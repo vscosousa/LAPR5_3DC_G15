@@ -1,0 +1,13 @@
+@startuml
+
+left to right direction
+
+actor "User" as PM #white;line:black;line.bold;text:black
+
+rectangle System {
+    usecase "example" as xxx
+}
+
+PM --> xxx
+
+@enduml
