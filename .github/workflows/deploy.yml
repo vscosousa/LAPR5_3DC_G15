@@ -1,4 +1,3 @@
-# This workflow will build a .NET project
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
 
 name: .NET
@@ -39,7 +38,10 @@ jobs:
       run: mkdir -p coverage_reports
     
     - name: Test with coverage
-      run: dotnet test --no-build --verbosity normal /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=coverage_reports/
+      run: dotnet test --no-build --verbosity normal /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=coverage_reports/coverage.opencover.xml
+    
+    - name: List coverage reports directory
+      run: ls -R coverage_reports
     
     - name: Upload coverage report
       uses: actions/upload-artifact@v3
