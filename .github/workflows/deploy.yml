@@ -15,34 +15,32 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-
+    
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 8.0.x
-
+    
     - name: Restore dependencies
       run: dotnet restore
-
+    
     - name: Build
       run: dotnet build --no-restore
-
+    
     - name: Install coverlet
-      run: dotnet tool install --global coverlet.console --version 1.7.0
-      env:
-        PATH: ${{ runner.tool_cache }}/.dotnet/tools:${{ env.PATH }}
-
+      run: |
+        dotnet tool install --global coverlet.console --version 1.7.0
+        echo "::add-path::${HOME}/.dotnet/tools"
+    
     - name: Verify coverlet installation
       run: coverlet --version
-      env:
-        PATH: ${{ runner.tool_cache }}/.dotnet/tools:${{ env.PATH }}
-
+    
     - name: Create coverage reports directory
       run: mkdir -p coverage_reports
-
+    
     - name: Test with coverage
       run: dotnet test --no-build --verbosity normal /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:CoverletOutput=coverage_reports/
-
+    
     - name: Upload coverage report
       uses: actions/upload-artifact@v3
       with:
