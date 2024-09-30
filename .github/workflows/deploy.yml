@@ -30,7 +30,7 @@ jobs:
     - name: Install coverlet
       run: |
         dotnet tool install --global coverlet.console --version 1.7.0
-        echo "::add-path::${HOME}/.dotnet/tools"
+        echo "${HOME}/.dotnet/tools" >> $GITHUB_PATH
     
     - name: Verify coverlet installation
       run: coverlet --version
