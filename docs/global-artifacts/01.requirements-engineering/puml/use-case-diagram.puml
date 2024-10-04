@@ -2,12 +2,32 @@
 
 left to right direction
 
-actor "User" as PM #white;line:black;line.bold;text:black
+actor "Admin" as AD #white;line:red;line.bold;text:black
+actor "Patient" as PA #white;line:blue;line.bold;text:black
+actor "Staff" as ST #white;line:green;line.bold;text:black
+actor "Backoffice User" as BU #white;line:purple;line.bold;text:black
 
-rectangle System {
-    usecase "example" as xxx
+rectangle System { 
+    usecase "Manage Backoffice Users" as US5_1_1
+    usecase "Manage Patients" as US5_1_8_9_10_11
+    usecase "Manage Staff Profile" as US5_1_12_13_14_15
+    usecase "Manage Operation Types" as US5_1_20_21_22_23
+    usecase "Register in the application" as US5_1_3
+    usecase "Manage my profile" as US5_1_4_5
+    usecase "Log in to the system" as US5_1_6
+    usecase "Reset my Password" as US5_1_2
+    usecase "Manage Operation Requests" as US5_1_16_17_18_19
 }
 
-PM --> xxx
+AD --> US5_1_1
+AD --> US5_1_8_9_10_11
+AD --> US5_1_12_13_14_15
+AD --> US5_1_20_21_22_23
+PA --> US5_1_3
+PA --> US5_1_4_5
+BU --> US5_1_6
+BU --> US5_1_2
+ST --> US5_1_16_17_18_19
+
 
 @enduml
