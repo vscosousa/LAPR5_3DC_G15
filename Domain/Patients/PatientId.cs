@@ -2,16 +2,16 @@ using System;
 using DDDSample1.Domain.Shared;
 using Newtonsoft.Json;
 
-namespace DDDSample1.Domain.Categories
+namespace DDDSample1.Domain.Patients
 {
-    public class CategoryId : EntityId
+    public class PatientId : EntityId
     {
         [JsonConstructor]
-        public CategoryId(Guid value) : base(value)
+        public PatientId(Guid value) : base(value)
         {
         }
 
-        public CategoryId(String value) : base(value)
+        public PatientId(String value) : base(value)
         {
         }
 
