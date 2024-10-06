@@ -124,3 +124,4 @@ _NCrunch*
 # Visual Studio Code
 .vscode/
 *.code-workspace
+.fake
