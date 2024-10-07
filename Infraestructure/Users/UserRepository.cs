@@ -1,4 +1,3 @@
-using DDDSample1.Domain.Patients;
 using DDDSample1.Domain.User;
 using DDDSample1.Infrastructure.Shared;
 

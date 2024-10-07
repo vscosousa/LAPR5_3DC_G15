@@ -20,7 +20,7 @@ namespace DDDSample1.Domain.User
             this.Email = email;
             this.Username = username;
             this.Role = role;
-            this.IsActive = false; // User is inactive until they set up their password
+            this.IsActive = false;
         }
 
         // Constructor for self-registration by patients
