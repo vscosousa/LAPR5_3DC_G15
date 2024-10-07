@@ -11,6 +11,8 @@ using DDDSample1.Infrastructure.Shared;
 using DDDSample1.Domain.Shared;
 using DDDSample1.Infrastructure.Patients;
 using DDDSample1.Domain.Patients;
+using DDDSample1.Domain.User;
+using DDDSample1.Infrastructure.Users;
 
 namespace DDDSample1
 {
@@ -71,6 +73,12 @@ namespace DDDSample1
 
             services.AddTransient<IPatientRepository, PatientRepository>();
             services.AddTransient<PatientService>();
+
+            services.AddTransient<IUserRepository, UserRepository>();
+            services.AddTransient<UserService>();
+
+            services.AddTransient<IMailService, MailService>();
+            
         }
     }
 }

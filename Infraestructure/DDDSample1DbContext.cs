@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using DDDSample1.Domain.Patients;
 using DDDSample1.Infrastructure.Patients;
+using DDDSample1.Domain.User;
 
 namespace DDDSample1.Infrastructure
 {
@@ -10,6 +11,8 @@ namespace DDDSample1.Infrastructure
         {
         }
         public DbSet<Patient> Patients { get; set; }
+
+        public DbSet<User> Users { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
