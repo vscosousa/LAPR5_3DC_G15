@@ -1,37 +1,41 @@
-using System;
+using System.Text.RegularExpressions;
 using DDDSample1.Domain.Shared;
 
 namespace DDDSample1.Domain.ValueObjects
 {
     public class PhoneNumber : IValueObject
     {
-        public string CountryIdentifier { get; }
-        public string PhoneNumberValue { get; }
+        public string Number;
 
         private PhoneNumber() { }
 
-        public PhoneNumber(string countryIdentifier, string phoneNumber)
+        public PhoneNumber(string number)
         {
-            ArgumentNullException.ThrowIfNull(countryIdentifier);
 
-            ArgumentNullException.ThrowIfNull(phoneNumber);
+            if (string.IsNullOrWhiteSpace(number))
+            {
+                throw new BusinessRuleValidationException("Phone number can't be null or empty");
+            }
+            if (!Regex.IsMatch(number, @"^(?:([+]\d{1,4})[-.\s]?)?(?:[(](\d{1,3})[)][-.\s]?)?(\d{1,4})[-.\s]?(\d{1,4})[-.\s]?(\d{1,9})$"))
+            {
+                throw new BusinessRuleValidationException("Phone number is invalid.");
+            }
 
-            if (!countryIdentifier.Contains('+'))
-                throw new ArgumentException("Country identifier must start with a '+'.");
-
-            CountryIdentifier = countryIdentifier;
-            PhoneNumberValue = phoneNumber;
+            this.Number = number;
         }
-
-        public override string ToString() => CountryIdentifier + PhoneNumberValue;
 
         public override bool Equals(object obj)
         {
-            var other = (PhoneNumber)obj;
+            var compareTo = obj as PhoneNumber;
 
-            return CountryIdentifier == other.CountryIdentifier && PhoneNumberValue == other.PhoneNumberValue;
+            if (ReferenceEquals(this, compareTo)) return true;
+            if (compareTo is null) return false;
+
+            return compareTo.Number.Equals(this.Number);
         }
 
-        public override int GetHashCode() => HashCode.Combine(CountryIdentifier, PhoneNumberValue);
+        public override int GetHashCode() => this.Number.GetHashCode();
+
+        public override string ToString() => this.Number;
     }
 }

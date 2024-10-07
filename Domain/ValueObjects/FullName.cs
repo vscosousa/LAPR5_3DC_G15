@@ -1,42 +1,33 @@
 using System;
-using System.Collections.Generic;
 using DDDSample1.Domain.Shared;
 
 namespace DDDSample1.Domain.ValueObjects
 {
     public class FullName : IValueObject
     {
-        public List<Name> FullNameValue { get; }
+        public string FullNameValue { get; }
 
         private FullName() { }
 
 
-        public FullName(List<Name> fullName)
+        public FullName(string fullName)
         {
             ArgumentNullException.ThrowIfNull(fullName);
             FullNameValue = fullName;
-
-            if (fullName.Count < 2)
-                throw new ArgumentException("Full Name must have at least two names.");
         }
 
-        /* public override string ToString()
-        {
-            string fullName = "";
-            foreach (Name name in FullNameValue)
-            {
-                fullName += name.NameValue + " ";
-            }
-            return fullName;
-        }
+        public override string ToString() => FullNameValue;
 
         public override bool Equals(object obj)
         {
-            var other = (FullName)obj;
+            var compareTo = obj as FullName;
 
-            return FullNameValue == other.FullNameValue;
+            if (ReferenceEquals(this, compareTo)) return true;
+            if (compareTo is null) return false;
+
+            return compareTo.FullNameValue.Equals(FullNameValue);
         }
 
-        public override int GetHashCode() => FullNameValue.GetHashCode(); */
+        public override int GetHashCode() => FullNameValue.GetHashCode();
     }
 }

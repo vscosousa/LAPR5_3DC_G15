@@ -44,22 +44,20 @@ namespace DDDSample1.Domain.Patients
                 // Convert DTO properties to value objects
                 var firstName = new Name(dto.FirstName);
                 var lastName = new Name(dto.LastName);
-                var fullName = new FullName(new List<Name>(Array.ConvertAll(dto.FullName, name => new Name(name))));
+                var fullName = new FullName(dto.FullName);
                 var genderOption = (GenderOptions)Enum.Parse(typeof(GenderOptions), dto.Gender, true);
                 var gender = new Gender(genderOption);
                 var dateOfBirth = new Date(dto.DateOfBirth);
                 var medicalRecordNumber = new MedicalRecordNumber(dto.MedicalRecordNumber);
                 var email = new Email(dto.Email);
-                var phoneNumber = new PhoneNumber(dto.CountryIdentifier, dto.PhoneNumber);
-                var contactInformation = new ContactInformation(email, phoneNumber);
-                var emergencyContactPhoneNumber = new PhoneNumber(dto.EmergencyCountryIdentifier, dto.EmergencyPhoneNumber);
+                var phoneNumber = new PhoneNumber(dto.PhoneNumber);
+                var emergencyContactPhoneNumber = new PhoneNumber(dto.EmergencyContact);
                 var emergencyContact = new EmergencyContact(emergencyContactPhoneNumber);
                 var medicalConditions = new MedicalConditions(dto.MedicalConditions);
-                var dateOfAppointment = new Date(dto.DateOfAppointment);
-                var timeOfAppointment = new Time(dto.TimeOfAppointment);
-                var appointmentHistory = new AppointmentHistory(dateOfAppointment, timeOfAppointment);
+                var appointmentDates = Array.ConvertAll(dto.AppointmentHistory, date => DateTime.Parse(date));
+                var appointmentHistory = new AppointmentHistory(appointmentDates);
         
-                var patient = new Patient(firstName, lastName, fullName, dateOfBirth, gender, medicalRecordNumber, contactInformation, emergencyContact, medicalConditions, appointmentHistory);
+                var patient = new Patient(firstName, lastName, fullName, dateOfBirth, gender, medicalRecordNumber, email, phoneNumber, emergencyContact, medicalConditions, appointmentHistory);
         
                 await _repo.AddAsync(patient);
                 await _unitOfWork.CommitAsync();

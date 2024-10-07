@@ -12,16 +12,16 @@ namespace DDDSample1.Domain.Patients
         public Date DateOfBirth { get; set; }
         public Gender Gender { get; set; }
         public MedicalRecordNumber MedicalRecordNumber { get; set; }
-        public ContactInformation ContactInformation { get; set; }
+        public Email Email { get; set; }
+        public PhoneNumber PhoneNumber { get; set; }
         public EmergencyContact EmergencyContact { get; set; }
         public MedicalConditions MedicalConditions { get; set; }
         public AppointmentHistory AppointmentHistory { get; set; }
         public bool IsActive { get; set; }
-        public DateTime? ActivationLinkSentAt { get; set; }
 
         public PatientDTO() { }
 
-        public PatientDTO(Guid id, Name firstName, Name lastName, FullName fullName, Date dateofBirth, Gender gender, MedicalRecordNumber medicalRecordNumber, ContactInformation contactInformation, EmergencyContact emergencyContact, MedicalConditions medicalConditions, AppointmentHistory appointmentHistory, bool isActive, DateTime? activationLinkSentAt)
+        public PatientDTO(Guid id, Name firstName, Name lastName, FullName fullName, Date dateofBirth, Gender gender, MedicalRecordNumber medicalRecordNumber, Email email, PhoneNumber phoneNumber, EmergencyContact emergencyContact, MedicalConditions medicalConditions, AppointmentHistory appointmentHistory, bool isActive)
         {
             Id = id;
             FirstName = firstName;
@@ -30,12 +30,12 @@ namespace DDDSample1.Domain.Patients
             DateOfBirth = dateofBirth;
             Gender = gender;
             MedicalRecordNumber = medicalRecordNumber;
-            ContactInformation = contactInformation;
+            Email = email;
+            PhoneNumber = phoneNumber;
             EmergencyContact = emergencyContact;
             MedicalConditions = medicalConditions;
             AppointmentHistory = appointmentHistory;
             IsActive = isActive;
-            ActivationLinkSentAt = activationLinkSentAt;
         }
 
         // Static method to convert a domain Patient entity to a PatientDTO
@@ -49,12 +49,12 @@ namespace DDDSample1.Domain.Patients
                 patient.DateOfBirth,
                 patient.Gender,
                 patient.MedicalRecordNumber,
-                patient.ContactInformation,
+                patient.Email,
+                patient.PhoneNumber,
                 patient.EmergencyContact,
                 patient.MedicalConditions,
                 patient.AppointmentHistory,
-                patient.IsActive,
-                patient.ActivationLinkSentAt
+                patient.IsActive
             );
         }
     }

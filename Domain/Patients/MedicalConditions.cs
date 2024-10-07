@@ -4,16 +4,16 @@ namespace DDDSample1.Domain.Patients
 {
         public class MedicalConditions : IValueObject
     {
-        public string[] Conditions { get; }  // ver regras de negócio
+        public string Conditions { get; }  // ver regras de negócio
 
         private MedicalConditions() { }
 
-        public MedicalConditions(string[] conditions)
+        public MedicalConditions(string conditions)
         {
             Conditions = conditions;
         }
 
-        public override string ToString() => string.Join(", ", Conditions);
+        public override string ToString() => Conditions;
 
         public override bool Equals(object obj)
         {

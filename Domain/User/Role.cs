@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Text.RegularExpressions;
 using DDDSample1.Domain.Shared;
 
 public class Role : IValueObject

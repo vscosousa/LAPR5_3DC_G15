@@ -1,32 +1,34 @@
 using System;
 using DDDSample1.Domain.Shared;
-using DDDSample1.Domain.ValueObjects;
 
 namespace DDDSample1.Domain.Patients
 {
     public class AppointmentHistory : IValueObject
     {
-        public Date DateValue { get; }
-        public Time TimeValue { get; }
+        public DateTime[] Appointment { get; private set; }
 
         private AppointmentHistory() { }
 
-        public AppointmentHistory(Date date, Time time)
+        public AppointmentHistory(DateTime[] appointment)
         {
-            DateValue = date;
-            TimeValue = time;
+            Appointment = appointment;
         }
 
-        /* public override string ToString() => DateValue.ToString() + " " + TimeValue.ToString();
+        //toString, equals and getHashCode
+
+        public override string ToString() => $"Appointment: {Appointment}";
 
         public override bool Equals(object obj)
         {
-            var other = (AppointmentHistory)obj;
+            var compareTo = obj as AppointmentHistory;
 
-            return DateValue.Equals(other.DateValue) && TimeValue.Equals(other.TimeValue);
+            if (ReferenceEquals(this, compareTo)) return true;
+            if (compareTo is null) return false;
+
+            return compareTo.Appointment == Appointment;
         }
 
-        public override int GetHashCode() => HashCode.Combine(DateValue, TimeValue); */
+        public override int GetHashCode() => HashCode.Combine(Appointment);
 
     }
 }
