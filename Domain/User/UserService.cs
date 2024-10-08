@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using DDDSample1.Domain.Shared;
 using DDDSample1.Domain.ValueObjects;
 
 
@@ -10,13 +11,15 @@ namespace DDDSample1.Domain.User
         private readonly IUserRepository _userRepository;
 
         private readonly IMailService _mailService; 
+         private readonly IUnitOfWork _unitOfWork;
         
          
 
-        public UserService(IUserRepository userRepository, IMailService mailService) 
+        public UserService(IUserRepository userRepository, IMailService mailService, IUnitOfWork unitOfWork) 
         {
             _userRepository = userRepository;
             _mailService = mailService; 
+            _unitOfWork = unitOfWork;
         }
 
         // Create a user
@@ -28,8 +31,10 @@ namespace DDDSample1.Domain.User
 
             var user = new User(email, username, userRole);
 
-           // await _userRepository.AddAsync(user);
-           // await _userRepository.SaveChangesAsync();
+            // Save user to database
+            await _userRepository.AddAsync(user);
+            await _unitOfWork.CommitAsync();
+
 
             
             string activationLink = GenerateActivationLink(user.Id.AsGuid());
