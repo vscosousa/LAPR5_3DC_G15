@@ -4,5 +4,7 @@ namespace DDDSample1.Domain.User
 {
     public interface IUserRepository: IRepository<User, UserID>
     {
+        
     }
+
 }

@@ -1,20 +1,22 @@
-@startuml level_2
+@startuml US5.1.1 Level 2
+'https://plantuml.com/sequence-diagram
+skinparam handwritten false
+skinparam monochrome false
+skinparam packageStyle rect
+skinparam defaultFontName FG Virgil
+skinparam shadowing true
 
-title Level 2 Diagram
-
-hide empty members
-'skinparam Linetype ortho
-
-skinparam class {
-    BackgroundColor<<valueObject>> #D6EAF8
-    BackgroundColor<<root>> #FDEBD0
-    BackgroundColor<<service>> #D1F2EB
-    BackgroundColor #FEF9E7
-    ArrowColor Black
-}
-
-skinparam package {
-    BackgroundColor #EBF5FB
-}
+actor Admin as AD
+activate AD
+AD -> UI: Create a user (username, email, role)
+activate UI
+UI -> MDR: createUser(username, email, role)
+activate MDR
+MDR --> MDR: Validate user's data
+MDR --> UI: 200 (Success) OR 400 (Bad Request)
+deactivate MDR
+UI -> AD: 200 (Success) OR 400 (Bad Request)
+deactivate UI
 
 @enduml
+

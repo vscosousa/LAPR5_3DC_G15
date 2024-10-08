@@ -1,20 +1,20 @@
-@startuml level_1
+@startuml US 5.1.1 Level 1
 
-title Level 1 Diagram
+skinparam handwritten false
+skinparam monochrome false
+skinparam packageStyle rect
+skinparam defaultFontName FG Virgil
+skinparam shadowing true
 
-hide empty members
-'skinparam Linetype ortho
+actor Admin as AD
 
-skinparam class {
-    BackgroundColor<<valueObject>> #D6EAF8
-    BackgroundColor<<root>> #FDEBD0
-    BackgroundColor<<service>> #D1F2EB
-    BackgroundColor #FEF9E7
-    ArrowColor Black
-}
-
-skinparam package {
-    BackgroundColor #EBF5FB
-}
+activate AD
+AD -> System: Ask for create a user
+activate System
+System -> AD: Ask for user's data
+AD -> System: Send user's data (username, email,role)
+System -> System: Validate user's data
+System -> AD: Send confirmation message
+deactivate System
 
 @enduml

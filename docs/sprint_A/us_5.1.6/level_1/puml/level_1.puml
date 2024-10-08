@@ -1,20 +1,20 @@
-@startuml level_1
+@startuml US 5.1.6 -  As a (non-authenticated) Backoffice User, I want to log in to the system using my credentials Level 1 
 
-title Level 1 Diagram
+skinparam handwritten false
+skinparam monochrome false
+skinparam packageStyle rect
+skinparam defaultFontName FG Virgil
+skinparam shadowing true
 
-hide empty members
-'skinparam Linetype ortho
+actor Backoffice_User as BOU
 
-skinparam class {
-    BackgroundColor<<valueObject>> #D6EAF8
-    BackgroundColor<<root>> #FDEBD0
-    BackgroundColor<<service>> #D1F2EB
-    BackgroundColor #FEF9E7
-    ArrowColor Black
-}
-
-skinparam package {
-    BackgroundColor #EBF5FB
-}
+activate BOU
+BOU -> System: Ask to login in the system
+activate System
+System -> BOU: Ask for user's data (email, password)
+BOU -> System: Send user's data (email, password)
+System -> System: Validate user's data
+System -> BOU: Send confirmation message
+deactivate System
 
 @enduml

@@ -19,7 +19,7 @@ namespace DDDSample1.Controllers
         }
 
         // POST api/user
-// US 5.1.1 - Creates a new user (for both admin and self-registered)
+        // US 5.1.1 - Creates a new user (for both admin and self-registered)
         [HttpPost]
         public async Task<IActionResult> CreateUser([FromBody] CreatingUserDTO request)
         {
