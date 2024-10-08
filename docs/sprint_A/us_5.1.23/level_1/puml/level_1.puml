@@ -1,20 +1,24 @@
 @startuml level_1
+skinparam handwritten false
+skinparam monochrome false
+skinparam packageStyle rect
+skinparam shadowing true
+title 5.1.23 Level 1 Diagram
 
-title Level 1 Diagram
+actor Admin as AD
 
-hide empty members
-'skinparam Linetype ortho
+activate AD
+AD -> System: Ask to list or search types of operations
+activate System
 
-skinparam class {
-    BackgroundColor<<valueObject>> #D6EAF8
-    BackgroundColor<<root>> #FDEBD0
-    BackgroundColor<<service>> #D1F2EB
-    BackgroundColor #FEF9E7
-    ArrowColor Black
-}
+alt Choose to list
+    System -> AD: Shows the list of all operation types
+else Choose to search
+    AD -> System: Send operationTypeID or operationTypeName
+    System -> AD: Shows the details for operation type
+end
 
-skinparam package {
-    BackgroundColor #EBF5FB
-}
+deactivate System
+deactivate AD
 
 @enduml

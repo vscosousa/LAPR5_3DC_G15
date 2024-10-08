@@ -1,20 +1,52 @@
 @startuml level_3
+skinparam handwritten false
+skinparam monochrome false
+skinparam packageStyle rect
+skinparam shadowing true
 
-title Level 3 Diagram
+actor Admin as AD
 
-hide empty members
-'skinparam Linetype ortho
-
-skinparam class {
-    BackgroundColor<<valueObject>> #D6EAF8
-    BackgroundColor<<root>> #FDEBD0
-    BackgroundColor<<service>> #D1F2EB
-    BackgroundColor #FEF9E7
-    ArrowColor Black
-}
-
-skinparam package {
-    BackgroundColor #EBF5FB
-}
+activate AD
+AD -> Routes: post(\operationTypeData)
+activate Routes
+Routes -> MDR: createOperationType(operationTypeData)
+activate MDR
+MDR -> Controller: createOperationType(operationTypeData)
+activate Controller
+Controller -> Service: instance().createOperationType(operationTypeData)
+activate Service
+Service -> DTO: createOperationType(operationTypeDTO)
+activate DTO
+DTO -> Repository: saveOperationType(operationType)
+activate Repository
+Repository -> Repository: save()
+alt Success 200
+    Repository --> DTO: 200
+    deactivate Repository
+    DTO --> Service: 200
+    deactivate DTO
+    Service --> Controller: 200
+    deactivate Service
+    Controller --> MDR: 200
+    deactivate Controller
+    MDR --> Routes: 200
+    deactivate MDR
+    Routes --> AD: Operation Type created
+    deactivate Routes
+else Failure 400
+    Repository --> DTO: 400
+    deactivate Repository
+    DTO --> Service: 400
+    deactivate DTO
+    Service --> Controller: 400
+    deactivate Service
+    Controller --> MDR: 400
+    deactivate Controller
+    MDR --> Routes: 400
+    deactivate MDR
+    Routes --> AD: Operation Type creation failed
+    deactivate Routes
+end
+deactivate AD
 
 @enduml

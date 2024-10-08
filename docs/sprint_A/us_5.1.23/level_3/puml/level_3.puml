@@ -1,20 +1,77 @@
 @startuml level_3
+skinparam handwritten false
+skinparam monochrome false
+skinparam packageStyle rect
+skinparam shadowing true
+title 5.1.23 Level 3 Diagram - List or Search Operation Types
 
-title Level 3 Diagram
+actor Admin as AD
 
-hide empty members
-'skinparam Linetype ortho
+activate AD
+AD -> Routes: get(\operationTypes)  
+activate Routes
 
-skinparam class {
-    BackgroundColor<<valueObject>> #D6EAF8
-    BackgroundColor<<root>> #FDEBD0
-    BackgroundColor<<service>> #D1F2EB
-    BackgroundColor #FEF9E7
-    ArrowColor Black
-}
+alt List all operation types
+    Routes -> MDR: getAllOperationTypes()
+    activate MDR
+    MDR -> Controller: getAllOperationTypes()
+    activate Controller
+    Controller -> Service: instance().getAllOperationTypes()
+    activate Service
 
-skinparam package {
-    BackgroundColor #EBF5FB
-}
+    Service -> Repository: findAllOperationTypes()
+    activate Repository
+    Repository --> Service: operationTypeList OR 400 (Bad Request)
+    deactivate Repository
+    Service --> Controller: operationTypeList OR 400 (Bad Request)
+    deactivate Service
+    Controller --> MDR: operationTypeList OR 400 (Bad Request)
+    deactivate Controller
+    MDR --> Routes: operationTypeList OR 400 (Bad Request)
+    deactivate MDR
+    Routes --> AD: operationTypeList OR 400 (Bad Request)
+
+else Search for operation type
+    AD -> Routes: get(\operationTypeID or operationTypeName)
+    activate Routes
+    Routes -> MDR: getOperationType(operationTypeID or operationTypeName)
+    activate MDR
+    MDR -> Controller: getOperationType(operationTypeID or operationTypeName)
+    activate Controller
+    Controller -> Service: instance().validateAndGetOperationType(operationTypeID or operationTypeName)
+    activate Service
+
+    alt Operation type found
+    activate Repository
+        Service -> Repository: findOperationTypeByID(operationTypeID)
+        Service -> Repository: findOperationTypeByName(operationTypeName)
+        Repository --> Service: operationTypeData
+        deactivate Repository
+        Service --> Controller: operationTypeData
+        deactivate Service
+        Controller --> MDR: operationTypeData
+        deactivate Controller
+        MDR --> Routes: operationTypeData
+        deactivate MDR
+        Routes --> AD: Operation Type details
+        deactivate Routes
+
+    else Operation type not found
+        Service -> Repository: 404 (Not Found)
+        activate Repository
+        Repository --> Service: 404 (Not Found)
+        deactivate Repository
+        Service --> Controller: 404 (Not Found)
+        deactivate Service
+        Controller --> MDR: 404 (Not Found)
+        deactivate Controller
+        MDR --> Routes: 404 (Not Found)
+        deactivate MDR
+        Routes --> AD: Operation Type not found
+        deactivate Routes
+    end
+end
+
+deactivate AD
 
 @enduml

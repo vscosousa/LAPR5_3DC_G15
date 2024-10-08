@@ -1,20 +1,82 @@
 @startuml level_3
+skinparam handwritten false
+skinparam monochrome false
+skinparam packageStyle rect
+skinparam shadowing true
+title 5.1.21 Level 3 Diagram
 
-title Level 3 Diagram
+actor Admin as AD
 
-hide empty members
-'skinparam Linetype ortho
+activate AD
+AD -> Routes: patch(\update)
+activate Routes
+Routes -> MDR: updateOperationType(ID,newOperationTypeData)
+activate MDR
+MDR -> Controller: updateOperationType(ID,newOperationTypeData)
+activate Controller
+Controller -> Service: instance().validateAndUpdateOperationType(ID,newOperationTypeData)
+activate Service
 
-skinparam class {
-    BackgroundColor<<valueObject>> #D6EAF8
-    BackgroundColor<<root>> #FDEBD0
-    BackgroundColor<<service>> #D1F2EB
-    BackgroundColor #FEF9E7
-    ArrowColor Black
-}
 
-skinparam package {
-    BackgroundColor #EBF5FB
-}
+Service -> Repository: findOperationTypeByID(ID)
+activate Repository
+alt Operation type exists
+    Repository --> Service: OperationType found
+    deactivate Repository
+    Service -> DTO: updateOperationType(operationTypeDTO)
+    activate DTO
+    DTO -> Repository: saveOperationType(operationType)
+    activate Repository
+    Repository -> Repository: save()
+    
+    alt Success 200
+        Repository --> DTO: 200
+        deactivate Repository
+        DTO --> Service: 200
+        deactivate DTO
+        Service --> Controller: 200
+        deactivate Service
+        Controller --> MDR: 200
+        deactivate Controller
+        MDR --> Routes: 200
+        deactivate MDR
+        Routes --> AD: Operation Type updated
+        deactivate Routes
+    else Failure 400
+        Repository --> DTO: 400
+        activate DTO
+        deactivate Repository
+        DTO --> Service: 400
+        activate Service
+        deactivate DTO
+        Service --> Controller: 400
+        activate Controller
+        deactivate Service
+        Controller --> MDR: 400
+        activate MDR
+        deactivate Controller
+        MDR --> Routes: 400
+        activate Routes
+        deactivate MDR
+        Routes --> AD: Operation Type update failed
+        deactivate Routes
+    end
+else Operation type not found
+    Repository --> Service: 404 (Not Found)
+    activate Service
+    deactivate Repository
+    Service --> Controller: 404 (Not Found)
+    activate Controller
+    deactivate Service
+    Controller --> MDR: 404 (Not Found)
+    activate MDR
+    deactivate Controller
+    MDR --> Routes: 404 (Not Found)
+    activate Routes
+    deactivate MDR
+    Routes --> AD: Operation Type not found
+    deactivate Routes
+end
+deactivate AD
 
 @enduml

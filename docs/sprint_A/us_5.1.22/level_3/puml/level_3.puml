@@ -1,20 +1,67 @@
 @startuml level_3
+skinparam handwritten false
+skinparam monochrome false
+skinparam packageStyle rect
+skinparam shadowing true
+title 5.1.22 Level 3 Diagram
 
-title Level 3 Diagram
+actor Admin as AD
 
-hide empty members
-'skinparam Linetype ortho
+activate AD
+AD -> Routes: delete(\operationTypeID or \operationTypeName)
+activate Routes
+Routes -> MDR: deleteOperationType(operationTypeID or operationTypeName)
+activate MDR
+MDR -> Controller: deleteOperationType(operationTypeID or operationTypeName)
+activate Controller
+Controller -> Service: instance().validateAndDeleteOperationType(operationTypeID or operationTypeName)
+activate Service
 
-skinparam class {
-    BackgroundColor<<valueObject>> #D6EAF8
-    BackgroundColor<<root>> #FDEBD0
-    BackgroundColor<<service>> #D1F2EB
-    BackgroundColor #FEF9E7
-    ArrowColor Black
-}
+Service -> Repository: findOperationTypeByID(operationTypeID)
+Service -> Repository: findOperationTypeByName(operationTypeName)
+activate Repository
+alt Operation type exists
+    Repository --> Service: OperationType found
+    deactivate Repository
+    Service -> Repository: deleteOperationType(operationTypeID or operationTypeName)
+    activate Repository
+    Repository -> Repository: delete()
 
-skinparam package {
-    BackgroundColor #EBF5FB
-}
+    alt Success 200
+        Repository --> Service: 200
+        deactivate Repository
+        Service --> Controller: 200
+        deactivate Service
+        Controller --> MDR: 200
+        deactivate Controller
+        MDR --> Routes: 200
+        deactivate MDR
+        Routes --> AD: Operation Type deleted
+        deactivate Routes
+    else Failure 400
+        Repository --> Service: 400
+        deactivate Repository
+        Service --> Controller: 400
+        deactivate Service
+        Controller --> MDR: 400
+        deactivate Controller
+        MDR --> Routes: 400
+        deactivate MDR
+        Routes --> AD: Operation Type deletion failed
+        deactivate Routes
+    end
+else Operation type not found
+    Repository --> Service: 404 (Not Found)
+    deactivate Repository
+    Service --> Controller: 404 (Not Found)
+    deactivate Service
+    Controller --> MDR: 404 (Not Found)
+    deactivate Controller
+    MDR --> Routes: 404 (Not Found)
+    deactivate MDR
+    Routes --> AD: Operation Type not found
+    deactivate Routes
+end
+deactivate AD
 
 @enduml

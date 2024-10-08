@@ -1,20 +1,22 @@
 @startuml level_1
+skinparam handwritten false
+skinparam monochrome false
+skinparam packageStyle rect
+skinparam shadowing true
+title 5.1.21 Level 1 Diagram
 
-title Level 1 Diagram
+actor Admin as AD
 
-hide empty members
-'skinparam Linetype ortho
-
-skinparam class {
-    BackgroundColor<<valueObject>> #D6EAF8
-    BackgroundColor<<root>> #FDEBD0
-    BackgroundColor<<service>> #D1F2EB
-    BackgroundColor #FEF9E7
-    ArrowColor Black
-}
-
-skinparam package {
-    BackgroundColor #EBF5FB
-}
+activate AD
+AD -> System: Ask to edit types of operations
+activate System
+System -> AD: Ask for type of operation data to edit(ID or name)
+AD -> System: Send ID or Name of type of operation to edit
+System -> System: Validate ID or Name
+System -> AD: Shows the type of operation data to edit
+AD -> System: Change the type of operation data (name,requiredStaffBySpecialization,estimatedDuration) 
+System -> System: Validate data
+System -> AD: Send confirmation message(Success or Failure)
+deactivate System
 
 @enduml
