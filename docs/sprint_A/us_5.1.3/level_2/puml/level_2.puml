@@ -17,4 +17,25 @@ skinparam package {
     BackgroundColor #EBF5FB
 }
 
+actor Patient as P
+participant "User Interface" as UI
+participant "PatientController" as C
+
+
+activate P
+P -> UI: Asks to create a Patient
+activate UI
+UI --> P: Asks for Patient's data
+deactivate UI
+P -> UI: Sends Patient's data
+activate UI
+UI -> C: createPatient(firstName, lastName, fullName, dateOfBirth, \ngender, medicalRecordNumber, email, phoneNumber, emergencyContact, \nmedicalConditions, listOfAppointments)
+activate C
+C --> C: Validates Patient's data
+C --> UI: Returns Operation Status Response Code
+deactivate C
+UI --> P: Returns Operation In/Sucess message
+deactivate UI
+
+
 @enduml
