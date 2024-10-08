@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using DDDSample1.Domain.Shared;
 
@@ -5,13 +6,14 @@ namespace DDDSample1.Domain.ValueObjects
 {
     public class PhoneNumber : IValueObject
     {
-        public string Number;
+        [JsonPropertyName("Number")]
+        public string Number { get; private set; }
 
         private PhoneNumber() { }
 
+        [JsonConstructor]
         public PhoneNumber(string number)
         {
-
             if (string.IsNullOrWhiteSpace(number))
             {
                 throw new BusinessRuleValidationException("Phone number can't be null or empty");
@@ -20,8 +22,7 @@ namespace DDDSample1.Domain.ValueObjects
             {
                 throw new BusinessRuleValidationException("Phone number is invalid.");
             }
-
-            this.Number = number;
+            Number = number;
         }
 
         public override bool Equals(object obj)
@@ -34,8 +35,8 @@ namespace DDDSample1.Domain.ValueObjects
             return compareTo.Number.Equals(this.Number);
         }
 
-        public override int GetHashCode() => this.Number.GetHashCode();
+        public override int GetHashCode() => Number.GetHashCode();
 
-        public override string ToString() => this.Number;
+        public override string ToString() => Number;
     }
 }

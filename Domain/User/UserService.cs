@@ -40,7 +40,7 @@ namespace DDDSample1.Domain.User
             string activationLink = GenerateActivationLink(user.Id.AsGuid());
 
             // Send activation email
-            await _mailService.SendActivationEmail(email.EmailValue, username.Value, activationLink);
+            await _mailService.SendActivationEmail(email.EmailValue, username.UsernameValue, activationLink);
 
             
             return new UserDTO(user); 

@@ -1,22 +1,25 @@
 using System;
+using System.Text.Json.Serialization;
 using DDDSample1.Domain.Shared;
 
 namespace DDDSample1.Domain.ValueObjects
 {
     public class Name : IValueObject
     {
+        [JsonPropertyName("NameValue")]
         public string NameValue { get; }
 
         private Name() { }
 
-        public Name(string name)
+        [JsonConstructor]
+        public Name(string nameValue)
         {
-            if (name == null)
+            if (nameValue == null)
                 throw new ArgumentNullException("Name cannot be null.");
-            if (name[0] != char.ToUpper(name[0]))
+            if (nameValue[0] != char.ToUpper(nameValue[0]))
                 throw new ArgumentException("Name must start with a capital letter.");
 
-            NameValue = name;
+            NameValue = nameValue;
         }
 
         public override string ToString() => NameValue;

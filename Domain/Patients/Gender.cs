@@ -1,14 +1,17 @@
 using System;
+using System.Text.Json.Serialization;
 using DDDSample1.Domain.Shared;
 
 namespace DDDSample1.Domain.Patients
 {
     public class Gender : IValueObject
     {
+        [JsonPropertyName("GenderOption")]
         public GenderOptions GenderOption { get; }
 
         private Gender() { }
 
+        [JsonConstructor]
         public Gender(GenderOptions genderOption)
         {
             if (!Enum.IsDefined(typeof(GenderOptions), genderOption))

@@ -1,13 +1,16 @@
 using DDDSample1.Domain.Shared;
+using System.Text.Json.Serialization;
 
 namespace DDDSample1.Domain.Patients
 {
-        public class MedicalConditions : IValueObject
+    public class MedicalConditions : IValueObject
     {
-        public string Conditions { get; }  // ver regras de negócio
+        [JsonPropertyName("Conditions")]
+        public string Conditions { get; }
 
         private MedicalConditions() { }
 
+        [JsonConstructor]
         public MedicalConditions(string conditions)
         {
             Conditions = conditions;

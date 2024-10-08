@@ -1,35 +1,39 @@
 using System;
+using System.Text.Json.Serialization;
 using DDDSample1.Domain.Shared;
 
 public class Username : IValueObject
 {
-    public string Value { get; }
+    [JsonPropertyName("UsernameValue")]
+    public string UsernameValue { get; }
 
     private Username() { }
-    public Username(string value)
+
+    [JsonConstructor]
+    public Username(string usernameValue)
     {
-        if (string.IsNullOrWhiteSpace(value))
+        if (string.IsNullOrWhiteSpace(usernameValue))
         {
             throw new ArgumentNullException("Username can't be empty");
         }
 
-        Value = value;
+        UsernameValue = usernameValue;
     }
 
     public override string ToString()
     {
-        return Value;
+        return UsernameValue;
     }
 
     public override bool Equals(object obj)
     {
         var otherValue = (Username) obj;
 
-        return Value == otherValue.Value;
+        return UsernameValue == otherValue.UsernameValue;
     }
 
     public override int GetHashCode()
     {
-        return Value.GetHashCode();
+        return UsernameValue.GetHashCode();
     }
 }

@@ -9,7 +9,7 @@ namespace DDDSample1.Domain.Patients
         private Name _firstName;
         private Name _lastName;
         private FullName _fullName;
-        private Date _dateOfBirth;
+        private DateOnly _dateOfBirth;
         private Gender _gender;
         private MedicalRecordNumber _medicalRecordNumber;
         private Email _email;
@@ -22,7 +22,7 @@ namespace DDDSample1.Domain.Patients
         // Parameterless constructor for EF Core
         private Patient() { }
 
-        public Patient(Name firstName, Name lastName, FullName fullName, Date dateOfBirth, Gender gender, MedicalRecordNumber medicalRecordNumber, Email email, PhoneNumber phoneNumber, EmergencyContact emergencyContact, MedicalConditions medicalConditions, AppointmentHistory appointmentHistory)
+        public Patient(Name firstName, Name lastName, FullName fullName, DateOnly dateOfBirth, Gender gender, MedicalRecordNumber medicalRecordNumber, Email email, PhoneNumber phoneNumber, EmergencyContact emergencyContact, MedicalConditions medicalConditions, AppointmentHistory appointmentHistory)
         {
             Id = new PatientId(Guid.NewGuid());
             _firstName = firstName;
@@ -43,7 +43,7 @@ namespace DDDSample1.Domain.Patients
         public Name FirstName => _firstName;
         public Name LastName => _lastName;
         public FullName FullName => _fullName;
-        public Date DateOfBirth => _dateOfBirth;
+        public DateOnly DateOfBirth => _dateOfBirth;
         public Gender Gender => _gender;
         public MedicalRecordNumber MedicalRecordNumber => _medicalRecordNumber;
         public Email Email => _email;
@@ -52,21 +52,6 @@ namespace DDDSample1.Domain.Patients
         public EmergencyContact EmergencyContact => _emergencyContact;
         public AppointmentHistory AppointmentHistory => _appointmentHistory;
         public bool IsActive => _isActive;
-        public static Patient FromDTO(PatientDTO dto)
-        {
-            return new Patient(
-                dto.FirstName,
-                dto.LastName,
-                dto.FullName,
-                dto.DateOfBirth,
-                dto.Gender,
-                dto.MedicalRecordNumber,
-                dto.Email,
-                dto.PhoneNumber,
-                dto.EmergencyContact,
-                dto.MedicalConditions,
-                dto.AppointmentHistory
-            );
-        }
+        
     }
 }

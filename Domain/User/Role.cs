@@ -1,18 +1,20 @@
 using System;
+using System.Text.Json.Serialization;
 using DDDSample1.Domain.Shared;
 
 public class Role : IValueObject
 {
+    [JsonPropertyName("Roles")]
     public Roles Roles { get; }
 
     private Role() { }
 
-    public Role(string value)
+    [JsonConstructor]
+    public Role(string roles)
     {
-        if (value == null)
-            throw new ArgumentNullException("Role cannot be null.");
+        ArgumentNullException.ThrowIfNull(roles);
 
-        Roles = (Roles)Enum.Parse(typeof(Roles), value);
+        Roles = (Roles)Enum.Parse(typeof(Roles), roles);
     }
 
     public static implicit operator Roles(Role role) => role.Roles;

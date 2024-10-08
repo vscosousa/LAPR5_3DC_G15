@@ -1,4 +1,5 @@
 using System;
+using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using DDDSample1.Domain.Shared;
 
@@ -6,10 +7,12 @@ namespace DDDSample1.Domain.ValueObjects
 {
     public class Time : IValueObject
     {
+        [JsonPropertyName("TimeValue")]
         public string TimeValue { get; }
 
         private Time() { }
 
+        [JsonConstructor]
         public Time(string timeValue)
         {
             ArgumentNullException.ThrowIfNull(timeValue);

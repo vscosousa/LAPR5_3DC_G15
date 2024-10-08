@@ -1,4 +1,5 @@
 using System;
+using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using DDDSample1.Domain.Shared;
 
@@ -6,18 +7,20 @@ namespace DDDSample1.Domain.ValueObjects
 {
     public class Date : IValueObject
     {
+        [JsonPropertyName("DateValue")]
         public string DateValue { get; }
 
         private Date() { }
 
-        public Date(string date)
+        [JsonConstructor]
+        public Date(string dateValue)
         {
-            ArgumentNullException.ThrowIfNull(date);
+            ArgumentNullException.ThrowIfNull(dateValue);
 
-            if (!Regex.IsMatch(date, @"^[0-9]{4}/(0[1-9]|1[0-2])/(0[1-9]|[12][0-9]|3[01])$"))
+            if (!Regex.IsMatch(dateValue, @"^[0-9]{4}/(0[1-9]|1[0-2])/(0[1-9]|[12][0-9]|3[01])$"))
                 throw new ArgumentException("Date is invalid. The correct format is YYYY/MM/DD.");
 
-            DateValue = date;
+            DateValue = dateValue;
         }
 
         public override string ToString() => DateValue;

@@ -1,3 +1,5 @@
+using System;
+
 namespace DDDSample1.Domain.Patients
 {
     public class CreatingPatientDTO

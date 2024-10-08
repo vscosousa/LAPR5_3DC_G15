@@ -6,28 +6,28 @@ namespace DDDSample1.Domain.Patients
     public class PatientDTO
     {
         public Guid Id { get; set; }
-        public Name FirstName { get; set; }
-        public Name LastName { get; set; }
-        public FullName FullName { get; set; }
-        public Date DateOfBirth { get; set; }
-        public Gender Gender { get; set; }
-        public MedicalRecordNumber MedicalRecordNumber { get; set; }
-        public Email Email { get; set; }
-        public PhoneNumber PhoneNumber { get; set; }
-        public EmergencyContact EmergencyContact { get; set; }
-        public MedicalConditions MedicalConditions { get; set; }
-        public AppointmentHistory AppointmentHistory { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string FullName { get; set; }
+        public string DateOfBirth { get; set; }
+        public string Gender { get; set; }
+        public string MedicalRecordNumber { get; set; }
+        public string Email { get; set; }
+        public string PhoneNumber { get; set; }
+        public string EmergencyContact { get; set; }
+        public string MedicalConditions { get; set; }
+        public string AppointmentHistory { get; set; }
         public bool IsActive { get; set; }
 
         public PatientDTO() { }
 
-        public PatientDTO(Guid id, Name firstName, Name lastName, FullName fullName, Date dateofBirth, Gender gender, MedicalRecordNumber medicalRecordNumber, Email email, PhoneNumber phoneNumber, EmergencyContact emergencyContact, MedicalConditions medicalConditions, AppointmentHistory appointmentHistory, bool isActive)
+        public PatientDTO(Guid id, string firstName, string lastName, string fullName, string dateOfBirth, string gender, string medicalRecordNumber, string email, string phoneNumber, string emergencyContact, string medicalConditions, string appointmentHistory, bool isActive)
         {
             Id = id;
             FirstName = firstName;
             LastName = lastName;
             FullName = fullName;
-            DateOfBirth = dateofBirth;
+            DateOfBirth = dateOfBirth;
             Gender = gender;
             MedicalRecordNumber = medicalRecordNumber;
             Email = email;
@@ -43,17 +43,17 @@ namespace DDDSample1.Domain.Patients
         {
             return new PatientDTO(
                 Guid.Parse(patient.Id.Value),
-                patient.FirstName,
-                patient.LastName,
-                patient.FullName,
-                patient.DateOfBirth,
-                patient.Gender,
-                patient.MedicalRecordNumber,
-                patient.Email,
-                patient.PhoneNumber,
-                patient.EmergencyContact,
-                patient.MedicalConditions,
-                patient.AppointmentHistory,
+                patient.FirstName.NameValue,
+                patient.LastName.NameValue,
+                patient.FullName.FullNameValue,
+                patient.DateOfBirth.ToString(),
+                patient.Gender.GenderOption.ToString(),
+                patient.MedicalRecordNumber.Number.ToString(),
+                patient.Email.EmailValue,
+                patient.PhoneNumber.Number,
+                patient.EmergencyContact.EmergencyNumberValue.Number,
+                string.Join(", ", patient.MedicalConditions.Conditions),
+                string.Join(", ", patient.AppointmentHistory.Appointment),
                 patient.IsActive
             );
         }

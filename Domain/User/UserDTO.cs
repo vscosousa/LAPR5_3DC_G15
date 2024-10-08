@@ -19,7 +19,7 @@ namespace DDDSample1.Domain.User
         {
             this.Id = user.Id.AsGuid();
             this.Email = user.Email.EmailValue;
-            this.Username = user.Username.Value;
+            this.Username = user.Username.UsernameValue;
             this.Role = user.Role.ToString();
             this.IsActive = user.IsActive;
             this.ActivationLinkSentAt = user.ActivationLinkSentAt;

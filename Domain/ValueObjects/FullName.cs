@@ -1,21 +1,23 @@
 using System;
+using System.Text.Json.Serialization;
 using DDDSample1.Domain.Shared;
 
 namespace DDDSample1.Domain.ValueObjects
 {
     public class FullName : IValueObject
     {
+        [JsonPropertyName("FullNameValue")]
         public string FullNameValue { get; }
 
         private FullName() { }
 
 
-        public FullName(string fullName)
+        [JsonConstructor]
+        public FullName(string fullNameValue)
         {
-            ArgumentNullException.ThrowIfNull(fullName);
-            FullNameValue = fullName;
+            ArgumentNullException.ThrowIfNull(fullNameValue);
+            FullNameValue = fullNameValue;
         }
-
         public override string ToString() => FullNameValue;
 
         public override bool Equals(object obj)

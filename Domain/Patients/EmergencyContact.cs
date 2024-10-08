@@ -1,4 +1,5 @@
 using System;
+using System.Text.Json.Serialization;
 using DDDSample1.Domain.Shared;
 using DDDSample1.Domain.ValueObjects;
 
@@ -6,10 +7,14 @@ namespace DDDSample1.Domain.Patients
 {
     public class EmergencyContact : IValueObject
     {
+
+        [JsonPropertyName("EmergencyNumberValue")]
         public PhoneNumber EmergencyNumberValue { get; }
 
         private EmergencyContact() { }
 
+
+        [JsonConstructor]
         public EmergencyContact(PhoneNumber emergencyNumberValue)
         {
             ArgumentNullException.ThrowIfNull(emergencyNumberValue);
