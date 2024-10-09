@@ -5,11 +5,11 @@ namespace DDDSample1.Domain.OperationTypes
     public class OperationTypeDTO
     {
         public Guid Id { get; set; }
-        public Name Name { get; set; }
-        public EstimatedDuration EstimatedDuration { get; set; }
+        public string Name { get; set; }
+        public string EstimatedDuration { get; set; }
 
 
-        public OperationTypeDTO(Guid id, Name name, EstimatedDuration estimatedDuration)
+        public OperationTypeDTO(Guid id, string name, string estimatedDuration)
         {
             Id = id;
             Name = name;

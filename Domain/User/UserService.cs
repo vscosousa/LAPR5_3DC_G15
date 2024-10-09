@@ -22,29 +22,32 @@ namespace DDDSample1.Domain.User
         }
 
         // Create a user
-            public async Task<UserDTO> CreateUser(Email email, Username username, string role)
+       public async Task<User> CreateUser(CreatingUserDTO dto)
         {
-            Role userRole = string.IsNullOrEmpty(role) || role.Equals("Patient", StringComparison.OrdinalIgnoreCase)
-                ? Role.FromString("Patient")
-                : Role.FromString(role);
+            try
+            {
+                var username = dto.Username;
+                var email = dto.Email;
+                var role = (Role)Enum.Parse(typeof(Role), dto.Role, true);
+               
+                var user = new User(email,username,role);
 
-            var user = new User(email, username, userRole);
+                await _userRepository.AddAsync(user);
+                await _unitOfWork.CommitAsync();
+                Console.WriteLine("Transaction committed successfully");
 
-            // Save user to database
-            await _userRepository.AddAsync(user);
-            await _unitOfWork.CommitAsync();
-
-
-            
-            string activationLink = GenerateActivationLink(user.Id.AsGuid());
-
-            // Send activation email
-            await _mailService.SendActivationEmail(email.EmailValue, username.UsernameValue, activationLink);
-
-            
-            return new UserDTO(user); 
+                return user;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred: {ex.Message}");
+                if (ex.InnerException != null)
+                {
+                    Console.WriteLine($"Inner exception: {ex.InnerException.Message}");
+                }
+                throw;
+            }
         }
-
 
         private string GenerateActivationLink(Guid userId)
         {

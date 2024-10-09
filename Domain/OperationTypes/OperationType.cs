@@ -5,11 +5,11 @@ namespace DDDSample1.Domain.OperationTypes
 {
     public class OperationType : Entity<OperationTypeId>, IAggregateRoot
     {
-        private Name _name;
+        private string _name;
         //private List<Staff> _staffBySpecialization;
-        private EstimatedDuration _estimatedDuration;
+        private string _estimatedDuration;
 
-        public OperationType(Name name, EstimatedDuration estimatedDuration)
+        public OperationType(string name, string estimatedDuration)
         {
             Id = new OperationTypeId(Guid.NewGuid());
             _name = name;
@@ -23,8 +23,8 @@ namespace DDDSample1.Domain.OperationTypes
         {
         }
 
-        public Name Name => _name;
-        public EstimatedDuration EstimatedDuration => _estimatedDuration;
+        public string Name => _name;
+        public string EstimatedDuration => _estimatedDuration;
 
     }
 

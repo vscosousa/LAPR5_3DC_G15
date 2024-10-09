@@ -13,7 +13,13 @@ namespace DDDSample1.Infrastructure.Patients
             builder.HasIndex(b => b.Id).IsUnique();
             builder.HasIndex(b => b.Email).IsUnique();
             builder.HasIndex(b => b.Username).IsUnique();
-            builder.Property(b => b.Id).HasConversion(new EntityIdValueConverter<UserID>());        
+            builder.Property(b => b.Id).HasConversion(new EntityIdValueConverter<UserID>());
+            builder.Property(b => b.Email).IsRequired();
+            builder.Property(b => b.Username).IsRequired();
+            builder.Property(b => b.Role).IsRequired().HasConversion<string>().HasField("_role");
+            builder.Property(b => b.Password).IsRequired(false);
+            builder.Property(b => b.IsActive).IsRequired();
+            builder.Property(b => b.ActivationLinkSentAt).IsRequired(false);
         }
     }
 }

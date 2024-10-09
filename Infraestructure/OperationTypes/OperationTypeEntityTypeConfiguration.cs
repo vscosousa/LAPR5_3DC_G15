@@ -13,8 +13,8 @@ namespace DDDSample1.Infrastructure.OperationTypes
             builder.HasKey(b => b.Id);
             builder.HasIndex(b => b.Id).IsUnique();
             builder.Property(b => b.Id).HasConversion(new EntityIdValueConverter<OperationTypeId>());
-            builder.Property(b => b.Name).IsRequired().HasConversion(new ValueObjectConverter<Name>());
-            builder.Property(b => b.EstimatedDuration).IsRequired().HasConversion(new ValueObjectConverter<EstimatedDuration>());
+            builder.Property(b => b.Name).IsRequired();
+            builder.Property(b => b.EstimatedDuration).IsRequired();
         }
     }
 }

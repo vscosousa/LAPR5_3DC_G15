@@ -33,16 +33,9 @@ namespace DDDSample1.Domain.OperationTypes
         {
             try
             {
-                // Convert DTO properties to value objects
-                var name = new Name(dto.Name);
-                var estimatedDuration = new EstimatedDuration(dto.EstimatedDuration);
-
-                var operationType = new OperationType(name, estimatedDuration);
-
+                var operationType = new OperationType(dto.Name, dto.EstimatedDuration);
                 await _repository.AddAsync(operationType);
-
                 await _unitOfWork.CommitAsync();
-
                 return operationType;
             }
             catch (Exception e)

@@ -20,23 +20,14 @@ namespace DDDSample1.Controllers
         // POST api/user
         // US 5.1.1 - Creates a new user (for both admin and self-registered)
         [HttpPost]
-        public async Task<IActionResult> CreateUser([FromBody] CreatingUserDTO request)
+        public async Task<ActionResult<User>> CreateUser(CreatingUserDTO userDTO)
         {
-            try
-            {
-                // Create the user using the service
-                var userDto = await _userService.CreateUser(
-                    new Email(request.Email),
-                    new Username(request.Username),
-                    request.Role);
-
-                // Return a 201 Created status with the created user data
-                return CreatedAtAction(nameof(CreateUser), new { id = userDto.Id }, userDto);
+            try{
+                var user = await this._userService.CreateUser(userDTO);
+                return Ok(user);
             }
-            catch (Exception ex)
-            {
-                // Handle errors and return a 400 Bad Request or other appropriate status code
-                return BadRequest(new { message = ex.Message });
+            catch (Exception ex){
+                return StatusCode(500, $"An error occurred while creating the user: {ex.Message}");
             }
         }
 

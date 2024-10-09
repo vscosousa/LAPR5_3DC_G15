@@ -7,22 +7,25 @@ namespace DDDSample1.Domain.User
         public Guid Id { get; set; }
         public string Email { get; set; }
         public string Username { get; set; }
-        public string Role { get; set; }
+        public string Role { get; set; }  
+        public string Password { get; set; }  
         public bool IsActive { get; set; }
         public DateTime? ActivationLinkSentAt { get; set; }
 
-        // Parameterless constructor for serialization/deserialization
-        public UserDTO() { }
-
-        // Constructor to create the DTO from the User domain model
-        public UserDTO(User user)
+       
+        public UserDTO(Guid id, string email, string username, string role, string password, bool isActive, DateTime? activationLinkSentAt)
         {
-            this.Id = user.Id.AsGuid();
-            this.Email = user.Email.EmailValue;
-            this.Username = user.Username.UsernameValue;
-            this.Role = user.Role.ToString();
-            this.IsActive = user.IsActive;
-            this.ActivationLinkSentAt = user.ActivationLinkSentAt;
+            Id = id;
+            Email = email;
+            Username = username;
+            Role = role;
+            Password = password;
+            IsActive = isActive;
+            ActivationLinkSentAt = activationLinkSentAt;
         }
+
+    
+
+    
     }
 }
