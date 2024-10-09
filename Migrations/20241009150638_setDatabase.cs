@@ -12,6 +12,17 @@ namespace DDDNetCore.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "OperationTypes",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OperationTypes", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Patients",
                 columns: table => new
                 {
@@ -20,11 +31,14 @@ namespace DDDNetCore.Migrations
                     LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     FullName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     DateOfBirth = table.Column<DateOnly>(type: "date", nullable: false),
+                    GenderOptions = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    MedicalRecordNumber = table.Column<int>(type: "int", nullable: false),
                     Email = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     PhoneNumber = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     MedicalConditions = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     EmergencyContact = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    AppointmentHistory = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    AppointmentHistory = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -87,6 +101,9 @@ namespace DDDNetCore.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "OperationTypes");
+
             migrationBuilder.DropTable(
                 name: "Patients");
 

@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using DDDSample1.Domain.Patients;
+using DDDSample1.Domain.Shared;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DDDSample1.Controllers
@@ -13,7 +14,7 @@ namespace DDDSample1.Controllers
         private readonly PatientService _patientService;
         public PatientController(PatientService patientService)
         {
-            this._patientService = patientService;
+            _patientService = patientService;
         }
         // POST api/user
         // US 5.1.1
@@ -32,29 +33,23 @@ namespace DDDSample1.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeletePatient(string id)
+        public async Task<ActionResult<PatientDTO>> DeletePatient(Guid id)
         {
-            if (string.IsNullOrEmpty(id))
-            {
-                return BadRequest(new { message = "Patient ID is required." });
-            }
-
             try
             {
-                var patientId = new PatientId(id);
-                var result = await _patientService.DeletePatient(patientId);
+                var cat = await _patientService.DeletePatient(new PatientId(id));
 
-                if (result == null)
+                if (cat == null)
                 {
-                    return NotFound(new { message = "Patient not found." });
+                    return NotFound();
                 }
 
-                return Ok(result);
+                return Ok(cat);
             }
-            catch (Exception ex)
+            catch(BusinessRuleValidationException ex)
             {
-                return StatusCode(500, new { message = ex.Message });
+               return BadRequest(new {Message = ex.Message});
             }
-        }
+            } 
     }
 }

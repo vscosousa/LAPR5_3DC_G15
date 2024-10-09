@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DDDNetCore.Migrations
 {
     [DbContext(typeof(DDDSample1DbContext))]
-    [Migration("20241008172903_setDatabase")]
+    [Migration("20241009150638_setDatabase")]
     partial class setDatabase
     {
         /// <inheritdoc />
@@ -24,6 +24,16 @@ namespace DDDNetCore.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("DDDSample1.Domain.OperationTypes.OperationType", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("OperationTypes");
+                });
 
             modelBuilder.Entity("DDDSample1.Domain.Patients.Patient", b =>
                 {
@@ -53,6 +63,13 @@ namespace DDDNetCore.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("GenderOptions")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
                     b.Property<string>("LastName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -60,6 +77,9 @@ namespace DDDNetCore.Migrations
                     b.Property<string>("MedicalConditions")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("MedicalRecordNumber")
+                        .HasColumnType("int");
 
                     b.Property<string>("PhoneNumber")
                         .IsRequired()

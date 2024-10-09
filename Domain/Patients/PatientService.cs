@@ -1,10 +1,7 @@
 using System.Threading.Tasks;
-using System.Collections.Generic;
 using DDDSample1.Domain.Shared;
 using System;
-using DDDSample1.Domain.ValueObjects;
 using System.Linq;
-using Newtonsoft.Json;
 
 namespace DDDSample1.Domain.Patients
 {
@@ -23,23 +20,19 @@ namespace DDDSample1.Domain.Patients
         {
             try
             {
-                // Convert DTO properties to value objects
-                var firstName = new Name(dto.FirstName);
-                var lastName = new Name(dto.LastName);
-                var fullName = new FullName(dto.FullName);
+                var firstName = dto.FirstName;
+                var lastName = dto.LastName;
+                var fullName = dto.FullName;
                 var dateOfBirth = DateOnly.FromDateTime(DateTime.Parse(dto.DateOfBirth));
                 var genderOption = (GenderOptions)Enum.Parse(typeof(GenderOptions), dto.Gender, true);
-                var gender = new Gender(genderOption);
-                var medicalRecordNumber = new MedicalRecordNumber(dto.MedicalRecordNumber);
-                var email = new Email(dto.Email);
-                var phoneNumber = new PhoneNumber(dto.PhoneNumber);
-                var emergencyContactPhoneNumber = new PhoneNumber(dto.EmergencyContact);
-                var emergencyContact = new EmergencyContact(emergencyContactPhoneNumber);
-                var medicalConditions = new MedicalConditions(dto.MedicalConditions);
-                var appointmentDates = dto.AppointmentHistory.Select(date => DateTime.Parse(date)).ToArray();
-                var appointmentHistory = new AppointmentHistory(appointmentDates);
+                var medicalRecordNumber = dto.MedicalRecordNumber;
+                var email = dto.Email;
+                var phoneNumber = dto.PhoneNumber;
+                var emergencyContact = dto.EmergencyContact;
+                var medicalConditions = dto.MedicalConditions;
+                var appointmentHistory = dto.AppointmentHistory.Select(date => DateTime.Parse(date)).ToArray();
 
-                var patient = new Patient(firstName, lastName, fullName, dateOfBirth, gender, medicalRecordNumber, email, phoneNumber, emergencyContact, medicalConditions, appointmentHistory);
+                var patient = new Patient(firstName, lastName, fullName, dateOfBirth, genderOption, medicalRecordNumber, email, phoneNumber, emergencyContact, medicalConditions, appointmentHistory);
 
                 await _repo.AddAsync(patient);
                 await _unitOfWork.CommitAsync();
@@ -58,17 +51,17 @@ namespace DDDSample1.Domain.Patients
             }
         }
 
-        public async Task<Patient> DeletePatient(PatientId id)
+        public async Task<PatientDTO> DeletePatient(PatientId id)
         {
-            Patient patient = await _repo.GetByIdAsync(id);
+            var patient = await _repo.GetByIdAsync(id); 
 
             if (patient == null)
-                return null;
+                return null;   
 
             _repo.Remove(patient);
             await _unitOfWork.CommitAsync();
 
-            return patient;
+            return new PatientDTO { Id = patient.Id.AsGuid(), FirstName = patient.FirstName.ToString(), LastName = patient.LastName.ToString(), FullName = patient.FullName.ToString(), DateOfBirth = patient.DateOfBirth.ToString(), Gender = patient.GenderOptions.ToString(), MedicalRecordNumber = patient.MedicalRecordNumber.ToString(), Email = patient.Email.ToString(), PhoneNumber = patient.PhoneNumber.ToString(), EmergencyContact = patient.EmergencyContact.ToString(), MedicalConditions = patient.MedicalConditions.ToString(), AppointmentHistory = patient.AppointmentHistory.ToString(), IsActive = patient.IsActive };
         }
     }
 }

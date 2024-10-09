@@ -1,35 +1,34 @@
 using System;
 using DDDSample1.Domain.Shared;
-using DDDSample1.Domain.ValueObjects;
 
 namespace DDDSample1.Domain.Patients
 {
     public class Patient : Entity<PatientId>, IAggregateRoot
     {
-        private Name _firstName;
-        private Name _lastName;
-        private FullName _fullName;
+        private string _firstName;
+        private string _lastName;
+        private string _fullName;
         private DateOnly _dateOfBirth;
-        private Gender _gender;
-        private MedicalRecordNumber _medicalRecordNumber;
-        private Email _email;
-        private PhoneNumber _phoneNumber;
-        private MedicalConditions _medicalConditions;
-        private EmergencyContact _emergencyContact;
-        private AppointmentHistory _appointmentHistory;
+        private GenderOptions _genderOptions;
+        private int _medicalRecordNumber;
+        private string _email;
+        private string _phoneNumber;
+        private string _emergencyContact;
+        private string _medicalConditions;
+        private DateTime[] _appointmentHistory;
         private bool _isActive;
 
         // Parameterless constructor for EF Core
         private Patient() { }
 
-        public Patient(Name firstName, Name lastName, FullName fullName, DateOnly dateOfBirth, Gender gender, MedicalRecordNumber medicalRecordNumber, Email email, PhoneNumber phoneNumber, EmergencyContact emergencyContact, MedicalConditions medicalConditions, AppointmentHistory appointmentHistory)
+        public Patient(string firstName, string lastName, string fullName, DateOnly dateOfBirth, GenderOptions gender, int medicalRecordNumber, string email, string phoneNumber, string emergencyContact, string medicalConditions, DateTime[] appointmentHistory)
         {
             Id = new PatientId(Guid.NewGuid());
             _firstName = firstName;
             _lastName = lastName;
             _fullName = fullName;
             _dateOfBirth = dateOfBirth;
-            _gender = gender;
+            _genderOptions = gender;
             _medicalRecordNumber = medicalRecordNumber;
             _email = email;
             _phoneNumber = phoneNumber;
@@ -39,19 +38,22 @@ namespace DDDSample1.Domain.Patients
             _isActive = true;
         }
 
-        // Public getters
-        public Name FirstName => _firstName;
-        public Name LastName => _lastName;
-        public FullName FullName => _fullName;
+        public string FirstName => _firstName;
+        public string LastName => _lastName;
+        public string FullName => _fullName;
         public DateOnly DateOfBirth => _dateOfBirth;
-        public Gender Gender => _gender;
-        public MedicalRecordNumber MedicalRecordNumber => _medicalRecordNumber;
-        public Email Email => _email;
-        public PhoneNumber PhoneNumber => _phoneNumber;
-        public MedicalConditions MedicalConditions => _medicalConditions;
-        public EmergencyContact EmergencyContact => _emergencyContact;
-        public AppointmentHistory AppointmentHistory => _appointmentHistory;
+        public GenderOptions GenderOptions => _genderOptions;
+        public int MedicalRecordNumber => _medicalRecordNumber;
+        public string Email => _email;
+        public string PhoneNumber => _phoneNumber;
+        public string EmergencyContact => _emergencyContact;
+        public string MedicalConditions => _medicalConditions;
+        public DateTime[] AppointmentHistory => _appointmentHistory;
         public bool IsActive => _isActive;
+
+            
+
+        
         
     }
 }

@@ -1,8 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using DDDSample1.Domain.Patients;
 using DDDSample1.Infrastructure.Shared;
-using DDDSample1.Domain.ValueObjects;
 using DDDSample1.Domain.OperationTypes;
 
 namespace DDDSample1.Infrastructure.OperationTypes

@@ -1,5 +1,4 @@
 using System;
-using DDDSample1.Domain.ValueObjects;
 
 namespace DDDSample1.Domain.Patients
 {
@@ -36,26 +35,6 @@ namespace DDDSample1.Domain.Patients
             MedicalConditions = medicalConditions;
             AppointmentHistory = appointmentHistory;
             IsActive = isActive;
-        }
-
-        // Static method to convert a domain Patient entity to a PatientDTO
-        public static PatientDTO FromDomain(Patient patient)
-        {
-            return new PatientDTO(
-                Guid.Parse(patient.Id.Value),
-                patient.FirstName.NameValue,
-                patient.LastName.NameValue,
-                patient.FullName.FullNameValue,
-                patient.DateOfBirth.ToString(),
-                patient.Gender.GenderOption.ToString(),
-                patient.MedicalRecordNumber.Number.ToString(),
-                patient.Email.EmailValue,
-                patient.PhoneNumber.Number,
-                patient.EmergencyContact.EmergencyNumberValue.Number,
-                string.Join(", ", patient.MedicalConditions.Conditions),
-                string.Join(", ", patient.AppointmentHistory.Appointment),
-                patient.IsActive
-            );
         }
     }
 }

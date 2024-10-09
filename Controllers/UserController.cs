@@ -2,12 +2,11 @@
 using System;
 using System.Threading.Tasks;
 using DDDSample1.Domain.User;
-using DDDSample1.Domain.ValueObjects;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DDDSample1.Controllers
 {
-     [ApiController]
+    [ApiController]
     [Route("api/[controller]")]
     public class UserController : ControllerBase
     {

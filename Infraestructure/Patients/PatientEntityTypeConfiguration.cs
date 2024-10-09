@@ -2,8 +2,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using DDDSample1.Domain.Patients;
 using DDDSample1.Infrastructure.Shared;
-using DDDSample1.Domain.ValueObjects;
-using System;
 
 namespace DDDSample1.Infrastructure.Patients
 {
@@ -16,15 +14,18 @@ namespace DDDSample1.Infrastructure.Patients
             builder.HasIndex(b => b.Email).IsUnique();
             builder.HasIndex(b => b.PhoneNumber).IsUnique();
             builder.Property(b => b.Id).HasConversion(new EntityIdValueConverter<PatientId>());
-            builder.Property(b => b.FirstName).IsRequired().HasConversion(new ValueObjectConverter<Name>());
-            builder.Property(b => b.LastName).IsRequired().HasConversion(new ValueObjectConverter<Name>());
-            builder.Property(b => b.FullName).IsRequired().HasConversion(new ValueObjectConverter<FullName>());
+            builder.Property(b => b.FirstName).IsRequired();
+            builder.Property(b => b.LastName).IsRequired();
+            builder.Property(b => b.FullName).IsRequired();
             builder.Property(b => b.DateOfBirth).IsRequired();
-            builder.Property(b => b.Email).IsRequired().HasConversion(new ValueObjectConverter<Email>());
-            builder.Property(b => b.PhoneNumber).IsRequired().HasConversion(new ValueObjectConverter<PhoneNumber>());
-            builder.Property(b => b.EmergencyContact).IsRequired().HasConversion(new ValueObjectConverter<EmergencyContact>());
-            builder.Property(b => b.MedicalConditions).IsRequired().HasConversion(new ValueObjectConverter<MedicalConditions>());
-            builder.Property(b => b.AppointmentHistory).IsRequired().HasConversion(new ValueObjectConverter<AppointmentHistory>());
+            builder.Property(b => b.GenderOptions).IsRequired().HasConversion<string>().HasField("_genderOptions"); 
+            builder.Property(b => b.MedicalRecordNumber).IsRequired();
+            builder.Property(b => b.Email).IsRequired();
+            builder.Property(b => b.PhoneNumber).IsRequired();
+            builder.Property(b => b.EmergencyContact).IsRequired();
+            builder.Property(b => b.MedicalConditions).IsRequired();
+            builder.Property(b => b.AppointmentHistory).IsRequired();
+            builder.Property(b => b.IsActive).IsRequired();
         }
     }
 }

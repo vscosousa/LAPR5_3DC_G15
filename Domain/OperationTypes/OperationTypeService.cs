@@ -2,7 +2,6 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using DDDSample1.Domain.Shared;
 using System;
-using DDDSample1.Domain.ValueObjects;
 
 namespace DDDSample1.Domain.OperationTypes
 {

@@ -1,5 +1,4 @@
 using System;
-using DDDSample1.Domain.ValueObjects;
 
 namespace DDDSample1.Domain.OperationTypes
 {
