@@ -13,6 +13,7 @@ using DDDSample1.Infrastructure.Patients;
 using DDDSample1.Domain.Patients;
 using DDDSample1.Domain.User;
 using DDDSample1.Infrastructure.Users;
+using Auth0.AspNetCore.Authentication;
 
 namespace DDDSample1
 {
@@ -28,8 +29,23 @@ namespace DDDSample1
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddCors();
-            
+            services.AddCors(options =>
+        {
+            options.AddPolicy("AllowAllOrigins",
+                builder =>
+                {
+                    builder.AllowAnyOrigin()
+                           .AllowAnyMethod()
+                           .AllowAnyHeader();
+                });
+        });
+
+            services.AddAuth0WebAppAuthentication(options =>
+            {
+                options.Domain = Configuration["Auth0:Domain"];
+                options.ClientId = Configuration["Auth0:ClientId"];
+            });
+
             services.AddDbContext<DDDSample1DbContext>(opt =>
                 opt.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"),
                 sqlServerOptionsAction: sqlOptions =>
@@ -42,7 +58,7 @@ namespace DDDSample1
                 .ReplaceService<IValueConverterSelector, StronglyEntityIdValueConverterSelector>());
             ConfigureMyServices(services);
 
-            services.AddSwaggerGen();  
+            services.AddSwaggerGen();
             services.AddControllers().AddNewtonsoftJson();
         }
 
@@ -58,7 +74,8 @@ namespace DDDSample1
             }
 
             app.UseRouting();
-
+            
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
@@ -78,7 +95,7 @@ namespace DDDSample1
             services.AddTransient<UserService>();
 
             services.AddTransient<IMailService, MailService>();
-            
+
         }
     }
 }
