@@ -45,5 +45,11 @@ namespace DDDSample1.Infrastructure.Shared
         {
             this._objs.Remove(obj);
         }
+
+        public Task UpdateAsync(TEntity obj)
+        {
+            this._objs.Update(obj);
+            return Task.CompletedTask;
+        }
     }
 }

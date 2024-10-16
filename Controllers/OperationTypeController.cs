@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using DDDSample1.Domain.OperationTypes;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DDDSample1.Controllers
@@ -17,7 +18,8 @@ namespace DDDSample1.Controllers
         }
         // POST api/operationType
         // US 5.1.20
-        [HttpPost]
+      /*  [HttpPost]
+        [AllowAnonymous]
         public async Task<ActionResult<OperationType>> CreateOperationType(CreatingOperationTypeDTO operationTypeDTO) // Change the DTO
         {
             try
@@ -29,6 +31,6 @@ namespace DDDSample1.Controllers
             {
             return StatusCode(500, $"An error occurred while creating the operation type: {ex.Message}");
             }
-        }
+        }*/
     }
 }

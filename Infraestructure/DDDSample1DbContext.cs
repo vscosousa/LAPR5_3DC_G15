@@ -7,6 +7,7 @@ using DDDSample1.Infrastructure.Specializations;
 using DDDSample1.Domain.Staffs;
 using DDDSample1.Infrastructure.Staffs;
 using DDDSample1.Domain.OperationTypes;
+using DDDSample1.Infrastructure.OperationTypes;
 
 namespace DDDSample1.Infrastructure
 {
@@ -28,6 +29,7 @@ namespace DDDSample1.Infrastructure
             modelBuilder.ApplyConfiguration(new UserEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new StaffEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new SpecializationEntityTypeConfiguration());
+            modelBuilder.ApplyConfiguration(new OperationTypeEntityTypeConfiguration());
         }
 
     }

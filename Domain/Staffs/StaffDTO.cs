@@ -1,30 +1,41 @@
 using System;
-using DDDSample1.Domain.Specializations;
 
-namespace DDDSample1.Domain.Staffs
+namespace DDD.sample1.Domain.Staffs
 {
-    public class CreatingStaffDTO
-    {
+    public class StaffDTO{
 
+        public Guid id { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
+
         public string FullName { get; set; }
+
         public string LicenseNumber { get; set; }
 
+        public string SpecOption { get; set; }
+
         public string Email { get; set; }
+
         public string PhoneNumber { get; set; }
 
         public DateTime[] AvailabilitySlots { get; set; }
 
-        public CreatingStaffDTO(string firstName, string lastName, string fullName, string licenseNumber, string email, string phoneNumber, DateTime[] availabilitySlots){
-        
+
+        public StaffDTO() { }
+
+        public StaffDTO(Guid id, string firstName, string lastName, string fullName, string email, string phoneNumber, string specOption, string licenseNumber, DateTime[] availabilitySlots)
+        {
+            this.id = id;
             FirstName = firstName;
             LastName = lastName;
             FullName = fullName;
-            LicenseNumber = licenseNumber;
             Email = email;
             PhoneNumber = phoneNumber;
+            SpecOption = specOption;
+            LicenseNumber = licenseNumber;
             AvailabilitySlots = availabilitySlots;
         }
+
+        
     }
 }

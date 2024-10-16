@@ -14,6 +14,12 @@ using DDDSample1.Domain.Patients;
 using DDDSample1.Domain.User;
 using DDDSample1.Infrastructure.Users;
 using Auth0.AspNetCore.Authentication;
+using DDDSample1.Domain.OperationTypes;
+using DDDSample1.Infrastructure.OperationTypes;
+using DDDSample1.Domain.Specializations;
+using DDDSample1.Infrastructure.Specializations;
+using DDDSample1.Domain.Staffs;
+using DDDSample1.Infrastructure.Staffs;
 
 namespace DDDSample1
 {
@@ -60,6 +66,12 @@ namespace DDDSample1
 
             services.AddSwaggerGen();
             services.AddControllers().AddNewtonsoftJson();
+
+            services.AddControllers()
+            .AddNewtonsoftJson(options =>
+            {
+                options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -74,7 +86,7 @@ namespace DDDSample1
             }
 
             app.UseRouting();
-            
+
             app.UseAuthentication();
             app.UseAuthorization();
 
@@ -93,6 +105,15 @@ namespace DDDSample1
 
             services.AddTransient<IUserRepository, UserRepository>();
             services.AddTransient<UserService>();
+
+            services.AddTransient<IOperationTypeRepository, OperationTypeRepository>();
+            services.AddTransient<OperationTypeService>();
+
+            services.AddTransient<ISpecializationRepository, SpecializationRepository>();
+            services.AddTransient<SpecializationService>();
+
+            services.AddTransient<IStaffRepository, StaffRepository>();
+            services.AddTransient<StaffService>();
 
             services.AddTransient<IMailService, MailService>();
 
