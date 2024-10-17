@@ -51,9 +51,10 @@ namespace DDDSample1.Domain.Patients
         public DateTime[] AppointmentHistory => _appointmentHistory;
         public bool IsActive => _isActive;
 
-            
+        public void ChangeFirstName(string firstName)
+        {
+            _firstName = firstName;
+        }
 
-        
-        
     }
 }

@@ -20,6 +20,7 @@ using DDDSample1.Domain.Specializations;
 using DDDSample1.Infrastructure.Specializations;
 using DDDSample1.Domain.Staffs;
 using DDDSample1.Infrastructure.Staffs;
+using Projetos.LAPR5_3DC_G15.Mappers.Patients;
 
 namespace DDDSample1
 {
@@ -101,6 +102,7 @@ namespace DDDSample1
             services.AddTransient<IUnitOfWork, UnitOfWork>();
 
             services.AddTransient<IPatientRepository, PatientRepository>();
+            services.AddTransient<IPatientMapper, PatientMapper>();
             services.AddTransient<PatientService>();
 
             services.AddTransient<IUserRepository, UserRepository>();

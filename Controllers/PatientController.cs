@@ -1,10 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
-using Auth0.AspNetCore.Authentication;
 using DDDSample1.Domain.Patients;
 using DDDSample1.Domain.Shared;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,21 +12,20 @@ namespace DDDSample1.Controllers
     [ApiController]
     public class PatientController : ControllerBase
     {
-        private readonly PatientService _patientService;
+        private readonly PatientService _service;
 
         public PatientController(PatientService patientService)
         {
-            _patientService = patientService;
+            _service = patientService;
         }
 
-        // POST api/user
-        // US 5.1.1
         [HttpPost]
-        public async Task<ActionResult<Patient>> CreatePatient(CreatingPatientDTO patientDTO) // Change the DTO
+        [AllowAnonymous]
+        public async Task<ActionResult<Patient>> CreatePatient(CreatingPatientDTO patientDTO)
         {
             try
             {
-                var patient = await _patientService.CreatePatient(patientDTO);
+                var patient = await _service.CreatePatient(patientDTO);
                 return Ok(patient);
             }
             catch (Exception ex)
@@ -38,11 +35,12 @@ namespace DDDSample1.Controllers
         }
 
         [HttpDelete("{id}")]
+        [AllowAnonymous]
         public async Task<ActionResult<PatientDTO>> DeletePatient(Guid id)
         {
             try
             {
-                var cat = await _patientService.DeletePatient(new PatientId(id));
+                var cat = await _service.DeletePatient(new PatientId(id));
 
                 if (cat == null)
                 {
@@ -57,30 +55,36 @@ namespace DDDSample1.Controllers
             }
         }
 
-        [HttpGet("login")]
+        [HttpPut("{id}")]
         [AllowAnonymous]
-        public async Task Login(string returnUrl = "/")
+        public async Task<ActionResult<PatientDTO>> UpdatePatient(Guid id, PatientDTO dto)
         {
-            var authenticationProperties = new LoginAuthenticationPropertiesBuilder()
-                .WithRedirectUri(returnUrl)
-                .Build();
+            if (id != dto.Id)
+            {
+                return BadRequest();
+            }
 
-            await HttpContext.ChallengeAsync(Auth0Constants.AuthenticationScheme, authenticationProperties);
+            try
+            {
+                var patient = await _service.UpdatePatient(dto);
+                
+                if (patient == null)
+                {
+                    return NotFound();
+                }
+                return Ok(patient);
+            }
+            catch(BusinessRuleValidationException ex)
+            {
+                return BadRequest(new {Message = ex.Message});
+            }
         }
 
-        [HttpGet("logout")]
-        [Authorize]
-        public async Task Logout()
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<ActionResult<IEnumerable<PatientDTO>>> GetPatients()
         {
-            var authenticationProperties = new LogoutAuthenticationPropertiesBuilder()
-                // Indicate here where Auth0 should redirect the user after a logout.
-                // Note that the resulting absolute Uri must be added in the
-                // **Allowed Logout URLs** settings for the client.
-                .WithRedirectUri(Url.Action("Index", "Home"))
-                .Build();
-
-            await HttpContext.SignOutAsync(Auth0Constants.AuthenticationScheme, authenticationProperties);
-            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            return await _service.GetAllPatients();
         }
     }
 }

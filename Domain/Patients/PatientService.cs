@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using DDDSample1.Domain.Shared;
 using System;
-using System.Linq;
+using System.Collections.Generic;
 
 namespace DDDSample1.Domain.Patients
 {
@@ -9,31 +9,20 @@ namespace DDDSample1.Domain.Patients
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IPatientRepository _repo;
+        private readonly IPatientMapper _mapper;
 
-        public PatientService(IUnitOfWork unitOfWork, IPatientRepository repo) // IUserRepository -> IPatientRepository
+        public PatientService(IUnitOfWork unitOfWork, IPatientRepository repo, IPatientMapper mapper)
         {
             _unitOfWork = unitOfWork;
             _repo = repo;
+            _mapper = mapper;
         }
 
         public async Task<Patient> CreatePatient(CreatingPatientDTO dto)
         {
             try
             {
-                var firstName = dto.FirstName;
-                var lastName = dto.LastName;
-                var fullName = dto.FullName;
-                var dateOfBirth = DateOnly.FromDateTime(DateTime.Parse(dto.DateOfBirth));
-                var genderOption = (GenderOptions)Enum.Parse(typeof(GenderOptions), dto.Gender, true);
-                var medicalRecordNumber = dto.MedicalRecordNumber;
-                var email = dto.Email;
-                var phoneNumber = dto.PhoneNumber;
-                var emergencyContact = dto.EmergencyContact;
-                var medicalConditions = dto.MedicalConditions;
-                var appointmentHistory = dto.AppointmentHistory.Select(date => DateTime.Parse(date)).ToArray();
-
-                var patient = new Patient(firstName, lastName, fullName, dateOfBirth, genderOption, medicalRecordNumber, email, phoneNumber, emergencyContact, medicalConditions, appointmentHistory);
-
+                var patient = _mapper.ToDomain(dto);
                 await _repo.AddAsync(patient);
                 await _unitOfWork.CommitAsync();
                 Console.WriteLine("Transaction committed successfully");
@@ -53,15 +42,38 @@ namespace DDDSample1.Domain.Patients
 
         public async Task<PatientDTO> DeletePatient(PatientId id)
         {
-            var patient = await _repo.GetByIdAsync(id); 
+            var patient = await _repo.GetByIdAsync(id);
 
             if (patient == null)
-                return null;   
+                return null;
 
             _repo.Remove(patient);
             await _unitOfWork.CommitAsync();
 
-            return new PatientDTO { Id = patient.Id.AsGuid(), FirstName = patient.FirstName.ToString(), LastName = patient.LastName.ToString(), FullName = patient.FullName.ToString(), DateOfBirth = patient.DateOfBirth.ToString(), Gender = patient.GenderOptions.ToString(), MedicalRecordNumber = patient.MedicalRecordNumber.ToString(), Email = patient.Email.ToString(), PhoneNumber = patient.PhoneNumber.ToString(), EmergencyContact = patient.EmergencyContact.ToString(), MedicalConditions = patient.MedicalConditions.ToString(), AppointmentHistory = patient.AppointmentHistory.ToString(), IsActive = patient.IsActive };
+            return _mapper.ToDto(patient);
+        }
+
+        public async Task<PatientDTO> UpdatePatient(PatientDTO dto)
+        {
+            var patient = await this._repo.GetByIdAsync(new PatientId(dto.Id));
+
+            if (patient == null)
+                return null;
+
+            patient.ChangeFirstName(dto.FirstName);
+
+            await _unitOfWork.CommitAsync();
+
+            return _mapper.ToDto(patient);
+        }
+
+        public async Task<List<PatientDTO>> GetAllPatients()
+        {
+            var list = await _repo.GetAllAsync();
+            
+            var listDto = list.ConvertAll(_mapper.ToDto);
+
+            return listDto;
         }
     }
 }

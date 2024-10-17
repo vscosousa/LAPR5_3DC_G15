@@ -2,21 +2,21 @@ namespace DDDSample1.Domain.Patients
 {
     public class CreatingPatientDTO
     {
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public string FullName { get; set; }
-        public string DateOfBirth { get; set; }
-        public string Gender { get; set; }
-        public int MedicalRecordNumber { get; set; }
-        public string Email { get; set; }
-        public string PhoneNumber { get; set; }
-        public string EmergencyContact { get; set; }
-        public string MedicalConditions { get; set; }
-        public string[] AppointmentHistory { get; set; }
+        public string FirstName { get; init; }
+        public string LastName { get; init; }
+        public string FullName { get; init; }
+        public string DateOfBirth { get; init; }
+        public GenderOptions Gender { get; init; }
+        public int MedicalRecordNumber { get; init; }
+        public string Email { get; init; }
+        public string PhoneNumber { get; init; }
+        public string EmergencyContact { get; init; }
+        public string MedicalConditions { get; init; }
+        public string[] AppointmentHistory { get; init; }
 
         public CreatingPatientDTO() { }
 
-        public CreatingPatientDTO(string firstName, string lastName, string fullName, string dateOfBirth, string gender, int medicalRecordNumber, string email, string phoneNumber, string emergencyContact, string medicalConditions, string[] appointmentHistory)
+        public CreatingPatientDTO(string firstName, string lastName, string fullName, string dateOfBirth, GenderOptions gender, int medicalRecordNumber, string email, string phoneNumber, string emergencyContact, string medicalConditions, string[] appointmentHistory)
         {
             FirstName = firstName;
             LastName = lastName;
