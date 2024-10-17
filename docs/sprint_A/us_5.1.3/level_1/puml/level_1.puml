@@ -17,19 +17,4 @@ skinparam package {
     BackgroundColor #EBF5FB
 }
 
-actor Patient as P
-
-activate P
-P -> System: Asks to create a Patient
-activate System
-System --> P: Asks for Patient's data
-deactivate System
-P -> System: Sends Patient's data (First name, Last name, Fullname, Date of birth, \nGender, Medical Record Number, Email, Phone number, Emergency Contact, \nMedical Conditions, List of Appointments)
-activate System
-System -> System: Validates Patient's data
-System --> P: Returns Operation In/Sucess message
-deactivate System
-
-@enduml
-
 @enduml
