@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json.Serialization;
+using DDDSample1.Domain.OperationTypes;
 using DDDSample1.Domain.Shared;
 using DDDSample1.Domain.Staffs;
 
@@ -12,11 +13,16 @@ namespace DDDSample1.Domain.Specializations
         public SpecializationOption SpecOption;
         public List<Staff> Staffs;
 
+        public List<OperationType> OperationTypes;
+
+
+
         public Specialization(SpecializationOption specOption)
         {
             Id = new SpecializationId(Guid.NewGuid());
             SpecOption = specOption;
             Staffs = new List<Staff>();
+            OperationTypes = new List<OperationType>();
         }
 
         internal void addStaff(List<Staff> staffs)

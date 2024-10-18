@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using DDDSample1.Domain.Specializations;
 
 namespace DDDSample1.Domain.OperationTypes
 {
@@ -6,18 +8,14 @@ namespace DDDSample1.Domain.OperationTypes
     {
         public string Name { get; set; }
         public string EstimatedDuration { get; set; }
-        public List<string> Specializations { get; set; } // List of specialization names or IDs
+        public List<Guid> Specializations { get; set; } // List of specialization types.
 
-        public CreatingOperationTypeDTO(string name, string estimatedDuration, List<string> specializations)
+        public CreatingOperationTypeDTO(string name, string estimatedDuration, List<Guid> specializations)
         {
             Name = name;
             EstimatedDuration = estimatedDuration;
-            Specializations = specializations ?? new List<string>();
-        }
+            Specializations = specializations; 
 
-        public CreatingOperationTypeDTO()
-        {
-            Specializations = new List<string>();
         }
     }
 }

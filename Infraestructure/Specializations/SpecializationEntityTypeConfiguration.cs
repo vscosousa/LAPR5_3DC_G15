@@ -22,6 +22,12 @@ namespace DDDSample1.Infrastructure.Specializations
                 .WithOne(s => s.Specialization) 
                 .HasForeignKey("SpecializationId") 
                 .OnDelete(DeleteBehavior.Cascade); 
+
+
+            builder
+                .HasMany(b => b.OperationTypes)
+                .WithMany(s => s.Specializations)
+                .UsingEntity(j => j.ToTable("OperationTypeSpecialization"));
         }
     }
 }

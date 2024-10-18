@@ -61,5 +61,8 @@ namespace Projetos.LAPR5_3DC_G15.Mappers.Patients
                 AppointmentHistory = domain.AppointmentHistory.Select(date => date.ToString()).ToArray()
             };
         }
+
+
+        
     }
 }

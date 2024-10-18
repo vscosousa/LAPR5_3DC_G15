@@ -14,13 +14,13 @@ namespace DDDSample1.Infrastructure.OperationTypes
             builder.HasIndex(b => b.Id).IsUnique();
             builder.Property(b => b.Id).HasConversion(new EntityIdValueConverter<OperationTypeId>());
             builder.Property(b => b.Name).IsRequired();
+            builder.HasIndex(b => b.Name).IsUnique();
             builder.Property(b => b.EstimatedDuration).IsRequired();
-           /* builder
+            builder.Property(b => b.IsActive).IsRequired();
+            builder
                 .HasMany(b => b.Specializations)
-                .WithMany()
-                .UsingEntity(j => j.ToTable("OperationTypeSpecialization"));*/
-
-
+                .WithMany(s => s.OperationTypes)
+                .UsingEntity(j => j.ToTable("OperationTypeSpecialization"));
         }
     }
 }

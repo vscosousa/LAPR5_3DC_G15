@@ -12,8 +12,6 @@ namespace DDD.sample1.Domain.Staffs
 
         public string LicenseNumber { get; set; }
 
-        public string SpecOption { get; set; }
-
         public string Email { get; set; }
 
         public string PhoneNumber { get; set; }
@@ -23,7 +21,7 @@ namespace DDD.sample1.Domain.Staffs
 
         public StaffDTO() { }
 
-        public StaffDTO(Guid id, string firstName, string lastName, string fullName, string email, string phoneNumber, string specOption, string licenseNumber, DateTime[] availabilitySlots)
+        public StaffDTO(Guid id, string firstName, string lastName, string fullName, string email, string phoneNumber, string licenseNumber, DateTime[] availabilitySlots)
         {
             this.id = id;
             FirstName = firstName;
@@ -31,7 +29,6 @@ namespace DDD.sample1.Domain.Staffs
             FullName = fullName;
             Email = email;
             PhoneNumber = phoneNumber;
-            SpecOption = specOption;
             LicenseNumber = licenseNumber;
             AvailabilitySlots = availabilitySlots;
         }

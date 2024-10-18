@@ -1,4 +1,7 @@
 using System;
+using System.Collections.Generic;
+using DDD.sample1.Domain.Staffs;
+using DDDSample1.Domain.Staffs;
 
 namespace DDDSample1.Domain.OperationTypes
 {
@@ -8,23 +11,17 @@ namespace DDDSample1.Domain.OperationTypes
         public string Name { get; set; }
         public string EstimatedDuration { get; set; }
 
+        public List<StaffDTO> Staffs { get; set; }
 
-        public OperationTypeDTO(Guid id, string name, string estimatedDuration)
+    
+        public OperationTypeDTO(Guid id, string name, string estimatedDuration, List<StaffDTO> staffs)
         {
             Id = id;
             Name = name;
             EstimatedDuration = estimatedDuration;
+            Staffs = staffs;
         }
 
-        // Static method to convert a domain OperationType entity to a OperationTypeDTO
-        public static OperationTypeDTO FromDomain(OperationType operationType)
-        {
-            return new OperationTypeDTO(
-                Guid.Parse(operationType.Id.Value),
-                operationType.Name,
-                operationType.EstimatedDuration
-            );
-        }
+        
     }
-
 }

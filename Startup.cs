@@ -21,6 +21,7 @@ using DDDSample1.Infrastructure.Specializations;
 using DDDSample1.Domain.Staffs;
 using DDDSample1.Infrastructure.Staffs;
 using Projetos.LAPR5_3DC_G15.Mappers.Patients;
+using DDDSample1.Mappers.OperationTypes;
 
 namespace DDDSample1
 {
@@ -109,6 +110,7 @@ namespace DDDSample1
             services.AddTransient<UserService>();
 
             services.AddTransient<IOperationTypeRepository, OperationTypeRepository>();
+            services.AddTransient<IOperationTypeMapper, OperationTypeMapper>();
             services.AddTransient<OperationTypeService>();
 
             services.AddTransient<ISpecializationRepository, SpecializationRepository>();
