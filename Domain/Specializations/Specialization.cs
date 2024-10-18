@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.Json.Serialization;
 using DDDSample1.Domain.OperationTypes;
 using DDDSample1.Domain.Shared;
 using DDDSample1.Domain.Staffs;

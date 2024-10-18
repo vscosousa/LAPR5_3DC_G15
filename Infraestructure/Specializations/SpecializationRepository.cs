@@ -1,4 +1,3 @@
-using System;
 using System.Threading.Tasks;
 using DDDSample1.Domain.Specializations;
 using DDDSample1.Infrastructure.Shared;

@@ -2,11 +2,8 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using DDDSample1.Domain.Shared;
 using System;
-using DDDSample1.Domain.Specializations;
 using DDDSample1.Domain.Staffs;
 using System.Linq;
-using System.Diagnostics;
-using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace DDDSample1.Domain.Specializations
 {

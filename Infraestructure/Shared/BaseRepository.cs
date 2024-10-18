@@ -2,8 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
 using DDDSample1.Domain.Shared;
+using Microsoft.EntityFrameworkCore;
 
 namespace DDDSample1.Infrastructure.Shared
 {
@@ -11,7 +11,7 @@ namespace DDDSample1.Infrastructure.Shared
     where TEntity : Entity<TEntityId>
     where TEntityId : EntityId
     {
-        private readonly DbSet<TEntity> _objs;
+        protected readonly DbSet<TEntity> _objs;
         
         public BaseRepository(DbSet<TEntity> objs)
         {

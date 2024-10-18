@@ -4,6 +4,7 @@ using DDDSample1.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DDDNetCore.Migrations
 {
     [DbContext(typeof(DDDSample1DbContext))]
-    partial class DDDSample1DbContextModelSnapshot : ModelSnapshot
+    [Migration("20241018130602_UserUpdate")]
+    partial class UserUpdate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -31,19 +34,13 @@ namespace DDDNetCore.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("Id")
-                        .IsUnique();
-
-                    b.HasIndex("Name")
                         .IsUnique();
 
                     b.ToTable("OperationTypes");
@@ -226,21 +223,6 @@ namespace DDDNetCore.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("OperationTypeSpecialization", b =>
-                {
-                    b.Property<string>("OperationTypesId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("SpecializationsId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("OperationTypesId", "SpecializationsId");
-
-                    b.HasIndex("SpecializationsId");
-
-                    b.ToTable("OperationTypeSpecialization", (string)null);
-                });
-
             modelBuilder.Entity("DDDSample1.Domain.Staffs.Staff", b =>
                 {
                     b.HasOne("DDDSample1.Domain.Specializations.Specialization", "Specialization")
@@ -249,21 +231,6 @@ namespace DDDNetCore.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Specialization");
-                });
-
-            modelBuilder.Entity("OperationTypeSpecialization", b =>
-                {
-                    b.HasOne("DDDSample1.Domain.OperationTypes.OperationType", null)
-                        .WithMany()
-                        .HasForeignKey("OperationTypesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("DDDSample1.Domain.Specializations.Specialization", null)
-                        .WithMany()
-                        .HasForeignKey("SpecializationsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("DDDSample1.Domain.Specializations.Specialization", b =>

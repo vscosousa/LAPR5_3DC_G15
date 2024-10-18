@@ -1,5 +1,4 @@
 using System;
-using DDDSample1.Domain.Specializations;
 
 namespace DDDSample1.Domain.Staffs
 {

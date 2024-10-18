@@ -16,8 +16,7 @@ namespace DDDSample1.Infrastructure.Patients
             builder.Property(b => b.Id).HasConversion(new EntityIdValueConverter<UserID>());
             builder.Property(b => b.Email).IsRequired();
             builder.Property(b => b.Username).IsRequired();
-            builder.Property(b => b.Role).IsRequired().HasConversion<string>().HasField("_role");
-            builder.Property(b => b.Password).IsRequired(false);
+            builder.Property(b => b.PasswordHash).IsRequired();
             builder.Property(b => b.IsActive).IsRequired();
             builder.Property(b => b.ActivationLinkSentAt).IsRequired(false);
         }

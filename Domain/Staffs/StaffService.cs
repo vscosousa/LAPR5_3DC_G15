@@ -1,11 +1,5 @@
-using System.Threading.Tasks;
-using System.Collections.Generic;
 using DDDSample1.Domain.Shared;
-using System;
 using DDDSample1.Domain.Specializations;
-using DDDSample1.Infrastructure.Specializations;
-using System.Linq;
-using DDD.sample1.Domain.Staffs;
 
 namespace DDDSample1.Domain.Staffs
 {

@@ -1,8 +1,6 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using DDDSample1.Domain.Shared;
-using DDDSample1.Domain.Specializations;
 using DDDSample1.Domain.Staffs;
 
 namespace DDDSample1.Domain.OperationTypes

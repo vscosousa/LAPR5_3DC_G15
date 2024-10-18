@@ -13,7 +13,6 @@ using DDDSample1.Infrastructure.Patients;
 using DDDSample1.Domain.Patients;
 using DDDSample1.Domain.User;
 using DDDSample1.Infrastructure.Users;
-using Auth0.AspNetCore.Authentication;
 using DDDSample1.Domain.OperationTypes;
 using DDDSample1.Infrastructure.OperationTypes;
 using DDDSample1.Domain.Specializations;
@@ -21,6 +20,10 @@ using DDDSample1.Infrastructure.Specializations;
 using DDDSample1.Domain.Staffs;
 using DDDSample1.Infrastructure.Staffs;
 using Projetos.LAPR5_3DC_G15.Mappers.Patients;
+using DDDNetCore.Migrations;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 using DDDSample1.Mappers.OperationTypes;
 
 namespace DDDSample1
@@ -38,20 +41,14 @@ namespace DDDSample1
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddCors(options =>
-        {
-            options.AddPolicy("AllowAllOrigins",
-                builder =>
-                {
-                    builder.AllowAnyOrigin()
-                           .AllowAnyMethod()
-                           .AllowAnyHeader();
-                });
-        });
-
-            services.AddAuth0WebAppAuthentication(options =>
             {
-                options.Domain = Configuration["Auth0:Domain"];
-                options.ClientId = Configuration["Auth0:ClientId"];
+                options.AddPolicy("AllowAllOrigins",
+                    builder =>
+                    {
+                        builder.AllowAnyOrigin()
+                               .AllowAnyMethod()
+                               .AllowAnyHeader();
+                    });
             });
 
             services.AddDbContext<DDDSample1DbContext>(opt =>
@@ -65,6 +62,32 @@ namespace DDDSample1
                 })
                 .ReplaceService<IValueConverterSelector, StronglyEntityIdValueConverterSelector>());
             ConfigureMyServices(services);
+
+            var key = Configuration["Jwt:Key"];
+            if (string.IsNullOrEmpty(key))
+            {
+                throw new ArgumentNullException("Jwt:Key", "JWT secret key cannot be null or empty.");
+            }
+
+            var keyBytes = Encoding.UTF8.GetBytes(key);
+
+            services.AddAuthentication(x =>
+            {
+                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(x =>
+            {
+                x.RequireHttpsMetadata = false;
+                x.SaveToken = true;
+                x.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(keyBytes),
+                    ValidateIssuer = false,
+                    ValidateAudience = false
+                };
+            });
 
             services.AddSwaggerGen();
             services.AddControllers().AddNewtonsoftJson();
@@ -120,7 +143,6 @@ namespace DDDSample1
             services.AddTransient<StaffService>();
 
             services.AddTransient<IMailService, MailService>();
-
         }
     }
 }
