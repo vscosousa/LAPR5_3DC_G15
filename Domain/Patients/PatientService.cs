@@ -23,6 +23,8 @@ namespace DDDSample1.Domain.Patients
             try
             {
                 var patient = _mapper.ToDomain(dto);
+                var list = await _repo.GetAllAsync();
+                patient.AssignMedicalRecordNumber(MedicalRecordNumberGenerator.GenerateMedicalRecordNumber(list.Count));
                 await _repo.AddAsync(patient);
                 await _unitOfWork.CommitAsync();
                 Console.WriteLine("Transaction committed successfully");
@@ -55,7 +57,7 @@ namespace DDDSample1.Domain.Patients
 
         public async Task<PatientDTO> UpdatePatient(PatientDTO dto)
         {
-            var patient = await this._repo.GetByIdAsync(new PatientId(dto.Id));
+            var patient = await _repo.GetByIdAsync(new PatientId(dto.Id));
 
             if (patient == null)
                 return null;

@@ -13,6 +13,7 @@ namespace DDDSample1.Infrastructure.Patients
             builder.HasIndex(b => b.Id).IsUnique();
             builder.HasIndex(b => b.Email).IsUnique();
             builder.HasIndex(b => b.PhoneNumber).IsUnique();
+            builder.HasIndex(b => b.MedicalRecordNumber).IsUnique();
             builder.Property(b => b.Id).HasConversion(new EntityIdValueConverter<PatientId>());
             builder.Property(b => b.FirstName).IsRequired();
             builder.Property(b => b.LastName).IsRequired();

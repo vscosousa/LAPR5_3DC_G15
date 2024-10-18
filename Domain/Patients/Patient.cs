@@ -10,7 +10,7 @@ namespace DDDSample1.Domain.Patients
         private string _fullName;
         private DateOnly _dateOfBirth;
         private GenderOptions _genderOptions;
-        private int _medicalRecordNumber;
+        private string _medicalRecordNumber;
         private string _email;
         private string _phoneNumber;
         private string _emergencyContact;
@@ -21,7 +21,7 @@ namespace DDDSample1.Domain.Patients
         // Parameterless constructor for EF Core
         private Patient() { }
 
-        public Patient(string firstName, string lastName, string fullName, DateOnly dateOfBirth, GenderOptions gender, int medicalRecordNumber, string email, string phoneNumber, string emergencyContact, string medicalConditions, DateTime[] appointmentHistory)
+        public Patient(string firstName, string lastName, string fullName, DateOnly dateOfBirth, GenderOptions gender, string email, string phoneNumber, string emergencyContact, string medicalConditions, DateTime[] appointmentHistory)
         {
             Id = new PatientId(Guid.NewGuid());
             _firstName = firstName;
@@ -29,7 +29,7 @@ namespace DDDSample1.Domain.Patients
             _fullName = fullName;
             _dateOfBirth = dateOfBirth;
             _genderOptions = gender;
-            _medicalRecordNumber = medicalRecordNumber;
+            _medicalRecordNumber = "";
             _email = email;
             _phoneNumber = phoneNumber;
             _emergencyContact = emergencyContact;
@@ -43,7 +43,7 @@ namespace DDDSample1.Domain.Patients
         public string FullName => _fullName;
         public DateOnly DateOfBirth => _dateOfBirth;
         public GenderOptions GenderOptions => _genderOptions;
-        public int MedicalRecordNumber => _medicalRecordNumber;
+        public string MedicalRecordNumber => _medicalRecordNumber;
         public string Email => _email;
         public string PhoneNumber => _phoneNumber;
         public string EmergencyContact => _emergencyContact;
@@ -54,6 +54,11 @@ namespace DDDSample1.Domain.Patients
         public void ChangeFirstName(string firstName)
         {
             _firstName = firstName;
+        }
+
+        public void AssignMedicalRecordNumber(string medicalRecordNumber)
+        {
+            _medicalRecordNumber = medicalRecordNumber;
         }
 
     }

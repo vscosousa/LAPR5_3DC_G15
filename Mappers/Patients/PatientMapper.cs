@@ -35,12 +35,11 @@ namespace Projetos.LAPR5_3DC_G15.Mappers.Patients
                 dto.FullName,
                 DateOnly.Parse(dto.DateOfBirth),
                 dto.Gender,
-                dto.MedicalRecordNumber,
                 dto.Email,
                 dto.PhoneNumber,
                 dto.EmergencyContact,
                 dto.MedicalConditions,
-                dto.AppointmentHistory.Select(date => DateTime.Parse(date)).ToArray()
+                dto.AppointmentHistory.Select(DateTime.Parse).ToArray()
             );
         }
 
@@ -53,7 +52,6 @@ namespace Projetos.LAPR5_3DC_G15.Mappers.Patients
                 FullName = domain.FullName,
                 DateOfBirth = domain.DateOfBirth.ToString(),
                 Gender = domain.GenderOptions,
-                MedicalRecordNumber = domain.MedicalRecordNumber,
                 Email = domain.Email,
                 PhoneNumber = domain.PhoneNumber,
                 EmergencyContact = domain.EmergencyContact,
