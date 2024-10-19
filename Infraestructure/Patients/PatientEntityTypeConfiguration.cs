@@ -24,7 +24,7 @@ namespace DDDSample1.Infrastructure.Patients
             builder.Property(b => b.Email).IsRequired();
             builder.Property(b => b.PhoneNumber).IsRequired();
             builder.Property(b => b.EmergencyContact).IsRequired();
-            builder.Property(b => b.MedicalConditions).IsRequired();
+            builder.Property(b => b.MedicalHistory).IsRequired();
             builder.Property(b => b.AppointmentHistory).IsRequired();
             builder.Property(b => b.IsActive).IsRequired();
         }

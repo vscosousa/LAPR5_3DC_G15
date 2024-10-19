@@ -20,7 +20,6 @@ using DDDSample1.Infrastructure.Specializations;
 using DDDSample1.Domain.Staffs;
 using DDDSample1.Infrastructure.Staffs;
 using Projetos.LAPR5_3DC_G15.Mappers.Patients;
-using DDDNetCore.Migrations;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;

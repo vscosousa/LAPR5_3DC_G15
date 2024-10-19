@@ -23,6 +23,13 @@ namespace DDDSample1.Domain.Patients
             try
             {
                 var patient = _mapper.ToDomain(dto);
+                
+                if (await _repo.GetUserByEmailAsync(patient.Email) != null)
+                    throw new BusinessRuleValidationException("A patient with the same email already exists.");
+
+                if (await _repo.GetUserByPhoneNumberAsync(patient.PhoneNumber) != null)
+                    throw new BusinessRuleValidationException("A patient with the same phone number already exists.");
+
                 var list = await _repo.GetAllAsync();
                 patient.AssignMedicalRecordNumber(MedicalRecordNumberGenerator.GenerateMedicalRecordNumber(list.Count));
                 await _repo.AddAsync(patient);
@@ -72,7 +79,7 @@ namespace DDDSample1.Domain.Patients
         public async Task<List<PatientDTO>> GetAllPatients()
         {
             var list = await _repo.GetAllAsync();
-            
+
             var listDto = list.ConvertAll(_mapper.ToDto);
 
             return listDto;

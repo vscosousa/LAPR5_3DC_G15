@@ -21,7 +21,7 @@ namespace Projetos.LAPR5_3DC_G15.Mappers.Patients
                 Email = domain.Email,
                 PhoneNumber = domain.PhoneNumber,
                 EmergencyContact = domain.EmergencyContact,
-                MedicalConditions = domain.MedicalConditions,
+                MedicalConditions = domain.MedicalHistory,
                 AppointmentHistory = domain.AppointmentHistory.Select(date => date.ToString()).ToArray(),
                 IsActive = domain.IsActive
             };
@@ -34,12 +34,10 @@ namespace Projetos.LAPR5_3DC_G15.Mappers.Patients
                 dto.LastName,
                 dto.FullName,
                 DateOnly.Parse(dto.DateOfBirth),
-                dto.Gender,
+                dto.GenderOptions,
                 dto.Email,
                 dto.PhoneNumber,
-                dto.EmergencyContact,
-                dto.MedicalConditions,
-                dto.AppointmentHistory.Select(DateTime.Parse).ToArray()
+                dto.EmergencyContact          
             );
         }
 
@@ -51,12 +49,10 @@ namespace Projetos.LAPR5_3DC_G15.Mappers.Patients
                 LastName = domain.LastName,
                 FullName = domain.FullName,
                 DateOfBirth = domain.DateOfBirth.ToString(),
-                Gender = domain.GenderOptions,
+                GenderOptions = domain.GenderOptions,
                 Email = domain.Email,
                 PhoneNumber = domain.PhoneNumber,
-                EmergencyContact = domain.EmergencyContact,
-                MedicalConditions = domain.MedicalConditions,
-                AppointmentHistory = domain.AppointmentHistory.Select(date => date.ToString()).ToArray()
+                EmergencyContact = domain.EmergencyContact
             };
         }
 

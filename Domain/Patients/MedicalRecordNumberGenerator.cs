@@ -1,13 +1,15 @@
+using System;
+
 namespace DDDSample1.Domain.Patients
 {
     public class MedicalRecordNumberGenerator
     {
-        private const string Prefix = "PAT";
-
         public static string GenerateMedicalRecordNumber(int count)
         {
-            var medicalRecordNumber = count + 1;
-            return $"{Prefix}{medicalRecordNumber:D6}";
+            var currentYear = DateTime.Now.Year;
+            var currentMonth = DateTime.Now.Month;
+            var sequentialNumber = count + 1;
+            return $"{currentYear:D4}{currentMonth}{sequentialNumber:D6}";
         }
     }
 }

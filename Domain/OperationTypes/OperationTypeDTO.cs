@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using DDD.sample1.Domain.Staffs;
-using DDDSample1.Domain.Staffs;
 
 namespace DDDSample1.Domain.OperationTypes
 {
