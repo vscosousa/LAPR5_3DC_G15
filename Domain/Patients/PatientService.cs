@@ -2,6 +2,7 @@ using System.Threading.Tasks;
 using DDDSample1.Domain.Shared;
 using System;
 using System.Collections.Generic;
+using DDDSample1.Domain.Logs;
 
 namespace DDDSample1.Domain.Patients
 {
@@ -10,12 +11,14 @@ namespace DDDSample1.Domain.Patients
         private readonly IUnitOfWork _unitOfWork;
         private readonly IPatientRepository _repo;
         private readonly IPatientMapper _mapper;
+        private readonly ILogRepository _logRepository;
 
-        public PatientService(IUnitOfWork unitOfWork, IPatientRepository repo, IPatientMapper mapper)
+        public PatientService(IUnitOfWork unitOfWork, IPatientRepository repo, IPatientMapper mapper, ILogRepository logRepository)
         {
             _unitOfWork = unitOfWork;
             _repo = repo;
             _mapper = mapper;
+            _logRepository = logRepository;
         }
 
         public async Task<Patient> CreatePatient(CreatingPatientDTO dto)
@@ -57,6 +60,10 @@ namespace DDDSample1.Domain.Patients
                 return null;
 
             _repo.Remove(patient);
+
+            var log = new Log(TypeOfAction.Delete, id.AsString(), "Patient deleted.");
+            await _logRepository.AddAsync(log);
+
             await _unitOfWork.CommitAsync();
 
             return _mapper.ToDto(patient);

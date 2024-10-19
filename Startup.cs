@@ -24,6 +24,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using DDDSample1.Mappers.OperationTypes;
+using DDDSample1.Domain.Logs;
 
 namespace DDDSample1
 {
@@ -142,6 +143,8 @@ namespace DDDSample1
             services.AddTransient<StaffService>();
 
             services.AddTransient<IMailService, MailService>();
+
+            services.AddTransient<ILogRepository, LogRepository>();
         }
     }
 }

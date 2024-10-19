@@ -8,6 +8,8 @@ using DDDSample1.Domain.Staffs;
 using DDDSample1.Infrastructure.Staffs;
 using DDDSample1.Domain.OperationTypes;
 using DDDSample1.Infrastructure.OperationTypes;
+using DDDSample1.Domain.Logs;
+using DDDSample1.Infrastructure.Logs;
 
 namespace DDDSample1.Infrastructure
 {
@@ -21,6 +23,7 @@ namespace DDDSample1.Infrastructure
         public DbSet<User> Users { get; set; }
         public DbSet<Specialization> Specializations { get; set; }
         public DbSet<OperationType> OperationTypes { get; set; }
+        public DbSet<Log> Logs { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -30,6 +33,7 @@ namespace DDDSample1.Infrastructure
             modelBuilder.ApplyConfiguration(new StaffEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new SpecializationEntityTypeConfiguration());
             modelBuilder.ApplyConfiguration(new OperationTypeEntityTypeConfiguration());
+            modelBuilder.ApplyConfiguration(new LogEntityTypeConfiguration());
         }
 
     }
