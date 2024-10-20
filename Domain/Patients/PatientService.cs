@@ -3,6 +3,9 @@ using DDDSample1.Domain.Shared;
 using System;
 using System.Collections.Generic;
 using DDDSample1.Domain.Logs;
+using System.Linq;
+using DDDSample1.Infrastructure.Patients;
+using Microsoft.EntityFrameworkCore;
 
 namespace DDDSample1.Domain.Patients
 {
@@ -26,11 +29,11 @@ namespace DDDSample1.Domain.Patients
             try
             {
                 var patient = _mapper.ToDomain(dto);
-                
-                if (await _repo.GetUserByEmailAsync(patient.Email) != null)
+
+                if (await _repo.GetByEmailAsync(patient.Email) != null)
                     throw new BusinessRuleValidationException("A patient with the same email already exists.");
 
-                if (await _repo.GetUserByPhoneNumberAsync(patient.PhoneNumber) != null)
+                if (await _repo.GetByPhoneNumberAsync(patient.PhoneNumber) != null)
                     throw new BusinessRuleValidationException("A patient with the same phone number already exists.");
 
                 var list = await _repo.GetAllAsync();
@@ -69,26 +72,68 @@ namespace DDDSample1.Domain.Patients
             return _mapper.ToDto(patient);
         }
 
-        public async Task<PatientDTO> UpdatePatient(PatientDTO dto)
+        public async Task<PatientDTO> UpdatePatient(Guid id, UpdatePatientDTO dto)
         {
-            var patient = await _repo.GetByIdAsync(new PatientId(dto.Id));
+            var patient = await _repo.GetByIdAsync(new PatientId(id));
 
             if (patient == null)
                 return null;
 
-            patient.ChangeFirstName(dto.FirstName);
+            var updatedFields = new List<string>();
 
-            await _unitOfWork.CommitAsync();
+            var updateActions = new Dictionary<string, Action>
+            {
+                { "First Name", () => { if (!string.IsNullOrEmpty(dto.FirstName) && patient.FirstName != dto.FirstName) { patient.ChangeFirstName(dto.FirstName); updatedFields.Add("First Name"); } } },
+                { "Last Name", () => { if (!string.IsNullOrEmpty(dto.LastName) && patient.LastName != dto.LastName) { patient.ChangeLastName(dto.LastName); updatedFields.Add("Last Name"); } } },
+                { "Full Name", () => { if (!string.IsNullOrEmpty(dto.FullName) && patient.FullName != dto.FullName) { patient.ChangeFullName(dto.FullName); updatedFields.Add("Full Name"); } } },
+                { "Email", () => { if (!string.IsNullOrEmpty(dto.Email) && patient.Email != dto.Email) { patient.ChangeEmail(dto.Email); updatedFields.Add("Email"); } } },
+                { "Phone Number", () => { if (!string.IsNullOrEmpty(dto.PhoneNumber) && patient.PhoneNumber != dto.PhoneNumber) { patient.ChangePhoneNumber(dto.PhoneNumber); updatedFields.Add("Phone Number"); } } },
+                { "Emergency Contact", () => { if (!string.IsNullOrEmpty(dto.EmergencyContact) && patient.EmergencyContact != dto.EmergencyContact) { patient.ChangeEmergencyContact(dto.EmergencyContact); updatedFields.Add("Emergency Contact"); } } },
+                { "Medical Conditions", () => { if (!string.IsNullOrEmpty(dto.MedicalConditions) && patient.MedicalConditions != dto.MedicalConditions) { patient.ChangeMedicalConditions(dto.MedicalConditions); updatedFields.Add("Medical Conditions"); } } }
+            };
+
+            foreach (var action in updateActions.Values)
+            {
+                action();
+            }
+
+            if (updatedFields.Count > 0)
+            {
+                string message = "Patient updated. The following fields were updated: " + string.Join(", ", updatedFields) + ".";
+                var log = new Log(TypeOfAction.Update, id.ToString(), message);
+                await _logRepository.AddAsync(log);
+                await _unitOfWork.CommitAsync();
+            }
 
             return _mapper.ToDto(patient);
         }
-
-        public async Task<List<PatientDTO>> GetAllPatients()
+        
+        public async Task<List<PatientDTO>> SearchPatients(SearchPatientDTO dto)
         {
-            var list = await _repo.GetAllAsync();
+            var query = _repo.GetAllAsync().Result.AsQueryable();
 
+            var filterActions = new Dictionary<string, Func<Task<IQueryable<Patient>>>>
+            {
+                { "FirstName", async () => await _repo.GetByFirstNameAsync(dto.FirstName) },
+                { "LastName", async () => await _repo.GetByLastNameAsync(dto.LastName) },
+                { "FullName", async () => await _repo.GetByFullNameAsync(dto.FullName) },
+                { "DateOfBirth", async () => await _repo.GetByDateOfBirthAsync(DateOnly.Parse(dto.DateOfBirth)) },
+                { "Gender", async () => await _repo.GetByGenderAsync(dto.Gender) },
+                { "MedicalRecordNumber", async () => await _repo.GetByMedicalRecordNumberAsync(dto.MedicalRecordNumber) },
+                { "Email", async () => await _repo.GetQueriableByEmailAsync(dto.Email) },
+                { "PhoneNumber", async () => await _repo.GetQueriableByPhoneNumberAsync(dto.PhoneNumber) }
+            };
+
+            foreach (var filter in filterActions)
+            {
+                if (!string.IsNullOrEmpty(dto.GetType().GetProperty(filter.Key).GetValue(dto)?.ToString()))
+                {
+                    query = (await filter.Value()).AsQueryable();
+                }
+            }
+
+            var list = await query.ToListAsync();
             var listDto = list.ConvertAll(_mapper.ToDto);
-
             return listDto;
         }
     }

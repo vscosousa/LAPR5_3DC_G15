@@ -57,34 +57,41 @@ namespace DDDSample1.Controllers
 
         [HttpPut("{id}")]
         [AllowAnonymous]
-        public async Task<ActionResult<PatientDTO>> UpdatePatient(Guid id, PatientDTO dto)
+        public async Task<ActionResult<PatientDTO>> UpdatePatient(Guid id, UpdatePatientDTO dto)
         {
-            if (id != dto.Id)
-            {
-                return BadRequest();
-            }
-
             try
             {
-                var patient = await _service.UpdatePatient(dto);
-                
+                var patient = await _service.UpdatePatient(id, dto);
+
                 if (patient == null)
                 {
                     return NotFound();
                 }
                 return Ok(patient);
             }
-            catch(BusinessRuleValidationException ex)
+            catch (BusinessRuleValidationException ex)
             {
-                return BadRequest(new {Message = ex.Message});
+                return BadRequest(new { Message = ex.Message });
             }
         }
 
         [HttpGet]
         [AllowAnonymous]
-        public async Task<ActionResult<IEnumerable<PatientDTO>>> GetPatients()
+        public async Task<ActionResult<IEnumerable<PatientDTO>>> SearchPatients(string firstName, string lastName, string fullName, string dateOfBirth, string medicalRecordNumber, string gender, string email, string phoneNumber)
         {
-            return await _service.GetAllPatients();
+            var dto = new SearchPatientDTO
+            {
+                FirstName = firstName,
+                LastName = lastName,
+                FullName = fullName,
+                DateOfBirth = dateOfBirth,
+                Gender = gender,
+                MedicalRecordNumber = medicalRecordNumber,
+                Email = email,
+                PhoneNumber = phoneNumber
+            };
+
+            return await _service.SearchPatients(dto);
         }
     }
 }

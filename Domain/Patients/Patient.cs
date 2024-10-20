@@ -17,14 +17,14 @@ namespace DDDSample1.Domain.Patients
         private string _email;
         private string _phoneNumber;
         private string _emergencyContact;
-        private string _medicalHistory;
+        private string _medicalConditions;
         private DateTime[] _appointmentHistory;
         private bool _isActive;
 
         // Parameterless constructor for EF Core
         private Patient() { }
 
-        public Patient(string firstName, string lastName, string fullName, DateOnly dateOfBirth, GenderOptions gender, string email, string phoneNumber, string emergencyContact)
+        public Patient(string firstName, string lastName, string fullName, DateOnly dateOfBirth, GenderOptions gender, string email, string phoneNumber, string emergencyContact, string medicalConditions)
         {
             if (!NameStartsWithCapital(firstName) || !NameStartsWithCapital(lastName) || !NameStartsWithCapital(fullName))
                 throw new BusinessRuleValidationException("Names must start with a capital letter.");
@@ -51,7 +51,7 @@ namespace DDDSample1.Domain.Patients
             _email = email;
             _phoneNumber = phoneNumber;
             _emergencyContact = emergencyContact;
-            _medicalHistory = "";
+            _medicalConditions = medicalConditions;
             _appointmentHistory = [];
             _isActive = true;
         }
@@ -65,12 +65,33 @@ namespace DDDSample1.Domain.Patients
         public string Email => _email;
         public string PhoneNumber => _phoneNumber;
         public string EmergencyContact => _emergencyContact;
-        public string MedicalHistory => _medicalHistory;
+        public string MedicalConditions => _medicalConditions;
         public DateTime[] AppointmentHistory => _appointmentHistory;
         public bool IsActive => _isActive;
 
-        public void ChangeFirstName(string firstName) => _firstName = firstName;
-        public void AssignMedicalRecordNumber(string medicalRecordNumber) => _medicalRecordNumber = medicalRecordNumber;
+        internal void ChangeFirstName(string firstName) => _firstName = firstName;
+        internal void ChangeLastName(string lastName) => _lastName = lastName;
+        internal void ChangeFullName(string fullName) => _fullName = fullName;
+        internal void ChangeMedicalConditions(string medicalConditions) => _medicalConditions = medicalConditions;
+        internal void ChangeEmail(string email)
+        {
+            if (!Regex.IsMatch(email, @"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"))
+                throw new ArgumentException("Email must be in a valid format.");
+            _email = email;
+        }
+        internal void ChangePhoneNumber(string phoneNumber)
+        {
+            if (!phoneNumber.StartsWith("+") || !phoneNumber.Substring(1).All(char.IsDigit))
+                throw new ArgumentException("Phone number must start with an identifier and contain only digits.");
+            _phoneNumber = phoneNumber;
+        }
+        internal void ChangeEmergencyContact(string emergencyContact)
+        {
+            if (!emergencyContact.StartsWith("+") || !emergencyContact.Substring(1).All(char.IsDigit))
+                throw new ArgumentException("Emergency phone number must start with an identifier and contain only digits.");
+            _emergencyContact = emergencyContact;
+        }
+        internal void AssignMedicalRecordNumber(string medicalRecordNumber) => _medicalRecordNumber = medicalRecordNumber;
         private bool NameStartsWithCapital(string fullName)
         {
             if (!char.IsUpper(fullName[0]))
@@ -84,6 +105,5 @@ namespace DDDSample1.Domain.Patients
             }
             return true;
         }
-
     }
 }
