@@ -24,6 +24,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using DDDSample1.Mappers.OperationTypes;
+using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.Filters;
 using DDDSample1.Domain.Logs;
 
 namespace DDDSample1
@@ -89,7 +91,20 @@ namespace DDDSample1
                 };
             });
 
-            services.AddSwaggerGen();
+            services.AddSwaggerGen(options => {
+                options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
+                {
+                   Description = "Standard Authorization header using the Bearer scheme. Example: \"bearer {token}\"", 
+                   In = ParameterLocation.Header,
+                   Name = "Authorization",
+                   Type = SecuritySchemeType.ApiKey
+                });
+
+                options.OperationFilter<SecurityRequirementsOperationFilter>();
+            });
+
+
+
             services.AddControllers().AddNewtonsoftJson();
 
             services.AddControllers()

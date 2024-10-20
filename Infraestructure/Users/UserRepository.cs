@@ -16,5 +16,10 @@ namespace DDDSample1.Infrastructure.Users
         {
             return await _objs.Where(x => email.Equals(x.Email)).FirstOrDefaultAsync();
         }
+
+        public Task<User> GetUserByUsernameAsync(string username)
+        {
+            return _objs.Where(x => username.Equals(x.Username)).FirstOrDefaultAsync();
+        }
     }
 }

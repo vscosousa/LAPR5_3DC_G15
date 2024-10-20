@@ -6,6 +6,7 @@ namespace DDDSample1.Domain.User
     public interface IUserRepository : IRepository<User, UserID>
     {
         Task<User> GetUserByEmailAsync(string email);
+        Task<User> GetUserByUsernameAsync(string username);
     }
 
 }

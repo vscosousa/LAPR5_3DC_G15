@@ -4,13 +4,17 @@ namespace DDDSample1.Domain.User
     {
         public string Email { get; set; }
         public string Username { get; set; }
-        public string Password { get; set; }
 
-        public CreatingUserDTO( string email, string username, string password)
+        public string Role { get; set; }
+    
+
+
+
+        public CreatingUserDTO( string email, string username, string password, string role)
         {
             this.Email = email;
             this.Username = username;
-            this.Password = password;
+            this.Role = role;
         }
     }
 }

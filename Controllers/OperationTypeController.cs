@@ -78,22 +78,21 @@ namespace DDDSample1.Controllers
             }
             catch (KeyNotFoundException ex)
             {
-                // Return a 404 if the operation type was not found
                 return NotFound(new { message = ex.Message });
             }
             catch (InvalidOperationException ex)
             {
-                // Return a 400 if the operation type is already deactivated or other invalid operation
+                
                 return BadRequest(new { message = ex.Message });
             }
             catch (ArgumentException ex)
             {
-                // Return a 400 for invalid input
+                
                 return BadRequest(new { message = ex.Message });
             }
             catch (Exception ex)
             {
-                // Return a 500 for any other unhandled errors
+                
                 return StatusCode(500, new { message = "An error occurred while deactivating the operation type.", error = ex.Message });
             }
         }
@@ -106,27 +105,24 @@ namespace DDDSample1.Controllers
             try
             {
                 await _operationTypeService.ActivateOperationTypeAsync(operationName);
-                return Ok($"OperationType '{operationName}' has been successfully deactivated.");
+                return Ok($"OperationType '{operationName}' has been successfully Activated.");
             }
             catch (KeyNotFoundException ex)
             {
-                // Return a 404 if the operation type was not found
                 return NotFound(new { message = ex.Message });
             }
             catch (InvalidOperationException ex)
             {
-                // Return a 400 if the operation type is already deactivated or other invalid operation
                 return BadRequest(new { message = ex.Message });
             }
             catch (ArgumentException ex)
             {
-                // Return a 400 for invalid input
+
                 return BadRequest(new { message = ex.Message });
             }
             catch (Exception ex)
             {
-                // Return a 500 for any other unhandled errors
-                return StatusCode(500, new { message = "An error occurred while deactivating the operation type.", error = ex.Message });
+                return StatusCode(500, new { message = "An error occurred while Activating the operation type.", error = ex.Message });
             }
         }
 
