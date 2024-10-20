@@ -17,8 +17,8 @@ namespace DDDSample1.Infrastructure.Patients
             builder.Property(b => b.Email).IsRequired();
             builder.Property(b => b.Username).IsRequired();
             builder.Property(b => b.PasswordHash).IsRequired();
+            builder.Property(b => b.Role).IsRequired();
             builder.Property(b => b.IsActive).IsRequired();
-            builder.Property(b => b.ActivationLinkSentAt).IsRequired(false);
         }
     }
 }

@@ -23,7 +23,7 @@ namespace DDDSample1.Controllers
         //POST api/operationType
         // US 5.1.20
         [HttpPost]
-        [AllowAnonymous]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<OperationType>> CreateOperationType(CreatingOperationTypeDTO operationTypeDTO) // Change the DTO
         {
             try
@@ -40,7 +40,7 @@ namespace DDDSample1.Controllers
         //PUT api/operationType/update
         // US 5.1.21
         [HttpPut("operationTypeName")]
-        [AllowAnonymous]
+        [Authorize(Roles = "Admin")]
 
         public async Task<IActionResult> UpdateOperationType(string operationTypeName, [FromBody] UpdatingOperationTypeDTO dto)
         {
@@ -69,6 +69,7 @@ namespace DDDSample1.Controllers
         // US 5.1.22
         // PUT: api/OperationType/deactivate
         [HttpPut("deactivate")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeactivateOperationType([FromBody] string operationName)
         {
             try
@@ -78,22 +79,21 @@ namespace DDDSample1.Controllers
             }
             catch (KeyNotFoundException ex)
             {
-                // Return a 404 if the operation type was not found
                 return NotFound(new { message = ex.Message });
             }
             catch (InvalidOperationException ex)
             {
-                // Return a 400 if the operation type is already deactivated or other invalid operation
+                
                 return BadRequest(new { message = ex.Message });
             }
             catch (ArgumentException ex)
             {
-                // Return a 400 for invalid input
+                
                 return BadRequest(new { message = ex.Message });
             }
             catch (Exception ex)
             {
-                // Return a 500 for any other unhandled errors
+                
                 return StatusCode(500, new { message = "An error occurred while deactivating the operation type.", error = ex.Message });
             }
         }
@@ -101,32 +101,30 @@ namespace DDDSample1.Controllers
         // US 5.1.22
         // PUT: api/OperationType/activate
         [HttpPut("activate")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> ActivateOperationType([FromBody] string operationName)
         {
             try
             {
                 await _operationTypeService.ActivateOperationTypeAsync(operationName);
-                return Ok($"OperationType '{operationName}' has been successfully deactivated.");
+                return Ok($"OperationType '{operationName}' has been successfully Activated.");
             }
             catch (KeyNotFoundException ex)
             {
-                // Return a 404 if the operation type was not found
                 return NotFound(new { message = ex.Message });
             }
             catch (InvalidOperationException ex)
             {
-                // Return a 400 if the operation type is already deactivated or other invalid operation
                 return BadRequest(new { message = ex.Message });
             }
             catch (ArgumentException ex)
             {
-                // Return a 400 for invalid input
+
                 return BadRequest(new { message = ex.Message });
             }
             catch (Exception ex)
             {
-                // Return a 500 for any other unhandled errors
-                return StatusCode(500, new { message = "An error occurred while deactivating the operation type.", error = ex.Message });
+                return StatusCode(500, new { message = "An error occurred while Activating the operation type.", error = ex.Message });
             }
         }
 
@@ -137,7 +135,7 @@ namespace DDDSample1.Controllers
         // GET: api/OperationType
         //US 5.1.23
         [HttpGet("id")]
-        [AllowAnonymous]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetOperationType(Guid id)
         {
             try
@@ -159,7 +157,7 @@ namespace DDDSample1.Controllers
         // US 5.1.23
         // GET: api/OperationType/status
         [HttpGet("status")]
-        [AllowAnonymous]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetOperationTypeByStatus(bool status)
         {
             try
@@ -181,7 +179,7 @@ namespace DDDSample1.Controllers
         // US 5.1.23
         // GET: api/OperationType/name
         [HttpGet("name")]
-        [AllowAnonymous]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetOperationTypeByName(string name)
         {
             try
@@ -202,7 +200,7 @@ namespace DDDSample1.Controllers
         // Get all OperationTypes
         // GET: api/OperationType
         [HttpGet]
-        [AllowAnonymous]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAllOperationTypes()
         {
             try

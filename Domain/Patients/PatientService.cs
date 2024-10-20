@@ -107,34 +107,14 @@ namespace DDDSample1.Domain.Patients
 
             return _mapper.ToDto(patient);
         }
-        
+
         public async Task<List<PatientDTO>> SearchPatients(SearchPatientDTO dto)
         {
-            var query = _repo.GetAllAsync().Result.AsQueryable();
-
-            var filterActions = new Dictionary<string, Func<Task<IQueryable<Patient>>>>
-            {
-                { "FirstName", async () => await _repo.GetByFirstNameAsync(dto.FirstName) },
-                { "LastName", async () => await _repo.GetByLastNameAsync(dto.LastName) },
-                { "FullName", async () => await _repo.GetByFullNameAsync(dto.FullName) },
-                { "DateOfBirth", async () => await _repo.GetByDateOfBirthAsync(DateOnly.Parse(dto.DateOfBirth)) },
-                { "Gender", async () => await _repo.GetByGenderAsync(dto.Gender) },
-                { "MedicalRecordNumber", async () => await _repo.GetByMedicalRecordNumberAsync(dto.MedicalRecordNumber) },
-                { "Email", async () => await _repo.GetQueriableByEmailAsync(dto.Email) },
-                { "PhoneNumber", async () => await _repo.GetQueriableByPhoneNumberAsync(dto.PhoneNumber) }
-            };
-
-            foreach (var filter in filterActions)
-            {
-                if (!string.IsNullOrEmpty(dto.GetType().GetProperty(filter.Key).GetValue(dto)?.ToString()))
-                {
-                    query = (await filter.Value()).AsQueryable();
-                }
-            }
-
-            var list = await query.ToListAsync();
-            var listDto = list.ConvertAll(_mapper.ToDto);
-            return listDto;
+            var patients = await _repo.SearchPatientsAsync(dto);
+            var list = patients.ConvertAll(_mapper.ToDto);
+            if (list.Count == 0)
+                return null;
+            return list;
         }
     }
 }

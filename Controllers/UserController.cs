@@ -2,6 +2,7 @@
 using System;
 using System.Threading.Tasks;
 using DDDSample1.Domain.User;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DDDSample1.Controllers
@@ -17,8 +18,10 @@ namespace DDDSample1.Controllers
             _userService = userService;
         }
     
-        [HttpPost("Create")]
-        public async Task<ActionResult<User>> CreateUser(CreatingUserDTO userDTO)
+    
+        
+        [HttpPost("RegisterUser"), Authorize (Roles = "Admin")]
+        public async Task<ActionResult<User>> RegisterUser(CreatingUserDTO userDTO)
         {
             try
             {
@@ -30,9 +33,26 @@ namespace DDDSample1.Controllers
                 return StatusCode(500, $"An error occurred while creating the user: {ex.Message}");
             }
         }
-    
+
+        //Activate user and set password
+        [HttpPost("Activate")]
+        [AllowAnonymous]
+        public async Task<ActionResult<User>> ActivateUser(string token, string newPassword)
+        {
+            try
+            {
+                var user = await _userService.ActivateUser(token, newPassword);
+                return Ok(user);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred while activating the user: {ex.Message}");
+            }
+        }
+        
         [HttpPost("Login")]
-        public async Task<ActionResult<string>> Login(UserDTO userDTO)
+        [AllowAnonymous]
+        public async Task<ActionResult<string>> Login(LoginUserDTO userDTO)
         {
             try
             {
