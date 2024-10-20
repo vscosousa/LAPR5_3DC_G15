@@ -20,6 +20,7 @@ using DDDSample1.Infrastructure.Specializations;
 using DDDSample1.Domain.Staffs;
 using DDDSample1.Infrastructure.Staffs;
 using Projetos.LAPR5_3DC_G15.Mappers.Patients;
+using Projetos.LAPR5_3DC_G15.Mappers.Staffs;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
@@ -140,6 +141,7 @@ namespace DDDSample1
             services.AddTransient<SpecializationService>();
 
             services.AddTransient<IStaffRepository, StaffRepository>();
+            services.AddTransient<IStaffMapper, StaffMapper>();
             services.AddTransient<StaffService>();
 
             services.AddTransient<IMailService, MailService>();

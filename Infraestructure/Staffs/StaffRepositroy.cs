@@ -23,5 +23,21 @@ namespace DDDSample1.Infrastructure.Staffs
                 .Where(s => s.SpecializationId == specializationId)
                 .ToListAsync();
         }
+
+        public async Task<Staff> GetByEmailAsync(string email)
+        {
+            return await _objs.Where(x => email.Equals(x.Email)).FirstOrDefaultAsync();
+        }
+
+        public async Task<Staff> GetByPhoneNumberAsync(string phoneNumber)
+        {
+            return await _objs.Where(x => phoneNumber.Equals(x.PhoneNumber)).FirstOrDefaultAsync();
+        }
+
+        public async Task<Staff> GetByLicenseNumberAsync(string licenseNumber)
+        {
+            return await _objs.Where(x => licenseNumber.Equals(x.LicenseNumber)).FirstOrDefaultAsync();
+        }
     }
+
 }

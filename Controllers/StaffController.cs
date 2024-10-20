@@ -1,4 +1,8 @@
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using DDDSample1.Domain.Staffs;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DDDSample1.Controllers
@@ -13,39 +17,68 @@ namespace DDDSample1.Controllers
         {
             this._staffService = staffService;
         }
-
-        // POST api/staff
-    /*    [HttpPost]
+        
+        // Método para listar todos os staffs
+        [HttpGet]
         [AllowAnonymous]
-        public async Task<ActionResult<Staff>> CreateStaff(CreatingStaffDTO staffDTO)
+        public async Task<ActionResult<IEnumerable<StaffDTO>>> GetAllStaffs()
         {
             try
             {
-                var staff = await this._staffService.CreateStaff(staffDTO);
-                return Ok(staff);
-
-
+                
+                var staffs = await _staffService.GetAllStaffsAsync();
+                return Ok(staffs);
             }
             catch (Exception ex)
             {
+                return StatusCode(500, $"An error occurred while retrieving the staffs: {ex.Message}");
+            }
+        }
+
+        // Método para listar um staff por ID
+        [HttpGet("{id}")]
+        [AllowAnonymous]
+        public async Task<ActionResult<StaffDTO>> GetStaffById(Guid id)
+        {
+            try
+            {
+                var staff = await _staffService.GetStaffByIdAsync(id);
+
+                if (staff == null)
+                {
+                    return NotFound();
+                }
+
+                return Ok(staff);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred while retrieving the staff: {ex.Message}");
+            }
+        }
+
+        [HttpPost]
+        [AllowAnonymous] 
+        public async Task<ActionResult<StaffDTO>> CreateStaff(CreatingStaffDTO dto)
+        {
+            try
+            {
+                var createdStaff = await _staffService.CreateStaffAsync(dto);
+
+                // Retorna o staff criado com o status 201 Created
+                return Ok(createdStaff);
+            }
+            catch (Exception ex)
+            {
+                // Lida com outros tipos de erros
                 return StatusCode(500, $"An error occurred while creating the staff: {ex.Message}");
             }
         }
 
-        // GET api/specialization/{id}/staffs
-        [HttpGet("{id}/staffs")]
-        [AllowAnonymous]
-        public async Task<ActionResult<ICollection<StaffDTO>>> GetStaffsBySpecialization(Guid id)
-        {
-            try
-            {
-                var staffs = await _staffService.GetStaffsBySpecialization(new SpecializationId(id));
-                return Ok(staffs);
-            }
-            catch (BusinessRuleValidationException ex)
-            {
-                return NotFound(ex.Message);
-            }
-        }*/
+
     }
 }

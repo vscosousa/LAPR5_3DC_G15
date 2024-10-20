@@ -35,7 +35,6 @@ namespace DDDSample1.Domain.Specializations
                     s.LicenseNumber,
                     s.Email,
                     s.PhoneNumber,
-                    s.AvailabilitySlots,
                     newSpecialization.Id // Set the specialization ID for each staff
                 );
 

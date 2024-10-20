@@ -1,29 +1,25 @@
 using System;
+using DDDSample1.Domain.Specializations;
 
-namespace DDD.sample1.Domain.Staffs
+namespace DDDSample1.Domain.Staffs
 {
     public class StaffDTO{
 
-        public Guid id { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-
-        public string FullName { get; set; }
-
-        public string LicenseNumber { get; set; }
-
-        public string Email { get; set; }
-
-        public string PhoneNumber { get; set; }
-
-        public DateTime[] AvailabilitySlots { get; set; }
-
+        public Guid Id { get; init; }
+        public string FirstName { get; init; }
+        public string LastName { get; init; }
+        public string FullName { get; init; }
+        public string LicenseNumber { get; init; }
+        public string Email { get; init; }
+        public string PhoneNumber { get; init; }
+        public SpecializationId SpecializationId { get; init; }
+        public DateTime[] AvailabilitySlots { get; init; }
 
         public StaffDTO() { }
 
         public StaffDTO(Guid id, string firstName, string lastName, string fullName, string email, string phoneNumber, string licenseNumber, DateTime[] availabilitySlots)
         {
-            this.id = id;
+            Id = id;
             FirstName = firstName;
             LastName = lastName;
             FullName = fullName;
@@ -33,6 +29,16 @@ namespace DDD.sample1.Domain.Staffs
             AvailabilitySlots = availabilitySlots;
         }
 
-        
+         public StaffDTO(Guid id, string firstName, string lastName, string fullName, string email, string phoneNumber, string licenseNumber, DateTime[] availabilitySlots, SpecializationId specializationId)
+        {
+            Id = id;
+            FirstName = firstName;
+            LastName = lastName;
+            FullName = fullName;
+            Email = email;
+            PhoneNumber = phoneNumber;
+            LicenseNumber = licenseNumber;
+            AvailabilitySlots = availabilitySlots;
+        }
     }
 }
