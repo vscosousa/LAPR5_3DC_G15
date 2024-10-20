@@ -4,12 +4,13 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using DDDSample1.Domain.Patients;
 using DDDSample1.Domain.Shared;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
 
-namespace DDDSample1.Domain.User
+namespace DDDSample1.Domain.Users
 {
     public class UserService
     {
@@ -17,16 +18,17 @@ namespace DDDSample1.Domain.User
         private readonly IMailService _mailService;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IConfiguration _configuration;
+        private readonly IPatientRepository _patientRepository;
 
-        public UserService(IUserRepository userRepository, IMailService mailService, IUnitOfWork unitOfWork, IConfiguration configuration)
+        public UserService(IUserRepository userRepository, IMailService mailService, IUnitOfWork unitOfWork, IConfiguration configuration, IPatientRepository patientRepository)
         {
             _userRepository = userRepository;
             _mailService = mailService;
             _unitOfWork = unitOfWork;
             _configuration = configuration;
+            _patientRepository = patientRepository;
         }
 
-        // Create a user
         // Create a user
         public async Task<User> CreateUser(CreatingUserDTO dto)
         {
@@ -54,9 +56,9 @@ namespace DDDSample1.Domain.User
                 string token = CreateToken(user);
 
 
-                await _mailService.SendActivationEmail(dto.Email, "Activate your account", GenerateActivationLink(token));
+                await _mailService.SendActivationEmail(dto.Email, "Activate your account", GenerateActivationLink(token, "Activate"));
 
-        
+
                 await _userRepository.AddAsync(user);
                 await _unitOfWork.CommitAsync();
 
@@ -64,11 +66,38 @@ namespace DDDSample1.Domain.User
             }
             catch (Exception ex)
             {
-            
+
                 throw new Exception(ex.Message);
             }
         }
 
+        public async Task<User> CreateUserAsPatient(CreatingPatientUserDTO dto)
+        {
+            // Check if email is already in use
+            var existingUserByEmail = await _userRepository.GetUserByEmailAsync(dto.Email);
+            if (existingUserByEmail != null && existingUserByEmail.IsActive)
+            {
+                throw new Exception("Email is already in use.");
+            }
+
+            if (existingUserByEmail != null && existingUserByEmail.PhoneNumber != dto.PhoneNumber)
+            {
+                throw new Exception("Phone number does not match the Patient's email.");
+            }
+
+            var patient = await _patientRepository.GetByEmailAsync(dto.Email);
+
+            var role = Enum.Parse<Role>(dto.Role, true);
+            var user = new User(dto.Email, dto.PhoneNumber, role, dto.Password, patient.Id.AsGuid());
+            string token = CreateToken(user);
+
+            await _mailService.SendActivationEmail(dto.Email, "Activate your account", GenerateActivationLink(token, "ActivatePatientUser"));
+            await _userRepository.AddAsync(user);
+            await _unitOfWork.CommitAsync();
+
+            return user;
+
+        }
 
 
         // Activate a user and set the password
@@ -96,10 +125,27 @@ namespace DDDSample1.Domain.User
             return user;
         }
 
+        public async Task<User> ActivateUserAsPatient(string token)
+        {
+            var userId = VerifyToken(token);
+            if (userId == null)
+            {
+                throw new Exception("Invalid or expired token.");
+            }
 
+            var user = await _userRepository.GetByIdAsync(userId);
+            if (user == null)
+            {
+                throw new Exception("User not found.");
+            }
 
+            user.Activate();
 
+            await _userRepository.UpdateAsync(user);
+            await _unitOfWork.CommitAsync();
 
+            return user;
+        }
 
         private string CreateToken(User user)
         {
@@ -176,10 +222,9 @@ namespace DDDSample1.Domain.User
             }
         }
 
-        private string GenerateActivationLink(string token)
+        private static string GenerateActivationLink(string token, string typeOfActivation)
         {
-
-            return $"https://yourapp.com/activate?token={token}&token=your-activation-token";
+            return $"https://localhost:5001/{typeOfActivation}?token={token}";
         }
 
 
@@ -187,7 +232,7 @@ namespace DDDSample1.Domain.User
         {
 
             var user = await _userRepository.GetUserByEmailAsync(dto.Email);
-            if(user == null)
+            if (user == null)
             {
                 throw new Exception("Email not registered");
             }

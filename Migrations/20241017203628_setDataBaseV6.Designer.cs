@@ -185,7 +185,7 @@ namespace DDDNetCore.Migrations
                     b.ToTable("Staffs");
                 });
 
-            modelBuilder.Entity("DDDSample1.Domain.User.User", b =>
+            modelBuilder.Entity("DDDSample1.Domain.Users.User", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");

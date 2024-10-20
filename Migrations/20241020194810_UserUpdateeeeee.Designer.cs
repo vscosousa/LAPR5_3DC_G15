@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DDDNetCore.Migrations
 {
     [DbContext(typeof(DDDSample1DbContext))]
-    [Migration("20241017203714_setDataBaseV7")]
-    partial class setDataBaseV7
+    [Migration("20241020194810_UserUpdateeeeee")]
+    partial class UserUpdateeeeee
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,34 @@ namespace DDDNetCore.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("DDDSample1.Domain.Logs.Log", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("DateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("EntityId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TypeOfAction")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.ToTable("Logs");
+                });
 
             modelBuilder.Entity("DDDSample1.Domain.OperationTypes.OperationType", b =>
                 {
@@ -92,11 +120,11 @@ namespace DDDNetCore.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("MedicalConditions")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("MedicalRecordNumber")
-                        .HasColumnType("int");
+                    b.Property<string>("MedicalRecordNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
@@ -108,6 +136,9 @@ namespace DDDNetCore.Migrations
                         .IsUnique();
 
                     b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.HasIndex("MedicalRecordNumber")
                         .IsUnique();
 
                     b.HasIndex("PhoneNumber")
@@ -193,9 +224,6 @@ namespace DDDNetCore.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<DateTime?>("ActivationLinkSentAt")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
@@ -203,15 +231,18 @@ namespace DDDNetCore.Migrations
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
-                    b.Property<string>("Password")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Role")
+                    b.Property<string>("PasswordHash")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Role")
+                        .HasColumnType("int");
 
                     b.Property<string>("Username")
                         .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("_patientId")
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
@@ -224,6 +255,10 @@ namespace DDDNetCore.Migrations
 
                     b.HasIndex("Username")
                         .IsUnique();
+
+                    b.HasIndex("_patientId")
+                        .IsUnique()
+                        .HasFilter("[_patientId] IS NOT NULL");
 
                     b.ToTable("Users");
                 });
@@ -251,6 +286,16 @@ namespace DDDNetCore.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Specialization");
+                });
+
+            modelBuilder.Entity("DDDSample1.Domain.Users.User", b =>
+                {
+                    b.HasOne("DDDSample1.Domain.Patients.Patient", "Patient")
+                        .WithOne()
+                        .HasForeignKey("DDDSample1.Domain.Users.User", "_patientId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Patient");
                 });
 
             modelBuilder.Entity("OperationTypeSpecialization", b =>

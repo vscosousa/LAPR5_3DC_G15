@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using DDDSample1.Domain.Patients;
 using DDDSample1.Infrastructure.Shared;
+using DDDSample1.Domain.Users;
 
 namespace DDDSample1.Infrastructure.Patients
 {

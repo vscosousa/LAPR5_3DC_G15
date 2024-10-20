@@ -1,8 +1,9 @@
 using System;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using DDDSample1.Domain.Shared;
-using Microsoft.AspNetCore.JsonPatch.Helpers;
+using DDDSample1.Domain.Users;
 
 namespace DDDSample1.Domain.Patients
 {
@@ -20,7 +21,7 @@ namespace DDDSample1.Domain.Patients
         private string _medicalConditions;
         private DateTime[] _appointmentHistory;
         private bool _isActive;
-
+        
         // Parameterless constructor for EF Core
         private Patient() { }
 

@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace DDDSample1.Controllers
 {
     [Route("api/[controller]")]
+    [Authorize (Roles = "Admin")]
     [ApiController]
     public class PatientController : ControllerBase
     {
@@ -17,10 +18,10 @@ namespace DDDSample1.Controllers
         public PatientController(PatientService patientService)
         {
             _service = patientService;
+            
         }
 
         [HttpPost]
-        [AllowAnonymous]
         public async Task<ActionResult<Patient>> CreatePatient(CreatingPatientDTO patientDTO)
         {
             try
@@ -35,7 +36,6 @@ namespace DDDSample1.Controllers
         }
 
         [HttpDelete("{id}")]
-        [AllowAnonymous]
         public async Task<ActionResult<PatientDTO>> DeletePatient(Guid id)
         {
             try
@@ -56,7 +56,6 @@ namespace DDDSample1.Controllers
         }
 
         [HttpPut("{id}")]
-        [AllowAnonymous]
         public async Task<ActionResult<PatientDTO>> UpdatePatient(Guid id, UpdatePatientDTO dto)
         {
             try
@@ -76,7 +75,6 @@ namespace DDDSample1.Controllers
         }
 
         [HttpGet]
-        [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<PatientDTO>>> SearchPatients(string firstName, string lastName, string fullName, string dateOfBirth, string medicalRecordNumber, string gender, string email, string phoneNumber)
         {
             var dto = new SearchPatientDTO

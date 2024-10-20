@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using DDDSample1.Domain.Patients;
 using DDDSample1.Infrastructure.Patients;
-using DDDSample1.Domain.User;
+using DDDSample1.Domain.Users;
 using DDDSample1.Domain.Specializations;
 using DDDSample1.Infrastructure.Specializations;
 using DDDSample1.Domain.Staffs;
@@ -10,6 +10,7 @@ using DDDSample1.Domain.OperationTypes;
 using DDDSample1.Infrastructure.OperationTypes;
 using DDDSample1.Domain.Logs;
 using DDDSample1.Infrastructure.Logs;
+using DDDSample1.Infrastructure.Users;
 
 namespace DDDSample1.Infrastructure
 {

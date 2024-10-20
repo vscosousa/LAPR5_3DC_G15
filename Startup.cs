@@ -11,7 +11,7 @@ using DDDSample1.Infrastructure.Shared;
 using DDDSample1.Domain.Shared;
 using DDDSample1.Infrastructure.Patients;
 using DDDSample1.Domain.Patients;
-using DDDSample1.Domain.User;
+using DDDSample1.Domain.Users;
 using DDDSample1.Infrastructure.Users;
 using DDDSample1.Domain.OperationTypes;
 using DDDSample1.Infrastructure.OperationTypes;

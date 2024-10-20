@@ -1,13 +1,13 @@
 
 using System;
 using System.Threading.Tasks;
-using DDDSample1.Domain.User;
+using DDDSample1.Domain.Users;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DDDSample1.Controllers
 {
-        [ApiController]
+    [ApiController]
     [Route("api/[controller]")]
     public class UserController : ControllerBase
     {
@@ -34,6 +34,15 @@ namespace DDDSample1.Controllers
             }
         }
 
+        [HttpPost("RegisterUserAsPatient")]
+        [AllowAnonymous]
+        public async Task<ActionResult<User>> RegisterUserAsPatient(CreatingPatientUserDTO userDTO)
+        {
+            
+                var user = await _userService.CreateUserAsPatient(userDTO);
+                return Ok(user);
+        }
+
         //Activate user and set password
         [HttpPost("Activate")]
         [AllowAnonymous]
@@ -42,6 +51,21 @@ namespace DDDSample1.Controllers
             try
             {
                 var user = await _userService.ActivateUser(token, newPassword);
+                return Ok(user);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred while activating the user: {ex.Message}");
+            }
+        }
+
+        [HttpPost("ActivatePatientUser")]
+        [AllowAnonymous]
+        public async Task<ActionResult<User>> ActivatePatientUser(string token)
+        {
+            try
+            {
+                var user = await _userService.ActivateUserAsPatient(token);
                 return Ok(user);
             }
             catch (Exception ex)

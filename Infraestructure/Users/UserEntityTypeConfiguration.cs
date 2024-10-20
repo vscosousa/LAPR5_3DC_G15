@@ -1,9 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using DDDSample1.Infrastructure.Shared;
-using DDDSample1.Domain.User;
+using DDDSample1.Domain.Users;
 
-namespace DDDSample1.Infrastructure.Patients
+namespace DDDSample1.Infrastructure.Users
 {
     internal class UserEntityTypeConfiguration : IEntityTypeConfiguration<User>
     {
@@ -19,6 +19,12 @@ namespace DDDSample1.Infrastructure.Patients
             builder.Property(b => b.PasswordHash).IsRequired();
             builder.Property(b => b.Role).IsRequired();
             builder.Property(b => b.IsActive).IsRequired();
+            builder
+                .HasOne(b => b.Patient)
+                .WithOne()
+                .HasForeignKey<User>("_patientId")
+                .IsRequired(false)
+                .OnDelete(DeleteBehavior.SetNull);
         }
     }
 }

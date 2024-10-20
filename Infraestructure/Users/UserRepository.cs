@@ -1,6 +1,6 @@
 using System.Linq;
 using System.Threading.Tasks;
-using DDDSample1.Domain.User;
+using DDDSample1.Domain.Users;
 using DDDSample1.Infrastructure.Shared;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,6 +15,11 @@ namespace DDDSample1.Infrastructure.Users
         public async Task<User> GetUserByEmailAsync(string email)
         {
             return await _objs.Where(x => email.Equals(x.Email)).FirstOrDefaultAsync();
+        }
+
+        public async Task<User> GetUserByPhoneNumberAsync(string phoneNumber)
+        {
+            return await _objs.Where(x => phoneNumber.Equals(x.PhoneNumber)).FirstOrDefaultAsync();
         }
 
         public Task<User> GetUserByUsernameAsync(string username)

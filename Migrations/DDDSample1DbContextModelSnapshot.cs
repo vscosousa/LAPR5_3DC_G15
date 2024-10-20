@@ -216,7 +216,7 @@ namespace DDDNetCore.Migrations
                     b.ToTable("Staffs");
                 });
 
-            modelBuilder.Entity("DDDSample1.Domain.User.User", b =>
+            modelBuilder.Entity("DDDSample1.Domain.Users.User", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -239,6 +239,9 @@ namespace DDDNetCore.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<string>("_patientId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("Email")
@@ -249,6 +252,10 @@ namespace DDDNetCore.Migrations
 
                     b.HasIndex("Username")
                         .IsUnique();
+
+                    b.HasIndex("_patientId")
+                        .IsUnique()
+                        .HasFilter("[_patientId] IS NOT NULL");
 
                     b.ToTable("Users");
                 });
@@ -276,6 +283,16 @@ namespace DDDNetCore.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Specialization");
+                });
+
+            modelBuilder.Entity("DDDSample1.Domain.Users.User", b =>
+                {
+                    b.HasOne("DDDSample1.Domain.Patients.Patient", "Patient")
+                        .WithOne()
+                        .HasForeignKey("DDDSample1.Domain.Users.User", "_patientId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Patient");
                 });
 
             modelBuilder.Entity("OperationTypeSpecialization", b =>

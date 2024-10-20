@@ -1,6 +1,6 @@
 using System;
 
-namespace DDDSample1.Domain.User
+namespace DDDSample1.Domain.Users
 {
     public class UserDTO
     {
