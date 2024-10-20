@@ -36,6 +36,7 @@ namespace DDDSample1.Controllers
 
         //Activate user and set password
         [HttpPost("Activate")]
+        [AllowAnonymous]
         public async Task<ActionResult<User>> ActivateUser(string token, string newPassword)
         {
             try
@@ -50,6 +51,7 @@ namespace DDDSample1.Controllers
         }
         
         [HttpPost("Login")]
+        [AllowAnonymous]
         public async Task<ActionResult<string>> Login(LoginUserDTO userDTO)
         {
             try

@@ -1,5 +1,5 @@
 using System.Linq;
-using DDD.sample1.Domain.Staffs;
+using DDD.Sample1.Domain.Staffs;
 using DDDSample1.Domain.OperationTypes;
 using Projetos.LAPR5_3DC_G15.Domain.Shared;
 

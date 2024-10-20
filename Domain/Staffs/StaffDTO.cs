@@ -1,6 +1,6 @@
 using System;
 
-namespace DDD.sample1.Domain.Staffs
+namespace DDD.Sample1.Domain.Staffs
 {
     public class StaffDTO{
 

@@ -107,7 +107,8 @@ namespace DDDSample1.Domain.User
             {
                 new Claim(ClaimTypes.Name, user.Username),
                 new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.NameIdentifier, user.Id.AsGuid().ToString())
+                new Claim(ClaimTypes.NameIdentifier, user.Id.AsGuid().ToString()),
+                new Claim(ClaimTypes.Role, user.Role.ToString())
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));

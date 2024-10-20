@@ -4,8 +4,8 @@ using DDDSample1.Domain.Shared;
 using DDDSample1.Domain.Specializations;
 using System.Linq;
 using DDDSample1.Domain.Staffs;
-using DDD.sample1.Domain.Staffs;
 using System;
+using DDD.Sample1.Domain.Staffs;
 
 namespace DDDSample1.Domain.OperationTypes
 {
