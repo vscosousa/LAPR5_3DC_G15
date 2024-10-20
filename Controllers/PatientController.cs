@@ -90,8 +90,15 @@ namespace DDDSample1.Controllers
                 Email = email,
                 PhoneNumber = phoneNumber
             };
-
-            return await _service.SearchPatients(dto);
+            try {
+                var patients = await _service.SearchPatients(dto);
+                if (patients == null) {
+                    return Ok("No patients found with the given criteria.");
+                }
+                return Ok(patients);
+            } catch (Exception ex) {
+                return StatusCode(500, $"An error occurred while searching for patients: {ex.Message}");
+            }
         }
     }
 }
