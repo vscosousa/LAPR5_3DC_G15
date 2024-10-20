@@ -4,6 +4,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using DDDSample1.Domain.Logs;
 using DDDSample1.Domain.Patients;
 using DDDSample1.Domain.Shared;
 using Microsoft.Extensions.Configuration;
@@ -19,14 +20,16 @@ namespace DDDSample1.Domain.Users
         private readonly IUnitOfWork _unitOfWork;
         private readonly IConfiguration _configuration;
         private readonly IPatientRepository _patientRepository;
+        private readonly ILogRepository _logRepository; 
 
-        public UserService(IUserRepository userRepository, IMailService mailService, IUnitOfWork unitOfWork, IConfiguration configuration, IPatientRepository patientRepository)
+        public UserService(IUserRepository userRepository, IMailService mailService, IUnitOfWork unitOfWork, IConfiguration configuration, IPatientRepository patientRepository, ILogRepository logRepository)
         {
             _userRepository = userRepository;
             _mailService = mailService;
             _unitOfWork = unitOfWork;
             _configuration = configuration;
             _patientRepository = patientRepository;
+            _logRepository = logRepository;
         }
 
         // Create a user
@@ -56,7 +59,7 @@ namespace DDDSample1.Domain.Users
                 string token = CreateToken(user);
 
 
-                await _mailService.SendActivationEmail(dto.Email, "Activate your account", GenerateActivationLink(token, "Activate"));
+                await _mailService.SendEmail(dto.Email, "Activate your account", GenerateLink(token, "Activate"));
 
 
                 await _userRepository.AddAsync(user);
@@ -91,7 +94,7 @@ namespace DDDSample1.Domain.Users
             var user = new User(dto.Email, dto.PhoneNumber, role, dto.Password, patient.Id.AsGuid());
             string token = CreateToken(user);
 
-            await _mailService.SendActivationEmail(dto.Email, "Activate your account", GenerateActivationLink(token, "ActivatePatientUser"));
+            await _mailService.SendEmail(dto.Email, "Activate your account", GenerateLink(token, "ActivatePatientUser"));
             await _userRepository.AddAsync(user);
             await _unitOfWork.CommitAsync();
 
@@ -104,19 +107,8 @@ namespace DDDSample1.Domain.Users
         public async Task<User> ActivateUser(string token, string newPassword)
         {
 
-            var userId = VerifyToken(token);
-            if (userId == null)
-            {
-                throw new Exception("Invalid or expired token.");
-            }
-
-
-            var user = await _userRepository.GetByIdAsync(userId);
-            if (user == null)
-            {
-                throw new Exception("User not found.");
-            }
-
+            var userId = VerifyToken(token) ?? throw new Exception("Invalid or expired token.");
+            var user = await _userRepository.GetByIdAsync(userId) ?? throw new Exception("User not found.");
             user.SetPassword(newPassword);
 
             await _userRepository.UpdateAsync(user);
@@ -133,12 +125,7 @@ namespace DDDSample1.Domain.Users
                 throw new Exception("Invalid or expired token.");
             }
 
-            var user = await _userRepository.GetByIdAsync(userId);
-            if (user == null)
-            {
-                throw new Exception("User not found.");
-            }
-
+            var user = await _userRepository.GetByIdAsync(userId) ?? throw new Exception("User not found.");
             user.Activate();
 
             await _userRepository.UpdateAsync(user);
@@ -191,19 +178,13 @@ namespace DDDSample1.Domain.Users
                 var principal = tokenHandler.ValidateToken(token, validationParameters, out var validatedToken);
 
 
-                if (!(validatedToken is JwtSecurityToken jwtToken) ||
+                if (validatedToken is not JwtSecurityToken jwtToken ||
                     !jwtToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
                 {
                     throw new SecurityTokenException("Invalid token");
                 }
 
-                var userIdClaim = principal.FindFirst(ClaimTypes.NameIdentifier);
-                if (userIdClaim == null)
-                {
-                    throw new Exception("User ID not found in token.");
-                }
-
-
+                var userIdClaim = principal.FindFirst(ClaimTypes.NameIdentifier) ?? throw new Exception("User ID not found in token.");
                 if (!Guid.TryParse(userIdClaim.Value, out Guid userId))
                 {
                     throw new Exception("Invalid user ID in token.");
@@ -222,21 +203,16 @@ namespace DDDSample1.Domain.Users
             }
         }
 
-        private static string GenerateActivationLink(string token, string typeOfActivation)
+        private static string GenerateLink(string token, string typeOfLink)
         {
-            return $"https://localhost:5001/{typeOfActivation}?token={token}";
+            return $"https://localhost:5001/{typeOfLink}?token={token}";
         }
 
 
         public async Task<string> Login(LoginUserDTO dto)
         {
 
-            var user = await _userRepository.GetUserByEmailAsync(dto.Email);
-            if (user == null)
-            {
-                throw new Exception("Email not registered");
-            }
-
+            var user = await _userRepository.GetUserByEmailAsync(dto.Email) ?? throw new Exception("Email not registered");
             if (!BCrypt.Net.BCrypt.Verify(dto.Password, user.PasswordHash))
             {
                 throw new Exception("Wrong password");
@@ -247,6 +223,41 @@ namespace DDDSample1.Domain.Users
             output += $"\n\nToken: {token}";
 
             return output;
+        }
+
+        public async Task RequestDelete(string token)
+        {
+            try{
+                var userId = VerifyToken(token) ?? throw new Exception("Invalid or expired token.");
+                var user = await _userRepository.GetByIdAsync(userId);
+
+                await _mailService.SendEmail(user.Email, "Delete User Request", GenerateLink(token, "DeleteUser"));
+                return;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task DeleteUser(string token)
+        {
+            try{
+                var userId = VerifyToken(token) ?? throw new Exception("Invalid or expired token.");
+                var user = await _userRepository.GetByIdAsync(userId);
+
+                _userRepository.Remove(user);
+                
+                var log = new Log(TypeOfAction.Delete, userId.ToString(), "User of Type" + user.Role + " deleted.");
+                await _logRepository.AddAsync(log);
+
+                await _unitOfWork.CommitAsync();
+                return;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
     }
 }

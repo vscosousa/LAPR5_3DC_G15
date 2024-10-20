@@ -20,7 +20,6 @@ using DDDSample1.Infrastructure.Specializations;
 using DDDSample1.Domain.Staffs;
 using DDDSample1.Infrastructure.Staffs;
 using Projetos.LAPR5_3DC_G15.Mappers.Patients;
-using Projetos.LAPR5_3DC_G15.Mappers.Staffs;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
@@ -28,6 +27,7 @@ using DDDSample1.Mappers.OperationTypes;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Filters;
 using DDDSample1.Domain.Logs;
+using Projetos.LAPR5_3DC_G15.Mappers.Staffs;
 
 namespace DDDSample1
 {

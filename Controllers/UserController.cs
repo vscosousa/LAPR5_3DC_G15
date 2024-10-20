@@ -88,5 +88,33 @@ namespace DDDSample1.Controllers
                 return StatusCode(500, $"An error occurred while logging in: {ex.Message}");
             }
         }
+
+        [HttpPost("RequestDelete"), Authorize(Roles = "Patient")]
+        public async Task<ActionResult> RequestDelete(string token)
+        {
+            try
+            {
+                await _userService.RequestDelete(token);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred while deleting the user: {ex.Message}");
+            }
+        }
+
+        [HttpDelete("Delete"), Authorize(Roles = "Patient")]
+        public async Task<ActionResult> DeleteUser(string token)
+        {
+            try
+            {
+                await _userService.DeleteUser(token);
+                return Ok("User deleted successfully");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred while deleting the user: {ex.Message}");
+            }
+        }
     }
 }

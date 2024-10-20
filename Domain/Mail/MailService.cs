@@ -11,7 +11,7 @@ public class MailService : IMailService
         _configuration = configuration;
     }
 
-    public async Task SendActivationEmail(string toEmail, string username, string activationLink)
+    public async Task SendEmail(string toEmail, string username, string activationLink)
     {
         var smtpClient = new SmtpClient
         {
