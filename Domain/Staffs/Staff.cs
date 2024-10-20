@@ -23,6 +23,8 @@ namespace DDDSample1.Domain.Staffs
         // Navigation property
         [JsonIgnore]
         public Specialization Specialization { get; private set; }
+
+        public Staff() { }
         
         public Staff(string firstName, string lastName, string fullName, string licenseNumber, string email, string phoneNumber, SpecializationId specializationId)
         {
