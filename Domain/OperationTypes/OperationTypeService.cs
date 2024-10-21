@@ -4,7 +4,9 @@ using DDDSample1.Domain.Shared;
 using DDDSample1.Domain.Specializations;
 using System.Linq;
 using DDDSample1.Domain.Staffs;
+
 using System;
+using DDDSample1.Domain.Logs;
 
 namespace DDDSample1.Domain.OperationTypes
 {
@@ -16,15 +18,18 @@ namespace DDDSample1.Domain.OperationTypes
         private readonly ISpecializationRepository _specializationRepository;
         private readonly IStaffRepository _staffRepository;
 
+        private readonly ILogRepository _logRepository;
+
         private readonly IOperationTypeMapper _mapper;
 
-        public OperationTypeService(IUnitOfWork unitOfWork, IOperationTypeRepository repository, ISpecializationRepository specializationRepository, IStaffRepository staffRepository, IOperationTypeMapper mapper)
+        public OperationTypeService(IUnitOfWork unitOfWork, IOperationTypeRepository repository, ISpecializationRepository specializationRepository, IStaffRepository staffRepository, IOperationTypeMapper mapper, ILogRepository logRepository)
         {
             _unitOfWork = unitOfWork;
             _repository = repository;
             _specializationRepository = specializationRepository;
             _staffRepository = staffRepository;
             _mapper = mapper;
+            _logRepository = logRepository;
         }
 
 
@@ -77,33 +82,74 @@ namespace DDDSample1.Domain.OperationTypes
             return newOperationType;
         }
 
-        //Update OperationType
-        // US 5.1.21
+        // Update OperationType - US 5.1.21
         public async Task<OperationType> UpdateOperationTypeAsync(string operationTypeName, UpdatingOperationTypeDTO dto)
         {
-
             var operationType = await _repository.GetByNameAsync(operationTypeName);
 
             if (operationType == null)
             {
-                throw new KeyNotFoundException($"OperationType with ID {operationTypeName} not found.");
+                throw new KeyNotFoundException($"OperationType with name {operationTypeName} not found.");
             }
 
-            // Step 2: Update the editable fields if they are provided
-            if (!string.IsNullOrEmpty(dto.Name))
+            var updatedFields = new List<string>();
+
+            
+            var updateActions = new Dictionary<string, Func<Task>>
             {
-                operationType.UpdateName(dto.Name);
+                { "Name", async () => {
+                    if (!string.IsNullOrEmpty(dto.Name) && operationType.Name != dto.Name) {
+                        operationType.UpdateName(dto.Name);
+                        updatedFields.Add("Name");
+                    }
+                    await Task.CompletedTask;
+                }},
+                { "Estimated Duration", async () => {
+                    if (!string.IsNullOrEmpty(dto.EstimatedDuration) && operationType.EstimatedDuration != dto.EstimatedDuration) {
+                        operationType.UpdateEstimatedDuration(dto.EstimatedDuration);
+                        updatedFields.Add("Estimated Duration");
+                    }
+                    await Task.CompletedTask;
+                }},
+                { "Specializations", async () => {
+                    if (dto.Specializations != null && dto.Specializations.Count > 0)
+                    {
+                        var specializations = new List<Specialization>();
+                        foreach (var specId in dto.Specializations)
+                        {
+                            var spec = await _specializationRepository.GetByIdAsync(new SpecializationId(specId));
+                            if (spec == null)
+                            {
+                                throw new KeyNotFoundException($"Specialization with ID {specId} not found.");
+                            }
+                            specializations.Add(spec);
+                        }
+                        operationType.UpdateSpecializations(specializations);
+                        updatedFields.Add("Specializations");
+                    }
+                }}
+            };
+
+            
+            foreach (var action in updateActions.Values)
+            {
+                await action();
             }
 
-            if (!string.IsNullOrEmpty(dto.EstimatedDuration))
+            if (updatedFields.Count > 0)
             {
-                operationType.UpdateEstimatedDuration(dto.EstimatedDuration);
+                string message = "OperationType updated. The following fields were updated: " + string.Join(", ", updatedFields) + ".";
+                var log = new Log(TypeOfAction.Update,operationType.Id.ToString(), message);
+                await _logRepository.AddAsync(log);
+                await _unitOfWork.CommitAsync();
             }
 
             await _repository.UpdateAsync(operationType);
             await _unitOfWork.CommitAsync();
+
             return operationType;
         }
+
 
         //Deactivate OperationType
         // US 5.1.22
@@ -116,6 +162,8 @@ namespace DDDSample1.Domain.OperationTypes
             }
 
             operationType.Deactivate();
+            var log = new Log(TypeOfAction.Delete,operationType.Id.ToString(), $"OperationType '{operationName}' deactivated.");
+            await _logRepository.AddAsync(log);
 
             await _repository.UpdateAsync(operationType);
             await _unitOfWork.CommitAsync();
@@ -133,6 +181,8 @@ namespace DDDSample1.Domain.OperationTypes
             }
 
             operationType.Activate();
+            var log = new Log(TypeOfAction.Update, operationType.Id.ToString(),$"OperationType '{operationName}' activated.");
+            await _logRepository.AddAsync(log);
             await _repository.UpdateAsync(operationType);
             await _unitOfWork.CommitAsync();
         }
@@ -158,8 +208,8 @@ namespace DDDSample1.Domain.OperationTypes
                     staffs.Add(new StaffDTO(staff.Id.AsGuid(), staff.FirstName, staff.LastName, staff.FullName, staff.Email, staff.LicenseNumber, staff.PhoneNumber, staff.AvailabilitySlots));
                 }
             }
-
-            var operationTypeDTO = new OperationTypeDTO(operationType.Id.AsGuid(), operationType.Name, operationType.EstimatedDuration, staffs);
+            var specializationIds = operationType.Specializations.Select(spec => spec.Id.AsGuid()).ToList();
+            var operationTypeDTO = new OperationTypeDTO(operationType.Id.AsGuid(), operationType.Name, operationType.EstimatedDuration, specializationIds, staffs);
 
             return operationTypeDTO;
         }
@@ -202,7 +252,8 @@ namespace DDDSample1.Domain.OperationTypes
                 }
             }
 
-            var OperationTypeDTO = new OperationTypeDTO(operationType.Id.AsGuid(), operationType.Name, operationType.EstimatedDuration, staffs);
+            var specializationIds = operationType.Specializations.Select(spec => spec.Id.AsGuid()).ToList();
+            var OperationTypeDTO = new OperationTypeDTO(operationType.Id.AsGuid(), operationType.Name, operationType.EstimatedDuration, specializationIds, staffs);
 
             return OperationTypeDTO;
         }
@@ -233,6 +284,7 @@ namespace DDDSample1.Domain.OperationTypes
                     ot.Id.AsGuid(),
                     ot.Name,
                     ot.EstimatedDuration.ToString(),
+                    ot.Specializations.Select(spec => spec.Id.AsGuid()).ToList(),
                     staffs);
             }).ToList();
 

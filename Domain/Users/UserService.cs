@@ -32,19 +32,20 @@ namespace DDDSample1.Domain.Users
             _logRepository = logRepository;
         }
 
+        
         // Create a user
         public async Task<User> CreateUser(CreatingUserDTO dto)
         {
             try
             {
-                // Check if email is already in use
+                
                 var existingUserByEmail = await _userRepository.GetUserByEmailAsync(dto.Email);
                 if (existingUserByEmail != null)
                 {
                     throw new Exception("Email is already in use.");
                 }
 
-                // Check if username is already in use
+                
                 var existingUserByUsername = await _userRepository.GetUserByUsernameAsync(dto.Username);
                 if (existingUserByUsername != null)
                 {
@@ -248,7 +249,7 @@ namespace DDDSample1.Domain.Users
 
                 _userRepository.Remove(user);
                 
-                var log = new Log(TypeOfAction.Delete, userId.ToString(), "User of Type" + user.Role + " deleted.");
+               var log = new Log(TypeOfAction.Delete, userId.ToString(), " deleted.");
                 await _logRepository.AddAsync(log);
 
                 await _unitOfWork.CommitAsync();

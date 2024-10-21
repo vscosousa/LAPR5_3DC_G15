@@ -64,7 +64,10 @@ namespace DDDSample1.Domain.Patients
 
             _repo.Remove(patient);
 
-            var log = new Log(TypeOfAction.Delete, id.AsString(), "Patient deleted.");
+            var log = new Log(
+                TypeOfAction.Delete, patient.Id.ToString(),
+                "Patient deleted.");
+
             await _logRepository.AddAsync(log);
 
             await _unitOfWork.CommitAsync();
@@ -100,7 +103,7 @@ namespace DDDSample1.Domain.Patients
             if (updatedFields.Count > 0)
             {
                 string message = "Patient updated. The following fields were updated: " + string.Join(", ", updatedFields) + ".";
-                var log = new Log(TypeOfAction.Update, id.ToString(), message);
+                var log = new Log(TypeOfAction.Update,patient.Id.ToString(), message);
                 await _logRepository.AddAsync(log);
                 await _unitOfWork.CommitAsync();
             }

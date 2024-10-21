@@ -13,6 +13,7 @@ namespace DDDSample1.Mappers.OperationTypes
                 domain.Id.AsGuid(),
                 domain.Name,
                 domain.EstimatedDuration,
+                domain.Specializations.Select(s => s.Id.AsGuid()).ToList(),
                 domain.Staffs.Select(s => new StaffDTO(s.Id.AsGuid(), s.FirstName, s.LastName, s.FullName, s.Email, s.PhoneNumber, 
                 s.LicenseNumber, s.AvailabilitySlots)).ToList()
             );
