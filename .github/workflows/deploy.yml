@@ -18,9 +18,9 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
-    - name: Setup .NET Core # Required to execute ReportGenerator
+    - name: Setup .NET Core
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: '8.x'
@@ -48,7 +48,7 @@ jobs:
         classfilters: '+*'
         filefilters: '+*'
         riskhotspotassemblyfilters: '+*'
-        riskhotspotclassfilters: '+*' # Added missing closing quote
+        riskhotspotclassfilters: '+*'
         verbosity: 'Info'
         title: ''
         tag: '${{ github.run_number }}_${{ github.run_id }}'

@@ -17,17 +17,17 @@ skinparam package {
     BackgroundColor #EBF5FB
 }
 
-actor Patient as P
+actor Admin as A
 
-activate P
-P -> System: Asks to create a Patient
+activate A
+A -> System: Asks to create a Patient
 activate System
-System --> P: Asks for Patient's data
+System --> A: Asks for Patient's data
 deactivate System
-P -> System: Sends Patient's data (First name, Last name, Fullname, Date of birth, \nGender, Medical Record Number, Email, Phone number, Emergency Contact, \nMedical Conditions, List of Appointments)
+A -> System: Sends Patient's data (First name, Last name, Fullname, Date of birth, \nGender, Email, Phone number, Emergency Contact, Medical Conditions)
 activate System
 System -> System: Validates Patient's data
-System --> P: Returns Operation In/Sucess message
+System --> A: Returns Operation In/Sucess message
 deactivate System
 
 @enduml

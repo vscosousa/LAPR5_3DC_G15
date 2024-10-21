@@ -17,4 +17,91 @@ skinparam package {
     BackgroundColor #EBF5FB
 }
 
+actor Admin as A
+participant "User Interface" as UI
+participant "PatientController" as C
+participant "PatientService" as S
+participant "PatientMapper" as M
+participant "PatientRepository" as R
+participant "Patient" as P
+participant "MedicalRecordNumberGenerator" as MRNG
+participant "Database" as DB
+
+
+activate A
+A -> UI: Asks to create a Patient
+activate UI
+UI --> A: Asks for Patient's data
+deactivate UI
+A -> UI: Sends Patient's data (First name, Last name, Fullname, Date of birth, \nGender, Email, Phone number, Emergency Contact, Medical Conditions)
+activate UI
+UI -> C: createPatient(CreatingPatientDTO dto)
+activate C
+C --> S: createPatient(CreatingPatientDTO dto)
+activate S
+S -> M: ToDomain(CreatingPatientDTO dto)
+activate M
+M -> P: new Patient(dto.FirstName, dto.LastName, dto.FullName, \nDateOnly.Parse(dto.DateOfBirth), \ndto.GenderOptions, dto.Email, dto.PhoneNumber, \ndto.EmergencyContact, dto.MedicalConditions)
+activate P
+P -> P: Patient()
+deactivate P
+M --> S: return Patient
+deactivate M
+S -> R: getPatientByEmail(patient.Email)
+activate R
+R -> DB: _objs.Where(x => email.Equals(x.Email)).FirstOrDefaultAsync();
+activate DB
+DB --> R: return var
+deactivate DB
+R --> S: return var
+deactivate R
+alt var is null
+    S -> R: getPatientByPhoneNumber(patient.PhoneNumber)
+    activate R
+    R -> DB: _objs.Where(x => phoneNumber.Equals(x.PhoneNumber)).FirstOrDefaultAsync();
+    activate DB
+    DB --> R: return var
+    deactivate DB
+    R --> S: return var
+    deactivate R
+    alt var is null
+        S -> R: getAllAsync()
+        activate R
+        R -> DB: _objs.ToListAsync();
+        activate DB
+        DB --> R: return list
+        deactivate DB
+        R --> S: return list
+        deactivate R
+        S -> MRNG: GenerateMedicalRecordNumber(list.Count)
+        activate MRNG
+        MRNG --> S: return generatedMedicalRecordNumber
+        deactivate MRNG
+        S -> P: AssignMedicalRecordNumber(generatedMedicalRecordNumber)
+        activate P
+        P -> P: MedicalRecordNumber = genereatedMedicalRecordNumber
+        deactivate P
+        S -> R: addAsync(Patient patient)
+        activate R
+        R -> DB: _objs.AddAsync(patient)
+        activate DB
+        deactivate DB
+        R --> S: return true
+        deactivate R
+        S --> C: return Patient
+        deactivate S
+    else var is not null
+        S --> C: return Patient with same Phone Number already exists
+        deactivate S
+    end
+else var is not null
+    S --> C: return Patient with same Email already exists
+    deactivate S
+end
+C --> UI: Returns Operation Status Response Code
+deactivate C
+UI --> A: Returns Operation In/Sucess message
+deactivate UI
+
+
 @enduml
