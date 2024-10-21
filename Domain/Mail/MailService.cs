@@ -49,7 +49,7 @@ public class MailService : IMailService
 
             var mailMessage = new MailMessage
             {
-                From = new MailAddress(_configuration["SmtpSettings:FromEmail"]),
+                From = new MailAddress(_configuration["SmtpSettings:SenderEmail"],_configuration["SmtpSettings:SenderName"]),
                 Subject = subject,
                 Body = message,
                 IsBodyHtml = true
