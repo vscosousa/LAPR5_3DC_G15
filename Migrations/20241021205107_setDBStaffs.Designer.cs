@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DDDNetCore.Migrations
 {
     [DbContext(typeof(DDDSample1DbContext))]
-    [Migration("20241021161526_setDBStaffs")]
+    [Migration("20241021205107_setDBStaffs")]
     partial class setDBStaffs
     {
         /// <inheritdoc />
@@ -154,11 +154,14 @@ namespace DDDNetCore.Migrations
 
                     b.Property<string>("SpecOption")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.HasIndex("SpecOption")
                         .IsUnique();
 
                     b.ToTable("Specializations");

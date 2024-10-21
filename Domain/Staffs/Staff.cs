@@ -69,5 +69,45 @@ namespace DDDSample1.Domain.Staffs
             return true;
         }
 
+        //Metodos para Updates
+        internal void ChangeFirstName(string firstName) => FirstName = firstName;
+        internal void ChangeLastName(string lastName) => LastName = lastName;
+        internal void ChangeFullName(string fullName) => FullName = fullName;
+        internal void ChangeEmail(string email)
+        {
+            if (!Regex.IsMatch(email, @"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"))
+                throw new ArgumentException("Email must be in a valid format.");
+            Email = email;
+        }
+        internal void ChangePhoneNumber(string phoneNumber)
+        {
+            if (!phoneNumber.StartsWith("+") || !phoneNumber.Substring(1).All(char.IsDigit))
+                throw new ArgumentException("Phone number must start with an identifier and contain only digits.");
+            PhoneNumber = phoneNumber;
+        }
+        internal void RemvoveAvailabilitySlots(DateTime RemSlot)
+        {
+            if (!AvailabilitySlots.Contains(RemSlot))
+            {
+                throw new ArgumentException("The specified old availability slot does not exist.");
+            }
+            AvailabilitySlots = AvailabilitySlots.Where(slot => slot != RemSlot).ToArray();
+        }
+
+        internal void AddAvailabilitySlots( DateTime newSlot)
+        {
+            var updatedSlots = AvailabilitySlots.ToList();
+            updatedSlots.Add(newSlot);
+            AvailabilitySlots = updatedSlots.ToArray();
+        }
+
+        internal void ChangeSpecializationId(SpecializationId specializationId)
+        {
+            if (specializationId == null)
+                throw new ArgumentException("SpecializationId cannot be null.");
+
+            SpecializationId = specializationId;
+        }
+
     }
 }

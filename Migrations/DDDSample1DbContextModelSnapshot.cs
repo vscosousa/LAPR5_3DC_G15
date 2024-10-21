@@ -151,11 +151,14 @@ namespace DDDNetCore.Migrations
 
                     b.Property<string>("SpecOption")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.HasIndex("SpecOption")
                         .IsUnique();
 
                     b.ToTable("Specializations");

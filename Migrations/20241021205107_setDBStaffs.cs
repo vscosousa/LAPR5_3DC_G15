@@ -23,12 +23,26 @@ namespace DDDNetCore.Migrations
                 nullable: false,
                 defaultValue: false);
 
+            migrationBuilder.AlterColumn<string>(
+                name: "SpecOption",
+                table: "Specializations",
+                type: "nvarchar(450)",
+                nullable: false,
+                oldClrType: typeof(string),
+                oldType: "nvarchar(max)");
+
             migrationBuilder.CreateIndex(
                 name: "IX_Users__staffId",
                 table: "Users",
                 column: "_staffId",
                 unique: true,
                 filter: "[_staffId] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Specializations_SpecOption",
+                table: "Specializations",
+                column: "SpecOption",
+                unique: true);
 
             migrationBuilder.AddForeignKey(
                 name: "FK_Users_Staffs__staffId",
@@ -50,6 +64,10 @@ namespace DDDNetCore.Migrations
                 name: "IX_Users__staffId",
                 table: "Users");
 
+            migrationBuilder.DropIndex(
+                name: "IX_Specializations_SpecOption",
+                table: "Specializations");
+
             migrationBuilder.DropColumn(
                 name: "_staffId",
                 table: "Users");
@@ -57,6 +75,14 @@ namespace DDDNetCore.Migrations
             migrationBuilder.DropColumn(
                 name: "IsActive",
                 table: "Staffs");
+
+            migrationBuilder.AlterColumn<string>(
+                name: "SpecOption",
+                table: "Specializations",
+                type: "nvarchar(max)",
+                nullable: false,
+                oldClrType: typeof(string),
+                oldType: "nvarchar(450)");
         }
     }
 }

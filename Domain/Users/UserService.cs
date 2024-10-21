@@ -102,7 +102,8 @@ namespace DDDSample1.Domain.Users
         }
 
         public async Task<User> CreateUserAsStaff(CreatingStaffUserDTO dto)
-        {
+        {   
+            
             var existingUserByEmail = await _userRepository.GetUserByEmailAsync(dto.Email);
             if (existingUserByEmail != null && existingUserByEmail.IsActive)
             {
@@ -114,6 +115,7 @@ namespace DDDSample1.Domain.Users
                 throw new Exception("Phone number does not match the Staff's email.");
             }
             var staff = await _staffRepository.GetByEmailAsync(dto.Email);
+            
             var role = Enum.Parse<Role>(dto.Role, true);
             var user = new User(dto.Email, dto.PhoneNumber, role, dto.Password, staff.Id.AsGuid());
 
