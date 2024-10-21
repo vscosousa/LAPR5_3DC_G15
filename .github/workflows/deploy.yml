@@ -45,8 +45,14 @@ jobs:
         git config --global user.name "github-actions[bot]"
         git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
+    - name: Create coverage directory
+      run: mkdir -p coverage
+
+    - name: Copy coverage report to coverage directory
+      run: cp ./TestResults/**/coverage.cobertura.xml coverage/
+
     - name: Add coverage report
-      run: git add ./TestResults/**/coverage.cobertura.xml
+      run: git add -f coverage/coverage.cobertura.xml
 
     - name: Commit and push if there are changes
       env:
