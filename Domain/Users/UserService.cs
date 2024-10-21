@@ -33,11 +33,20 @@ namespace DDDSample1.Domain.Users
         }
 
 
-        // Create a user
         public async Task<User> CreateUser(CreatingUserDTO dto)
         {
             try
             {
+                if (string.IsNullOrWhiteSpace(dto.Role))
+                {
+                    throw new ArgumentException("Role must not be null or empty.", nameof(dto.Role));
+                }
+
+                // Check if the role is valid
+                if (!Enum.TryParse<Role>(dto.Role, true, out var role))
+                {
+                    throw new ArgumentException($"Invalid role: {dto.Role}", nameof(dto.Role));
+                }
 
                 var existingUserByEmail = await _userRepository.GetUserByEmailAsync(dto.Email);
                 if (existingUserByEmail != null)
@@ -45,24 +54,15 @@ namespace DDDSample1.Domain.Users
                     throw new Exception("Email is already in use.");
                 }
 
-
                 var existingUserByUsername = await _userRepository.GetUserByUsernameAsync(dto.Username);
                 if (existingUserByUsername != null)
                 {
                     throw new Exception("Username is already in use.");
                 }
 
-                // Parse the role and create the user
-                var role = Enum.Parse<Role>(dto.Role, true);
                 var user = new User(dto.Email, dto.Username, role);
-
-
                 string token = CreateToken(user);
-
-
                 await _mailService.SendEmail(dto.Email, "Activate your account", GenerateLink(token, "Activate"));
-
-
                 await _userRepository.AddAsync(user);
                 await _unitOfWork.CommitAsync();
 
@@ -70,10 +70,10 @@ namespace DDDSample1.Domain.Users
             }
             catch (Exception ex)
             {
-
                 throw new Exception(ex.Message);
             }
         }
+
 
         public async Task<User> CreateUserAsPatient(CreatingPatientUserDTO dto)
         {
@@ -216,6 +216,11 @@ namespace DDDSample1.Domain.Users
             var user = await _userRepository.GetUserByEmailAsync(dto.Email) ?? throw new Exception("Email not registered");
 
 
+            if (!user.IsActive)
+            {
+                return "User is not active. Check your Email to activate the account.";
+            }
+
             if (user.IsAccountLocked())
             {
                 return $"Your account is locked until {user.LockedUntil.Value.ToLocalTime()}. Please try again later.";
@@ -242,6 +247,7 @@ namespace DDDSample1.Domain.Users
 
             //reset failed attemps after sucesseful login
             user.ResetFailedLoginAttempts();
+            user.UnlockAccount();
 
             await _userRepository.UpdateAsync(user);
             await _unitOfWork.CommitAsync();

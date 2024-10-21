@@ -1,4 +1,4 @@
-@startuml US 5.1.6 -  As a (non-authenticated) Backoffice User, I want to log in to the system using my credentials Level 1 
+@startuml level_1
 
 skinparam handwritten false
 skinparam monochrome false

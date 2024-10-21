@@ -7,7 +7,6 @@ namespace DDDSample1.Domain.Users
 {
     public class User : Entity<UserID>, IAggregateRoot
     {
-        private PatientId _patientId;
         private string _email;
         private string _username;
         private string _phoneNumber;
@@ -20,7 +19,9 @@ namespace DDDSample1.Domain.Users
         private bool _isLocked;           // Indicates if the account is currently locked
 
         [JsonIgnore]
-        private Patient _patient;
+        private Patient _patient; 
+        
+        private PatientId _patientId;
 
         private User() { }
 
@@ -85,7 +86,7 @@ namespace DDDSample1.Domain.Users
         {
             _isActive = true;
         }
-        
+
 
         // Method to handle login failures and account lockout
         internal void RegisterFailedLoginAttempt()
@@ -127,6 +128,12 @@ namespace DDDSample1.Domain.Users
         internal void ResetFailedLoginAttempts()
         {
             _failedLoginAttempts = 0;
+        }
+
+        internal void UnlockAccount()
+        {
+            _isLocked = false;
+            _lockedUntil = null;
         }
     }
 }
