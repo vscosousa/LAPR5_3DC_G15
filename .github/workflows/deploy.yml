@@ -39,6 +39,8 @@ jobs:
 
     - name: Commit coverage report
       if: success()
+      env:
+        PAT: ${{ secrets.PAT }}
       run: |
         git config --global user.name 'github-actions[bot]'
         git config --global user.email 'github-actions[bot]@users.noreply.github.com'
@@ -47,4 +49,4 @@ jobs:
         cp ./TestResults/**/coverage.cobertura.xml coverage/
         git add coverage/coverage.cobertura.xml
         git commit -m "Add code coverage report"
-        git push origin coverage-report
+        git push https://x-access-token:${{ secrets.PAT }}@github.com/${{ github.repository }} coverage-report
