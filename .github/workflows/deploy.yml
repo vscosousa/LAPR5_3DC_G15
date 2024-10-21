@@ -29,7 +29,14 @@ jobs:
       run: dotnet build --configuration Release --no-restore
 
     - name: Run tests
-      run: dotnet test --configuration Release --no-build --collect:"XPlat Code Coverage"
+      run: dotnet test --configuration Release --no-build --collect:"XPlat Code Coverage" --results-directory ./TestResults
+
+    - name: Verify coverage report exists
+      run: |
+        if [ ! -f ./TestResults/coverage.cobertura.xml ]; then
+          echo "Coverage report not found!"
+          exit 1
+        fi
 
     - name: Create coverage report directory
       run: mkdir -p coveragereport
@@ -37,5 +44,5 @@ jobs:
     - name: ReportGenerator
       uses: danielpalme/ReportGenerator-GitHub-Action@5.3.11
       with:
-        reports: '**/coverage.cobertura.xml'
+        reports: './TestResults/coverage.cobertura.xml'
         targetdir: 'coveragereport'
