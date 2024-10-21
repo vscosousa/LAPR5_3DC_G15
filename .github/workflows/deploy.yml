@@ -1,5 +1,8 @@
 name: .NET CI
 
+permissions:
+  contents: write
+
 on:
   push:
     branches:
@@ -37,16 +40,20 @@ jobs:
         name: code-coverage
         path: './TestResults/**/coverage.cobertura.xml'
 
-    - name: Commit coverage report
-      if: success()
+    - name: Set up Git user
+      run: |
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+    - name: Add coverage report
+      run: git add ./TestResults/**/coverage.cobertura.xml
+
+    - name: Commit and push if there are changes
       env:
         PAT: ${{ secrets.PAT }}
       run: |
-        git config --global user.name 'github-actions[bot]'
-        git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-        git checkout -b coverage-report
-        mkdir -p coverage
-        cp ./TestResults/**/coverage.cobertura.xml coverage/
-        git add coverage/coverage.cobertura.xml
-        git commit -m "Add code coverage report"
-        git push https://x-access-token:${{ secrets.PAT }}@github.com/${{ github.repository }} coverage-report
+        if ! git diff --cached --quiet; then
+          git commit -m "Add code coverage report"
+          git push https://x-access-token:${{ secrets.PAT }}@github.com/${{ github.repository }} HEAD:main
+        else
+          echo "No changes to commit"
