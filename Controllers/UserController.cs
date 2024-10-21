@@ -43,6 +43,14 @@ namespace DDDSample1.Controllers
                 return Ok(user);
         }
 
+        [HttpPost("RegisterUserAsStaff")]
+        [AllowAnonymous]
+        public async Task<ActionResult<User>> RegisterUserAsStaff(CreatingStaffUserDTO userDTO)
+        {
+            var user = await _userService.CreateUserAsStaff(userDTO);
+            return Ok(user);
+        }
+
         //Activate user and set password
         [HttpPost("Activate")]
         [AllowAnonymous]

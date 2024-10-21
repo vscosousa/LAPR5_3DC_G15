@@ -9,14 +9,11 @@ namespace DDDSample1.Domain.Specializations
 {
     public class Specialization : Entity<SpecializationId>, IAggregateRoot
     {
-        public SpecializationOption SpecOption;
-        public List<Staff> Staffs;
+        public string SpecOption { get; private set; }
+        public List<Staff> Staffs { get; private set; }
+        public List<OperationType> OperationTypes  { get; private set; }
 
-        public List<OperationType> OperationTypes;
-
-
-
-        public Specialization(SpecializationOption specOption)
+        public Specialization(string specOption)
         {
             Id = new SpecializationId(Guid.NewGuid());
             SpecOption = specOption;

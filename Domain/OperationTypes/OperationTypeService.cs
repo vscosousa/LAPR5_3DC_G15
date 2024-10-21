@@ -2,6 +2,7 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using DDDSample1.Domain.Shared;
 using DDDSample1.Domain.Specializations;
+using Projetos.LAPR5_3DC_G15.Mappers.Staffs;
 using System.Linq;
 using DDDSample1.Domain.Staffs;
 using System;
@@ -12,21 +13,20 @@ namespace DDDSample1.Domain.OperationTypes
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IOperationTypeRepository _repository;
-
         private readonly ISpecializationRepository _specializationRepository;
         private readonly IStaffRepository _staffRepository;
-
         private readonly IOperationTypeMapper _mapper;
+        private readonly IStaffMapper _staffMapper;
 
-        public OperationTypeService(IUnitOfWork unitOfWork, IOperationTypeRepository repository, ISpecializationRepository specializationRepository, IStaffRepository staffRepository, IOperationTypeMapper mapper)
+        public OperationTypeService(IUnitOfWork unitOfWork, IOperationTypeRepository repository, ISpecializationRepository specializationRepository, IStaffRepository staffRepository, IOperationTypeMapper mapper, IStaffMapper staffMapper)
         {
             _unitOfWork = unitOfWork;
             _repository = repository;
             _specializationRepository = specializationRepository;
             _staffRepository = staffRepository;
             _mapper = mapper;
+            _staffMapper = staffMapper;
         }
-
 
         //Create OperationType 
         // US 5.1.20
@@ -155,7 +155,7 @@ namespace DDDSample1.Domain.OperationTypes
             {
                 foreach (var staff in spec.Staffs)
                 {
-                    staffs.Add(new StaffDTO(staff.Id.AsGuid(), staff.FirstName, staff.LastName, staff.FullName, staff.Email, staff.LicenseNumber, staff.PhoneNumber, staff.AvailabilitySlots));
+                    staffs.Add(_staffMapper.ToDto(staff));
                 }
             }
 
@@ -198,7 +198,7 @@ namespace DDDSample1.Domain.OperationTypes
             {
                 foreach (var staff in spec.Staffs)
                 {
-                    staffs.Add(new StaffDTO(staff.Id.AsGuid(), staff.FirstName, staff.LastName, staff.FullName, staff.Email, staff.LicenseNumber, staff.PhoneNumber, staff.AvailabilitySlots));
+                    staffs.Add(_staffMapper.ToDto(staff));
                 }
             }
 
@@ -218,15 +218,7 @@ namespace DDDSample1.Domain.OperationTypes
             {
                 var staffs = ot.Specializations
                     .SelectMany(spec => spec.Staffs)
-                    .Select(staff => new StaffDTO(
-                        staff.Id.AsGuid(),
-                        staff.FirstName,
-                        staff.LastName,
-                        staff.FullName,
-                        staff.Email,
-                        staff.LicenseNumber,
-                        staff.PhoneNumber,
-                        staff.AvailabilitySlots))
+                    .Select(staff => _staffMapper.ToDto(staff))
                     .ToList();
 
                 return new OperationTypeDTO(

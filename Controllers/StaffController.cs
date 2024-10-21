@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using DDDSample1.Domain.Shared;
 using System.Threading.Tasks;
 using DDDSample1.Domain.Staffs;
 using Microsoft.AspNetCore.Authorization;
@@ -25,7 +26,6 @@ namespace DDDSample1.Controllers
         {
             try
             {
-                
                 var staffs = await _staffService.GetAllStaffsAsync();
                 return Ok(staffs);
             }
@@ -79,6 +79,31 @@ namespace DDDSample1.Controllers
             }
         }
 
+        [HttpDelete("{id}")]
+        [Authorize (Roles = "Admin")] 
+        public async Task<ActionResult<StaffDTO>> DeleteStaff(Guid id)
+        {
+            try
+            {
+                // Chama o serviço para deletar o paciente
+                var deletedPatient = await _staffService.DeleteStaffAsync(new StaffId(id));
 
+                // Verifica se o paciente foi encontrado e deletado
+                if (deletedPatient == null)
+                {
+                    return NotFound(new { Message = $"staff with ID {id} not found." });
+                }
+
+                return Ok(new { Message = "Staff deleted successfully.", Patient = deletedPatient });
+            }
+            catch (BusinessRuleValidationException ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred while deleting the Staff: {ex.Message}");
+            }
+        }
     }
 }

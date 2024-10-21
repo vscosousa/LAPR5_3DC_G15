@@ -16,6 +16,7 @@ namespace DDDSample1.Domain.Staffs
         public string Email { get; private set; }
         public string PhoneNumber { get; private set; }
         public DateTime[] AvailabilitySlots { get; private set; }
+        public bool IsActive { get; private set; }
 
         // Foreign key property
         public SpecializationId SpecializationId { get; private set; }
@@ -46,6 +47,7 @@ namespace DDDSample1.Domain.Staffs
             PhoneNumber = phoneNumber;
             AvailabilitySlots = [];
             SpecializationId = specializationId; 
+            IsActive = true;
         }
         // Method to set the navigation property after creation
         public void SetSpecialization(Specialization specialization)

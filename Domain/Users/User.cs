@@ -1,6 +1,7 @@
 using System;
 using System.Text.Json.Serialization;
 using DDDSample1.Domain.Patients;
+using DDDSample1.Domain.Staffs;
 using DDDSample1.Domain.Shared;
 
 namespace DDDSample1.Domain.Users
@@ -8,6 +9,7 @@ namespace DDDSample1.Domain.Users
     public class User : Entity<UserID>, IAggregateRoot
     {
         private PatientId _patientId;
+        private StaffId _staffId;
         private string _email;
         private string _username;
         private string _phoneNumber;
@@ -17,8 +19,8 @@ namespace DDDSample1.Domain.Users
 
         [JsonIgnore]
         private Patient _patient;
+        private Staff _staff;
 
-        
         private User() { }
         // Constructor for User to register by the admin
         public User(string email, string username, Role role)
@@ -26,6 +28,8 @@ namespace DDDSample1.Domain.Users
             Id = new UserID(Guid.NewGuid());
             _patientId = null;
             _patient = null;
+            _staffId = null;
+            _staff = null;
             _email = email;
             _phoneNumber = "";
             _username = username;
@@ -35,17 +39,29 @@ namespace DDDSample1.Domain.Users
 
         }
 
-        // Constructor for User to register by the patient
-        public User(string email, string phoneNumber, Role role, string password, Guid patientId)
+        // Constructor for User to register by the patient/staff
+        public User(string email, string phoneNumber, Role role, string password, Guid IdRole)
         {
             Id = new UserID(Guid.NewGuid());
-            _patientId = new PatientId(patientId);
             _email = email;
             _phoneNumber = phoneNumber;
             _username = email;
             _role = role;
             SetPassword(password);
             _isActive = false;
+            if (_role == Role.Patient)
+            {
+                _patientId = new PatientId(IdRole);
+                _staffId = null;
+                _staff = null;
+
+            }
+            else if (_role == Role.Doctor || _role == Role.Nurse || _role == Role.Technician)
+            {
+                _staffId = new StaffId(IdRole);
+                _patientId = null;
+                _patient = null;
+            }
         }
 
 
@@ -57,6 +73,8 @@ namespace DDDSample1.Domain.Users
         public bool IsActive => _isActive;
         public PatientId PatientId => _patientId;
         public Patient Patient => _patient;
+        public StaffId StaffId => _staffId;
+        public Staff Staff => _staff;
 
         internal void SetPassword(string password)
         {

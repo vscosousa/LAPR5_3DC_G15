@@ -3,8 +3,10 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using DDDSample1.Domain.Shared;
 using DDDSample1.Domain.Specializations;
+using DDDSample1.Domain.Logs;
 using DDDSample1.Infrastructure.Specializations;
 using System.Linq;
+using System.Diagnostics;
 
 namespace DDDSample1.Domain.Staffs
 {
@@ -14,12 +16,14 @@ namespace DDDSample1.Domain.Staffs
         private readonly IStaffRepository _repository;
         private readonly IStaffMapper _mapper;
         private readonly ISpecializationRepository _specializationRepository;
+        private readonly ILogRepository _logRepository;
 
-        public StaffService(IUnitOfWork unitOfWork, IStaffRepository repository, ISpecializationRepository specializationRepository, IStaffMapper mapper)
+        public StaffService(IUnitOfWork unitOfWork, IStaffRepository repository, ISpecializationRepository specializationRepository, IStaffMapper mapper, ILogRepository logRepository)
         {
             _unitOfWork = unitOfWork;
             _repository = repository;
             _specializationRepository = specializationRepository;
+            _logRepository = logRepository;
             _mapper = mapper;
         }
         
@@ -90,7 +94,7 @@ namespace DDDSample1.Domain.Staffs
 
             do
             {
-                // Gerar um novo número de licença
+                // Gera um novo número de licença
                 licenseNumber = Guid.NewGuid().ToString().Substring(0, 8).ToUpper();
 
                 // Verifica se já existe um funcionário com esse número de licença
@@ -101,6 +105,21 @@ namespace DDDSample1.Domain.Staffs
 
             return licenseNumber;
         }
+        public async Task<StaffDTO> DeleteStaffAsync(StaffId id)
+        {
+            var staff = await _repository.GetByIdAsync(id);
 
+            if (staff == null)
+                return null;
+
+            _repository.Remove(staff);
+
+            var log = new Log(TypeOfAction.Delete, id.AsString(), "Staff deleted.");
+            await _logRepository.AddAsync(log);
+
+            await _unitOfWork.CommitAsync();
+
+            return _mapper.ToDto(staff);
+        }
     }
 }

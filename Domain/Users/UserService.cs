@@ -5,6 +5,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using DDDSample1.Domain.Patients;
+using DDDSample1.Domain.Staffs;
 using DDDSample1.Domain.Shared;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -19,14 +20,15 @@ namespace DDDSample1.Domain.Users
         private readonly IUnitOfWork _unitOfWork;
         private readonly IConfiguration _configuration;
         private readonly IPatientRepository _patientRepository;
-
-        public UserService(IUserRepository userRepository, IMailService mailService, IUnitOfWork unitOfWork, IConfiguration configuration, IPatientRepository patientRepository)
+        private readonly IStaffRepository _staffRepository;
+        public UserService(IUserRepository userRepository, IMailService mailService, IUnitOfWork unitOfWork, IConfiguration configuration, IPatientRepository patientRepository, IStaffRepository staffRepository)
         {
             _userRepository = userRepository;
             _mailService = mailService;
             _unitOfWork = unitOfWork;
             _configuration = configuration;
             _patientRepository = patientRepository;
+            _staffRepository = staffRepository;
         }
 
         // Create a user
@@ -99,6 +101,31 @@ namespace DDDSample1.Domain.Users
 
         }
 
+        public async Task<User> CreateUserAsStaff(CreatingStaffUserDTO dto)
+        {
+            var existingUserByEmail = await _userRepository.GetUserByEmailAsync(dto.Email);
+            if (existingUserByEmail != null && existingUserByEmail.IsActive)
+            {
+                throw new Exception("Email is already in use.");
+            }
+
+            if (existingUserByEmail != null && existingUserByEmail.PhoneNumber != dto.PhoneNumber)
+            {
+                throw new Exception("Phone number does not match the Staff's email.");
+            }
+            var staff = await _staffRepository.GetByEmailAsync(dto.Email);
+            var role = Enum.Parse<Role>(dto.Role, true);
+            var user = new User(dto.Email, dto.PhoneNumber, role, dto.Password, staff.Id.AsGuid());
+
+            string token = CreateToken(user);
+
+            await _mailService.SendActivationEmail(dto.Email, "Activate your account", GenerateActivationLink(token, "ActivateStaffUser"));
+
+            await _userRepository.AddAsync(user);
+            await _unitOfWork.CommitAsync();
+
+            return user;
+        }
 
         // Activate a user and set the password
         public async Task<User> ActivateUser(string token, string newPassword)

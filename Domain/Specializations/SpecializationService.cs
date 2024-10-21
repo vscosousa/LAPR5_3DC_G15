@@ -1,7 +1,7 @@
+using System;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using DDDSample1.Domain.Shared;
-using System;
 using DDDSample1.Domain.Staffs;
 using System.Linq;
 
@@ -21,11 +21,8 @@ namespace DDDSample1.Domain.Specializations
         //Create Specializations
         public async Task<Specialization> CreateSpecializationAsync(CreatingSpecializationDTO dto)
         {
-            var newSpecialization = new Specialization(
-                (SpecializationOption)Enum.Parse(typeof(SpecializationOption), dto.SpecOption, true)
-            );
-
-        
+            var newSpecialization = new Specialization(dto.SpecOption);
+ 
             var staffs = dto.Staffs.Select(s =>
             {
                 var staff = new Staff(

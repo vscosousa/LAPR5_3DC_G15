@@ -13,11 +13,12 @@ namespace DDDSample1.Domain.Staffs
         public string Email { get; init; }
         public string PhoneNumber { get; init; }
         public SpecializationId SpecializationId { get; init; }
-        public DateTime[] AvailabilitySlots { get; init; }
+        public string[] AvailabilitySlots { get; init; }
+        public bool IsActive { get; init; }
 
         public StaffDTO() { }
 
-        public StaffDTO(Guid id, string firstName, string lastName, string fullName, string email, string phoneNumber, string licenseNumber, DateTime[] availabilitySlots)
+         public StaffDTO(Guid id, string firstName, string lastName, string fullName, string email, string phoneNumber, string licenseNumber, string[] availabilitySlots, SpecializationId specializationId, bool isActive )
         {
             Id = id;
             FirstName = firstName;
@@ -27,18 +28,8 @@ namespace DDDSample1.Domain.Staffs
             PhoneNumber = phoneNumber;
             LicenseNumber = licenseNumber;
             AvailabilitySlots = availabilitySlots;
-        }
-
-         public StaffDTO(Guid id, string firstName, string lastName, string fullName, string email, string phoneNumber, string licenseNumber, DateTime[] availabilitySlots, SpecializationId specializationId)
-        {
-            Id = id;
-            FirstName = firstName;
-            LastName = lastName;
-            FullName = fullName;
-            Email = email;
-            PhoneNumber = phoneNumber;
-            LicenseNumber = licenseNumber;
-            AvailabilitySlots = availabilitySlots;
+            SpecializationId = specializationId;
+            IsActive = isActive;
         }
     }
 }
