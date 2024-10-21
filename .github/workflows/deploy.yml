@@ -1,4 +1,4 @@
-name: .NET Core CI
+name: .NET CI
 
 on:
   push:
@@ -7,6 +7,7 @@ on:
   pull_request:
     branches:
       - main
+  workflow_dispatch:
 
 jobs:
   build:
@@ -16,33 +17,34 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Setup .NET Core
-      uses: actions/setup-dotnet@v4
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v2
       with:
-        dotnet-version: '8.x'
-        dotnet-quality: 'ga'
+        dotnet-version: '8.0.x'
 
     - name: Restore dependencies
       run: dotnet restore
 
     - name: Build
-      run: dotnet build --configuration Release --no-restore
+      run: dotnet build --no-restore
 
-    - name: Run tests
-      run: dotnet test --configuration Release --no-build --collect:"XPlat Code Coverage" --results-directory ./TestResults
+    - name: Run tests and generate coverage report
+      run: dotnet test --no-build --collect:"XPlat Code Coverage"
 
-    - name: Verify coverage report exists
-      run: |
-        if [ ! -f ./TestResults/coverage.cobertura.xml ]; then
-          echo "Coverage report not found!"
-          exit 1
-        fi
-
-    - name: Create coverage report directory
-      run: mkdir -p coveragereport
-
-    - name: ReportGenerator
-      uses: danielpalme/ReportGenerator-GitHub-Action@5.3.11
+    - name: Publish code coverage
+      uses: actions/upload-artifact@v2
       with:
-        reports: './TestResults/coverage.cobertura.xml'
-        targetdir: 'coveragereport'
+        name: code-coverage
+        path: '**/coverage.cobertura.xml'
+
+    - name: Commit coverage report
+      if: success()
+      run: |
+        git config --global user.name 'github-actions[bot]'
+        git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+        git checkout -b coverage-report
+        mkdir -p coverage
+        cp **/coverage.cobertura.xml coverage/
+        git add coverage/coverage.cobertura.xml
+        git commit -m "Add code coverage report"
+        git push origin coverage-report
