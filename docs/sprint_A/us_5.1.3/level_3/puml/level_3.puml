@@ -1,6 +1,6 @@
-@startuml level_3
+@startuml level_1
 
-title Level 3 Diagram
+title Level 1 Diagram
 
 hide empty members
 'skinparam Linetype ortho
@@ -16,5 +16,64 @@ skinparam class {
 skinparam package {
     BackgroundColor #EBF5FB
 }
+
+actor Patient as P
+participant "User Interface" as UI
+participant "UserController" as C
+participant "UserService" as S
+participant "EmailService" as ES
+participant "UserRepository" as R
+participant "PatientRepository" as PR
+participant "User" as U
+participant "Database" as DB
+
+activate P
+P -> UI: Asks to Register as User
+activate UI
+UI --> P: Asks for data to register as User
+deactivate UI
+P -> UI: Sends data(email, password, phone number, name)
+activate UI
+UI -> C: createPatientUser(CreatingPatientUserDTO dto)
+activate C
+C -> S: createPatientUser(CreatingPatientUserDTO dto)
+activate S
+S -> R: getUserByEmailAsync(dto.Email())
+activate R
+R --> S: Returns var
+deactivate R
+alt var is null
+    S -> PR: getUserByEmailAsync(dto.Email())
+    activate PR
+    PR --> S: Returns var
+    deactivate PR
+    alt Phone number matches the Patient's profile with the given email
+        S -> U: new User(dto.Email(), dto.PhoneNumber, Role.Patient, dto.Password(), dto.Name())
+        activate U
+        U -> U: User()
+        deactivate U
+        S -> ES: sendEmail(SendEmail(dto.Email, "Activate your account", GenerateLink(token, "ActivatePatientUser")
+        activate ES
+        ES --> ES: Sends email using SMTP configuration
+        deactivate ES
+        S -> R: addAsync(user)
+        activate R
+        R -> DB: _objs.AddAsync(user)
+        activate DB
+        deactivate DB
+        R --> S: return User
+        deactivate R
+        S --> C: return User
+    else Phone number does not match the Patient's profile with the given email
+        S -> C: return exception message
+    end
+else var is not null
+    S -> C: return exception message
+    deactivate S
+end
+C --> UI: Returns Operation Status Response Code
+deactivate C
+UI --> P: Returns Operation In/Sucess message
+deactivate UI
 
 @enduml

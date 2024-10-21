@@ -77,21 +77,20 @@ namespace DDDSample1.Domain.Users
 
         public async Task<User> CreateUserAsPatient(CreatingPatientUserDTO dto)
         {
-            // Check if email is already in use
             var existingUserByEmail = await _userRepository.GetUserByEmailAsync(dto.Email);
-            if (existingUserByEmail != null && existingUserByEmail.IsActive)
+            if (existingUserByEmail != null)
             {
                 throw new Exception("Email is already in use.");
             }
 
-            if (existingUserByEmail != null && existingUserByEmail.PhoneNumber != dto.PhoneNumber)
+            var patient = await _patientRepository.GetByEmailAsync(dto.Email) ?? throw new Exception("Patient not found.");
+
+            if (patient.PhoneNumber != dto.PhoneNumber)
             {
-                throw new Exception("Phone number does not match the Patient's email.");
+                throw new Exception("Phone number does not match the Patient's profile with the given email.");
             }
 
-            var patient = await _patientRepository.GetByEmailAsync(dto.Email);
-
-            var role = Enum.Parse<Role>(dto.Role, true);
+            var role = Role.Patient;
             var user = new User(dto.Email, dto.PhoneNumber, role, dto.Password, patient.Id.AsGuid());
             string token = CreateToken(user);
 

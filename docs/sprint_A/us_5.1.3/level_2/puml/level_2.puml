@@ -1,6 +1,6 @@
-@startuml level_2
+@startuml level_1
 
-title Level 2 Diagram
+title Level 1 Diagram
 
 hide empty members
 'skinparam Linetype ortho
@@ -16,5 +16,24 @@ skinparam class {
 skinparam package {
     BackgroundColor #EBF5FB
 }
+
+actor Patient as P
+participant "User Interface" as UI
+participant "UserController" as C
+
+activate P
+P -> UI: Asks to Register as User
+activate UI
+UI --> P: Asks for data to register as User
+deactivate UI
+P -> UI: Sends data(email, password, phone number, name)
+activate UI
+UI -> C: createPatientUser(CreatingPatientUserDTO dto)
+activate C
+C --> C: Validates data and tries to create the User
+C --> UI: Returns Operation Status Response Code
+deactivate C
+UI --> P: Returns Operation In/Sucess message
+deactivate UI
 
 @enduml

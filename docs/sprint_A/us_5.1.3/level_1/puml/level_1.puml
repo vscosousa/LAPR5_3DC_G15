@@ -17,4 +17,17 @@ skinparam package {
     BackgroundColor #EBF5FB
 }
 
+actor Patient as P
+
+activate P
+P -> System: Asks to Register as User
+activate System
+System --> P: Asks for data to register as User
+deactivate System
+P -> System: Sends data(email, password, phone number, name)
+activate System
+System -> System: Validates data and tries to create the User
+System --> P: Returns Operation In/Sucess message
+deactivate System
+
 @enduml

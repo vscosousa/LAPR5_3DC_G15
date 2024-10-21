@@ -103,7 +103,7 @@ namespace DDDSample1.Controllers
             }
         }
 
-        [HttpDelete("Delete"), Authorize(Roles = "Patient")]
+        [HttpDelete("DeleteUser"), Authorize(Roles = "Patient")]
         public async Task<ActionResult> DeleteUser(string token)
         {
             try

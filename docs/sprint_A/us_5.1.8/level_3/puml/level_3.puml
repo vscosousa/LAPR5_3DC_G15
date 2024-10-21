@@ -86,7 +86,7 @@ alt var is null
         R -> DB: _objs.AddAsync(patient)
         activate DB
         deactivate DB
-        R --> S: return true
+        R --> S: return Patient
         deactivate R
         S --> C: return Patient
         deactivate S
