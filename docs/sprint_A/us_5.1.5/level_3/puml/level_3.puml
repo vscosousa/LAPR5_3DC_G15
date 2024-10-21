@@ -17,4 +17,76 @@ skinparam package {
     BackgroundColor #EBF5FB
 }
 
+actor Patient as P
+participant "User Interface" as UI
+participant "UserController" as C
+participant "UserService" as S
+participant "EmailService" as ES
+participant "UserRepository" as R
+participant "LogRepository" as LR
+participant "Log" as L
+participant "Database" as DB
+
+activate P
+P -> UI: Asks to Delete User Profile
+activate UI
+UI -> C: RequestDelete(token)
+activate C
+C -> S: RequestDelete(token)
+activate S
+note right of S: This method verifies the provided token and returns the respective user id
+S -> S: VerifyToken(token)
+S -> R: GetByIdAsync(userId)
+activate R
+R -> DB: _objs.Where(x => id.Equals(x.Id)).FirstOrDefaultAsync();
+activate DB
+DB --> R: Returns User
+deactivate DB
+R --> S: Returns User
+deactivate R
+S -> ES: SendEmail(user.Email, "Delete User Request", GenerateLink(token, "DeleteUser")
+activate ES
+ES --> ES: sendEmail()
+deactivate ES
+S --> C: return
+deactivate S
+C --> UI: Returns Operation Status Response Code
+deactivate C
+UI -> C: DeleteUser(token)
+activate C
+C -> S: DeleteUser(token)
+activate S
+S -> S: VerifyToken(token)
+S -> R: GetByIdAsync(userId)
+activate R
+R -> DB: _objs.Where(x => id.Equals(x.Id)).FirstOrDefaultAsync();
+activate DB
+DB --> R: Returns User
+deactivate DB
+R --> S: Returns User
+deactivate R
+S -> R: Remove(user)
+activate R
+R -> DB: _objs.Remove(user)
+activate DB
+deactivate DB
+deactivate R
+S -> L: new Log(TypeOfAction.Delete, userId, "User of Type Patient was deleted."
+activate L
+L -> L: Log()
+deactivate L
+S -> LR: AddAsync(log)
+activate LR
+LR -> DB: _objs.AddAsync(log)
+activate DB
+DB --> LR: Returns Log
+deactivate DB
+LR --> S: Returns Log
+deactivate LR
+S --> C: return
+C --> UI: Returns Operation Status Response Code
+deactivate C
+UI --> P: Returns Operation In/Sucess message
+deactivate UI
+
 @enduml

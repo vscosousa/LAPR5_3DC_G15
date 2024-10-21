@@ -17,4 +17,12 @@ skinparam package {
     BackgroundColor #EBF5FB
 }
 
+actor Patient as P
+
+activate P
+P -> System: Asks to Delete User Profile
+activate System
+System --> P: Returns Operation In/Sucess message
+deactivate System
+
 @enduml

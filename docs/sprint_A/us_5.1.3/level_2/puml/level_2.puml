@@ -1,6 +1,6 @@
-@startuml level_1
+@startuml level_2
 
-title Level 1 Diagram
+title Level 2 Diagram
 
 hide empty members
 'skinparam Linetype ortho

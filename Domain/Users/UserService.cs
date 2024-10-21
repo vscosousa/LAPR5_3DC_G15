@@ -303,7 +303,7 @@ namespace DDDSample1.Domain.Users
 
                 _userRepository.Remove(user);
 
-                var log = new Log(TypeOfAction.Delete, userId.ToString(), " deleted.");
+                var log = new Log(TypeOfAction.Delete, userId.ToString(), "User of Type: " + user.Role.ToString() + "was deleted.");
                 await _logRepository.AddAsync(log);
 
                 await _unitOfWork.CommitAsync();

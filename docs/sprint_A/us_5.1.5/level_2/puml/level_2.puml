@@ -17,4 +17,24 @@ skinparam package {
     BackgroundColor #EBF5FB
 }
 
+actor Patient as P
+participant "User Interface" as UI
+participant "UserController" as C
+
+activate P
+P -> UI: Asks to Delete User Profile
+activate UI
+UI -> C: RequestDelete(token)
+activate C
+C -> C: Validates token and tries to process the request
+C --> UI: Returns Operation Status Response Code
+deactivate C
+UI -> C: DeleteUser(token)
+activate C
+C -> C: Validates token and tries to delete the user
+C --> UI: Returns Operation Status Response Code
+deactivate C
+UI --> P: Returns Operation In/Sucess message
+deactivate UI
+
 @enduml

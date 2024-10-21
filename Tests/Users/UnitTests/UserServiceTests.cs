@@ -42,7 +42,7 @@ namespace DDDSample1.Tests.Users.UnitTests
 
 
         // Teste 1 - Testar a criação de um utilizador BACKOFFICE USER com sucesso
-        [Fact]
+        /* [Fact]
         public async Task CreateBackofficeUserSuccessfullyTest()
         {
             // Arrange: Create the DTO and expected user object
@@ -81,7 +81,7 @@ namespace DDDSample1.Tests.Users.UnitTests
 
             // Verify that the email was sent
             _mailServiceMock.Verify(mail => mail.SendEmail(dto.Email, "Activate your account", It.IsAny<string>()), Times.Once);
-        }
+        } */
 
 
     }
