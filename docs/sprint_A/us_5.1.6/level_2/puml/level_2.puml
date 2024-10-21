@@ -1,4 +1,4 @@
-@startuml US5.1.6 - As a (non-authenticated) Backoffice User, I want to log in to the system using my credentials Level 2
+@startuml level_2
 'https://plantuml.com/sequence-diagram
 skinparam handwritten false
 skinparam monochrome false
@@ -10,11 +10,11 @@ actor Backoffice_User as BOU
 activate BOU
 BOU -> UI: Log in the system (email, password)
 activate UI
-UI -> MDR: login(email, password)
-activate MDR
-MDR --> MDR: Validate user's data , check if user is in the database and check permissions
-MDR --> UI: 200 (Success) OR 400 (Bad Request)
-deactivate MDR
+UI -> Controller: login(email, password)
+activate Controller
+Controller --> Controller: Validate user's data , check if user is in the database and check permissions
+Controller --> UI: 200 (Success) OR 400 (Bad Request)
+deactivate Controller
 UI -> BOU: 200 (Success) OR 400 (Bad Request)
 deactivate UI
 

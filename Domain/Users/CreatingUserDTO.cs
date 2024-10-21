@@ -6,15 +6,12 @@ namespace DDDSample1.Domain.Users
         public string Username { get; set; }
 
         public string Role { get; set; }
-    
 
-
-
-        public CreatingUserDTO( string email, string username, string password, string role)
+        public CreatingUserDTO( string email, string username, string role)
         {
-            this.Email = email;
-            this.Username = username;
-            this.Role = role;
+            Email = email;
+            Username = username;
+            Role = role;
         }
     }
 }

@@ -1,4 +1,4 @@
-@startuml US5.1.1 Level 2
+@startuml level_2
 'https://plantuml.com/sequence-diagram
 skinparam handwritten false
 skinparam monochrome false
@@ -8,13 +8,13 @@ skinparam shadowing true
 
 actor Admin as AD
 activate AD
-AD -> UI: Create a user (username, email, role)
+AD -> UI: ask to create a user (username, email, role)
 activate UI
-UI -> MDR: createUser(username, email, role)
-activate MDR
-MDR --> MDR: Validate user's data
-MDR --> UI: 200 (Success) OR 400 (Bad Request)
-deactivate MDR
+UI -> Controller: createUser(CreatingUserDTO)
+activate Controller
+Controller --> Controller: Validate user's data
+Controller --> UI: 200 (Success) OR 400 (Bad Request)
+deactivate Controller
 UI -> AD: 200 (Success) OR 400 (Bad Request)
 deactivate UI
 

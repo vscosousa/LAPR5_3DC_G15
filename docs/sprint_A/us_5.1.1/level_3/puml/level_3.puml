@@ -1,4 +1,4 @@
-@startuml US5.1.1  Level 3
+@startuml level_3
 'https://plantuml.com/sequence-diagram
 skinparam handwritten false
 skinparam monochrome false
@@ -7,32 +7,77 @@ skinparam defaultFontName FG Virgil
 skinparam shadowing true
 
 actor Admin as AD
+participant "User Interface" as UI
+participant "UserController" as C
+participant "UserService" as S
+participant "MailService" as MS
+participant "UserMapper" as M
+participant "UserRepository" as R
+participant "User" as U
+participant "Database" as DB
 
 activate AD
-AD-> Routes: post(\data)
-activate Routes
-Routes -> MDR: createUser(data)
-activate MDR
-MDR -> Controller: createUser(data)
-activate Controller
-Controller -> Service: instance().createUser(data)
-activate Service
-Service -> CreatingUserDTO: createUser(data)
-activate CreatingUserDTO
-DTO -> Repository: saveBuilding(building)
-activate Repository
-Repository -> Repository: save()
-Repository --> DTO: 200
-deactivate Repository
-DTO --> Service: 200
-deactivate DTO
-Service --> Controller: 200
-deactivate Service
-Controller --> MDR: 200
-deactivate Controller
-MDR --> Routes: 200
-deactivate MDR
-Routes --> USER: building created
-deactivate Routes
+AD -> UI: Asks to create a User
+activate UI
+UI --> AD: Asks for User's data
+deactivate UI
+AD -> UI: Sends User's data (Email, Username, Role)
+activate UI
+UI -> C: createUser(CreatingUserDTO dto)
+activate C
+C --> S: createUser(CreatingUserDTO dto)
+activate S
+S -> S: Validate Role
+alt Role is null or empty
+    S --> C: throw ArgumentException("Role must not be null or empty.")
+    deactivate S
+    deactivate C
+    return
+else Role is invalid
+    S --> C: throw ArgumentException($"Invalid role: {dto.Role}")
+    deactivate S
+    deactivate C
+    return
+end
 
+S -> R: GetUserByEmailAsync(dto.Email)
+activate R
+R --> S: return null (if no user found)
+deactivate R
+
+S -> R: GetUserByUsernameAsync(dto.Username)
+activate R
+R --> S: return null (if no user found)
+deactivate R
+
+S -> M: ToDomain(CreatingUserDTO dto)
+activate M
+M -> U: new User(dto.Email, dto.Username, dto.Role)
+activate U
+U -> U: User()
+deactivate U
+M --> S: return User
+deactivate M
+
+S -> MS: SendEmail(dto.Email, "Activate your account", GenerateLink(token, "Activate"))
+activate MS
+MS --> S: return
+deactivate MS
+
+S -> R: AddAsync(user)
+activate R
+R --> S: return
+deactivate R
+
+S -> DB: CommitAsync()
+activate DB
+DB --> S: return
+deactivate DB
+
+S --> C: return User
+deactivate S
+C --> UI: return User
+deactivate C
+UI --> AD: User created successfully
+deactivate UI
 @enduml

@@ -13,18 +13,18 @@ AD -> UI: send request to list or search operation types
 activate UI
 
 alt List all operation types
-    UI -> MDR: getAllOperationTypes()
-    activate MDR
-    MDR --> UI: operationTypeList OR 400 (Bad Request)
-    deactivate MDR
+    UI -> Controller: getAllOperationTypes()
+    activate Controller
+    Controller --> UI: operationTypeList OR 400 (Bad Request)
+    deactivate Controller
     UI -> AD: operationTypeList OR 400 (Bad Request)
 
 else Search for operation type
     AD -> UI: send operationTypeID or operationTypeName
-    UI -> MDR: getOperationType(operationTypeID or operationTypeName)
-    activate MDR
-    MDR --> UI: operationTypeData OR 404 (Not Found)
-    deactivate MDR
+    UI -> Controller: getOperationType(operationTypeID or operationTypeName)
+    activate Controller
+    Controller --> UI: operationTypeData OR 404 (Not Found)
+    deactivate Controller
     UI -> AD: operationTypeData OR 404 (Not Found)
 end
 

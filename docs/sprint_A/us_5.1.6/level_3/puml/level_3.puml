@@ -1,20 +1,86 @@
 @startuml level_3
 
-title Level 3 Diagram
+'https://plantuml.com/sequence-diagram
+skinparam handwritten false
+skinparam monochrome false
+skinparam packageStyle rect
+skinparam defaultFontName FG Virgil
+skinparam shadowing true
 
-hide empty members
-'skinparam Linetype ortho
+actor User as U
+participant "User Interface" as UI
+participant "UserController" as C
+participant "UserService" as S
+participant "MailService" as MS
+participant "User" as Us
+participant "UserRepository" as R
+participant "Database" as DB
 
-skinparam class {
-    BackgroundColor<<valueObject>> #D6EAF8
-    BackgroundColor<<root>> #FDEBD0
-    BackgroundColor<<service>> #D1F2EB
-    BackgroundColor #FEF9E7
-    ArrowColor Black
-}
+activate U
+U -> UI: Requests to login (Email, Password)
+activate UI
+UI -> C: Login(LoginUserDTO dto)
+activate C
+C -> S: Login(LoginUserDTO dto)
+activate S
 
-skinparam package {
-    BackgroundColor #EBF5FB
-}
+S -> R: GetUserByEmailAsync(dto.Email)
+activate R
+R --> S: return User (if found) or null (if not registered)
+deactivate R
+
+alt User not registered
+    S --> C: throw Exception("Email not registered")
+    deactivate S
+    deactivate C
+    return
+end
+
+S -> Us: Check if User is active
+alt User not active
+    S --> C: return "User is not active. Check your Email to activate the account."
+    deactivate S
+    deactivate C
+    return
+end
+
+S -> Us: Check if account is locked
+alt Account locked
+    S --> C: return "Your account is locked until {user.LockedUntil}. Please try again later."
+    deactivate S
+    deactivate C
+    return
+end
+
+S -> Us: Verify Password
+alt Wrong password
+    Us -> Us: RegisterFailedLoginAttempt()
+    S -> R: UpdateAsync(user)
+    R -> DB: Update user in the database
+    activate R
+    R --> S: return
+    deactivate R
+
+    S -> Us: Check if account should be locked
+    alt Account gets locked
+        S --> C: return "Your account has been locked due to multiple failed login attempts. An admin has been notified."
+        activate R
+        S -> MS: NotifyAdmin(user)
+        R --> S: return
+        deactivate R
+    end
+    
+else Correct password
+    activate S
+    S -> S: CreateToken(user)
+    activate C
+    S --> C: return "User logged in successfully\n\nToken: {token}"
+end
+
+deactivate S
+C --> UI: return output message
+deactivate C
+UI --> U: Display login result
+deactivate UI
 
 @enduml
