@@ -17,4 +17,25 @@ skinparam package {
     BackgroundColor #EBF5FB
 }
 
+actor Admin as A
+participant "User Interface" as UI
+participant "PatientController" as C
+
+
+activate A
+A -> UI: Asks to delete a Patient
+activate UI
+UI --> A: Asks for Patient's ID
+deactivate UI
+A -> UI: Sends Patient's ID
+activate UI
+UI -> C: deletePatient(PatientID id)
+activate C
+C --> C: Validates Patient's data and tries to delete the Patient
+C --> UI: Returns Operation Status Response Code
+deactivate C
+UI --> A: Returns Operation In/Sucess message
+deactivate UI
+
+
 @enduml

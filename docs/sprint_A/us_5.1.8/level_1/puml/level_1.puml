@@ -26,7 +26,7 @@ System --> A: Asks for Patient's data
 deactivate System
 A -> System: Sends Patient's data (First name, Last name, Fullname, Date of birth, \nGender, Email, Phone number, Emergency Contact, Medical Conditions)
 activate System
-System -> System: Validates Patient's data
+System -> System: Validates Patient's data and tries to create the Patient
 System --> A: Returns Operation In/Sucess message
 deactivate System
 

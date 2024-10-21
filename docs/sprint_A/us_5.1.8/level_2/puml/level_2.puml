@@ -31,7 +31,7 @@ A -> UI: Sends Patient's data (First name, Last name, Fullname, Date of birth, \
 activate UI
 UI -> C: createPatient(CreatingPatientDTO dto)
 activate C
-C --> C: Validates Patient's data
+C --> C: Validates Patient's data and tries to create the Patient
 C --> UI: Returns Operation Status Response Code
 deactivate C
 UI --> A: Returns Operation In/Sucess message

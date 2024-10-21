@@ -17,4 +17,66 @@ skinparam package {
     BackgroundColor #EBF5FB
 }
 
+actor Admin as A
+participant "User Interface" as UI
+participant "PatientController" as C
+participant "PatientService" as S
+participant "PatientRepository" as R
+participant "LogRepository" as LR
+participant "PatientMapper" as M
+participant "Log" as L
+participant "Database" as DB
+
+
+activate A
+A -> UI: Asks to delete a Patient
+activate UI
+UI --> A: Asks for Patient's ID
+deactivate UI
+A -> UI: Sends Patient's ID
+activate UI
+UI -> C: deletePatient(PatientID id)
+activate C
+C --> S: deletePatient(PatientID id)
+activate S
+S -> R: getByIdAsync(id)
+activate R
+R -> DB: _objs.Where(x => id.Equals(x.Id)).FirstOrDefaultAsync();
+activate DB
+DB --> R: return var
+deactivate DB
+R --> S: return var
+deactivate R
+alt var is null
+    S --> C: return null
+else var is not null
+    S -> R: Remove(patient)
+    activate R
+    R -> DB: _objs.Remove(patient)
+    activate DB
+    deactivate DB
+    deactivate R
+    S --> L: new Log(TypeOfAction.Delete, patientId, "Patient Deleted")
+    activate L
+    L --> L: Log()
+    deactivate L
+    S --> LR: AddAsync(log)
+    activate LR
+    LR -> DB: _objs.AddAsync(log)
+    activate DB
+    deactivate DB
+    deactivate LR
+    S --> M: ToDto(patient)
+    activate M
+    M --> S: return dto
+    deactivate M
+    S --> C: return dto
+    deactivate S
+end
+C --> UI: Returns Operation Status Response Code
+deactivate C
+UI --> A: Returns Operation In/Sucess message
+deactivate UI
+
+
 @enduml
