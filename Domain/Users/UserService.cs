@@ -20,7 +20,7 @@ namespace DDDSample1.Domain.Users
         private readonly IUnitOfWork _unitOfWork;
         private readonly IConfiguration _configuration;
         private readonly IPatientRepository _patientRepository;
-        private readonly ILogRepository _logRepository; 
+        private readonly ILogRepository _logRepository;
 
         public UserService(IUserRepository userRepository, IMailService mailService, IUnitOfWork unitOfWork, IConfiguration configuration, IPatientRepository patientRepository, ILogRepository logRepository)
         {
@@ -32,20 +32,20 @@ namespace DDDSample1.Domain.Users
             _logRepository = logRepository;
         }
 
-        
+
         // Create a user
         public async Task<User> CreateUser(CreatingUserDTO dto)
         {
             try
             {
-                
+
                 var existingUserByEmail = await _userRepository.GetUserByEmailAsync(dto.Email);
                 if (existingUserByEmail != null)
                 {
                     throw new Exception("Email is already in use.");
                 }
 
-                
+
                 var existingUserByUsername = await _userRepository.GetUserByUsernameAsync(dto.Username);
                 if (existingUserByUsername != null)
                 {
@@ -214,21 +214,69 @@ namespace DDDSample1.Domain.Users
         {
 
             var user = await _userRepository.GetUserByEmailAsync(dto.Email) ?? throw new Exception("Email not registered");
-            if (!BCrypt.Net.BCrypt.Verify(dto.Password, user.PasswordHash))
+
+
+            if (user.IsAccountLocked())
             {
-                throw new Exception("Wrong password");
+                return $"Your account is locked until {user.LockedUntil.Value.ToLocalTime()}. Please try again later.";
             }
 
-            string output = "User logged in successfully";
+            if (!BCrypt.Net.BCrypt.Verify(dto.Password, user.PasswordHash))
+            {
+
+                user.RegisterFailedLoginAttempt();
+
+
+                await _userRepository.UpdateAsync(user);
+                await _unitOfWork.CommitAsync();
+
+
+                if (user.IsAccountLocked())
+                {
+                    await NotifyAdmin(user);
+                    return "Your account has been locked due to multiple failed login attempts. Please try again in 30 minutes. An admin has been notified.";
+                }
+
+                return $"Wrong password. You have {5 - user.FailedLoginAttempts} attempts left before your account is locked.";
+            }
+
+            //reset failed attemps after sucesseful login
+            user.ResetFailedLoginAttempts();
+
+            await _userRepository.UpdateAsync(user);
+            await _unitOfWork.CommitAsync();
+
+
+
             string token = CreateToken(user);
+
+
+            string output = "User logged in successfully";
             output += $"\n\nToken: {token}";
 
             return output;
         }
 
+        private async Task NotifyAdmin(User user)
+        {
+            try
+            {
+                var adminEmail = _configuration["AdminSettings:AdminEmail"];
+                var subject = $"Account Locked: {user.Email}";
+                var message = $"The user with email: {user.Email} has been locked after 5 failed login attempts.";
+                await _mailService.SendEmailToAdminAsync(adminEmail, subject, message);
+            }
+            catch (Exception ex)
+            {
+                // Handle exceptions (e.g., log error)
+                throw new Exception("Failed to notify admin: " + ex.Message);
+            }
+        }
+
         public async Task RequestDelete(string token)
         {
-            try{
+            try
+            {
                 var userId = VerifyToken(token) ?? throw new Exception("Invalid or expired token.");
                 var user = await _userRepository.GetByIdAsync(userId);
 
@@ -243,13 +291,14 @@ namespace DDDSample1.Domain.Users
 
         public async Task DeleteUser(string token)
         {
-            try{
+            try
+            {
                 var userId = VerifyToken(token) ?? throw new Exception("Invalid or expired token.");
                 var user = await _userRepository.GetByIdAsync(userId);
 
                 _userRepository.Remove(user);
-                
-               var log = new Log(TypeOfAction.Delete, userId.ToString(), " deleted.");
+
+                var log = new Log(TypeOfAction.Delete, userId.ToString(), " deleted.");
                 await _logRepository.AddAsync(log);
 
                 await _unitOfWork.CommitAsync();
