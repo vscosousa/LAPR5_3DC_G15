@@ -48,7 +48,7 @@ jobs:
         classfilters: '+*'
         filefilters: '+*'
         riskhotspotassemblyfilters: '+*'
-        riskhotspotclassfilters: '+*
+        riskhotspotclassfilters: '+*' # Added missing closing quote
         verbosity: 'Info'
         title: ''
         tag: '${{ github.run_number }}_${{ github.run_id }}'
