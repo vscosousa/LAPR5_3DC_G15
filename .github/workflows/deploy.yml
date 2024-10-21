@@ -29,13 +29,13 @@ jobs:
       run: dotnet build --no-restore
 
     - name: Run tests and generate coverage report
-      run: dotnet test --no-build --collect:"XPlat Code Coverage"
+      run: dotnet test --no-build --collect:"XPlat Code Coverage" --results-directory ./TestResults
 
     - name: Publish code coverage
       uses: actions/upload-artifact@v3
       with:
         name: code-coverage
-        path: '**/coverage.cobertura.xml'
+        path: './TestResults/**/coverage.cobertura.xml'
 
     - name: Commit coverage report
       if: success()
@@ -44,7 +44,7 @@ jobs:
         git config --global user.email 'github-actions[bot]@users.noreply.github.com'
         git checkout -b coverage-report
         mkdir -p coverage
-        cp **/coverage.cobertura.xml coverage/
+        cp ./TestResults/**/coverage.cobertura.xml coverage/
         git add coverage/coverage.cobertura.xml
         git commit -m "Add code coverage report"
         git push origin coverage-report
