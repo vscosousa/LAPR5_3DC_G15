@@ -9,16 +9,24 @@ namespace DDDSample1.Infrastructure.Users
     {
         public void Configure(EntityTypeBuilder<User> builder)
         {
+            
             builder.HasKey(b => b.Id);
+
             builder.HasIndex(b => b.Id).IsUnique();
             builder.HasIndex(b => b.Email).IsUnique();
             builder.HasIndex(b => b.Username).IsUnique();
+
             builder.Property(b => b.Id).HasConversion(new EntityIdValueConverter<UserID>());
             builder.Property(b => b.Email).IsRequired();
             builder.Property(b => b.Username).IsRequired();
             builder.Property(b => b.PasswordHash).IsRequired();
             builder.Property(b => b.Role).IsRequired();
             builder.Property(b => b.IsActive).IsRequired();
+
+            builder.Property(b => b.FailedLoginAttempts).IsRequired();  
+            builder.Property(b => b.IsLocked).IsRequired();
+            builder.Property(b => b.LockedUntil).IsRequired(false);  
+
             builder
                 .HasOne(b => b.Patient)
                 .WithOne()
