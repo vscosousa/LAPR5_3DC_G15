@@ -18,13 +18,17 @@ To build the Surgical Appointment and Resource Management system, follow these s
 2. Open a terminal or command prompt.
 3. Navigate to the root directory of the project.
 4. Run the following command to restore the project dependencies:
+
     ```sh
     dotnet restore
     ```
+
 5. Build the project using:
+
     ```sh
     dotnet build
     ```
+
 6. If the build is successful, the output binaries will be available in the `bin` directory.
 
 ## 4. How to Run
@@ -32,9 +36,11 @@ To build the Surgical Appointment and Resource Management system, follow these s
 To run the Surgical Appointment and Resource Management system:
 
 1. Run the following command to start the application with the HTTPS profile:
+
     ```sh
     dotnet run --launch-profile https
     ```
+
 2. The application will start, and you will see output indicating that the server is running. By default, it will be accessible at `https://localhost:5001`.
 3. A web browser will automatically open and navigate to the appropriate URL to interact with the application.
 
@@ -45,9 +51,11 @@ To run the Surgical Appointment and Resource Management system:
 To execute tests for the Surgical Appointment and Resource Management system:
 
 1. Run the following command to execute the tests:
+
     ```sh
     dotnet test
     ```
+    
 2. The test results will be displayed in the terminal or command prompt. You can also configure the test runner to generate test reports in various formats.
 
 ## 6. How to Execute Postman Tests

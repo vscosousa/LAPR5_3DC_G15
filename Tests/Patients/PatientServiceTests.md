@@ -1,6 +1,6 @@
-# PatientServiceTests
+# Patient Tests
 
-This document provides an overview of the unit tests for the `PatientService` class. Each test is described with its purpose, expected result, and type of test.
+This document provides an overview of the tests related to the Patient Requirements. The tests are divided into three types: **Unit Tests**, **Integration Tests**, and **End-to-End Tests**.
 
 ## Summary
 
@@ -185,5 +185,6 @@ The following is a summary of the number of tests for each service method:
 | **Type of Test** | Unit Test |
 
 ---
+<br>
 
-This README provides an overview of the unit tests for the `PatientService` class, explaining the purpose, expected result, and type of each test.
+[Back to top](#patient-tests)
