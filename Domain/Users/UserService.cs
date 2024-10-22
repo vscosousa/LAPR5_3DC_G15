@@ -129,6 +129,21 @@ namespace DDDSample1.Domain.Users
             return user;
         }
 
+        public async Task<string> ResetPasswordEmail(string email)
+        {     
+            var getUserByEmail = await _userRepository.GetUserByEmailAsync(email);
+
+            if (getUserByEmail == null )
+            {
+                throw new Exception("Email not found!");
+            }
+
+            string token = CreateToken(getUserByEmail);
+            await _mailService.SendActivationEmail(email, "Reset your password", GenerateActivationLink(token, "ResetPassword"));
+            string output = $"User logged in successfully \n\nToken: {token}";
+            return output;
+        }
+
         // Activate a user and set the password
         public async Task<User> ActivateUser(string token, string newPassword)
         {
@@ -147,6 +162,7 @@ namespace DDDSample1.Domain.Users
             }
 
             user.SetPassword(newPassword);
+            user.Activate();
 
             await _userRepository.UpdateAsync(user);
             await _unitOfWork.CommitAsync();
@@ -253,7 +269,7 @@ namespace DDDSample1.Domain.Users
 
         private static string GenerateActivationLink(string token, string typeOfActivation)
         {
-            return $"https://localhost:5001/{typeOfActivation}?token={token}";
+            return $"https://localhost:5001/api/user/{typeOfActivation}?token={token}";
         }
 
 

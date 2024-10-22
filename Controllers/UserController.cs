@@ -46,10 +46,61 @@ namespace DDDSample1.Controllers
         [HttpPost("RegisterUserAsStaff")]
         [AllowAnonymous]
         public async Task<ActionResult<User>> RegisterUserAsStaff(CreatingStaffUserDTO userDTO)
-        {
-            var user = await _userService.CreateUserAsStaff(userDTO);
-            return Ok(user);
+        {   
+            try
+            {
+                var user = await _userService.CreateUserAsStaff(userDTO);
+                return Ok(user);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred while register Satff in: {ex.Message}");
+            }
         }
+
+        //request email to recover password
+        [HttpPost("ResetPasswordByEmail")]
+        [AllowAnonymous]
+        public async Task<ActionResult<string>> ResetPasswordByEmail([FromBody]ResetPasswordDTO resetPasswordDto)
+        {   
+            try
+            {
+                var user = await _userService.ResetPasswordEmail(resetPasswordDto.Email);
+                return Ok(user);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred while sending email to reset Password in: {ex.Message}");
+            }
+        }
+
+        //"https://localhost:5001/api/user/ResetPassword?token={token}" reset password
+        [HttpPost("ResetPassword")]
+        [AllowAnonymous]
+        public async Task<ActionResult<User>> ResetPassword([FromBody] ResetPasswordDTO resetPasswordDto, [FromQuery] string token)
+        {
+            try
+            {   
+                if (string.IsNullOrEmpty(resetPasswordDto.NewPassword) || string.IsNullOrEmpty(resetPasswordDto.NewPasswordConfirm))
+                {
+                    throw new Exception("Both password fields must be filled!");
+                }
+
+                // Check if passwords match
+                if (!string.Equals(resetPasswordDto.NewPassword, resetPasswordDto.NewPasswordConfirm, StringComparison.Ordinal))
+                {
+                    throw new Exception("Passwords do not match!");
+                }
+
+                var user = await _userService.ActivateUser(token, resetPasswordDto.NewPassword);
+                return Ok(user);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred while activating the user: {ex.Message}");
+            }
+        }
+
 
         //Activate user and set password
         [HttpPost("Activate")]
