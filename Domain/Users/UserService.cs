@@ -125,7 +125,7 @@ namespace DDDSample1.Domain.Users
             return user;
         }
 
-        public virtual string CreateToken(User user)
+        public string CreateToken(User user)
         {
             List<Claim> claims = new List<Claim>
             {
@@ -194,7 +194,7 @@ namespace DDDSample1.Domain.Users
             }
         }
 
-        public virtual string GenerateLink(string token, string typeOfLink)
+        private static string GenerateLink(string token, string typeOfLink)
         {
             return $"https://localhost:5001/{typeOfLink}?token={token}";
         }
