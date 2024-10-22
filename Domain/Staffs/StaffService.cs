@@ -3,8 +3,10 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using DDDSample1.Domain.Shared;
 using DDDSample1.Domain.Specializations;
+using DDDSample1.Domain.Logs;
 using DDDSample1.Infrastructure.Specializations;
 using System.Linq;
+using System.Diagnostics;
 
 namespace DDDSample1.Domain.Staffs
 {
@@ -14,12 +16,14 @@ namespace DDDSample1.Domain.Staffs
         private readonly IStaffRepository _repository;
         private readonly IStaffMapper _mapper;
         private readonly ISpecializationRepository _specializationRepository;
+        private readonly ILogRepository _logRepository;
 
-        public StaffService(IUnitOfWork unitOfWork, IStaffRepository repository, ISpecializationRepository specializationRepository, IStaffMapper mapper)
+        public StaffService(IUnitOfWork unitOfWork, IStaffRepository repository, ISpecializationRepository specializationRepository, IStaffMapper mapper, ILogRepository logRepository)
         {
             _unitOfWork = unitOfWork;
             _repository = repository;
             _specializationRepository = specializationRepository;
+            _logRepository = logRepository;
             _mapper = mapper;
         }
         
@@ -90,10 +94,7 @@ namespace DDDSample1.Domain.Staffs
 
             do
             {
-                // Gerar um novo número de licença
-                licenseNumber = Guid.NewGuid().ToString().Substring(0, 8).ToUpper();
-
-                // Verifica se já existe um funcionário com esse número de licença
+                licenseNumber = Guid.NewGuid().ToString().Substring(0, 8).ToUpper();        
                 var existingStaff = await _repository.GetByLicenseNumberAsync(licenseNumber);
                 isUnique = (existingStaff == null);
             }
@@ -101,6 +102,76 @@ namespace DDDSample1.Domain.Staffs
 
             return licenseNumber;
         }
+        
+        public async Task<StaffDTO> UpdateStaffAsync(Guid id, UpdateStaffDTO dto)
+        {
+            var staff = await _repository.GetByIdAsync(new StaffId(id));
+
+            if (staff == null)
+                return null;
+
+            var updatedFields = new List<string>();
+
+            var updateActions = new Dictionary<string, Action>
+            {
+                { "First Name", () => { if (!string.IsNullOrEmpty(dto.FirstName) && staff.FirstName != dto.FirstName) { staff.ChangeFirstName(dto.FirstName); updatedFields.Add("First Name"); } } },
+                { "Last Name", () => { if (!string.IsNullOrEmpty(dto.LastName) && staff.LastName != dto.LastName) { staff.ChangeLastName(dto.LastName); updatedFields.Add("Last Name"); } } },
+                { "Full Name", () => { if (!string.IsNullOrEmpty(dto.FullName) && staff.FullName != dto.FullName) { staff.ChangeFullName(dto.FullName); updatedFields.Add("Full Name"); } } },
+                { "Email", () => { if (!string.IsNullOrEmpty(dto.Email) && staff.Email != dto.Email) { staff.ChangeEmail(dto.Email); updatedFields.Add("Email"); } } },
+                { "Phone Number", () => { if (!string.IsNullOrEmpty(dto.PhoneNumber) && staff.PhoneNumber != dto.PhoneNumber) { staff.ChangePhoneNumber(dto.PhoneNumber); updatedFields.Add("Phone Number"); } } },
+                { "Add Availability Slots", () => 
+                    { 
+                        if (!string.IsNullOrEmpty(dto.AddAvailabilitySlots))
+                        {
+                            var addSlots = dto.AddAvailabilitySlots.Split(',').Select(DateTime.Parse).ToArray();
+                            foreach (var slot in addSlots)
+                            {
+                                staff.AddAvailabilitySlots(slot);
+                            }
+                            updatedFields.Add("Added Availability Slots");
+                        }
+                    }
+                },
+                { "Remove Availability Slots", () => 
+                    { 
+                        if (!string.IsNullOrEmpty(dto.RemoveAvailabilitySlots))
+                        {
+                            var removeSlots = dto.RemoveAvailabilitySlots.Split(',').Select(DateTime.Parse).ToArray();
+                            foreach (var slot in removeSlots)
+                            {
+                                staff.RemvoveAvailabilitySlots(slot);
+                            }
+                            updatedFields.Add("Removed Availability Slots");
+                        }
+                    }
+                },
+                { "Specialization", () => 
+                    { 
+                        if (!string.IsNullOrEmpty(dto.SpecializationId) && staff.SpecializationId.ToString() != dto.SpecializationId)
+                        {
+                            staff.ChangeSpecializationId(new SpecializationId(Guid.Parse(dto.SpecializationId)));
+                            updatedFields.Add("Specialization Id");
+                        }
+                    }
+                }
+            };
+
+            foreach (var action in updateActions.Values)
+            {
+                action();
+            }
+
+            if (updatedFields.Count > 0)
+            {
+                string message = "Staff updated. The following fields were updated: " + string.Join(", ", updatedFields) + ".";
+                var log = new Log(TypeOfAction.Update, id.ToString(), message);
+                await _logRepository.AddAsync(log);
+                await _unitOfWork.CommitAsync();
+            }
+
+            return _mapper.ToDto(staff);
+        }
+
 
     }
 }

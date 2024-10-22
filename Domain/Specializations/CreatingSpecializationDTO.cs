@@ -8,11 +8,8 @@ namespace DDDSample1.Domain.Specializations
         
         public string SpecOption { get; set; }
 
-        public List<CreatingStaffDTO> Staffs { get; set; }
-
-        public CreatingSpecializationDTO(string specOption, List<CreatingStaffDTO> staffs){
+        public CreatingSpecializationDTO(string specOption){
             SpecOption = specOption;
-            Staffs = staffs;
         }
     }
 }

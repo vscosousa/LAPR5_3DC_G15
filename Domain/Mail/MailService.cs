@@ -64,4 +64,27 @@ public class MailService : IMailService
             throw new Exception("Failed to send email: " + ex.Message);
         }
     }
+
+    public async Task SendResetPasswordEmailAsync(string email, string username, string resetLink)
+    {
+        var smtpClient = new SmtpClient
+        {
+            Host = _configuration["SmtpSettings:Server"],
+            Port = int.Parse(_configuration["SmtpSettings:Port"]),
+            EnableSsl = bool.Parse(_configuration["SmtpSettings:EnableSsl"]),
+            Credentials = new NetworkCredential(_configuration["SmtpSettings:Username"], _configuration["SmtpSettings:Password"])
+        };
+
+        var mailMessage = new MailMessage
+        {
+            From = new MailAddress(_configuration["SmtpSettings:SenderEmail"], _configuration["SmtpSettings:SenderName"]),
+            Subject = "Reset your password",
+            Body = $"Hi {username}, please reset your password by clicking this link: {resetLink}",
+            IsBodyHtml = true,
+        };
+
+        mailMessage.To.Add(email);
+
+        await smtpClient.SendMailAsync(mailMessage);
+    }
 }

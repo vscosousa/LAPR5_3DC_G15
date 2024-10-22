@@ -11,18 +11,16 @@ namespace DDDSample1.Infrastructure.Specializations
         {
             builder.HasKey(b => b.Id);
             builder.HasIndex(b => b.Id).IsUnique();
-            builder.Property(b => b.Id).HasConversion(new EntityIdValueConverter<SpecializationId>());
-            builder.Property(b => b.SpecOption)
-                   .IsRequired()
-                   .HasConversion<string>();
+            builder.HasIndex(b => b.SpecOption).IsUnique();
 
-            
+            builder.Property(b => b.Id).HasConversion(new EntityIdValueConverter<SpecializationId>());
+            builder.Property(b => b.SpecOption).IsRequired();
+
             builder
                 .HasMany(b => b.Staffs)
                 .WithOne(s => s.Specialization) 
-                .HasForeignKey("SpecializationId") 
+                .HasForeignKey("SpecializationId")
                 .OnDelete(DeleteBehavior.Cascade); 
-
 
             builder
                 .HasMany(b => b.OperationTypes)

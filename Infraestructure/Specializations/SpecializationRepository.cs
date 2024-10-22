@@ -1,7 +1,9 @@
+using System;
 using System.Threading.Tasks;
 using DDDSample1.Domain.Specializations;
 using DDDSample1.Infrastructure.Shared;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace DDDSample1.Infrastructure.Specializations
 {
@@ -27,6 +29,14 @@ namespace DDDSample1.Infrastructure.Specializations
                 return await _context.Specializations
                     .FirstOrDefaultAsync(s => s.Id == id);
             }
+        }
+
+        public async Task<SpecializationId> GetSpecIdByOptionAsync(string option)
+        {
+            return await _objs
+                .Where(x => x.SpecOption.ToLower() == option.ToLower())
+                .Select(x => x.Id)
+                .FirstOrDefaultAsync();
         }
     }
 }

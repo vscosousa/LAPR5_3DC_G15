@@ -10,7 +10,7 @@ namespace Projetos.LAPR5_3DC_G15.Mappers.Staffs
     {
         public StaffDTO ToDto(Staff domain)
         {   
-            Console.WriteLine("StaffMapper - ToDto -------");
+            
             return new StaffDTO
             {
                 Id = domain.Id.AsGuid(),
@@ -20,8 +20,9 @@ namespace Projetos.LAPR5_3DC_G15.Mappers.Staffs
                 LicenseNumber = domain.LicenseNumber.ToString(),
                 Email = domain.Email,
                 PhoneNumber = domain.PhoneNumber,
-                AvailabilitySlots = domain.AvailabilitySlots,
-                SpecializationId = domain.SpecializationId
+                AvailabilitySlots = domain.AvailabilitySlots.Select(date => date.ToString()).ToArray(),
+                SpecializationId = domain.SpecializationId,
+                IsActive = domain.IsActive
             };
         }
 

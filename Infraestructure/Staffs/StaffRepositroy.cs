@@ -3,8 +3,8 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using DDDSample1.Domain.Staffs;
 using DDDSample1.Infrastructure.Shared;
-using System.Linq;
 using DDDSample1.Domain.Specializations;
+using System.Linq;
 
 namespace DDDSample1.Infrastructure.Staffs
 {
@@ -39,5 +39,4 @@ namespace DDDSample1.Infrastructure.Staffs
             return await _objs.Where(x => licenseNumber.Equals(x.LicenseNumber)).FirstOrDefaultAsync();
         }
     }
-
 }

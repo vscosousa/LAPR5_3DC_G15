@@ -1,12 +1,14 @@
 using System;
 using System.Text.Json.Serialization;
 using DDDSample1.Domain.Patients;
+using DDDSample1.Domain.Staffs;
 using DDDSample1.Domain.Shared;
 
 namespace DDDSample1.Domain.Users
 {
     public class User : Entity<UserID>, IAggregateRoot
     {
+        private StaffId _staffId;
         private string _email;
         private string _username;
         private string _phoneNumber;
@@ -22,6 +24,8 @@ namespace DDDSample1.Domain.Users
         private Patient _patient; 
         
         private PatientId _patientId;
+        [JsonIgnore]
+        private Staff _staff;
 
         private User() { }
 
@@ -31,6 +35,8 @@ namespace DDDSample1.Domain.Users
             Id = new UserID(Guid.NewGuid());
             _patientId = null;
             _patient = null;
+            _staffId = null;
+            _staff = null;
             _email = email;
             _phoneNumber = "";
             _username = username;
@@ -41,11 +47,10 @@ namespace DDDSample1.Domain.Users
             _failedLoginAttempts = 0;
         }
 
-        // Constructor for User registered by the patient
-        public User(string email, string phoneNumber, Role role, string password, Guid patientId)
+        // Constructor for User registered by the patient/staff
+        public User(string email, string phoneNumber, Role role, string password, Guid IdRole)
         {
             Id = new UserID(Guid.NewGuid());
-            _patientId = new PatientId(patientId);
             _email = email;
             _phoneNumber = phoneNumber;
             _username = email;
@@ -54,6 +59,19 @@ namespace DDDSample1.Domain.Users
             _isActive = false;
             _isLocked = false;
             _failedLoginAttempts = 0;
+            if (_role == Role.Patient)
+            {
+                _patientId = new PatientId(IdRole);
+                _staffId = null;
+                _staff = null;
+
+            }
+            else if (_role == Role.Doctor || _role == Role.Nurse || _role == Role.Technician)
+            {
+                _staffId = new StaffId(IdRole);
+                _patientId = null;
+                _patient = null;
+            }
         }
 
         public string Email => _email;
@@ -67,6 +85,8 @@ namespace DDDSample1.Domain.Users
         public int FailedLoginAttempts => _failedLoginAttempts;
         public DateTime? LockedUntil => _lockedUntil;
         public bool IsLocked => _isLocked;
+        public StaffId StaffId => _staffId;
+        public Staff Staff => _staff;
 
         internal void SetPassword(string password)
         {

@@ -43,6 +43,68 @@ namespace DDDSample1.Controllers
                 return Ok(user);
         }
 
+        [HttpPost("RegisterUserAsStaff")]
+        [AllowAnonymous]
+        public async Task<ActionResult<User>> RegisterUserAsStaff(CreatingStaffUserDTO userDTO)
+        {   
+            try
+            {
+                var user = await _userService.CreateUserAsStaff(userDTO);
+                return Ok(user);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred while register Satff in: {ex.Message}");
+            }
+        }
+
+        [HttpPost("RequestResetPassword"), AllowAnonymous]
+        public async Task<IActionResult> RequestPasswordReset(string email)
+        {
+            if (string.IsNullOrWhiteSpace(email))
+            {
+                return BadRequest("Email is required.");
+            }
+
+            try
+            {
+                await _userService.RequestPasswordReset(email);
+                return Ok("Password reset link has been sent to your email.");
+            }
+            catch (Exception ex)
+            {
+                // Log exception (ex) if needed
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        // POST: api/PasswordReset/Reset
+        [HttpPost("ResetPassword"), AllowAnonymous]
+        public async Task<IActionResult> ResetPassword(string token, string newPassword)
+        {
+            if (string.IsNullOrWhiteSpace(token) ||
+                string.IsNullOrWhiteSpace(newPassword))
+            {
+                return BadRequest("Token and new password are required.");
+            }
+
+            try
+            {
+                await _userService.ResetPassword(token, newPassword);
+                return Ok("Your password has been reset successfully.");
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message); 
+            }
+            catch (Exception ex)
+            {
+
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+
         //Activate user and set password
         [HttpPost("Activate")]
         [AllowAnonymous]

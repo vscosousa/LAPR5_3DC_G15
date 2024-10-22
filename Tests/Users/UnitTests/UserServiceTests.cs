@@ -8,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using DDDSample1.Domain.Patients;
 using DDDSample1.Domain.Logs;
 using Microsoft.IdentityModel.Tokens;
+using DDDSample1.Domain.Staffs;
 
 namespace DDDSample1.Tests.Users.UnitTests
 {
@@ -21,6 +22,7 @@ namespace DDDSample1.Tests.Users.UnitTests
         private readonly Mock<IPatientRepository> _patientRepositoryMock;
         private readonly Mock<ILogRepository> _logRepositoryMock;
         private readonly UserService _userService;
+        private readonly Mock<IStaffRepository> _staffRepositoryMock;
 
         public UserServiceTests()
         {
@@ -31,6 +33,7 @@ namespace DDDSample1.Tests.Users.UnitTests
             _configurationMock = new Mock<IConfiguration>();
             _patientRepositoryMock = new Mock<IPatientRepository>();
             _logRepositoryMock = new Mock<ILogRepository>();
+            _staffRepositoryMock = new Mock<IStaffRepository>();
 
 
             _configurationMock.Setup(config => config["Jwt:Key"])
@@ -43,6 +46,7 @@ namespace DDDSample1.Tests.Users.UnitTests
                 _unitOfWorkMock.Object,
                 _configurationMock.Object,
                 _patientRepositoryMock.Object,
+                _staffRepositoryMock.Object,
                 _logRepositoryMock.Object,
                 _userMapperMock.Object
             );

@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using DDDSample1.Domain.Logs;
 using DDDSample1.Domain.Patients;
+using DDDSample1.Domain.Staffs;
 using DDDSample1.Domain.Shared;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -20,11 +21,12 @@ namespace DDDSample1.Domain.Users
         private readonly IUnitOfWork _unitOfWork;
         private readonly IConfiguration _configuration;
         private readonly IPatientRepository _patientRepository;
+        private readonly IStaffRepository _staffRepository;        
         private readonly ILogRepository _logRepository;
 
         private readonly IUserMapper _userMapper;
 
-        public UserService(IUserRepository userRepository, IMailService mailService, IUnitOfWork unitOfWork, IConfiguration configuration, IPatientRepository patientRepository, ILogRepository logRepository, IUserMapper userMapper)
+        public UserService(IUserRepository userRepository, IMailService mailService, IUnitOfWork unitOfWork, IConfiguration configuration, IPatientRepository patientRepository, IStaffRepository staffRepository, ILogRepository logRepository, IUserMapper userMapper)
         {
             _userRepository = userRepository;
             _mailService = mailService;
@@ -33,8 +35,8 @@ namespace DDDSample1.Domain.Users
             _patientRepository = patientRepository;
             _logRepository = logRepository;
             _userMapper = userMapper;
+            _staffRepository = staffRepository;
         }
-
 
         public async Task<User> CreateUser(CreatingUserDTO dto)
         {
@@ -93,6 +95,34 @@ namespace DDDSample1.Domain.Users
 
         }
 
+        public async Task<User> CreateUserAsStaff(CreatingStaffUserDTO dto)
+        {   
+            
+            var existingUserByEmail = await _userRepository.GetUserByEmailAsync(dto.Email);
+            if (existingUserByEmail != null)
+            {
+                throw new Exception("Email is already in use.");
+            }
+
+            var staff = await _staffRepository.GetByEmailAsync(dto.Email) ?? throw new Exception("Patient not found.");
+
+            if (staff.PhoneNumber != dto.PhoneNumber)
+            {
+                throw new Exception("Phone number does not match the Staff's email.");
+            }
+            
+            var role = Enum.Parse<Role>(dto.Role, true);
+            var user = new User(dto.Email, dto.PhoneNumber, role, dto.Password, staff.Id.AsGuid());
+
+            string token = CreateToken(user);
+
+            await _mailService.SendEmail(dto.Email, "Activate your account", GenerateLink(token, "ActivateStaffUser"));
+
+            await _userRepository.AddAsync(user);
+            await _unitOfWork.CommitAsync();
+
+            return user;
+        }
 
         // Activate a user and set the password
         public async Task<User> ActivateUser(string token, string newPassword)
@@ -101,6 +131,7 @@ namespace DDDSample1.Domain.Users
             var userId = VerifyToken(token) ?? throw new Exception("Invalid or expired token.");
             var user = await _userRepository.GetByIdAsync(userId) ?? throw new Exception("User not found.");
             user.SetPassword(newPassword);
+            user.Activate();
 
             await _userRepository.UpdateAsync(user);
             await _unitOfWork.CommitAsync();
@@ -196,7 +227,7 @@ namespace DDDSample1.Domain.Users
 
         private static string GenerateLink(string token, string typeOfLink)
         {
-            return $"https://localhost:5001/{typeOfLink}?token={token}";
+            return $"https://localhost:5001/api/user/{typeOfLink}?token={token}";
         }
 
 
@@ -305,5 +336,54 @@ namespace DDDSample1.Domain.Users
                 throw new Exception(ex.Message);
             }
         }
+        
+        public async Task RequestPasswordReset(string email)
+        {
+            var user = await _userRepository.GetUserByEmailAsync(email) ?? throw new Exception("Email not registered");
+            if(user.IsActive == false){
+                throw new Exception("Account not ative yet,  check your email to activate the account.");
+            }
+            string token = CreatePasswordResetToken(user);
+            var resetLink = GenerateLink(token, "ResetPassword");
+
+            await _mailService.SendResetPasswordEmailAsync(email, "Password Reset", resetLink);
+        }
+
+        public string CreatePasswordResetToken(User user)
+        {
+            List<Claim> claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Name, user.Username),
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.NameIdentifier, user.Id.AsGuid().ToString()),
+                new Claim(ClaimTypes.Role, user.Role.ToString())
+            };
+
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
+
+            var cred = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+            var token = new JwtSecurityToken(
+                claims: claims,
+                expires: DateTime.Now.AddHours(24),
+                signingCredentials: cred
+            );
+
+            var jwt = new JwtSecurityTokenHandler().WriteToken(token);
+
+            return jwt;
+            }
+            public async Task ResetPassword(string token, string newPassword)
+            {
+                // Verify the token validade
+                var userID = VerifyToken(token);
+
+                var user = await _userRepository.GetByIdAsync(userID) ?? throw new Exception("User not found.");
+                user.SetPassword(newPassword);
+
+                await _userRepository.UpdateAsync(user);
+                await _unitOfWork.CommitAsync();
+
+            }
     }
 }

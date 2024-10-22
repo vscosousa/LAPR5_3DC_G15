@@ -24,7 +24,7 @@ namespace DDDSample1.Infrastructure.Staffs
             builder.Property(b => b.PhoneNumber).IsRequired();
             builder.Property(b => b.LicenseNumber).IsRequired();
             builder.Property(b => b.AvailabilitySlots).IsRequired();
-
+            builder.Property(b => b.IsActive).IsRequired();
            
             builder
                 .HasOne<Specialization>() 

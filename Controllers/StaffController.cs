@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using DDDSample1.Domain.Shared;
 using DDDSample1.Domain.Staffs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+
 
 namespace DDDSample1.Controllers
 {
@@ -76,6 +78,31 @@ namespace DDDSample1.Controllers
             {
                 // Lida com outros tipos de erros
                 return StatusCode(500, $"An error occurred while creating the staff: {ex.Message}");
+            }
+        }   
+
+        [HttpPut("{id}")]
+        [Authorize(Roles = "Admin, Doctor, Nurse, Technician")]
+        public async Task<ActionResult<StaffDTO>> UpdateStaff(Guid id, UpdateStaffDTO dto)
+        {
+            try
+            {
+                var updatedStaff = await _staffService.UpdateStaffAsync(id, dto);
+
+                if (updatedStaff == null)
+                {
+                    return NotFound(new { Message = $"Staff with ID {id} not found." });
+                }
+
+                return Ok(new { Message = "Staff updated successfully.", Staff = updatedStaff });
+            }
+            catch (BusinessRuleValidationException ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred while updating the staff: {ex.Message}");
             }
         }
 
