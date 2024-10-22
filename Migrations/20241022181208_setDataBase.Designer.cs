@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DDDNetCore.Migrations
 {
     [DbContext(typeof(DDDSample1DbContext))]
-    [Migration("20241021130053_updateLogTablev2")]
-    partial class updateLogTablev2
+    [Migration("20241022181208_setDataBase")]
+    partial class setDataBase
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -154,11 +154,14 @@ namespace DDDNetCore.Migrations
 
                     b.Property<string>("SpecOption")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.HasIndex("SpecOption")
                         .IsUnique();
 
                     b.ToTable("Specializations");
@@ -184,6 +187,9 @@ namespace DDDNetCore.Migrations
                     b.Property<string>("FullName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
 
                     b.Property<string>("LastName")
                         .IsRequired()
@@ -228,8 +234,17 @@ namespace DDDNetCore.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<int>("FailedLoginAttempts")
+                        .HasColumnType("int");
+
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
+
+                    b.Property<bool>("IsLocked")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LockedUntil")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("PasswordHash")
                         .IsRequired()
@@ -243,6 +258,9 @@ namespace DDDNetCore.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("_patientId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("_staffId")
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
@@ -259,6 +277,10 @@ namespace DDDNetCore.Migrations
                     b.HasIndex("_patientId")
                         .IsUnique()
                         .HasFilter("[_patientId] IS NOT NULL");
+
+                    b.HasIndex("_staffId")
+                        .IsUnique()
+                        .HasFilter("[_staffId] IS NOT NULL");
 
                     b.ToTable("Users");
                 });
@@ -295,7 +317,14 @@ namespace DDDNetCore.Migrations
                         .HasForeignKey("DDDSample1.Domain.Users.User", "_patientId")
                         .OnDelete(DeleteBehavior.SetNull);
 
+                    b.HasOne("DDDSample1.Domain.Staffs.Staff", "Staff")
+                        .WithOne()
+                        .HasForeignKey("DDDSample1.Domain.Users.User", "_staffId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
                     b.Navigation("Patient");
+
+                    b.Navigation("Staff");
                 });
 
             modelBuilder.Entity("OperationTypeSpecialization", b =>

@@ -43,7 +43,6 @@ namespace Projetos.LAPR5_3DC_G15.Mappers.Users
             (
               dto.Email,
               dto.Password,
-              dto.Role,
               dto.PhoneNumber,
               dto.PatientId
             );   

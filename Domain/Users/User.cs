@@ -48,30 +48,19 @@ namespace DDDSample1.Domain.Users
         }
 
         // Constructor for User registered by the patient/staff
-        public User(string email, string phoneNumber, Role role, string password, Guid IdRole)
+        public User(string email, string phoneNumber, string password, Guid patientId)
         {
             Id = new UserID(Guid.NewGuid());
             _email = email;
             _phoneNumber = phoneNumber;
             _username = email;
-            _role = role;
+            _role = Role.Patient; 
             SetPassword(password);
             _isActive = false;
             _isLocked = false;
             _failedLoginAttempts = 0;
-            if (_role == Role.Patient)
-            {
-                _patientId = new PatientId(IdRole);
-                _staffId = null;
-                _staff = null;
-
-            }
-            else if (_role == Role.Doctor || _role == Role.Nurse || _role == Role.Technician)
-            {
-                _staffId = new StaffId(IdRole);
-                _patientId = null;
-                _patient = null;
-            }
+            _patientId = new PatientId(patientId);
+            _staffId = null;
         }
 
         public string Email => _email;

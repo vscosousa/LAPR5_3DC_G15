@@ -12,15 +12,15 @@ namespace DDDSample1.Controllers
     public class UserController : ControllerBase
     {
         private readonly UserService _userService;
-    
+
         public UserController(UserService userService)
         {
             _userService = userService;
         }
-    
-    
-        
-        [HttpPost("RegisterUser"), Authorize (Roles = "Admin")]
+
+
+
+        [HttpPost("RegisterUser"), Authorize(Roles = "Admin")]   
         public async Task<ActionResult<User>> RegisterUser(CreatingUserDTO userDTO)
         {
             try
@@ -38,12 +38,12 @@ namespace DDDSample1.Controllers
         [AllowAnonymous]
         public async Task<ActionResult<User>> RegisterUserAsPatient(CreatingPatientUserDTO userDTO)
         {
-            
-                var user = await _userService.CreateUserAsPatient(userDTO);
-                return Ok(user);
+
+            var user = await _userService.CreateUserAsPatient(userDTO);
+            return Ok(user);
         }
 
-        [HttpPost("RegisterUserAsStaff")]
+      /*  [HttpPost("RegisterUserAsStaff")]
         [AllowAnonymous]
         public async Task<ActionResult<User>> RegisterUserAsStaff(CreatingStaffUserDTO userDTO)
         {   
@@ -56,7 +56,7 @@ namespace DDDSample1.Controllers
             {
                 return StatusCode(500, $"An error occurred while register Satff in: {ex.Message}");
             }
-        }
+        }*/
 
         [HttpPost("RequestResetPassword"), AllowAnonymous]
         public async Task<IActionResult> RequestPasswordReset(string email)
@@ -135,7 +135,7 @@ namespace DDDSample1.Controllers
                 return StatusCode(500, $"An error occurred while activating the user: {ex.Message}");
             }
         }
-        
+
         [HttpPost("Login")]
         [AllowAnonymous]
         public async Task<ActionResult<string>> Login(LoginUserDTO userDTO)

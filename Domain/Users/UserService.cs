@@ -84,7 +84,7 @@ namespace DDDSample1.Domain.Users
                 throw new Exception("Phone number does not match the Patient's profile with the given email.");
             }
 
-            var user = _userMapper.ToCreatingPatientUser(dto);
+            var user = new User(dto.Email, dto.PhoneNumber, dto.Password, patient.Id.AsGuid());
             string token = CreateToken(user);
 
             await _mailService.SendEmail(dto.Email, "Activate your account", GenerateLink(token, "ActivatePatientUser"));
@@ -95,7 +95,7 @@ namespace DDDSample1.Domain.Users
 
         }
 
-        public async Task<User> CreateUserAsStaff(CreatingStaffUserDTO dto)
+       /* public async Task<User> CreateUserAsStaff(CreatingStaffUserDTO dto)
         {   
             
             var existingUserByEmail = await _userRepository.GetUserByEmailAsync(dto.Email);
@@ -122,7 +122,7 @@ namespace DDDSample1.Domain.Users
             await _unitOfWork.CommitAsync();
 
             return user;
-        }
+        }*/
 
         // Activate a user and set the password
         public async Task<User> ActivateUser(string token, string newPassword)
@@ -295,7 +295,6 @@ namespace DDDSample1.Domain.Users
             }
             catch (Exception ex)
             {
-                // Handle exceptions (e.g., log error)
                 throw new Exception("Failed to notify admin: " + ex.Message);
             }
         }
