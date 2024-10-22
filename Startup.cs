@@ -28,6 +28,7 @@ using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Filters;
 using DDDSample1.Domain.Logs;
 using Projetos.LAPR5_3DC_G15.Mappers.Staffs;
+using Projetos.LAPR5_3DC_G15.Mappers.Users;
 
 namespace DDDSample1
 {
@@ -146,6 +147,7 @@ namespace DDDSample1
             services.AddTransient<PatientService>();
 
             services.AddTransient<IUserRepository, UserRepository>();
+            services.AddTransient<IUserMapper, UserMapper>();
             services.AddTransient<UserService>();
 
             services.AddTransient<IOperationTypeRepository, OperationTypeRepository>();

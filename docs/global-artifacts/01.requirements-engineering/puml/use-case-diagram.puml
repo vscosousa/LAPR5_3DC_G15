@@ -1,4 +1,4 @@
-@startuml
+@startuml use-case-diagram
 
 left to right direction
 
@@ -8,26 +8,53 @@ actor "Staff" as ST #white;line:green;line.bold;text:black
 actor "Backoffice User" as BU #white;line:purple;line.bold;text:black
 
 rectangle System { 
-    usecase "Manage Backoffice Users" as US5_1_1
-    usecase "Manage Patients" as US5_1_8_9_10_11
-    usecase "Manage Staff Profile" as US5_1_12_13_14_15
-    usecase "Manage Operation Types" as US5_1_20_21_22_23
-    usecase "Register in the application" as US5_1_3
-    usecase "Manage my profile" as US5_1_4_5
-    usecase "Log in to the system" as US5_1_6
-    usecase "Reset my Password" as US5_1_2
-    usecase "Manage Operation Requests" as US5_1_16_17_18_19
+    usecase "Register new backoffice users" as US5_1_1
+    usecase "Reset password" as US5_1_2
+    usecase "Register as Patient" as US5_1_3
+    usecase "Delete my profile" as US5_1_4
+    usecase "Update my profile" as US5_1_5
+    usecase "Log in as BackOffice User" as US5_1_6
+    usecase "Log in to the system as Patient" as US5_1_7
+    usecase "Create patient profile" as US5_1_8
+    usecase "Edit patient profile" as US5_1_9
+    usecase "Delete patient profile" as US5_1_10
+    usecase "List/Search patient profiles" as US5_1_11
+    usecase "Create staff profile" as US5_1_12
+    usecase "Edit staff profile" as US5_1_13
+    usecase "Deactivate staff profile" as US5_1_14
+    usecase "List/Search staff profiles" as US5_1_15
+    usecase "Request operation" as US5_1_16
+    usecase "Update operation requisition" as US5_1_17
+    usecase "Remove operation requisition" as US5_1_18
+    usecase "List/Search operation requisitions" as US5_1_19
+    usecase "Add new operation types" as US5_1_20
+    usecase "Edit operation types" as US5_1_21
+    usecase "Remove operation types" as US5_1_22
+    usecase "List/Search operation types" as US5_1_23
 }
 
-AD --> US5_1_1
-AD --> US5_1_8_9_10_11
-AD --> US5_1_12_13_14_15
-AD --> US5_1_20_21_22_23
-PA --> US5_1_3
-PA --> US5_1_4_5
-BU --> US5_1_6
-BU --> US5_1_2
-ST --> US5_1_16_17_18_19
-
+AD --> US5_1_1 : "US 5.1.1"
+BU --> US5_1_2 : "US 5.1.2"
+PA --> US5_1_3 : "US 5.1.3"
+PA --> US5_1_4 : "US 5.1.4"
+PA --> US5_1_5 : "US 5.1.5"
+BU --> US5_1_6 : "US 5.1.6"
+PA --> US5_1_7 : "US 5.1.7"
+AD --> US5_1_8 : "US 5.1.8"
+AD --> US5_1_9 : "US 5.1.9"
+AD --> US5_1_10 : "US 5.1.10"
+AD --> US5_1_11 : "US 5.1.11"
+AD --> US5_1_12 : "US 5.1.12"
+AD --> US5_1_13 : "US 5.1.13"
+AD --> US5_1_14 : "US 5.1.14"
+AD --> US5_1_15 : "US 5.1.15"
+ST --> US5_1_16 : "US 5.1.16"
+ST --> US5_1_17 : "US 5.1.17"
+ST --> US5_1_18 : "US 5.1.18"
+ST --> US5_1_19 : "US 5.1.19"
+AD --> US5_1_20 : "US 5.1.20"
+AD --> US5_1_21 : "US 5.1.21"
+AD --> US5_1_22 : "US 5.1.22"
+AD --> US5_1_23 : "US 5.1.23"
 
 @enduml

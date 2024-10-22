@@ -22,7 +22,9 @@ namespace DDDSample1.Domain.Users
         private readonly IPatientRepository _patientRepository;
         private readonly ILogRepository _logRepository;
 
-        public UserService(IUserRepository userRepository, IMailService mailService, IUnitOfWork unitOfWork, IConfiguration configuration, IPatientRepository patientRepository, ILogRepository logRepository)
+        private readonly IUserMapper _userMapper;
+
+        public UserService(IUserRepository userRepository, IMailService mailService, IUnitOfWork unitOfWork, IConfiguration configuration, IPatientRepository patientRepository, ILogRepository logRepository, IUserMapper userMapper)
         {
             _userRepository = userRepository;
             _mailService = mailService;
@@ -30,6 +32,7 @@ namespace DDDSample1.Domain.Users
             _configuration = configuration;
             _patientRepository = patientRepository;
             _logRepository = logRepository;
+            _userMapper = userMapper;
         }
 
 
@@ -37,17 +40,6 @@ namespace DDDSample1.Domain.Users
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(dto.Role))
-                {
-                    throw new ArgumentException("Role must not be null or empty.", nameof(dto.Role));
-                }
-
-                // Check if the role is valid
-                if (!Enum.TryParse<Role>(dto.Role, true, out var role))
-                {
-                    throw new ArgumentException($"Invalid role: {dto.Role}", nameof(dto.Role));
-                }
-
                 var existingUserByEmail = await _userRepository.GetUserByEmailAsync(dto.Email);
                 if (existingUserByEmail != null)
                 {
@@ -60,7 +52,7 @@ namespace DDDSample1.Domain.Users
                     throw new Exception("Username is already in use.");
                 }
 
-                var user = new User(dto.Email, dto.Username, role);
+                var user = _userMapper.ToDomain(dto);
                 string token = CreateToken(user);
                 await _mailService.SendEmail(dto.Email, "Activate your account", GenerateLink(token, "Activate"));
                 await _userRepository.AddAsync(user);
@@ -90,8 +82,7 @@ namespace DDDSample1.Domain.Users
                 throw new Exception("Phone number does not match the Patient's profile with the given email.");
             }
 
-            var role = Role.Patient;
-            var user = new User(dto.Email, dto.PhoneNumber, role, dto.Password, patient.Id.AsGuid());
+            var user = _userMapper.ToCreatingPatientUser(dto);
             string token = CreateToken(user);
 
             await _mailService.SendEmail(dto.Email, "Activate your account", GenerateLink(token, "ActivatePatientUser"));
@@ -134,7 +125,7 @@ namespace DDDSample1.Domain.Users
             return user;
         }
 
-        private string CreateToken(User user)
+        public virtual string CreateToken(User user)
         {
             List<Claim> claims = new List<Claim>
             {
@@ -203,7 +194,7 @@ namespace DDDSample1.Domain.Users
             }
         }
 
-        private static string GenerateLink(string token, string typeOfLink)
+        public virtual string GenerateLink(string token, string typeOfLink)
         {
             return $"https://localhost:5001/{typeOfLink}?token={token}";
         }
