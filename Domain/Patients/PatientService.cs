@@ -103,7 +103,7 @@ namespace DDDSample1.Domain.Patients
             if (updatedFields.Count > 0)
             {
                 string message = "Patient updated. The following fields were updated: " + string.Join(", ", updatedFields) + ".";
-                var log = new Log(TypeOfAction.Update,patient.Id.ToString(), message);
+                var log = new Log(TypeOfAction.Update, patient.Id.ToString(), message);
                 await _logRepository.AddAsync(log);
                 await _unitOfWork.CommitAsync();
             }
@@ -114,9 +114,12 @@ namespace DDDSample1.Domain.Patients
         public async Task<List<PatientDTO>> SearchPatients(SearchPatientDTO dto)
         {
             var patients = await _repo.SearchPatientsAsync(dto);
-            var list = patients.ConvertAll(_mapper.ToDto);
-            if (list.Count == 0)
+            if (patients == null || patients.Count == 0)
+            {
                 return null;
+            }
+
+            var list = patients.ConvertAll(_mapper.ToDto);
             return list;
         }
     }

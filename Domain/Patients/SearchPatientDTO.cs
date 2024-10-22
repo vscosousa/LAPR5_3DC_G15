@@ -10,6 +10,7 @@ namespace DDDSample1.Domain.Patients
         public string MedicalRecordNumber { get; init; }
         public string Email { get; init; }
         public string PhoneNumber { get; init; }
+        
         public SearchPatientDTO() { }
 
         public SearchPatientDTO(string firstName, string lastName, string fullName, string dateOfBirth, string gender, string medicalRecordNumber, string email, string phoneNumber)
