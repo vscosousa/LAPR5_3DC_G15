@@ -22,6 +22,7 @@ actor Patient as P
 activate P
 P -> System: Asks to Delete User Profile
 activate System
+System -> System: Validates token and tries to delete the user
 System --> P: Returns Operation In/Sucess message
 deactivate System
 

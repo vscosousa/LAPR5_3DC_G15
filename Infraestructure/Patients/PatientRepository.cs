@@ -28,13 +28,13 @@ namespace DDDSample1.Infrastructure.Patients
             var query = _objs.AsQueryable();
 
             if (!string.IsNullOrEmpty(dto.FirstName))
-                query = query.Where(p => p.FirstName.Contains(dto.FirstName));
+                query = query.Where(p => p.FirstName == dto.FirstName);
 
             if (!string.IsNullOrEmpty(dto.LastName))
-                query = query.Where(p => p.LastName.Contains(dto.LastName));
+                query = query.Where(p => p.LastName == dto.LastName);
 
             if (!string.IsNullOrEmpty(dto.FullName))
-                query = query.Where(p => p.FullName.Contains(dto.FullName));
+                query = query.Where(p => p.FullName == dto.FullName);
 
             if (!string.IsNullOrEmpty(dto.DateOfBirth))
             {
@@ -47,13 +47,13 @@ namespace DDDSample1.Infrastructure.Patients
                     query = query.Where(p => p.GenderOptions == gender);
 
             if (!string.IsNullOrEmpty(dto.MedicalRecordNumber))
-                query = query.Where(p => p.MedicalRecordNumber.Contains(dto.MedicalRecordNumber));
+                query = query.Where(p => p.MedicalRecordNumber == dto.MedicalRecordNumber);
 
             if (!string.IsNullOrEmpty(dto.Email))
-                query = query.Where(p => p.Email.Contains(dto.Email));
+                query = query.Where(p => p.Email == dto.Email);
 
             if (!string.IsNullOrEmpty(dto.PhoneNumber))
-                query = query.Where(p => p.PhoneNumber.Contains(dto.PhoneNumber));
+                query = query.Where(p => p.PhoneNumber == dto.PhoneNumber);
 
             return await query.ToListAsync();
         }

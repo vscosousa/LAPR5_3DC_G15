@@ -18,24 +18,19 @@ skinparam package {
 }
 
 actor Admin as A
-participant "User Interface" as UI
-participant "PatientController" as C
+participant "MDR" as Backoffice
 
 
 activate A
-A -> UI: Asks to create a Patient
-activate UI
-UI --> A: Asks for Patient's data
-deactivate UI
-A -> UI: Sends Patient's data (First name, Last name, Fullname, Date of birth, \nGender, Email, Phone number, Emergency Contact, Medical Conditions)
-activate UI
-UI -> C: createPatient(CreatingPatientDTO dto)
-activate C
-C --> C: Validates Patient's data and tries to create the Patient
-C --> UI: Returns Operation Status Response Code
-deactivate C
-UI --> A: Returns Operation In/Sucess message
-deactivate UI
+A -> Backoffice: Asks to create a Patient
+activate Backoffice
+Backoffice --> A: Asks for Patient's data
+deactivate Backoffice
+A -> Backoffice: Sends Patient's data (First name, Last name, Fullname, Date of birth, \nGender, Email, Phone number, Emergency Contact, Medical Conditions)
+activate Backoffice
+Backoffice -> Backoffice: Validates Patient's data and tries to create the Patient
+Backoffice --> A: Returns Operation In/Sucess message
+deactivate Backoffice
 
 
 @enduml

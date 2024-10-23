@@ -142,6 +142,22 @@ namespace DDDSample1.Tests.Patients.UnitTests
             _patientRepositoryMock.Setup(r => r.GetByPhoneNumberAsync(expectedPatient.PhoneNumber)).ReturnsAsync((Patient)null);
             _patientRepositoryMock.Setup(r => r.GetAllAsync()).ReturnsAsync(new List<Patient>());
             _patientRepositoryMock.Setup(r => r.AddAsync(expectedPatient)).ReturnsAsync(expectedPatient);
+            _patientMapperMock.Setup(m => m.ToDto(expectedPatient)).Returns(new PatientDTO
+            {
+                Id = expectedPatient.Id.AsGuid(),
+                FirstName = expectedPatient.FirstName,
+                LastName = expectedPatient.LastName,
+                FullName = expectedPatient.FullName,
+                DateOfBirth = expectedPatient.DateOfBirth.ToString(),
+                Gender = expectedPatient.GenderOptions,
+                MedicalRecordNumber = expectedPatient.MedicalRecordNumber,
+                Email = expectedPatient.Email,
+                PhoneNumber = expectedPatient.PhoneNumber,
+                EmergencyContact = expectedPatient.EmergencyContact,
+                MedicalConditions = expectedPatient.MedicalConditions,
+                AppointmentHistory = expectedPatient.AppointmentHistory.Select(date => date.ToString("o")).ToArray(),
+                IsActive = expectedPatient.IsActive
+            });
 
             // Act
             var createdPatient = await _service.CreatePatient(dto);
@@ -151,8 +167,8 @@ namespace DDDSample1.Tests.Patients.UnitTests
             Assert.Equal(expectedPatient.FirstName, createdPatient.FirstName);
             Assert.Equal(expectedPatient.LastName, createdPatient.LastName);
             Assert.Equal(expectedPatient.FullName, createdPatient.FullName);
-            Assert.Equal(expectedPatient.DateOfBirth, createdPatient.DateOfBirth);
-            Assert.Equal(expectedPatient.GenderOptions, createdPatient.GenderOptions);
+            Assert.Equal(expectedPatient.DateOfBirth.ToString(), createdPatient.DateOfBirth.ToString());
+            Assert.Equal(expectedPatient.GenderOptions, createdPatient.Gender);
             Assert.Equal(expectedPatient.Email, createdPatient.Email);
             Assert.Equal(expectedPatient.PhoneNumber, createdPatient.PhoneNumber);
             Assert.Equal(expectedPatient.EmergencyContact, createdPatient.EmergencyContact);
@@ -163,6 +179,7 @@ namespace DDDSample1.Tests.Patients.UnitTests
             _patientRepositoryMock.Verify(r => r.GetAllAsync(), Times.Once);
             _patientRepositoryMock.Verify(r => r.AddAsync(expectedPatient), Times.Once);
             _unitOfWorkMock.Verify(u => u.CommitAsync(), Times.Once);
+            _patientMapperMock.Verify(m => m.ToDto(expectedPatient), Times.Once);
         }
 
         [Fact]

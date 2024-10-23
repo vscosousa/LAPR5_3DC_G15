@@ -3,9 +3,6 @@ using DDDSample1.Domain.Shared;
 using System;
 using System.Collections.Generic;
 using DDDSample1.Domain.Logs;
-using System.Linq;
-using DDDSample1.Infrastructure.Patients;
-using Microsoft.EntityFrameworkCore;
 
 namespace DDDSample1.Domain.Patients
 {
@@ -24,7 +21,7 @@ namespace DDDSample1.Domain.Patients
             _logRepository = logRepository;
         }
 
-        public async Task<Patient> CreatePatient(CreatingPatientDTO dto)
+        public async Task<PatientDTO> CreatePatient(CreatingPatientDTO dto)
         {
             try
             {
@@ -42,7 +39,9 @@ namespace DDDSample1.Domain.Patients
                 await _unitOfWork.CommitAsync();
                 Console.WriteLine("Transaction committed successfully");
 
-                return patient;
+                var patientDTO = _mapper.ToDto(patient);
+
+                return patientDTO;
             }
             catch (Exception ex)
             {

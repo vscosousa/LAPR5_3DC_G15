@@ -22,7 +22,7 @@ namespace DDDSample1.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Patient>> CreatePatient(CreatingPatientDTO patientDTO)
+        public async Task<ActionResult<PatientDTO>> CreatePatient(CreatingPatientDTO patientDTO)
         {
             try
             {

@@ -24,6 +24,7 @@ participant "PatientService" as S
 participant "PatientMapper" as M
 participant "PatientRepository" as R
 participant "Patient" as P
+participant "PatientDTO" as DTO
 participant "MedicalRecordNumberGenerator" as MRNG
 participant "Database" as DB
 
@@ -88,7 +89,15 @@ alt var is null
         deactivate DB
         R --> S: return Patient
         deactivate R
-        S --> C: return Patient
+        S -> M: ToDTO(Patient patient)
+        activate M
+        M -> DTO: new PatientDTO(patient fields)
+        activate DTO
+        DTO -> DTO: PatientDTO()
+        deactivate DTO
+        M --> S: return PatientDTO
+        deactivate M
+        S --> C: return PatientDTO
         deactivate S
     else var is not null
         S --> C: return Patient with same Phone Number already exists

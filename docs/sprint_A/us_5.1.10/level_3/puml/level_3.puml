@@ -24,6 +24,7 @@ participant "PatientService" as S
 participant "PatientRepository" as R
 participant "LogRepository" as LR
 participant "PatientMapper" as M
+participant "PatientDTO" as DTO
 participant "Log" as L
 participant "Database" as DB
 
@@ -68,6 +69,10 @@ else var is not null
     deactivate LR
     S --> M: ToDto(patient)
     activate M
+    M -> DTO: new PatientDTO(patient fields)
+    activate DTO
+    DTO -> DTO: PatientDTO()
+    deactivate DTO
     M --> S: return dto
     deactivate M
     S --> C: return dto

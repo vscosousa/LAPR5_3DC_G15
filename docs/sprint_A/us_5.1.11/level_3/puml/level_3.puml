@@ -16,5 +16,103 @@ skinparam class {
 skinparam package {
     BackgroundColor #EBF5FB
 }
+actor Admin as A
+participant "User Interface" as UI
+participant "PatientController" as C
+participant "PatientService" as S
+participant "PatientRepository" as R
+participant "PatientMapper" as M
+participant "PatientDTO" as D
+participant "Database" as DB
+
+activate A
+A -> UI: Asks to list patients
+activate UI
+UI --> A: Asks for the data to filter the patients
+deactivate UI
+A -> UI: Sends the data to filter the patients
+note right of UI: The data can be First Name and/or Last Name and/or Full Name\nand/or Date of Birth and/or Gender and/or Medical Record Number\nand/or Email and/or Phone Number
+activate UI
+UI -> C: searchPatients(SearchPatientDTO dto)
+activate C
+C -> S: searchPatients(SearchPatientDTO dto)
+activate S
+S -> R: searchPatientsAsync(dto)
+activate R
+R -> DB: _objs.AsQueryable()
+activate DB
+note right of DB: This will return a queryable list of all patients.\nThis means that other queries can be chained\nto this one in order to filter the patients.
+DB --> R: Returns the queryable list of all patients
+deactivate DB
+opt Filter queryable by First Name
+    R -> DB: query.Where(p => p.FirstName == dto.FirstName)
+    activate DB
+    DB --> R: Returns the queryable list of patients filtered by First 
+    deactivate DB
+end
+opt Filter queryable by Last Name
+    R -> DB: query.Where(p => p.LastName == dto.LastName)
+    activate DB
+    DB --> R: Returns the queryable list of patients filtered by Last Name
+    deactivate DB
+end
+opt Filter queryable by Full Name
+    R -> DB: query.Where(p => (p.FullName) == dto.FullName)
+    activate DB
+    DB --> R: Returns the queryable list of patients filtered by Full Name
+    deactivate DB
+end
+opt Filter queryable by Date of Birth
+    R -> DB: query.Where(p => p.DateOfBirth == dto.DateOfBirth);
+    activate DB
+    DB --> R: Returns the queryable list of patients filtered by Date of Birth
+    deactivate DB
+end
+opt Filter queryable by Gender
+    R -> DB: query.Where(p => p.GenderOptions == gender);
+    activate DB
+    DB --> R: Returns the queryable list of patients filtered by Gender
+    deactivate DB
+end
+opt Filter queryable by Medical Record Number
+    R -> DB: query.Where(p => p.MedicalRecordNumber == dto.MedicalRecordNumber);
+    activate DB
+    DB --> R: Returns the queryable list of patients filtered by Medical Record Number
+    deactivate DB
+end
+opt Filter queryable by Email
+    R -> DB: query.Where(p => p.Email == dto.Email);
+    activate DB
+    DB --> R: Returns the queryable list of patients filtered by Email
+    deactivate DB
+end
+opt Filter queryable by Phone Number
+    R -> DB: query.Where(p => p.PhoneNumber == dto.PhoneNumber);
+    activate DB
+    DB --> R: Returns the queryable list of patients filtered by Phone Number
+    deactivate DB
+end
+R --> S: Returns the final list of patients
+deactivate R
+alt list is null
+    S --> C: Returns null
+else list is not null
+    loop for each patient in the list
+        S -> M: toDTO(patient)
+        activate M
+        M -> D: new PatientDTO(patient fields)
+        activate D
+        D -> D: PatientDTO()
+        deactivate D
+        M --> S: Returns the PatientDTO
+        deactivate M
+    end
+    S --> C: Returns the list of PatientDTOs
+end
+deactivate S
+C --> UI: Returns Operation Status Response Code
+UI --> A: Returns Operation In/Sucess message
+deactivate UI
+
 
 @enduml

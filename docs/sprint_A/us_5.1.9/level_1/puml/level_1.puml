@@ -17,4 +17,20 @@ skinparam package {
     BackgroundColor #EBF5FB
 }
 
+actor Admin as A
+
+activate A
+A -> System: Asks to edit a Patient's Profile
+activate System
+System --> A: Asks for Patient's Id and the data to edit
+deactivate System
+A -> System: Sends Patient's data
+note right of System: The data can be First Name and/or Last Name and/or Full Name\nand/or Email and/or Phone Number and/or Emergency Contact\nand/or Medical Conditions
+activate System
+System -> System: Validates Patient's data and tries to update Patient's data
+System --> A: Returns Operation In/Sucess message
+deactivate System
+
+@enduml
+
 @enduml

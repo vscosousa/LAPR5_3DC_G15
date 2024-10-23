@@ -17,4 +17,21 @@ skinparam package {
     BackgroundColor #EBF5FB
 }
 
+actor Admin as A
+participant "MDR" as Backoffice
+
+activate A
+A -> Backoffice: Asks to list patients
+activate Backoffice
+Backoffice --> A: Asks for the data to filter the patients
+deactivate Backoffice
+A -> Backoffice: Sends the data to filter the patients
+note right of Backoffice: The data can be First Name and/or Last Name and/or Full Name\nand/or Date of Birth and/or Gender and/or Medical Record Number\nand/or Email and/or Phone Number
+activate Backoffice
+Backoffice -> Backoffice: Validates the data and tries to list the patients
+Backoffice --> A: Returns Operation In/Sucess message
+deactivate Backoffice
+
+@enduml
+
 @enduml
