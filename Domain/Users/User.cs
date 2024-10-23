@@ -21,8 +21,8 @@ namespace DDDSample1.Domain.Users
         private bool _isLocked;           // Indicates if the account is currently locked
 
         [JsonIgnore]
-        private Patient _patient; 
-        
+        private Patient _patient;
+
         private PatientId _patientId;
         [JsonIgnore]
         private Staff _staff;
@@ -48,13 +48,13 @@ namespace DDDSample1.Domain.Users
         }
 
         // Constructor for User registered by the patient/staff
-        public User(string email, string phoneNumber, string password, Guid patientId)
+        public User(string email, string password, string phoneNumber, Guid patientId)
         {
             Id = new UserID(Guid.NewGuid());
             _email = email;
             _phoneNumber = phoneNumber;
             _username = email;
-            _role = Role.Patient; 
+            _role = Role.Patient;
             SetPassword(password);
             _isActive = false;
             _isLocked = false;
@@ -79,14 +79,14 @@ namespace DDDSample1.Domain.Users
 
         internal void SetPassword(string password)
         {
-            var passwordRegex = new System.Text.RegularExpressions.Regex(@"^(?=.*[A-Z])(?=.*\d)(?=.*[^\w\d]).{10,}$");
+            var passwordRegex = new System.Text.RegularExpressions.Regex(@"^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^\w\d]).{10,}$");
 
             // Validate the password
             if (!passwordRegex.IsMatch(password))
             {
                 throw new ArgumentException("Password must be at least 10 characters long, include at least one digit, one uppercase letter, and one special character.");
             }
-            
+
             _passwordHash = BCrypt.Net.BCrypt.HashPassword(password);
             _isActive = true;
         }
@@ -112,7 +112,7 @@ namespace DDDSample1.Domain.Users
         internal void LockAccount()
         {
             _isLocked = true;
-            _lockedUntil = DateTime.UtcNow.AddMinutes(30);  
+            _lockedUntil = DateTime.UtcNow.AddMinutes(30);
         }
 
         // check if the account is currently locked

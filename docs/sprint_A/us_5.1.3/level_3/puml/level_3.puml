@@ -22,9 +22,11 @@ participant "User Interface" as UI
 participant "UserController" as C
 participant "UserService" as S
 participant "EmailService" as ES
+participant "UserMapper" as M
 participant "UserRepository" as R
 participant "PatientRepository" as PR
 participant "User" as U
+participant "UserDTO" as DTO
 participant "Database" as DB
 
 activate P
@@ -48,10 +50,14 @@ alt var is null
     PR --> S: Returns var
     deactivate PR
     alt Phone number matches the Patient's profile with the given email
-        S -> U: new User(dto.Email(), dto.PhoneNumber, Role.Patient, dto.Password(), dto.Name())
+        S -> M: ToCreatingPatientUser(dto)
+        activate M
+        M -> U: new User(dto fields)
         activate U
         U -> U: User()
         deactivate U
+        M --> S: return User
+        deactivate M
         S -> ES: sendEmail(SendEmail(dto.Email, "Activate your account", GenerateLink(token, "ActivatePatientUser")
         activate ES
         ES --> ES: Sends email using SMTP configuration
@@ -63,7 +69,15 @@ alt var is null
         deactivate DB
         R --> S: return User
         deactivate R
-        S --> C: return User
+        S -> M: ToDto(User)
+        activate M
+        M -> DTO: new UserDTO(User fields)
+        activate DTO
+        DTO -> DTO: UserDTO()
+        deactivate DTO
+        M --> S: return UserDTO
+        deactivate M
+        S --> C: return UserDTO 
     else Phone number does not match the Patient's profile with the given email
         S -> C: return exception message
     end

@@ -108,9 +108,10 @@ else list is not null
         deactivate M
     end
     S --> C: Returns the list of PatientDTOs
+    deactivate S
 end
-deactivate S
 C --> UI: Returns Operation Status Response Code
+deactivate C
 UI --> A: Returns Operation In/Sucess message
 deactivate UI
 

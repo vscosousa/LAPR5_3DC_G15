@@ -69,7 +69,7 @@ namespace DDDSample1.Domain.Users
         }
 
 
-        public async Task<User> CreateUserAsPatient(CreatingPatientUserDTO dto)
+        public async Task<UserDTO> CreateUserAsPatient(CreatingPatientUserDTO dto)
         {
             var existingUserByEmail = await _userRepository.GetUserByEmailAsync(dto.Email);
             if (existingUserByEmail != null)
@@ -84,14 +84,16 @@ namespace DDDSample1.Domain.Users
                 throw new Exception("Phone number does not match the Patient's profile with the given email.");
             }
 
-            var user = new User(dto.Email, dto.PhoneNumber, dto.Password, patient.Id.AsGuid());
+            var user = _userMapper.ToCreatingPatientUser(dto);
             string token = CreateToken(user);
 
             await _mailService.SendEmail(dto.Email, "Activate your account", GenerateLink(token, "ActivatePatientUser"));
             await _userRepository.AddAsync(user);
             await _unitOfWork.CommitAsync();
 
-            return user;
+            var userDTO = _userMapper.ToDto(user);
+
+            return userDTO;
 
         }
 
@@ -139,7 +141,7 @@ namespace DDDSample1.Domain.Users
             return user;
         }
 
-        public async Task<User> ActivateUserAsPatient(string token)
+        public async Task<UserDTO> ActivateUserAsPatient(string token)
         {
             var userId = VerifyToken(token);
             if (userId == null)
@@ -153,7 +155,9 @@ namespace DDDSample1.Domain.Users
             await _userRepository.UpdateAsync(user);
             await _unitOfWork.CommitAsync();
 
-            return user;
+            var userDto = _userMapper.ToDto(user);
+
+            return userDto;
         }
 
         public string CreateToken(User user)

@@ -36,11 +36,17 @@ namespace DDDSample1.Controllers
 
         [HttpPost("RegisterUserAsPatient")]
         [AllowAnonymous]
-        public async Task<ActionResult<User>> RegisterUserAsPatient(CreatingPatientUserDTO userDTO)
+        public async Task<ActionResult<UserDTO>> RegisterUserAsPatient(CreatingPatientUserDTO userDTO)
         {
-
-            var user = await _userService.CreateUserAsPatient(userDTO);
-            return Ok(user);
+            try
+            {
+                var user = await _userService.CreateUserAsPatient(userDTO);
+                return Ok(user);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred while creating the user: {ex.Message}");
+            }
         }
 
       /*  [HttpPost("RegisterUserAsStaff")]
@@ -123,7 +129,7 @@ namespace DDDSample1.Controllers
 
         [HttpPost("ActivatePatientUser")]
         [AllowAnonymous]
-        public async Task<ActionResult<User>> ActivatePatientUser(string token)
+        public async Task<ActionResult<UserDTO>> ActivatePatientUser(string token)
         {
             try
             {
