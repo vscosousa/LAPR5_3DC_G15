@@ -14,10 +14,12 @@ using System.Net;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 
+[Collection("Integration Collection")]
 public class UserControllerServiceIntegrationTests : IClassFixture<TestWebApplicationFactory<Startup>>
 {
     private readonly HttpClient _client;
     private readonly TestWebApplicationFactory<Startup> _factory;
+
 
     public UserControllerServiceIntegrationTests(TestWebApplicationFactory<Startup> factory)
     {
@@ -74,8 +76,8 @@ public class UserControllerServiceIntegrationTests : IClassFixture<TestWebApplic
         // Arrange
         var existingUserDTO = new CreatingUserDTO
         {
-            Email = "testuser@example.com",
-            Username = "existinguser",
+            Email = "testuser2@example.com",
+            Username = "existinguser2",
             Role = 0
         };
 
@@ -88,8 +90,8 @@ public class UserControllerServiceIntegrationTests : IClassFixture<TestWebApplic
 
         var newUserDTO = new CreatingUserDTO
         {
-            Email = "testuser@example.com", 
-            Username = "newuser",
+            Email = "testuser2@example.com", 
+            Username = "newuser2",
             Role = 0,
         };
 
@@ -107,7 +109,7 @@ public class UserControllerServiceIntegrationTests : IClassFixture<TestWebApplic
         // Arrange
         var existingUserDTO = new CreatingUserDTO
         {
-            Email = "testuser@example.com",
+            Email = "testuser3@example.com",
             Username = "existinguser",
             Role = 0
         };
@@ -121,7 +123,7 @@ public class UserControllerServiceIntegrationTests : IClassFixture<TestWebApplic
 
         var newUserDTO = new CreatingUserDTO
         {
-            Email = "test@example.com", 
+            Email = "test3@example.com", 
             Username = "existinguser",
             Role = 0,
         };

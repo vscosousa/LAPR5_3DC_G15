@@ -278,16 +278,10 @@ namespace DDDSample1.Domain.Users
 
             await _userRepository.UpdateAsync(user);
             await _unitOfWork.CommitAsync();
-
-
-
+            
             string token = CreateToken(user);
 
-
-            string output = "User logged in successfully";
-            output += $"\n\nToken: {token}";
-
-            return output;
+            return token;
         }
 
         private async Task NotifyAdmin(User user)
