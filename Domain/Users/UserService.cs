@@ -38,7 +38,7 @@ namespace DDDSample1.Domain.Users
             _staffRepository = staffRepository;
         }
 
-        public async Task<User> CreateUser(CreatingUserDTO dto)
+        public async Task<UserDTO> CreateUser(CreatingUserDTO dto)
         {
             try
             {
@@ -60,7 +60,8 @@ namespace DDDSample1.Domain.Users
                 await _userRepository.AddAsync(user);
                 await _unitOfWork.CommitAsync();
 
-                return user;
+                var userDto = _userMapper.ToDto(user);
+                return userDto;
             }
             catch (Exception ex)
             {
@@ -127,7 +128,7 @@ namespace DDDSample1.Domain.Users
         }*/
 
         // Activate a user and set the password
-        public async Task<User> ActivateUser(string token, string newPassword)
+        public async Task<UserDTO> ActivateUser(string token, string newPassword)
         {
 
             var userId = VerifyToken(token) ?? throw new Exception("Invalid or expired token.");
@@ -138,7 +139,8 @@ namespace DDDSample1.Domain.Users
             await _userRepository.UpdateAsync(user);
             await _unitOfWork.CommitAsync();
 
-            return user;
+            var userDTO = _userMapper.ToDto(user);
+            return userDTO;
         }
 
         public async Task<UserDTO> ActivateUserAsPatient(string token)

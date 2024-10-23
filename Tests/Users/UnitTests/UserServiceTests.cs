@@ -71,6 +71,9 @@ namespace DDDSample1.Tests.Users.UnitTests
             _userMapperMock.Setup(mapper => mapper.ToDomain(dto))
                            .Returns(user);
 
+            _userMapperMock.Setup(mapper => mapper.ToDto(user))
+                           .Returns(new UserDTO(user.Id.AsGuid(), user.Email, user.Username, user.IsActive));
+
 
             _userRepositoryMock.Setup(repo => repo.AddAsync(user)).ReturnsAsync(user);
 
@@ -81,7 +84,6 @@ namespace DDDSample1.Tests.Users.UnitTests
             Assert.NotNull(createdUser);
             Assert.Equal(dto.Email, createdUser.Email);
             Assert.Equal(dto.Username, createdUser.Username);
-            Assert.Equal(Role.Admin, createdUser.Role);
             Assert.False(createdUser.IsActive);
         }
 
@@ -134,10 +136,10 @@ namespace DDDSample1.Tests.Users.UnitTests
 
             _userRepositoryMock.Setup(repo => repo.GetByIdAsync(new UserID(userId))).ReturnsAsync(user);
 
-            
+
             _configurationMock.SetupGet(c => c["Jwt:Key"]).Returns("your-very-secure-key-that-is-at-least-256-bits-long");
 
-            
+
             var exception = await Assert.ThrowsAsync<SecurityTokenException>(() => _userService.ActivateUser(expiredToken, newPassword));
             Assert.Contains("Token validation failed", exception.Message);
         }
@@ -176,33 +178,40 @@ namespace DDDSample1.Tests.Users.UnitTests
         [Fact]
         public async Task ActivateUser_SuccessfullyActivatesUser()
         {
-             var dto = new CreatingUserDTO("joaopereira@gmail.com", "joao.pereira", 0);
+            // Arrange
+            var dto = new CreatingUserDTO("joaopereira@gmail.com", "joao.pereira", 0);
             var user = new User(dto.Email, dto.Username, Role.Admin);
             var token = _userService.CreateToken(user);
+
+            var expectedDto = new UserDTO(user.Id.AsGuid(), user.Email, user.Username, true);
 
             _userRepositoryMock.Setup(repo => repo.GetUserByEmailAsync(dto.Email))
                                .ReturnsAsync((User)null);
             _userRepositoryMock.Setup(repo => repo.GetUserByUsernameAsync(dto.Username))
                                .ReturnsAsync((User)null);
 
-
             _userMapperMock.Setup(mapper => mapper.ToDomain(dto))
                            .Returns(user);
 
-
             _userRepositoryMock.Setup(repo => repo.AddAsync(user)).ReturnsAsync(user);
+            _userMapperMock.Setup(mapper => mapper.ToDto(user))
+                                    .Returns(expectedDto);
+            
 
-            _userRepositoryMock.Setup(repo => repo.GetByIdAsync(user.Id)).ReturnsAsync(user);
-
-
+            // Act
             var createdUser = await _userService.CreateUser(dto);
 
-            var activatedUser = await _userService.ActivateUser(token, "PasswordCorrect123@");
+            _userRepositoryMock.Setup(repo => repo.UpdateAsync(user)).Returns(Task.CompletedTask);
+            _userRepositoryMock.Setup(repo => repo.GetByIdAsync(user.Id)).ReturnsAsync(user);
+            
+            var activatedUserDto = await _userService.ActivateUser(token, "PasswordCorrect123@");
 
-            Assert.NotNull(activatedUser);
-            Assert.True(activatedUser.IsActive);
+            // Assert
+            Assert.NotNull(activatedUserDto);
+            Assert.True(activatedUserDto.IsActive);
+            Assert.Equal(user.Email, activatedUserDto.Email);
+            Assert.Equal(user.Username, activatedUserDto.Username);
         }
-
 
         //Unit Test for Login - US5.1.6
         [Fact]
@@ -211,9 +220,9 @@ namespace DDDSample1.Tests.Users.UnitTests
             var dto = new LoginUserDTO { Email = "nonexistent@example.com", Password = "password123" };
 
             _userRepositoryMock.Setup(repo => repo.GetUserByEmailAsync(dto.Email))
-                               .ReturnsAsync((User)null); 
+                               .ReturnsAsync((User)null);
 
-            
+
             var exception = await Assert.ThrowsAsync<Exception>(() => _userService.Login(dto));
             Assert.Equal("Email not registered", exception.Message);
         }
@@ -222,17 +231,17 @@ namespace DDDSample1.Tests.Users.UnitTests
         [Fact]
         public async Task Login_UserNotActive_ReturnsUserNotActiveMessage()
         {
-            
+
             var dto = new LoginUserDTO { Email = "inactive@example.com", Password = "password123" };
             var user = new User(dto.Email, "username", Role.Admin);
 
             _userRepositoryMock.Setup(repo => repo.GetUserByEmailAsync(dto.Email))
                                .ReturnsAsync(user);
 
-            
+
             var result = await _userService.Login(dto);
 
-           
+
             Assert.Equal("User is not active. Check your Email to activate the account.", result);
         }
 
@@ -240,19 +249,19 @@ namespace DDDSample1.Tests.Users.UnitTests
         [Fact]
         public async Task Login_UserLocked_ReturnsAccountLockedMessage()
         {
-            
+
             var dto = new LoginUserDTO { Email = "locked@example.com", Password = "password123" };
             var user = new User(dto.Email, "username", Role.Admin);
             user.Activate();
             user.LockAccount();
 
             _userRepositoryMock.Setup(repo => repo.GetUserByEmailAsync(dto.Email))
-                               .ReturnsAsync(user); 
+                               .ReturnsAsync(user);
 
-           
+
             var result = await _userService.Login(dto);
 
-            
+
             Assert.Equal($"Your account is locked until {user.LockedUntil.Value.ToLocalTime()}. Please try again later.", result);
         }
 
@@ -260,7 +269,7 @@ namespace DDDSample1.Tests.Users.UnitTests
         [Fact]
         public async Task Login_WrongPassword_RegistersFailedAttempt_ReturnsRemainingAttemptsMessage()
         {
-           
+
             var dto = new LoginUserDTO { Email = "wrongpassword@example.com", Password = "wrongPassword" };
             var user = new User(dto.Email, "username", Role.Admin);
             user.Activate();
@@ -268,15 +277,15 @@ namespace DDDSample1.Tests.Users.UnitTests
             user.RegisterFailedLoginAttempt();
 
             _userRepositoryMock.Setup(repo => repo.GetUserByEmailAsync(dto.Email))
-                               .ReturnsAsync(user); 
+                               .ReturnsAsync(user);
             _userRepositoryMock.Setup(repo => repo.UpdateAsync(user))
-                               .Returns(Task.CompletedTask); 
+                               .Returns(Task.CompletedTask);
 
 
-            
+
             var result = await _userService.Login(dto);
 
-            
+
             Assert.Equal($"Wrong password. You have {5 - user.FailedLoginAttempts} attempts left before your account is locked.", result);
             _userRepositoryMock.Verify(repo => repo.UpdateAsync(user), Times.Once);
             _unitOfWorkMock.Verify(uow => uow.CommitAsync(), Times.Once);
@@ -286,7 +295,7 @@ namespace DDDSample1.Tests.Users.UnitTests
         [Fact]
         public async Task Login_UserLockedAfterFailedAttempts_NotifiesAdmin()
         {
-            
+
             var dto = new LoginUserDTO { Email = "lockafterattempts@example.com", Password = "wrongPassword" };
             var user = new User(dto.Email, "username", Role.Admin);
             user.Activate();
@@ -297,17 +306,17 @@ namespace DDDSample1.Tests.Users.UnitTests
             user.RegisterFailedLoginAttempt();
 
             _userRepositoryMock.Setup(repo => repo.GetUserByEmailAsync(dto.Email))
-                               .ReturnsAsync(user); 
+                               .ReturnsAsync(user);
             _userRepositoryMock.Setup(repo => repo.UpdateAsync(user))
                                .Returns(Task.CompletedTask);
 
             _mailServiceMock.Setup(mail => mail.SendEmailToAdminAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
-                            .Returns(Task.CompletedTask); 
+                            .Returns(Task.CompletedTask);
 
-            
+
             var result = await _userService.Login(dto);
 
-           
+
             Assert.Equal("Your account has been locked due to multiple failed login attempts. Please try again in 30 minutes. An admin has been notified.", result);
         }
 
@@ -315,21 +324,21 @@ namespace DDDSample1.Tests.Users.UnitTests
         [Fact]
         public async Task Login_SuccessfulLogin_ReturnsTokenAndMessage()
         {
-            
+
             var dto = new LoginUserDTO { Email = "success@example.com", Password = "PasswordCorrect123@" };
             var user = new User(dto.Email, "username", Role.Admin);
             user.Activate();
             user.SetPassword(dto.Password);
 
             _userRepositoryMock.Setup(repo => repo.GetUserByEmailAsync(dto.Email))
-                               .ReturnsAsync(user); 
+                               .ReturnsAsync(user);
             _userRepositoryMock.Setup(repo => repo.UpdateAsync(user))
-                               .Returns(Task.CompletedTask); 
+                               .Returns(Task.CompletedTask);
 
-            
+
             _userRepositoryMock.Setup(repo => repo.UpdateAsync(user)).Returns(Task.CompletedTask);
 
-            
+
             var result = await _userService.Login(dto);
 
             Assert.Contains("User logged in successfully", result);

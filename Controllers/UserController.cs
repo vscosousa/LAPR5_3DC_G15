@@ -18,10 +18,8 @@ namespace DDDSample1.Controllers
             _userService = userService;
         }
 
-
-
-        [HttpPost("RegisterUser"), Authorize(Roles = "Admin")]   
-        public async Task<ActionResult<User>> RegisterUser(CreatingUserDTO userDTO)
+        [HttpPost("RegisterUser"), Authorize(Roles = "Admin")]
+        public async Task<IActionResult> RegisterUser([FromBody] CreatingUserDTO userDTO)
         {
             try
             {
@@ -30,7 +28,11 @@ namespace DDDSample1.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"An error occurred while creating the user: {ex.Message}");
+                if (ex.Message == "Email is already in use."|| ex.Message == "Username is already in use.")
+                {
+                    return Conflict(new { message = ex.Message });
+                }
+                return BadRequest(new { message = ex.Message });
             }
         }
 
@@ -49,20 +51,20 @@ namespace DDDSample1.Controllers
             }
         }
 
-      /*  [HttpPost("RegisterUserAsStaff")]
-        [AllowAnonymous]
-        public async Task<ActionResult<User>> RegisterUserAsStaff(CreatingStaffUserDTO userDTO)
-        {   
-            try
-            {
-                var user = await _userService.CreateUserAsStaff(userDTO);
-                return Ok(user);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"An error occurred while register Satff in: {ex.Message}");
-            }
-        }*/
+        /*  [HttpPost("RegisterUserAsStaff")]
+          [AllowAnonymous]
+          public async Task<ActionResult<User>> RegisterUserAsStaff(CreatingStaffUserDTO userDTO)
+          {   
+              try
+              {
+                  var user = await _userService.CreateUserAsStaff(userDTO);
+                  return Ok(user);
+              }
+              catch (Exception ex)
+              {
+                  return StatusCode(500, $"An error occurred while register Satff in: {ex.Message}");
+              }
+          }*/
 
         [HttpPost("RequestResetPassword"), AllowAnonymous]
         public async Task<IActionResult> RequestPasswordReset(string email)
@@ -101,7 +103,7 @@ namespace DDDSample1.Controllers
             }
             catch (ArgumentException ex)
             {
-                return BadRequest(ex.Message); 
+                return BadRequest(ex.Message);
             }
             catch (Exception ex)
             {

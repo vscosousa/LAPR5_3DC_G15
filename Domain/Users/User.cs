@@ -29,6 +29,9 @@ namespace DDDSample1.Domain.Users
 
         private User() { }
 
+        
+
+        [JsonConstructor]
         // Constructor for User registered by the admin
         public User(string email, string username, Role role)
         {
