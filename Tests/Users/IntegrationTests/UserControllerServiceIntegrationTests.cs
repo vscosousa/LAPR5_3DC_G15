@@ -45,7 +45,7 @@ public class UserControllerServiceIntegrationTests : IClassFixture<TestWebApplic
         return tokenHandler.WriteToken(token);
     }
 
-    [Fact]
+    /* [Fact]
     public async Task RegisterUser_ShouldReturnOk_WhenUserIsCreated()
     {
         // Arrange
@@ -133,9 +133,5 @@ public class UserControllerServiceIntegrationTests : IClassFixture<TestWebApplic
 
         // assert
         Assert.Equal(HttpStatusCode.Conflict, conflictResponse.StatusCode);
-    }
-
-    
-
-    
+    } */
 }

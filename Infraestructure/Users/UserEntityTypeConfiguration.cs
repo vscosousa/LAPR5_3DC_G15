@@ -33,7 +33,8 @@ namespace DDDSample1.Infrastructure.Users
                 .HasForeignKey<User>("_patientId")
                 .IsRequired(false)
                 .OnDelete(DeleteBehavior.SetNull);
-            builder.HasOne(b => b.Staff)
+            builder
+                .HasOne(b => b.Staff)
                 .WithOne()
                 .HasForeignKey<User>("_staffId")
                 .IsRequired(false)

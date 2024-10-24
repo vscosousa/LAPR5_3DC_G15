@@ -56,12 +56,12 @@ namespace DDDSample1.Domain.Staffs
         public string PhoneNumber => _phoneNumber;
         public DateTime[] AvailabilitySlots => _availabilitySlots;
         public bool IsActive => _isActive;
-        public SpecializationId SpecializationId => _specializationId;
-        
+
         [JsonIgnore]
         public Specialization Specialization => _specialization;
+        public SpecializationId SpecializationId => _specializationId;
 
-        // Internal methods to set or modify values
+
         internal void GenerateLicenseNumber() => _licenseNumber = Guid.NewGuid().ToString().Substring(0, 8).ToUpper();
 
         internal void ChangePhoneNumber(string phoneNumber)

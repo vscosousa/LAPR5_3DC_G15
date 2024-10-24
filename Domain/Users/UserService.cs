@@ -40,13 +40,13 @@ namespace DDDSample1.Domain.Users
 
         public async Task<UserDTO> CreateUser(CreatingUserDTO dto)
         {
-            try
-            {
                 var existingUserByEmail = await _userRepository.GetUserByEmailAsync(dto.Email);
                 if (existingUserByEmail != null)
                 {
                     throw new Exception("Email is already in use.");
                 }
+
+                var staff = await _staffRepository.GetByEmailAsync(dto.Email) ?? throw new Exception("Staff not found.");
 
                 var existingUserByUsername = await _userRepository.GetUserByUsernameAsync(dto.Username);
                 if (existingUserByUsername != null)
@@ -62,11 +62,6 @@ namespace DDDSample1.Domain.Users
 
                 var userDto = _userMapper.ToDto(user);
                 return userDto;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
         }
 
 
