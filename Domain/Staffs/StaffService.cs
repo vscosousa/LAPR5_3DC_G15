@@ -157,7 +157,6 @@ namespace DDDSample1.Domain.Staffs
                 updatedFields.Add("Specialization");
             }
 
-            // Commit changes if there are any updates
             if (updatedFields.Count > 0)
             {
                 var logMessage = $"Staff updated. The following fields were updated:"+ string.Join(", ", updatedFields) +".";
@@ -172,32 +171,44 @@ namespace DDDSample1.Domain.Staffs
 
         public async Task<StaffDTO> DeactivateStaffAsync(Guid id)
         {
-            // Busca o perfil do staff pelo ID
-            var staff = await _repository.GetByIdAsync(new StaffId(id));
+            try
+            {
+                var staff = await _repository.GetByIdAsync(new StaffId(id));
 
-            if (staff == null)
-                throw new BusinessRuleValidationException("Staff not found.");
+                if (staff == null)
+                    throw new BusinessRuleValidationException("Staff not found.");
 
-            // Verifica se o staff já está desativado
-            if (staff.IsActive == false)
-                throw new BusinessRuleValidationException("Staff is already deactivated.");
+                staff.Deactivate();
 
-            // Desativa o perfil
-            staff.Deactivate();
+                var logMessage = $"Staff profile {staff.FullName} (ID: {staff.Id}) has been deactivated.";
+                var log = new Log(TypeOfAction.Deactivate, id.ToString(), logMessage);
+                await _logRepository.AddAsync(log);
 
-            // Registro de auditoria
-            var logMessage = $"Staff profile for {staff.FullName} (ID: {staff.Id}) has been deactivated.";
-            var log = new Log(TypeOfAction.Delete, id.ToString(), logMessage);
-            await _logRepository.AddAsync(log);
-
-            // Confirma a desativação no banco de dados
-            await _unitOfWork.CommitAsync();
-
-            // Retorna o perfil atualizado como DTO
-            return _mapper.ToDto(staff);
+                await _unitOfWork.CommitAsync();
+                return _mapper.ToDto(staff);    
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred: {ex.Message}");
+                if (ex.InnerException != null)
+                {
+                    Console.WriteLine($"Inner exception: {ex.InnerException.Message}");
+                }
+                throw;
+            }
         }
 
+        public async Task<List<StaffDTO>> SearchStaffProfiles(SearchStaffDTO dto)
+        {
+            var staffProfiles = await _repository.SearchStaffAsync(dto);
 
+            if (staffProfiles == null || staffProfiles.Count == 0)
+            {
+                return null;
+            }
+
+            return staffProfiles.ConvertAll(_mapper.ToDto);
+        }
 
     }
 }

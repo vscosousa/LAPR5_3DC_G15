@@ -106,7 +106,60 @@ namespace DDDSample1.Controllers
             }
         }
 
-        
+        [HttpPut("deactivate/{id}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<ActionResult<StaffDTO>> DeactivateStaff(Guid id)
+        {
+            try
+            {
+                var deactivatedStaff = await _staffService.DeactivateStaffAsync(id);
+
+                if (deactivatedStaff==null)
+                {
+                    return NotFound(new { message = $"Staff with ID {id} not found." });
+                }
+
+                return Ok(deactivatedStaff);
+            }
+            catch (BusinessRuleValidationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An error occurred while deactivating the staff", details = ex.Message });
+            }
+        }
+
+        [HttpGet("search")]
+        [Authorize(Roles = "Admin")]
+        public async Task<ActionResult<IEnumerable<StaffDTO>>> SearchStaffProfiles(
+            string firstName, string lastName, string email, string specializationId)
+        {
+            var dto = new SearchStaffDTO
+            {
+                FirstName = firstName,
+                LastName = lastName,
+                Email = email,
+                SpecializationId = specializationId
+            };
+
+            try
+            {
+                var staffProfiles = await _staffService.SearchStaffProfiles(dto);
+
+                if (staffProfiles == null || staffProfiles.Count == 0)
+                {
+                    return Ok("No staff profiles found with the given criteria.");
+                }
+
+                return Ok(staffProfiles);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred while searching for staff profiles: {ex.Message}");
+            }
+        }
 
 
     }

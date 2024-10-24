@@ -10,18 +10,13 @@ namespace DDDSample1.Infrastructure.Staffs
 {
     public class StaffRepository : BaseRepository<Staff, StaffId>, IStaffRepository
     {
-        private readonly DDDSample1DbContext _context;
-
         public StaffRepository(DDDSample1DbContext context) : base(context.Staffs)
         {
-            _context = context;
         }
 
         public async Task<IEnumerable<Staff>> GetStaffBySpecializationIdAsync(SpecializationId specializationId)
         {
-            return await _context.Staffs
-                .Where(s => s.SpecializationId == specializationId)
-                .ToListAsync();
+            return await _objs.Where(s => s.SpecializationId == specializationId).ToListAsync();
         }
 
         public async Task<Staff> GetByEmailAsync(string email)
@@ -38,5 +33,33 @@ namespace DDDSample1.Infrastructure.Staffs
         {
             return await _objs.Where(x => licenseNumber.Equals(x.LicenseNumber)).FirstOrDefaultAsync();
         }
+
+        public async Task<List<Staff>> SearchStaffAsync(SearchStaffDTO dto)
+        {
+            var query = _objs.AsQueryable();
+
+            if (!string.IsNullOrEmpty(dto.FirstName))
+            {
+                query = query.Where(s => s.FirstName.Contains(dto.FirstName));
+            }
+
+            if (!string.IsNullOrEmpty(dto.LastName))
+            {
+                query = query.Where(s => s.LastName.Contains(dto.LastName));
+            }
+
+            if (!string.IsNullOrEmpty(dto.Email))
+            {
+                query = query.Where(s => s.Email.Contains(dto.Email));
+            }
+
+            if (!string.IsNullOrEmpty(dto.SpecializationId))
+            {
+                query = query.Where(s => s.SpecializationId.ToString() == dto.SpecializationId);
+            }
+
+            return await query.ToListAsync();
+        }
+
     }
 }

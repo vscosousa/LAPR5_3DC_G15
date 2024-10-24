@@ -11,5 +11,6 @@ namespace DDDSample1.Domain.Staffs
         Task<Staff> GetByLicenseNumberAsync(string licenseNumber);
         Task<Staff> GetByEmailAsync(string email);
         Task<Staff> GetByPhoneNumberAsync(string phoneNumber);
+        Task<List<Staff>> SearchStaffAsync(SearchStaffDTO dto);
     }
 }

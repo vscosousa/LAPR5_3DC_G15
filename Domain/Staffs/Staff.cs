@@ -56,9 +56,8 @@ namespace DDDSample1.Domain.Staffs
         public string PhoneNumber => _phoneNumber;
         public DateTime[] AvailabilitySlots => _availabilitySlots;
         public bool IsActive => _isActive;
-        public SpecializationId SpecializationId => _specializationId;
-        
         [JsonIgnore]
+        public SpecializationId SpecializationId => _specializationId;
         public Specialization Specialization => _specialization;
 
         // Internal methods to set or modify values
@@ -102,7 +101,12 @@ namespace DDDSample1.Domain.Staffs
             _specializationId = specializationId;
         }
 
-        public void Deactivate() {_isActive = false;}
+        public void Deactivate() {
+            
+            if (_isActive == false)
+                    throw new BusinessRuleValidationException("Staff is already deactivated.");
+            _isActive = false;
+        }
 
         private bool NameStartsWithCapital(string fullName)
         {

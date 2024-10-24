@@ -1,5 +1,6 @@
 public enum TypeOfAction
 {
     Update,
-    Delete
+    Delete, 
+    Deactivate
 }
