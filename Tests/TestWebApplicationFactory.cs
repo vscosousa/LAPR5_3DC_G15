@@ -68,4 +68,16 @@ public class TestWebApplicationFactory<TStartup> : WebApplicationFactory<TStartu
             }
         });
     }
+
+    public void ResetDatabase()
+    {
+        using (var scope = Services.CreateScope())
+        {
+            var scopedServices = scope.ServiceProvider;
+            var db = scopedServices.GetRequiredService<DDDSample1DbContext>();
+
+            db.Database.EnsureDeleted();
+            db.Database.EnsureCreated();
+        }
+    }
 }

@@ -31,6 +31,10 @@ namespace DDDSample1.Controllers
             }
             catch (Exception ex)
             {
+                if (ex is BusinessRuleValidationException)
+                {
+                    return BadRequest(new { Message = ex.Message });
+                }
                 return StatusCode(500, $"An error occurred while creating the patient: {ex.Message}");
             }
         }
@@ -91,7 +95,7 @@ namespace DDDSample1.Controllers
             try {
                 var patients = await _service.SearchPatients(dto);
                 if (patients == null) {
-                    return Ok("No patients found with the given criteria.");
+                    return NotFound();
                 }
                 return Ok(patients);
             } catch (Exception ex) {
