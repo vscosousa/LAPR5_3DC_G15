@@ -21,8 +21,15 @@ namespace DDDSample1.Controllers
         [HttpPost("RegisterUser"), Authorize(Roles = "Admin")]
         public async Task<IActionResult> RegisterUser([FromBody] CreatingUserDTO userDTO)
         {
-                var user = await _userService.CreateUser(userDTO);
-                return Ok(user);
+                try
+                {
+                    await _userService.CreateUser(userDTO);
+                    return Ok();
+                }
+                catch (Exception ex)
+                {
+                    return StatusCode(500, $"An error occurred while registering the user: {ex.Message}");
+                }
         }
 
         [HttpPost("RegisterUserAsPatient")]

@@ -40,6 +40,7 @@ namespace DDDSample1.Domain.Users
 
         public async Task<UserDTO> CreateUser(CreatingUserDTO dto)
         {
+            try{
                 var existingUserByEmail = await _userRepository.GetUserByEmailAsync(dto.Email);
                 if (existingUserByEmail != null)
                 {
@@ -62,6 +63,11 @@ namespace DDDSample1.Domain.Users
 
                 var userDto = _userMapper.ToDto(user);
                 return userDto;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
 
@@ -92,35 +98,6 @@ namespace DDDSample1.Domain.Users
             return userDTO;
 
         }
-
-       /* public async Task<User> CreateUserAsStaff(CreatingStaffUserDTO dto)
-        {   
-            
-            var existingUserByEmail = await _userRepository.GetUserByEmailAsync(dto.Email);
-            if (existingUserByEmail != null)
-            {
-                throw new Exception("Email is already in use.");
-            }
-
-            var staff = await _staffRepository.GetByEmailAsync(dto.Email) ?? throw new Exception("Patient not found.");
-
-            if (staff.PhoneNumber != dto.PhoneNumber)
-            {
-                throw new Exception("Phone number does not match the Staff's email.");
-            }
-            
-            var role = Enum.Parse<Role>(dto.Role, true);
-            var user = new User(dto.Email, dto.PhoneNumber, role, dto.Password, staff.Id.AsGuid());
-
-            string token = CreateToken(user);
-
-            await _mailService.SendEmail(dto.Email, "Activate your account", GenerateLink(token, "ActivateStaffUser"));
-
-            await _userRepository.AddAsync(user);
-            await _unitOfWork.CommitAsync();
-
-            return user;
-        }*/
 
         // Activate a user and set the password
         public async Task<UserDTO> ActivateUser(string token, string newPassword)
