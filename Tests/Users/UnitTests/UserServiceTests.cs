@@ -54,7 +54,8 @@ namespace DDDSample1.Tests.Users.UnitTests
             );
         }
 
-        private Staff CreateSampleStaff(){
+        private Staff CreateSampleStaff()
+        {
             var specialization = new Specialization("Cardiology");
             return new Staff(
             "João",
@@ -63,6 +64,21 @@ namespace DDDSample1.Tests.Users.UnitTests
             "joao.pereira@gmail.com",
             "+123456789",
             specialization.Id
+            );
+        }
+
+        private Patient createSamplePatient()
+        {
+            return new Patient(
+                "João",
+                "Pereira",
+                "João Pereira",
+                new DateOnly(1999, 12, 25),
+                GenderOptions.Male,
+                "joao.pereira@gmail.com",
+                "+123456789",
+                "+987654321",
+                "Medical Conditions"
             );
         }
 
@@ -377,6 +393,214 @@ namespace DDDSample1.Tests.Users.UnitTests
             Assert.True(IsJwtToken(result));
         }
 
+        //Unit Test for Registering a new Patient User - US5.1.3
+        [Fact]
+        public async Task CreatePatientUser_SuccessfullyCreatesPatientUser()
+        {
+
+            var patient = createSamplePatient();
+            var dto = new CreatingPatientUserDTO(patient.Email, "PasswordCorrect123@", "+123456789", patient.Id.AsGuid());
+            var user = new User(patient.Email, dto.Password, dto.PhoneNumber, patient.Id.AsGuid());
+
+            _userRepositoryMock.Setup(repo => repo.GetUserByEmailAsync(dto.Email))
+                               .ReturnsAsync((User)null);
+
+            _patientRepositoryMock.Setup(repo => repo.GetByEmailAsync(dto.Email))
+                               .ReturnsAsync(patient);
+
+            _userMapperMock.Setup(mapper => mapper.ToCreatingPatientUser(dto))
+                           .Returns(user);
+
+            _userMapperMock.Setup(mapper => mapper.ToDto(user))
+                           .Returns(new UserDTO(user.Id.AsGuid(), user.Email, user.Username, user.IsActive));
+
+            _userRepositoryMock.Setup(repo => repo.AddAsync(user)).ReturnsAsync(user);
+
+
+            var createdUser = await _userService.CreateUserAsPatient(dto);
+
+            // Assert
+            Assert.NotNull(createdUser);
+            Assert.Equal(dto.Email, createdUser.Email);
+            Assert.Equal(dto.Email, createdUser.Username);
+            Assert.False(createdUser.IsActive);
+        }
+
+        //Unit Test for Registering a new Patient User - US5.1.3
+        [Fact]
+        public async Task RegisterPatientUser_EmailIsAlreadyInUse()
+        {
+            var patient = createSamplePatient();
+            var user = new User(patient.Email, "PasswordCorrect123@", patient.PhoneNumber, patient.Id.AsGuid());
+            var dto = new CreatingPatientUserDTO("joao.pereira@gmail.com", "PasswordCorrect123@", "+123456789", patient.Id.AsGuid());
+
+            _userRepositoryMock.Setup(repo => repo.GetUserByEmailAsync(dto.Email))
+                               .ReturnsAsync(new User(dto.Email, dto.Password, dto.PhoneNumber, dto.PatientId));
+
+            var exception = await Assert.ThrowsAsync<Exception>(() => _userService.CreateUserAsPatient(dto));
+
+            Assert.Equal("Email is already in use.", exception.Message);
+            _userRepositoryMock.Verify(repo => repo.GetUserByEmailAsync(dto.Email), Times.Once);
+            _patientRepositoryMock.Verify(repo => repo.GetByEmailAsync(dto.Email), Times.Never);
+            _userRepositoryMock.Verify(repo => repo.AddAsync(It.IsAny<User>()), Times.Never);
+            _userMapperMock.Verify(mapper => mapper.ToCreatingPatientUser(dto), Times.Never);
+            _userMapperMock.Verify(mapper => mapper.ToDto(It.IsAny<User>()), Times.Never);
+        }
+
+        //Unit Test for Registering a new Patient User - US5.1.3
+        [Fact]
+        public async Task RegisterPatientUser_PhoneNumberDoesNotMatchPatient()
+        {
+            var patient = createSamplePatient();
+            var user = new User(patient.Email, "PasswordCorrect123@", patient.PhoneNumber, patient.Id.AsGuid());
+            var dto = new CreatingPatientUserDTO("joao.pereira@gmail.com", "PasswordCorrect123@", "+123489", patient.Id.AsGuid());
+
+            _userRepositoryMock.Setup(repo => repo.GetUserByEmailAsync(dto.Email))
+                                .ReturnsAsync((User)null);
+            _patientRepositoryMock.Setup(repo => repo.GetByEmailAsync(dto.Email))
+                                .ReturnsAsync(patient);
+
+            var exception = await Assert.ThrowsAsync<Exception>(() => _userService.CreateUserAsPatient(dto));
+
+            Assert.Equal("Phone number does not match the Patient's profile with the given email.", exception.Message);
+            _userRepositoryMock.Verify(repo => repo.GetUserByEmailAsync(dto.Email), Times.Once);
+            _patientRepositoryMock.Verify(repo => repo.GetByEmailAsync(dto.Email), Times.Once);
+            _userRepositoryMock.Verify(repo => repo.AddAsync(It.IsAny<User>()), Times.Never);
+            _userMapperMock.Verify(mapper => mapper.ToCreatingPatientUser(dto), Times.Never);
+            _userMapperMock.Verify(mapper => mapper.ToDto(It.IsAny<User>()), Times.Never);
+        }
+
+        //Unit Test for ActivatePatientUser - US5.1.3
+        [Fact]
+        public async Task ActivatePatientUser_SuccessfullyActivatesPatientUser()
+        {
+            // Arrange
+            var patient = createSamplePatient();
+            var dto = new CreatingPatientUserDTO("joao.pereira@gmail.com", "PasswordCorrect123@", "+123489", patient.Id.AsGuid());
+            var user = new User(patient.Email, "PasswordCorrect123@", patient.PhoneNumber, patient.Id.AsGuid());
+            var token = _userService.CreateToken(user);
+
+            var expectedDto = new UserDTO(user.Id.AsGuid(), user.Email, user.Username, true);
+
+            _userRepositoryMock.Setup(repo => repo.GetByIdAsync(user.Id)).ReturnsAsync(user);
+            _userRepositoryMock.Setup(repo => repo.UpdateAsync(user)).Returns(Task.CompletedTask);
+            _userMapperMock.Setup(mapper => mapper.ToDto(user))
+                                    .Returns(expectedDto);
+
+            var activatedUserDto = await _userService.ActivateUserAsPatient(token);
+
+            // Assert
+            Assert.NotNull(activatedUserDto);
+            Assert.True(activatedUserDto.IsActive);
+            Assert.Equal(user.Email, activatedUserDto.Email);
+            Assert.Equal(user.Username, activatedUserDto.Username);
+        }
+
+        [Fact]
+        public async Task ActivatePatientUser_ExpiredToken()
+        {
+            // Arrange
+            var patient = createSamplePatient();
+            var dto = new CreatingPatientUserDTO("joao.pereira@gmail.com", "PasswordCorrect123@", "+123489", patient.Id.AsGuid());
+            var user = new User(patient.Email, "PasswordCorrect123@", patient.PhoneNumber, patient.Id.AsGuid());
+            var token = _userService.CreateToken(user);
+            var expiredToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiYWRtaW4iLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJhZG1pbkBnbWFpbC5jb20iLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9hbWFpZGVudGlmaWVyIjoic2VjdXJpdHkiLCJleHBhbml0eSI6MTcyOTYwNjIwMn0.9n-Z0lRhhg2I5D_vgh0ECjfjE1lQAWYw3He3Q9cS1to";
+
+            _userRepositoryMock.Setup(repo => repo.GetByIdAsync(new UserID(user.Id.AsGuid()))).ReturnsAsync(user);
+            _configurationMock.SetupGet(c => c["Jwt:Key"]).Returns("your-very-secure-key-that-is-at-least-256-bits-long");
+            var exception = await Assert.ThrowsAsync<SecurityTokenException>(() => _userService.ActivateUserAsPatient(expiredToken));
+            Assert.Contains("Token validation failed", exception.Message);
+        }
+
+
+        [Fact]
+        public async Task ActivatePatientUser_UserNotFound()
+        {
+            // Arrange
+            var patient = createSamplePatient();
+            var dto = new CreatingPatientUserDTO("joao.pereira@gmail.com", "PasswordCorrect123@", "+123489", patient.Id.AsGuid());
+            var user = new User(patient.Email, "PasswordCorrect123@", patient.PhoneNumber, patient.Id.AsGuid());
+            var token = _userService.CreateToken(user);
+
+            var expectedDto = new UserDTO(user.Id.AsGuid(), user.Email, user.Username, true);
+
+            _userRepositoryMock.Setup(repo => repo.GetByIdAsync(user.Id)).ReturnsAsync((User)null);
+
+            var exception = await Assert.ThrowsAsync<Exception>(() => _userService.ActivateUserAsPatient(token));
+        }
+
+        [Fact]
+        public async Task RequestDeletePatientUser_Successfully()
+        {
+            // Arrange
+            var patient = createSamplePatient();
+            var user = new User(patient.Email, "PasswordCorrect123@", patient.PhoneNumber, patient.Id.AsGuid());
+            var token = _userService.CreateToken(user);
+
+            _userRepositoryMock.Setup(repo => repo.GetByIdAsync(user.Id)).ReturnsAsync(user);
+            _mailServiceMock.Setup(mail => mail.SendEmail(user.Email, "Delete User Request", It.IsAny<string>())).Returns(Task.CompletedTask);
+            
+            // Act
+            await _userService.RequestDelete(token);
+
+            // Assert
+            _userRepositoryMock.Verify(repo => repo.GetByIdAsync(user.Id), Times.Once);
+            _mailServiceMock.Verify(mail => mail.SendEmail(user.Email, "Delete User Request", It.IsAny<string>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task RequestDeletePatientUser_UserNotFound()
+        {
+            // Arrange
+            var patient = createSamplePatient();
+            var user = new User(patient.Email, "PasswordCorrect123@", patient.PhoneNumber, patient.Id.AsGuid());
+            var token = _userService.CreateToken(user);
+
+            _userRepositoryMock.Setup(repo => repo.GetByIdAsync(user.Id)).ReturnsAsync((User)null);
+            
+            // Act
+            var exception = await Assert.ThrowsAsync<Exception>(() => _userService.RequestDelete(token));
+
+            // Assert
+            Assert.Equal("User not found.", exception.Message);
+            _userRepositoryMock.Verify(repo => repo.GetByIdAsync(user.Id), Times.Once);
+            _mailServiceMock.Verify(mail => mail.SendEmail(user.Email, "Delete User Request", It.IsAny<string>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task DeletePatientUser_Successfully()
+        {
+            // Arrange
+            var patient = createSamplePatient();
+            var user = new User(patient.Email, "PasswordCorrect123@", patient.PhoneNumber, patient.Id.AsGuid());
+            var token = _userService.CreateToken(user);
+
+            _userRepositoryMock.Setup(repo => repo.GetByIdAsync(user.Id)).ReturnsAsync(user);
+            _userRepositoryMock.Setup(repo => repo.Remove(user));
+            _logRepositoryMock.Setup(repo => repo.AddAsync(It.IsAny<Log>())).ReturnsAsync(new Log(TypeOfAction.Delete, user.Id.ToString(), "User of Type: " + user.Role.ToString() + "was deleted."));
+            // Act
+            await _userService.DeleteUser(token);
+
+            // Assert
+            _userRepositoryMock.Verify(repo => repo.GetByIdAsync(user.Id), Times.Once);
+            _userRepositoryMock.Verify(repo => repo.Remove(user), Times.Once);
+            _logRepositoryMock.Verify(repo => repo.AddAsync(It.Is<Log>(log => log.TypeOfAction == TypeOfAction.Delete && log.Message.Contains("User of Type: " + user.Role.ToString() + "was deleted."))), Times.Once);
+        }
+
+        [Fact]
+        public async Task DeletePatientUser_TokenExpired()
+        {
+            // Arrange
+            var patient = createSamplePatient();
+            var user = new User(patient.Email, "PasswordCorrect123@", patient.PhoneNumber, patient.Id.AsGuid());
+            var token = _userService.CreateToken(user);
+            var expiredToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiYWRtaW4iLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJhZG1pbkBnbWFpbC5jb20iLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9hbWFpZGVudGlmaWVyIjoic2VjdXJpdHkiLCJleHBhbml0eSI6MTcyOTYwNjIwMn0.9n-Z0lRhhg2I5D_vgh0ECjfjE1lQAWYw3He3Q9cS1to";
+
+            _configurationMock.SetupGet(c => c["Jwt:Key"]).Returns("your-very-secure-key-that-is-at-least-256-bits-long");
+            var exception = await Assert.ThrowsAsync<SecurityTokenException>(() => _userService.ActivateUserAsPatient(expiredToken));
+            Assert.Contains("Token validation failed", exception.Message);
+        }
+
         private bool IsJwtToken(string token)
         {
             if (string.IsNullOrEmpty(token))
@@ -416,6 +640,8 @@ namespace DDDSample1.Tests.Users.UnitTests
             var converted = Convert.FromBase64String(output);
             return System.Text.Encoding.UTF8.GetString(converted);
         }
+
+
     }
 }
 

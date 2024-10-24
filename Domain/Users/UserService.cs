@@ -10,6 +10,8 @@ using DDDSample1.Domain.Staffs;
 using DDDSample1.Domain.Shared;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Xunit.Sdk;
 
 
 namespace DDDSample1.Domain.Users
@@ -96,37 +98,7 @@ namespace DDDSample1.Domain.Users
             var userDTO = _userMapper.ToDto(user);
 
             return userDTO;
-
         }
-
-        /* public async Task<User> CreateUserAsStaff(CreatingStaffUserDTO dto)
-         {   
-
-             var existingUserByEmail = await _userRepository.GetUserByEmailAsync(dto.Email);
-             if (existingUserByEmail != null)
-             {
-                 throw new Exception("Email is already in use.");
-             }
-
-             var staff = await _staffRepository.GetByEmailAsync(dto.Email) ?? throw new Exception("Patient not found.");
-
-             if (staff.PhoneNumber != dto.PhoneNumber)
-             {
-                 throw new Exception("Phone number does not match the Staff's email.");
-             }
-
-             var role = Enum.Parse<Role>(dto.Role, true);
-             var user = new User(dto.Email, dto.PhoneNumber, role, dto.Password, staff.Id.AsGuid());
-
-             string token = CreateToken(user);
-
-             await _mailService.SendEmail(dto.Email, "Activate your account", GenerateLink(token, "ActivateStaffUser"));
-
-             await _userRepository.AddAsync(user);
-             await _unitOfWork.CommitAsync();
-
-             return user;
-         }*/
 
         // Activate a user and set the password
         public async Task<UserDTO> ActivateUser(string token, string newPassword)
@@ -306,6 +278,11 @@ namespace DDDSample1.Domain.Users
             {
                 var userId = VerifyToken(token) ?? throw new Exception("Invalid or expired token.");
                 var user = await _userRepository.GetByIdAsync(userId);
+
+                if (user == null)
+                {
+                    throw new Exception("User not found.");
+                }
 
                 await _mailService.SendEmail(user.Email, "Delete User Request", GenerateLink(token, "DeleteUser"));
                 return;

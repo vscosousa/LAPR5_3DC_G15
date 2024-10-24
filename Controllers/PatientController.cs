@@ -53,7 +53,7 @@ namespace DDDSample1.Controllers
 
                 return Ok(cat);
             }
-            catch (BusinessRuleValidationException ex)
+            catch (Exception ex)
             {
                 return BadRequest(new { Message = ex.Message });
             }
@@ -72,7 +72,7 @@ namespace DDDSample1.Controllers
                 }
                 return Ok(patient);
             }
-            catch (BusinessRuleValidationException ex)
+            catch (Exception ex)
             {
                 return BadRequest(new { Message = ex.Message });
             }

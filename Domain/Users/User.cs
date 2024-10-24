@@ -55,7 +55,7 @@ namespace DDDSample1.Domain.Users
             _phoneNumber = phoneNumber;
             _username = email;
             _role = Role.Patient;
-            SetPassword(password);
+            _passwordHash = BCrypt.Net.BCrypt.HashPassword(password);
             _isActive = false;
             _isLocked = false;
             _failedLoginAttempts = 0;
@@ -77,7 +77,7 @@ namespace DDDSample1.Domain.Users
         public DateTime? LockedUntil => _lockedUntil;
         public bool IsLocked => _isLocked;
 
-        internal void SetPassword(string password)
+        internal string SetPassword(string password)
         {
             var passwordRegex = new System.Text.RegularExpressions.Regex(@"^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^\w\d]).{10,}$");
 
@@ -89,6 +89,8 @@ namespace DDDSample1.Domain.Users
 
             _passwordHash = BCrypt.Net.BCrypt.HashPassword(password);
             _isActive = true;
+
+            return _passwordHash;
         }
 
         internal void Activate()

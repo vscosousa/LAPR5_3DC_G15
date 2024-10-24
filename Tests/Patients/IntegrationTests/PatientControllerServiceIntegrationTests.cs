@@ -157,7 +157,7 @@ namespace DDDSample1.Tests.Patients.IntegrationTests
         {
             var token = GenerateAdminJwtToken();
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
+        
             // Arrange
             var patientDTO = new CreatingPatientDTO
             {
@@ -171,25 +171,26 @@ namespace DDDSample1.Tests.Patients.IntegrationTests
                 EmergencyContact = "+351912345678",
                 MedicalConditions = "Nenhuma"
             };
-
+        
             var createResponse = await _client.PostAsJsonAsync("/api/Patient", patientDTO);
             createResponse.EnsureSuccessStatusCode();
             var createdPatient = await createResponse.Content.ReadFromJsonAsync<PatientDTO>();
-
+            var id = createdPatient.Id;
+        
             var updatePatientDTO = new UpdatePatientDTO
             {
-                FirstName = "João Updated",
-                LastName = "Silva Updated",
-                FullName = "João Silva Updated",
-                Email = "joao.silva.updated@example.com",
-                PhoneNumber = "+351912345679",
-                EmergencyContact = "+351912345679",
+                FirstName = "Miguel",
+                LastName = "Pereira",
+                FullName = "Miguel Pereira",
+                Email = "miguel.pereira@example.com",
+                PhoneNumber = "+351912345680",
+                EmergencyContact = "+351912345680",
                 MedicalConditions = "Updated Condition"
             };
-
+        
             // Act
-            var response = await _client.PutAsJsonAsync($"/api/Patient/{createdPatient.Id}", updatePatientDTO);
-
+            var response = await _client.PutAsJsonAsync($"/api/Patient/{id}", updatePatientDTO);
+        
             // Assert
             response.EnsureSuccessStatusCode();
         }

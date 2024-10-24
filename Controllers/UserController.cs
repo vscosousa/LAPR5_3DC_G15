@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using DDDSample1.Domain.Users;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Xunit.Sdk;
 
 namespace DDDSample1.Controllers
 {
@@ -21,15 +22,15 @@ namespace DDDSample1.Controllers
         [HttpPost("RegisterUser"), Authorize(Roles = "Admin")]
         public async Task<IActionResult> RegisterUser([FromBody] CreatingUserDTO userDTO)
         {
-                try
-                {
-                    await _userService.CreateUser(userDTO);
-                    return Ok();
-                }
-                catch (Exception ex)
-                {
-                    return StatusCode(500, $"An error occurred while registering the user: {ex.Message}");
-                }
+            try
+            {
+                var result = await _userService.CreateUser(userDTO);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred while registering the user: {ex.Message}");
+            }
         }
 
         [HttpPost("RegisterUserAsPatient")]
@@ -46,21 +47,6 @@ namespace DDDSample1.Controllers
                 return StatusCode(500, $"An error occurred while creating the user: {ex.Message}");
             }
         }
-
-        /*  [HttpPost("RegisterUserAsStaff")]
-          [AllowAnonymous]
-          public async Task<ActionResult<User>> RegisterUserAsStaff(CreatingStaffUserDTO userDTO)
-          {   
-              try
-              {
-                  var user = await _userService.CreateUserAsStaff(userDTO);
-                  return Ok(user);
-              }
-              catch (Exception ex)
-              {
-                  return StatusCode(500, $"An error occurred while register Satff in: {ex.Message}");
-              }
-          }*/
 
         [HttpPost("RequestResetPassword"), AllowAnonymous]
         public async Task<IActionResult> RequestPasswordReset(string email)
@@ -156,7 +142,7 @@ namespace DDDSample1.Controllers
         }
 
         [HttpPost("RequestDelete"), Authorize(Roles = "Patient")]
-        public async Task<ActionResult> RequestDelete(string token)
+        public async Task<ActionResult> RequestDelete([FromBody] string token)
         {
             try
             {
@@ -165,12 +151,16 @@ namespace DDDSample1.Controllers
             }
             catch (Exception ex)
             {
+                if (ex.Message == "User not found")
+                {
+                    return NotFound("User not found");
+                }
                 return StatusCode(500, $"An error occurred while deleting the user: {ex.Message}");
             }
         }
 
         [HttpDelete("DeleteUser"), Authorize(Roles = "Patient")]
-        public async Task<ActionResult> DeleteUser(string token)
+        public async Task<ActionResult> DeleteUser([FromBody] string token)
         {
             try
             {
@@ -184,13 +174,16 @@ namespace DDDSample1.Controllers
         }
 
         [HttpGet("GetAllUsers"), Authorize(Roles = "Admin")]
-        public async Task<ActionResult<UserDTO>> GetAllUsers(){
+        public async Task<ActionResult<UserDTO>> GetAllUsers()
+        {
 
-            try{
+            try
+            {
                 var users = await _userService.getAllUsers();
                 return Ok(users);
             }
-            catch (Exception ex){
+            catch (Exception ex)
+            {
                 return StatusCode(500, $"An error occurred while getting all users: {ex.Message}");
             }
         }
