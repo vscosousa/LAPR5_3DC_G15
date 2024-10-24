@@ -64,8 +64,8 @@ namespace DDDSample1.Controllers
         }
 
         [HttpPost]
-        [AllowAnonymous] 
-        public async Task<ActionResult<StaffDTO>> CreateStaff(CreatingStaffDTO dto)
+        [Authorize(Roles = "Admin")]
+        public async Task<ActionResult<Staff>> CreateStaff(CreatingStaffDTO dto)
         {
             try
             {
@@ -82,7 +82,7 @@ namespace DDDSample1.Controllers
         }   
 
         [HttpPut("{id}")]
-        [Authorize(Roles = "Admin, Doctor, Nurse, Technician")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<StaffDTO>> UpdateStaff(Guid id, UpdateStaffDTO dto)
         {
             try
@@ -105,6 +105,8 @@ namespace DDDSample1.Controllers
                 return StatusCode(500, $"An error occurred while updating the staff: {ex.Message}");
             }
         }
+
+        
 
 
     }

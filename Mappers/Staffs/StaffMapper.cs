@@ -32,7 +32,6 @@ namespace Projetos.LAPR5_3DC_G15.Mappers.Staffs
                 dto.FirstName,
                 dto.LastName,
                 dto.FullName,
-                dto.LicenseNumber,
                 dto.Email,
                 dto.PhoneNumber,
                 new SpecializationId(dto.SpecializationId)
@@ -46,7 +45,6 @@ namespace Projetos.LAPR5_3DC_G15.Mappers.Staffs
                 FirstName = domain.FirstName,
                 LastName = domain.LastName,
                 FullName = domain.FullName,
-                LicenseNumber = domain.LicenseNumber,
                 Email = domain.Email,
                 PhoneNumber = domain.PhoneNumber,
                 SpecializationId = domain.SpecializationId.ToString()

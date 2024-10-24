@@ -9,33 +9,21 @@ namespace DDDSample1.Domain.Specializations
 {
     public class Specialization : Entity<SpecializationId>, IAggregateRoot
     {
-        public string SpecOption { get; private set; }
-        public List<Staff> Staffs { get; private set; }
-        public List<OperationType> OperationTypes  { get; private set; }
+        private string _specOption;
+        private List<Staff> _staffs;
+        private List<OperationType> _operationTypes;
 
         public Specialization(string specOption)
         {
             Id = new SpecializationId(Guid.NewGuid());
-            SpecOption = specOption;
-            Staffs = new List<Staff>();
-            OperationTypes = new List<OperationType>();
+            _specOption = specOption;
+            _staffs = new List<Staff>();
+            _operationTypes = new List<OperationType>();
         }
-
-        internal void addStaff(List<Staff> staffs)
-        {
-            if (staffs == null || !staffs.Any())
-            {
-                throw new ArgumentException("Staff list cannot be null or empty.");
-            }
-
-            foreach (var staff in staffs)
-            {
-                // Set the specialization for each staff member
-                staff.SetSpecialization(this);
-
-                // Add staff to the Staffs list
-                Staffs.Add(staff);
-            }
-        }
+        
+        //getters
+        public string SpecOption => _specOption;
+        public List<Staff> Staffs => _staffs;
+        public List<OperationType> OperationTypes => _operationTypes;
     }
 }

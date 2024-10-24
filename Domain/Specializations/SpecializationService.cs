@@ -21,12 +21,29 @@ namespace DDDSample1.Domain.Specializations
         //Create Specializations
         public async Task<Specialization> CreateSpecializationAsync(CreatingSpecializationDTO dto)
         {
-            var newSpecialization = new Specialization(dto.SpecOption);
-             
-            await _repository.AddAsync(newSpecialization);
-            await _unitOfWork.CommitAsync();
+            try
+            {
+                var newSpecialization = new Specialization(dto.SpecOption);
 
-            return newSpecialization;
+                if (await _repository.GetSpecIdByOptionAsync(dto.SpecOption) != null)
+                {
+                    throw new BusinessRuleValidationException("Specialization already exists.");
+                }
+                
+                await _repository.AddAsync(newSpecialization);
+                await _unitOfWork.CommitAsync();
+
+                return newSpecialization;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred: {ex.Message}");
+                if (ex.InnerException != null)
+                {
+                    Console.WriteLine($"Inner exception: {ex.InnerException.Message}");
+                }
+                throw;
+            }
         }
 
         // Get Specialization by Id

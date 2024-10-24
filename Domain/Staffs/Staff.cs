@@ -1,33 +1,30 @@
 using System;
-using System.Text.Json.Serialization;
-using DDDSample1.Domain.Shared;
-using System.Text.RegularExpressions;
-using DDDSample1.Domain.Specializations;
 using System.Linq;
+using System.Text.Json.Serialization;
+using System.Text.RegularExpressions;
+using DDDSample1.Domain.Shared;
+using DDDSample1.Domain.Specializations;
 
 namespace DDDSample1.Domain.Staffs
 {
     public class Staff : Entity<StaffId>, IAggregateRoot
     {
-        public string FirstName { get; private set; }
-        public string LastName { get; private set; }
-        public string FullName { get; private set; }
-        public string LicenseNumber { get; private set; }
-        public string Email { get; private set; }
-        public string PhoneNumber { get; private set; }
-        public DateTime[] AvailabilitySlots { get; private set; }
-        public bool IsActive { get; private set; }
-
-        // Foreign key property
-        public SpecializationId SpecializationId { get; private set; }
-
-        // Navigation property
+        private string _firstName;
+        private string _lastName;
+        private string _fullName;
+        private string _licenseNumber;
+        private string _email;
+        private string _phoneNumber;
+        private DateTime[] _availabilitySlots;
+        private bool _isActive;
+        private SpecializationId _specializationId;
+        
         [JsonIgnore]
-        public Specialization Specialization { get; private set; }
+        private Specialization _specialization;
 
         public Staff() { }
-        
-        public Staff(string firstName, string lastName, string fullName, string licenseNumber, string email, string phoneNumber, SpecializationId specializationId)
+
+        public Staff(string firstName, string lastName, string fullName, string email, string phoneNumber, SpecializationId specializationId)
         {
             if (!NameStartsWithCapital(firstName) || !NameStartsWithCapital(lastName) || !NameStartsWithCapital(fullName))
                 throw new BusinessRuleValidationException("Names must start with a capital letter.");
@@ -39,21 +36,73 @@ namespace DDDSample1.Domain.Staffs
                 throw new ArgumentException("Phone number must start with an identifier and contain only digits.");
             
             Id = new StaffId(Guid.NewGuid());
-            FirstName = firstName;
-            LastName = lastName;
-            FullName = fullName;
-            LicenseNumber = licenseNumber;
-            Email = email;
-            PhoneNumber = phoneNumber;
-            AvailabilitySlots = [];
-            SpecializationId = specializationId; 
-            IsActive = true;
+            _firstName = firstName;
+            _lastName = lastName;
+            _fullName = fullName;
+            _licenseNumber = "";
+            _email = email;
+            _phoneNumber = phoneNumber;
+            _availabilitySlots = Array.Empty<DateTime>();
+            _specializationId = specializationId;
+            _isActive = true;
         }
-        // Method to set the navigation property after creation
-        public void SetSpecialization(Specialization specialization)
+
+        // Public getters
+        public string FirstName => _firstName;
+        public string LastName => _lastName;
+        public string FullName => _fullName;
+        public string LicenseNumber => _licenseNumber;
+        public string Email => _email;
+        public string PhoneNumber => _phoneNumber;
+        public DateTime[] AvailabilitySlots => _availabilitySlots;
+        public bool IsActive => _isActive;
+        public SpecializationId SpecializationId => _specializationId;
+        
+        [JsonIgnore]
+        public Specialization Specialization => _specialization;
+
+        // Internal methods to set or modify values
+        internal void GenerateLicenseNumber() => _licenseNumber = Guid.NewGuid().ToString().Substring(0, 8).ToUpper();
+
+        internal void ChangePhoneNumber(string phoneNumber)
         {
-           Specialization = specialization;
+            if (!phoneNumber.StartsWith("+") || !phoneNumber.Substring(1).All(char.IsDigit))
+                throw new ArgumentException("Phone number must start with an identifier and contain only digits.");
+            _phoneNumber = phoneNumber;
         }
+
+        internal void AddAvailabilitySlot(DateTime newSlot)
+        {
+            if (!DateTime.TryParseExact(newSlot.ToString("yyyy/MM/dd HH:mm"), "yyyy/MM/dd HH:mm", null, System.Globalization.DateTimeStyles.None, out _))
+                throw new BusinessRuleValidationException("Availability slot must be in the format YYYY/MM/DD HH:mm:ss.");
+
+            var updatedSlots = _availabilitySlots.ToList();
+            updatedSlots.Add(newSlot);
+            _availabilitySlots = updatedSlots.OrderBy(slot => slot).ToArray();
+        }
+
+        internal void RemoveAvailabilitySlot(DateTime remSlot)
+        {
+            if (!DateTime.TryParseExact(remSlot.ToString("yyyy/MM/dd HH:mm"), "yyyy/MM/dd HH:mm", null, System.Globalization.DateTimeStyles.None, out _))
+                throw new BusinessRuleValidationException("Availability slot must be in the format YYYY/MM/DD HH:mm:ss.");
+
+            if (!_availabilitySlots.Contains(remSlot))
+            {
+                throw new BusinessRuleValidationException("The specified old availability slot does not exist.");
+            }
+
+            _availabilitySlots = _availabilitySlots.Where(slot => slot != remSlot).ToArray();
+        }
+
+
+        internal void ChangeSpecializationId(SpecializationId specializationId)
+        {
+            if (specializationId == null)
+                throw new ArgumentException("SpecializationId cannot be null.");
+            _specializationId = specializationId;
+        }
+
+        public void Deactivate() {_isActive = false;}
 
         private bool NameStartsWithCapital(string fullName)
         {
@@ -61,53 +110,7 @@ namespace DDDSample1.Domain.Staffs
                 return false;
 
             string[] names = fullName.Split(' ');
-            foreach (string name in names)
-            {
-                if (!char.IsUpper(name[0]))
-                    return false;
-            }
-            return true;
+            return names.All(name => char.IsUpper(name[0]));
         }
-
-        //Metodos para Updates
-        internal void ChangeFirstName(string firstName) => FirstName = firstName;
-        internal void ChangeLastName(string lastName) => LastName = lastName;
-        internal void ChangeFullName(string fullName) => FullName = fullName;
-        internal void ChangeEmail(string email)
-        {
-            if (!Regex.IsMatch(email, @"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"))
-                throw new ArgumentException("Email must be in a valid format.");
-            Email = email;
-        }
-        internal void ChangePhoneNumber(string phoneNumber)
-        {
-            if (!phoneNumber.StartsWith("+") || !phoneNumber.Substring(1).All(char.IsDigit))
-                throw new ArgumentException("Phone number must start with an identifier and contain only digits.");
-            PhoneNumber = phoneNumber;
-        }
-        internal void RemvoveAvailabilitySlots(DateTime RemSlot)
-        {
-            if (!AvailabilitySlots.Contains(RemSlot))
-            {
-                throw new ArgumentException("The specified old availability slot does not exist.");
-            }
-            AvailabilitySlots = AvailabilitySlots.Where(slot => slot != RemSlot).ToArray();
-        }
-
-        internal void AddAvailabilitySlots( DateTime newSlot)
-        {
-            var updatedSlots = AvailabilitySlots.ToList();
-            updatedSlots.Add(newSlot);
-            AvailabilitySlots = updatedSlots.ToArray();
-        }
-
-        internal void ChangeSpecializationId(SpecializationId specializationId)
-        {
-            if (specializationId == null)
-                throw new ArgumentException("SpecializationId cannot be null.");
-
-            SpecializationId = specializationId;
-        }
-
     }
 }

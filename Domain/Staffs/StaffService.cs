@@ -7,6 +7,10 @@ using DDDSample1.Domain.Logs;
 using DDDSample1.Infrastructure.Specializations;
 using System.Linq;
 using System.Diagnostics;
+using System.Security.Claims;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Text;
 
 namespace DDDSample1.Domain.Staffs
 {
@@ -17,14 +21,16 @@ namespace DDDSample1.Domain.Staffs
         private readonly IStaffMapper _mapper;
         private readonly ISpecializationRepository _specializationRepository;
         private readonly ILogRepository _logRepository;
+        private readonly IMailService _mailService;
 
-        public StaffService(IUnitOfWork unitOfWork, IStaffRepository repository, ISpecializationRepository specializationRepository, IStaffMapper mapper, ILogRepository logRepository)
+        public StaffService(IUnitOfWork unitOfWork, IStaffRepository repository, IStaffMapper mapper, ISpecializationRepository specializationRepository, ILogRepository logRepository, IMailService mailService)
         {
             _unitOfWork = unitOfWork;
             _repository = repository;
+            _mapper = mapper;
             _specializationRepository = specializationRepository;
             _logRepository = logRepository;
-            _mapper = mapper;
+            _mailService = mailService;
         }
         
         // Método para listar todos os staffs
@@ -55,52 +61,42 @@ namespace DDDSample1.Domain.Staffs
             return _mapper.ToDto(staff);
         }
 
-        public async Task<StaffDTO> CreateStaffAsync(CreatingStaffDTO dto)
+        public async Task<Staff> CreateStaffAsync(CreatingStaffDTO dto)
         {
-           
-            string uniqueLicenseNumber = await GenerateUniqueLicenseNumberAsync();
-
-            var staff = _mapper.ToDomain(new CreatingStaffDTO(
-                dto.FirstName,
-                dto.LastName,
-                dto.FullName,
-                dto.Email,
-                dto.PhoneNumber,
-                dto.SpecializationId
-            ) {
-                LicenseNumber = uniqueLicenseNumber
-            });
-
-            // Verificar unicidade do email e telefone
-            if (await _repository.GetByEmailAsync(staff.Email) != null)
-                throw new InvalidOperationException("Email is already in use.");
-            
-            if (await _repository.GetByPhoneNumberAsync(staff.PhoneNumber) != null)
-                throw new InvalidOperationException("Phone number is already in use.");
-
-            // Salvar o staff no repositório
-            await _repository.AddAsync(staff);
-            await _unitOfWork.CommitAsync();
-
-            // Retornar o DTO de Staff
-            return _mapper.ToDto(staff);
-        }
-
-        // Método para gerar um número de licença único
-        private async Task<string> GenerateUniqueLicenseNumberAsync()
-        {
-            string licenseNumber;
-            bool isUnique;
-
-            do
+            try
             {
-                licenseNumber = Guid.NewGuid().ToString().Substring(0, 8).ToUpper();        
-                var existingStaff = await _repository.GetByLicenseNumberAsync(licenseNumber);
-                isUnique = (existingStaff == null);
-            }
-            while (!isUnique);
+                var staff = _mapper.ToDomain(dto);
+                // Verificar unicidade do email e telefone
+                if (await _repository.GetByEmailAsync(staff.Email) != null)
+                    throw new BusinessRuleValidationException("Email is already in use.");
 
-            return licenseNumber;
+                if (await _repository.GetByPhoneNumberAsync(staff.PhoneNumber) != null)
+                    throw new BusinessRuleValidationException("Phone number is already in use.");
+
+                if (await _specializationRepository.GetByIdAsync(staff.SpecializationId) == null)
+                    throw new BusinessRuleValidationException("Id of Specialization does not exist.");
+
+                do
+                {        
+                    staff.GenerateLicenseNumber();
+                }
+                while (await _repository.GetByLicenseNumberAsync(staff.LicenseNumber)!=null);
+
+                await _repository.AddAsync(staff);
+                await _unitOfWork.CommitAsync();
+                Console.WriteLine("Transaction committed successfully");
+
+                return staff;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred: {ex.Message}");
+                if (ex.InnerException != null)
+                {
+                    Console.WriteLine($"Inner exception: {ex.InnerException.Message}");
+                }
+                throw;
+            }
         }
         
         public async Task<StaffDTO> UpdateStaffAsync(Guid id, UpdateStaffDTO dto)
@@ -112,65 +108,95 @@ namespace DDDSample1.Domain.Staffs
 
             var updatedFields = new List<string>();
 
-            var updateActions = new Dictionary<string, Action>
+            // Update Phone Number
+            if (!string.IsNullOrEmpty(dto.PhoneNumber) && staff.PhoneNumber != dto.PhoneNumber)
             {
-                { "First Name", () => { if (!string.IsNullOrEmpty(dto.FirstName) && staff.FirstName != dto.FirstName) { staff.ChangeFirstName(dto.FirstName); updatedFields.Add("First Name"); } } },
-                { "Last Name", () => { if (!string.IsNullOrEmpty(dto.LastName) && staff.LastName != dto.LastName) { staff.ChangeLastName(dto.LastName); updatedFields.Add("Last Name"); } } },
-                { "Full Name", () => { if (!string.IsNullOrEmpty(dto.FullName) && staff.FullName != dto.FullName) { staff.ChangeFullName(dto.FullName); updatedFields.Add("Full Name"); } } },
-                { "Email", () => { if (!string.IsNullOrEmpty(dto.Email) && staff.Email != dto.Email) { staff.ChangeEmail(dto.Email); updatedFields.Add("Email"); } } },
-                { "Phone Number", () => { if (!string.IsNullOrEmpty(dto.PhoneNumber) && staff.PhoneNumber != dto.PhoneNumber) { staff.ChangePhoneNumber(dto.PhoneNumber); updatedFields.Add("Phone Number"); } } },
-                { "Add Availability Slots", () => 
-                    { 
-                        if (!string.IsNullOrEmpty(dto.AddAvailabilitySlots))
-                        {
-                            var addSlots = dto.AddAvailabilitySlots.Split(',').Select(DateTime.Parse).ToArray();
-                            foreach (var slot in addSlots)
-                            {
-                                staff.AddAvailabilitySlots(slot);
-                            }
-                            updatedFields.Add("Added Availability Slots");
-                        }
-                    }
-                },
-                { "Remove Availability Slots", () => 
-                    { 
-                        if (!string.IsNullOrEmpty(dto.RemoveAvailabilitySlots))
-                        {
-                            var removeSlots = dto.RemoveAvailabilitySlots.Split(',').Select(DateTime.Parse).ToArray();
-                            foreach (var slot in removeSlots)
-                            {
-                                staff.RemvoveAvailabilitySlots(slot);
-                            }
-                            updatedFields.Add("Removed Availability Slots");
-                        }
-                    }
-                },
-                { "Specialization", () => 
-                    { 
-                        if (!string.IsNullOrEmpty(dto.SpecializationId) && staff.SpecializationId.ToString() != dto.SpecializationId)
-                        {
-                            staff.ChangeSpecializationId(new SpecializationId(Guid.Parse(dto.SpecializationId)));
-                            updatedFields.Add("Specialization Id");
-                        }
-                    }
-                }
-            };
+                if (await _repository.GetByPhoneNumberAsync(dto.PhoneNumber) != null)
+                    throw new BusinessRuleValidationException("Phone number is already in use.");
 
-            foreach (var action in updateActions.Values)
-            {
-                action();
+                // Send confirmation email
+                //await _mailService.SendEmailToStaff(staff.Email, staff.FullName);
+                staff.ChangePhoneNumber(dto.PhoneNumber);
+                updatedFields.Add("Phone Number");
             }
 
+            // Add Availability Slots
+            if (!string.IsNullOrEmpty(dto.AddAvailabilitySlots))
+            {
+                var addSlots = dto.AddAvailabilitySlots.Split(',')
+                                .Select(slot => DateTime.Parse(slot.Trim()))
+                                .ToArray();
+                foreach (var slot in addSlots)
+                {
+                    staff.AddAvailabilitySlot(slot);
+                }
+                updatedFields.Add("Added Availability Slots");
+            }
+
+            // Remove Availability Slots
+            if (!string.IsNullOrEmpty(dto.RemoveAvailabilitySlots))
+            {
+                var removeSlots = dto.RemoveAvailabilitySlots.Split(',')
+                                    .Select(slot => DateTime.Parse(slot.Trim()))
+                                    .ToArray();
+                foreach (var slot in removeSlots)
+                {
+                    staff.RemoveAvailabilitySlot(slot);
+                }
+                updatedFields.Add("Removed Availability Slots");
+            }
+
+            // Update Specialization
+            if (!string.IsNullOrEmpty(dto.SpecializationId) && staff.SpecializationId.ToString() != dto.SpecializationId)
+            {
+                var specializationId = new SpecializationId(Guid.Parse(dto.SpecializationId));
+                if (await _specializationRepository.GetByIdAsync(specializationId) == null)
+                    throw new BusinessRuleValidationException("Id of Specialization does not exist.");
+
+                staff.ChangeSpecializationId(specializationId);
+                updatedFields.Add("Specialization");
+            }
+
+            // Commit changes if there are any updates
             if (updatedFields.Count > 0)
             {
-                string message = "Staff updated. The following fields were updated: " + string.Join(", ", updatedFields) + ".";
-                var log = new Log(TypeOfAction.Update, id.ToString(), message);
+                var logMessage = $"Staff updated. The following fields were updated:"+ string.Join(", ", updatedFields) +".";
+                var log = new Log(TypeOfAction.Update, id.ToString(), logMessage);
                 await _logRepository.AddAsync(log);
+
                 await _unitOfWork.CommitAsync();
             }
 
             return _mapper.ToDto(staff);
         }
+
+        public async Task<StaffDTO> DeactivateStaffAsync(Guid id)
+        {
+            // Busca o perfil do staff pelo ID
+            var staff = await _repository.GetByIdAsync(new StaffId(id));
+
+            if (staff == null)
+                throw new BusinessRuleValidationException("Staff not found.");
+
+            // Verifica se o staff já está desativado
+            if (staff.IsActive == false)
+                throw new BusinessRuleValidationException("Staff is already deactivated.");
+
+            // Desativa o perfil
+            staff.Deactivate();
+
+            // Registro de auditoria
+            var logMessage = $"Staff profile for {staff.FullName} (ID: {staff.Id}) has been deactivated.";
+            var log = new Log(TypeOfAction.Delete, id.ToString(), logMessage);
+            await _logRepository.AddAsync(log);
+
+            // Confirma a desativação no banco de dados
+            await _unitOfWork.CommitAsync();
+
+            // Retorna o perfil atualizado como DTO
+            return _mapper.ToDto(staff);
+        }
+
 
 
     }
