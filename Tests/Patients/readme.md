@@ -6,10 +6,10 @@ This document provides an overview of the tests related to the Patient Requireme
 
 The following is a summary of the number of tests for each service method:
 
-- **CreatePatient**: 3 tests
-- **UpdatePatient**: 5 tests
-- **DeletePatient**: 2 tests
-- **SearchPatients**: 11 tests
+- **CreatePatient**: 5 tests
+- **UpdatePatient**: 7 tests
+- **DeletePatient**: 4 tests
+- **SearchPatients**: 13 tests
 - **PatientMapper**: 3 tests
 - **PatientDomain**: 18 tests
 
@@ -58,6 +58,15 @@ The following is a summary of the number of tests for each service method:
 41. [ChangeEmergencyContactDirectlyFromDomainSuccessfully](#changeemergencycontactdirectlyfromdomainsuccessfully)
 42. [ChangeEmergencyContactDirectlyFromDomainWithInvalidEmergencyContact](#changeemergencycontactdirectlyfromdomainwithinvalidemergencycontact)
 43. [ChangeMedicalConditionsDirectlyFromDomainSuccessfully](#changemedicalconditionsdirectlyfromdomainsuccessfully)
+44. [CreatePatient_ShouldReturnOk_WhenPatientIsCreated](#createpatient_shouldreturnok_whenpatientiscreated)
+45. [CreatePatient_ShouldReturnError_WhenPatientAlreadyExists](#createpatient_shouldreturnerror_whenpatientalreadyexists)
+46. [DeletePatient_ShouldReturnOk_WhenPatientIsDeleted](#deletepatient_shouldreturnok_whenpatientisdeleted)
+47. [DeletePatient_ShouldReturnNotFound_WhenPatientDoesNotExist](#deletepatient_shouldreturnnotfound_whenpatientdoesnotexist)
+48. [UpdatePatient_ShouldReturnOk_WhenPatientIsUpdated](#updatepatient_shouldreturnok_whenpatientisupdated)
+49. [UpdatePatient_ShouldReturnNotFound_WhenPatientDoesNotExist](#updatepatient_shouldreturnnotfound_whenpatientdoesnotexist)
+50. [GetPatient_ShouldReturnOk_WhenPatientExists](#getpatient_shouldreturnok_whenpatientexists)
+51. [GetPatient_ShouldReturnNotFound_WhenPatientDoesNotExist](#getpatient_shouldreturnnotfound_whenpatientdoesnotexist)
+
 
 ## Test Descriptions
 
@@ -361,6 +370,62 @@ The following is a summary of the number of tests for each service method:
 |-------------|----------------------------------------------------------------------------------------------------|
 | **Expected Result** | The patient's medical conditions are updated. |
 | **Type of Test** | Unit Test |
+
+### CreatePatient_ShouldReturnOk_WhenPatientIsCreated
+
+| **Purpose** | To verify that a patient can be created successfully. |
+|-------------|---------------------------------------------------------------------|
+| **Expected Result** | The response status is 200. |
+| **Type of Test** | Integration Test |
+
+### CreatePatient_ShouldReturnError_WhenPatientAlreadyExists
+
+| **Purpose** | To verify that creating a patient fails if the patient already exists. |
+|-------------|---------------------------------------------------------------------|
+| **Expected Result** | The response status is 400. |
+| **Type of Test** | Integration Test |
+
+### DeletePatient_ShouldReturnOk_WhenPatientIsDeleted
+
+| **Purpose** | To verify that a patient can be deleted successfully. |
+|-------------|---------------------------------------------------------------------|
+| **Expected Result** | The response status is 200. |
+| **Type of Test** | Integration Test |
+
+### DeletePatient_ShouldReturnNotFound_WhenPatientDoesNotExist
+
+| **Purpose** | To verify that deleting a patient fails if the patient does not exist. |
+|-------------|---------------------------------------------------------------------|
+| **Expected Result** | The response status is 404. |
+| **Type of Test** | Integration Test |
+
+### UpdatePatient_ShouldReturnOk_WhenPatientIsUpdated
+
+| **Purpose** | To verify that a patient can be updated successfully. |
+|-------------|---------------------------------------------------------------------|
+| **Expected Result** | The response status is 200. |
+| **Type of Test** | Integration Test |
+
+### UpdatePatient_ShouldReturnNotFound_WhenPatientDoesNotExist
+
+| **Purpose** | To verify that updating a patient fails if the patient does not exist. |
+|-------------|---------------------------------------------------------------------|
+| **Expected Result** | The response status is 404. |
+| **Type of Test** | Integration Test |
+
+### GetPatient_ShouldReturnOk_WhenPatientExists
+
+| **Purpose** | To verify that a patient can be retrieved successfully. |
+|-------------|---------------------------------------------------------------------|
+| **Expected Result** | The response status is 200. |
+| **Type of Test** | Integration Test |
+
+### GetPatient_ShouldReturnNotFound_WhenPatientDoesNotExist
+
+| **Purpose** | To verify that retrieving a patient fails if the patient does not exist. |
+|-------------|---------------------------------------------------------------------|
+| **Expected Result** | The response status is 404. |
+| **Type of Test** | Integration Test |
 
 ---
 
