@@ -21,7 +21,7 @@ namespace DDDSample1.Controllers
         // POST api/specilization
         [HttpPost]
         [AllowAnonymous]
-        public async Task<ActionResult<Specialization>> CreateSpecialization(CreatingSpecializationDTO specializationDTO)
+        public async Task<ActionResult<SpecializationDTO>> CreateSpecialization(CreatingSpecializationDTO specializationDTO)
         {
             try
             {

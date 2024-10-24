@@ -65,7 +65,7 @@ namespace DDDSample1.Controllers
 
         [HttpPost]
         [Authorize(Roles = "Admin")]
-        public async Task<ActionResult<Staff>> CreateStaff(CreatingStaffDTO dto)
+        public async Task<ActionResult<StaffDTO>> CreateStaff(CreatingStaffDTO dto)
         {
             try
             {

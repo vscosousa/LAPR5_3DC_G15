@@ -61,7 +61,7 @@ namespace DDDSample1.Domain.Staffs
             return _mapper.ToDto(staff);
         }
 
-        public async Task<Staff> CreateStaffAsync(CreatingStaffDTO dto)
+        public async Task<StaffDTO> CreateStaffAsync(CreatingStaffDTO dto)
         {
             try
             {
@@ -86,7 +86,8 @@ namespace DDDSample1.Domain.Staffs
                 await _unitOfWork.CommitAsync();
                 Console.WriteLine("Transaction committed successfully");
 
-                return staff;
+                var staffDTO = _mapper.ToDto(staff);
+                return staffDTO;
             }
             catch (Exception ex)
             {

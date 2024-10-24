@@ -47,7 +47,7 @@ namespace Projetos.LAPR5_3DC_G15.Mappers.Staffs
                 FullName = domain.FullName,
                 Email = domain.Email,
                 PhoneNumber = domain.PhoneNumber,
-                SpecializationId = domain.SpecializationId.ToString()
+                SpecializationId = domain.SpecializationId.AsGuid()
             };
         }
     }

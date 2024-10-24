@@ -8,6 +8,8 @@ namespace DDDSample1.Domain.Specializations
         
         public string SpecOption { get; set; }
 
+
+        public CreatingSpecializationDTO(){}
         public CreatingSpecializationDTO(string specOption){
             SpecOption = specOption;
         }

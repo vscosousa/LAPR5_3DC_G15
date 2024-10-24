@@ -11,6 +11,10 @@ namespace DDDSample1.Domain.Specializations
         {
         }
 
+        public SpecializationId() : base(Guid.NewGuid())
+        {
+        }
+
         public SpecializationId(string value) : base(value)
         {
         }

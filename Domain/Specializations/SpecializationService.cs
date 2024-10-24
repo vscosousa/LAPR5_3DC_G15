@@ -19,7 +19,7 @@ namespace DDDSample1.Domain.Specializations
         }
 
         //Create Specializations
-        public async Task<Specialization> CreateSpecializationAsync(CreatingSpecializationDTO dto)
+        public async Task<SpecializationDTO> CreateSpecializationAsync(CreatingSpecializationDTO dto)
         {
             try
             {
@@ -33,7 +33,15 @@ namespace DDDSample1.Domain.Specializations
                 await _repository.AddAsync(newSpecialization);
                 await _unitOfWork.CommitAsync();
 
-                return newSpecialization;
+                var staffs = new List<Staff>();
+
+               var newSpecializationDTO = new SpecializationDTO
+               {
+                   Id = newSpecialization.Id.AsGuid(),
+                   SpecOption = newSpecialization.SpecOption,
+                   Staff = staffs
+               };
+               return newSpecializationDTO;
             }
             catch (Exception ex)
             {

@@ -15,6 +15,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using DDDSample1.Domain.Patients;
 using System.Collections.Generic;
+using DDDSample1.Domain.Specializations;
+using DDDSample1.Domain.Staffs;
 
 namespace DDDSample1.Tests.Users.IntegrationTests
 {
@@ -100,132 +102,55 @@ namespace DDDSample1.Tests.Users.IntegrationTests
             return tokenHandler.WriteToken(token);
         }
 
-        /*[Fact]
+        [Fact]
         public async Task RegisterUser_ShouldReturnOk_WhenUserIsCreated()
         {
-            // Arrange
+            var token = GenerateAdminJwtToken();
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+            var dto = new CreatingSpecializationDTO
+            {
+                SpecOption = "Cardiology"
+            };
+
+            var specialization = await _client.PostAsJsonAsync("/api/specialization", dto);
+            specialization.EnsureSuccessStatusCode();
+
+            var createdSpecialization = await specialization.Content.ReadFromJsonAsync<SpecializationDTO>();
+
+            var specializationId = createdSpecialization.Id;
+
+            var staffDTO = new CreatingStaffDTO
+            {
+                FirstName = "Joao",
+                LastName = "Pereira",
+                FullName = "Joao Pereira",
+                Email = "joao@gmail.com",
+                PhoneNumber = "+351912325678",
+                SpecializationId = specializationId
+            };
+
+            var staff = await _client.PostAsJsonAsync("/api/staff", staffDTO);
+            staff.EnsureSuccessStatusCode();
+
+            var createdStaff = await staff.Content.ReadFromJsonAsync<StaffDTO>();
+
+            var staffId = createdStaff.Id;
+
             var userDTO = new CreatingUserDTO
             {
-                Email = "testuser@example.com",
-                Username = "testuser",
-                Role = 0
-            };
-
-                var token = GenerateAdminJwtToken();
-                _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
-                // Act
-                var response = await _client.PostAsJsonAsync("/api/user/RegisterUser", userDTO);
-
-                // Assert
-                response.EnsureSuccessStatusCode();
-                var user = await response.Content.ReadFromJsonAsync<User>();
-                Assert.NotNull(user);
-                Assert.Equal(userDTO.Email, user.Email);
-                Assert.Equal(userDTO.Username, user.Username);
-            }
-
-            [Fact]
-            public async Task RegisterUser_ShouldReturnConflict_WhenEmailIsAlreadyInUse()
-            {
-                // Arrange
-                var existingUserDTO = new CreatingUserDTO
-                {
-                    Email = "testuser2@example.com",
-                    Username = "existinguser2",
-                    Role = 0
-                };
-
-                var token = GenerateAdminJwtToken();
-                _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
-                // create user with the same email
-                var createResponse = await _client.PostAsJsonAsync("/api/user/RegisterUser", existingUserDTO);
-                Assert.True(createResponse.IsSuccessStatusCode);
-
-            var newUserDTO = new CreatingUserDTO
-            {
-                Email = "testuser@example.com", 
-                Username = "newuser",
+                Email = "joao@gmail.com",
+                Username = "jonas",
                 Role = 0,
+                StaffId = staffId
             };
 
+            var response = await _client.PostAsJsonAsync("/api/user/RegisterUser", userDTO);
+            response.EnsureSuccessStatusCode();
 
-                var conflictResponse = await _client.PostAsJsonAsync("/api/user/RegisterUser", newUserDTO);
-
-                // assert
-                Assert.Equal(HttpStatusCode.Conflict, conflictResponse.StatusCode);
-            }
+        }
 
 
-            [Fact]
-            public async Task RegisterUser_ShouldReturnConflict_WhenUsernameIsAlreadyInUse()
-            {
-                // Arrange
-                var existingUserDTO = new CreatingUserDTO
-                {
-                    Email = "testuser3@example.com",
-                    Username = "existinguser",
-                    Role = 0
-                };
-
-                var token = GenerateAdminJwtToken();
-                _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
-                // create user with the same username
-                var createResponse = await _client.PostAsJsonAsync("/api/user/RegisterUser", existingUserDTO);
-                Assert.True(createResponse.IsSuccessStatusCode);
-
-                var newUserDTO = new CreatingUserDTO
-                {
-                    Email = "test3@example.com",
-                    Username = "existinguser",
-                    Role = 0,
-                };
-
-
-                var conflictResponse = await _client.PostAsJsonAsync("/api/user/RegisterUser", newUserDTO);
-
-                // assert
-                Assert.Equal(HttpStatusCode.Conflict, conflictResponse.StatusCode);
-            }
-
-            [Fact]
-            public async Task ActivateUser_ShouldReturnOk()
-            {
-                // Arrange
-                var userDTO = new CreatingUserDTO
-                {
-                    Email = "testuser@example.com",
-                    Username = "testuser",
-                    Role = 0
-                };
-
-                // Use admin token for registering the user
-                var adminToken = GenerateAdminJwtToken(); // Admin token for authorization
-                _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", adminToken);
-
-                // Create user
-                var createResponse = await _client.PostAsJsonAsync("/api/user/RegisterUser", userDTO);
-                createResponse.EnsureSuccessStatusCode();
-
-                // Simulate the generation of an activation token (e.g., as if sent via email)
-                var activationToken = GenerateActivationJwtToken(); // Token used for activating the user
-
-                // Activate the user
-                var newPassword = "Password123@";
-                var activateUserDTO = new { Token = activationToken, NewPassword = newPassword };
-
-                var response = await _client.PostAsJsonAsync("/api/user/Activate", activateUserDTO);
-
-                // Assert
-                response.EnsureSuccessStatusCode();
-                var activatedUser = await response.Content.ReadFromJsonAsync<User>();
-                Assert.NotNull(activatedUser);
-                Assert.Equal(userDTO.Email, activatedUser.Email);
-                Assert.Equal(userDTO.Username, activatedUser.Username);
-                Assert.True(activatedUser.IsActive);
-            }*/
 
         [Fact]
         public async Task RegisterPatientUser_ShouldReturnOk_WhenUserIsCreated()
@@ -380,7 +305,7 @@ namespace DDDSample1.Tests.Users.IntegrationTests
         {
             var token = GenerateAdminJwtToken();
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-        
+
             var dto = new CreatingPatientDTO
             {
                 FirstName = "Ana",
@@ -393,13 +318,13 @@ namespace DDDSample1.Tests.Users.IntegrationTests
                 EmergencyContact = "+351987654321",
                 MedicalConditions = "Nenhuma"
             };
-        
+
             // Arrange
             var patient = await _client.PostAsJsonAsync("/api/patient", dto);
             patient.EnsureSuccessStatusCode();
-        
+
             var createdPatient = await patient.Content.ReadFromJsonAsync<PatientDTO>();
-        
+
             var patientId = createdPatient.Id;
             var userDTO = new CreatingPatientUserDTO
             {
@@ -408,14 +333,14 @@ namespace DDDSample1.Tests.Users.IntegrationTests
                 PhoneNumber = "+351123456789",
                 PatientId = patientId
             };
-        
+
             var user = await _client.PostAsJsonAsync("/api/user/RegisterUserAsPatient", userDTO);
             user.EnsureSuccessStatusCode();
-        
+
             var userDto = await user.Content.ReadFromJsonAsync<UserDTO>();
             token = GeneratePatientJwtToken(userDto);
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-        
+
             // Act
             var response = await _client.PostAsJsonAsync("/api/user/RequestDelete", token);
             response.EnsureSuccessStatusCode();
@@ -426,7 +351,7 @@ namespace DDDSample1.Tests.Users.IntegrationTests
         {
             var token = GenerateAdminJwtToken();
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-        
+
             var dto = new CreatingPatientDTO
             {
                 FirstName = "Ana",
@@ -439,13 +364,13 @@ namespace DDDSample1.Tests.Users.IntegrationTests
                 EmergencyContact = "+351987654321",
                 MedicalConditions = "Nenhuma"
             };
-        
+
             // Arrange
             var patient = await _client.PostAsJsonAsync("/api/patient", dto);
             patient.EnsureSuccessStatusCode();
-        
+
             var createdPatient = await patient.Content.ReadFromJsonAsync<PatientDTO>();
-        
+
             var patientId = createdPatient.Id;
             var userDTO = new CreatingPatientUserDTO
             {
@@ -454,14 +379,14 @@ namespace DDDSample1.Tests.Users.IntegrationTests
                 PhoneNumber = "+351123456789",
                 PatientId = patientId
             };
-        
+
             var user = await _client.PostAsJsonAsync("/api/user/RegisterUserAsPatient", userDTO);
             user.EnsureSuccessStatusCode();
-        
+
             var userDto = await user.Content.ReadFromJsonAsync<UserDTO>();
             token = GeneratePatientJwtToken(userDto);
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-        
+
             // Act
             var response = await _client.PostAsJsonAsync("/api/user/RequestDelete", token);
             response.EnsureSuccessStatusCode();

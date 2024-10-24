@@ -20,7 +20,7 @@ namespace DDDSample1.Controllers
         }
 
         [HttpPost("RegisterUser"), Authorize(Roles = "Admin")]
-        public async Task<IActionResult> RegisterUser([FromBody] CreatingUserDTO userDTO)
+        public async Task<ActionResult<UserDTO>> RegisterUser([FromBody] CreatingUserDTO userDTO)
         {
             try
             {
