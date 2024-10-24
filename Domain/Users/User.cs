@@ -8,24 +8,23 @@ namespace DDDSample1.Domain.Users
 {
     public class User : Entity<UserID>, IAggregateRoot
     {
-        private StaffId _staffId;
         private string _email;
         private string _username;
         private string _phoneNumber;
         private Role _role;
         private string _passwordHash;
         private bool _isActive;
-
         private int _failedLoginAttempts; // Tracks the number of failed login attempts
         private DateTime? _lockedUntil;   // Tracks the time until the account is locked
         private bool _isLocked;           // Indicates if the account is currently locked
 
         [JsonIgnore]
         private Patient _patient;
-
         private PatientId _patientId;
+
         [JsonIgnore]
         private Staff _staff;
+        private StaffId _staffId;
 
         private User() { }
 
@@ -33,13 +32,9 @@ namespace DDDSample1.Domain.Users
 
         [JsonConstructor]
         // Constructor for User registered by the admin
-        public User(string email, string username, Role role)
+        public User(string email, string username, Role role, Guid staffId)
         {
             Id = new UserID(Guid.NewGuid());
-            _patientId = null;
-            _patient = null;
-            _staffId = null;
-            _staff = null;
             _email = email;
             _phoneNumber = "";
             _username = username;
@@ -48,9 +43,11 @@ namespace DDDSample1.Domain.Users
             _isActive = false;
             _isLocked = false;
             _failedLoginAttempts = 0;
+            _patientId = null;
+            _staffId = new StaffId(staffId);
         }
 
-        // Constructor for User registered by the patient/staff
+        // Constructor for User registered by the patient
         public User(string email, string password, string phoneNumber, Guid patientId)
         {
             Id = new UserID(Guid.NewGuid());
@@ -74,11 +71,11 @@ namespace DDDSample1.Domain.Users
         public bool IsActive => _isActive;
         public PatientId PatientId => _patientId;
         public Patient Patient => _patient;
+        public StaffId StaffId => _staffId;
+        public Staff Staff => _staff;
         public int FailedLoginAttempts => _failedLoginAttempts;
         public DateTime? LockedUntil => _lockedUntil;
         public bool IsLocked => _isLocked;
-        public StaffId StaffId => _staffId;
-        public Staff Staff => _staff;
 
         internal void SetPassword(string password)
         {

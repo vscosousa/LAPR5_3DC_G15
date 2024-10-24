@@ -33,14 +33,20 @@ namespace DDDSample1.Domain.Patients
             if (!DateTime.TryParseExact(dateOfBirth.ToString("yyyy/MM/dd"), "yyyy/MM/dd", null, System.Globalization.DateTimeStyles.None, out _))
                 throw new BusinessRuleValidationException("Date of birth must be in the format YYYY/MM/DD.");
 
+            if (dateOfBirth > DateOnly.FromDateTime(DateTime.Now))
+                throw new BusinessRuleValidationException("Date of birth must be in the past.");
+
+            if (!Enum.IsDefined(typeof(GenderOptions), gender))
+                throw new BusinessRuleValidationException("Invalid gender option.");
+
             if (!Regex.IsMatch(email, @"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"))
-                throw new ArgumentException("Email must be in a valid format.");
+                throw new BusinessRuleValidationException("Email must be in a valid format.");
 
             if (!phoneNumber.StartsWith("+") || !phoneNumber.Substring(1).All(char.IsDigit))
-                throw new ArgumentException("Phone number must start with an identifier and contain only digits.");
+                throw new BusinessRuleValidationException("Phone number must start with an identifier and contain only digits.");
 
             if (!emergencyContact.StartsWith("+") || !emergencyContact.Substring(1).All(char.IsDigit))
-                throw new ArgumentException("Emergency phone number must start with an identifier and contain only digits.");
+                throw new BusinessRuleValidationException("Emergency phone number must start with an identifier and contain only digits.");
 
             Id = new PatientId(Guid.NewGuid());
             _firstName = firstName;
@@ -83,13 +89,13 @@ namespace DDDSample1.Domain.Patients
         internal void ChangePhoneNumber(string phoneNumber)
         {
             if (!phoneNumber.StartsWith("+") || !phoneNumber.Substring(1).All(char.IsDigit))
-                throw new ArgumentException("Phone number must start with an identifier and contain only digits.");
+                throw new BusinessRuleValidationException("Phone number must start with an identifier and contain only digits.");
             _phoneNumber = phoneNumber;
         }
         internal void ChangeEmergencyContact(string emergencyContact)
         {
             if (!emergencyContact.StartsWith("+") || !emergencyContact.Substring(1).All(char.IsDigit))
-                throw new ArgumentException("Emergency phone number must start with an identifier and contain only digits.");
+                throw new BusinessRuleValidationException("Emergency phone number must start with an identifier and contain only digits.");
             _emergencyContact = emergencyContact;
         }
         internal void AssignMedicalRecordNumber(string medicalRecordNumber) => _medicalRecordNumber = medicalRecordNumber;

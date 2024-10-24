@@ -9,6 +9,8 @@ namespace DDDSample1.Domain.OperationTypes
         public string EstimatedDuration { get; set; }
         public List<Guid> Specializations { get; set; } // List of specialization types.
 
+
+        public CreatingOperationTypeDTO(){}
         public CreatingOperationTypeDTO(string name, string estimatedDuration, List<Guid> specializations)
         {
             Name = name;

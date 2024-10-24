@@ -1,5 +1,3 @@
-using System;
-using DDDSample1.Domain.Patients;
 using DDDSample1.Domain.Users;
 using Projetos.LAPR5_3DC_G15.Domain.Shared;
 
@@ -23,7 +21,8 @@ namespace Projetos.LAPR5_3DC_G15.Mappers.Users
             return new User(
                 dto.Email,
                 dto.Username,
-                dto.Role
+                dto.Role,
+                dto.StaffId
             );
         }
 

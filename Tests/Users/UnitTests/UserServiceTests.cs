@@ -9,6 +9,8 @@ using DDDSample1.Domain.Patients;
 using DDDSample1.Domain.Logs;
 using Microsoft.IdentityModel.Tokens;
 using DDDSample1.Domain.Staffs;
+using System.IdentityModel.Tokens.Jwt;
+using DDDSample1.Domain.Specializations;
 
 namespace DDDSample1.Tests.Users.UnitTests
 {
@@ -52,18 +54,31 @@ namespace DDDSample1.Tests.Users.UnitTests
             );
         }
 
+        private Staff CreateSampleStaff(){
+            var specialization = new Specialization("Cardiology");
+            return new Staff(
+            "João",
+            "Pereira",
+            "João Pereira",
+            "joao.pereira@gmail.com",
+            "+123456789",
+            specialization.Id
+            );
+        }
 
         //Unit Test for CreateUser - US5.1.1
         [Fact]
         public async Task CreateUser_SuccessfullyCreatesUser()
         {
 
-            var dto = new CreatingUserDTO("joaopereira@gmail.com", "joao.pereira", 0);
-            var user = new User(dto.Email, dto.Username, Role.Admin);
-
+            var staff = CreateSampleStaff();
+            var dto = new CreatingUserDTO(staff.Email, "joao.pereira", 0, staff.Id.AsGuid());
+            var user = new User(dto.Email, dto.Username, dto.Role, dto.StaffId);
 
             _userRepositoryMock.Setup(repo => repo.GetUserByEmailAsync(dto.Email))
                                .ReturnsAsync((User)null);
+            _staffRepositoryMock.Setup(repo => repo.GetByEmailAsync(dto.Email))
+                               .ReturnsAsync(staff);
             _userRepositoryMock.Setup(repo => repo.GetUserByUsernameAsync(dto.Username))
                                .ReturnsAsync((User)null);
 
@@ -91,6 +106,7 @@ namespace DDDSample1.Tests.Users.UnitTests
         [Fact]
         public async Task CreateUser_EmailIsAlreadyInUse()
         {
+            var staff = CreateSampleStaff();
             var dto = new CreatingUserDTO
             {
                 Email = "admin@gmail.com",
@@ -98,7 +114,7 @@ namespace DDDSample1.Tests.Users.UnitTests
             };
 
             _userRepositoryMock.Setup(repo => repo.GetUserByEmailAsync(dto.Email))
-                .ReturnsAsync(new User("admin@gmail.com", "admin", Role.Admin));
+                .ReturnsAsync(new User("admin@gmail.com", "admin", Role.Admin, staff.Id.AsGuid()));
 
             var exception = await Assert.ThrowsAsync<Exception>(() => _userService.CreateUser(dto));
             Assert.Equal("Email is already in use.", exception.Message);
@@ -108,17 +124,22 @@ namespace DDDSample1.Tests.Users.UnitTests
         [Fact]
         public async Task CreateUser_UsernameIsAlreadyInUse()
         {
+            var staff = CreateSampleStaff();
 
             var dto = new CreatingUserDTO
             {
-                Email = "test@example.com",
-                Username = "admin"
+                Email = staff.Email,
+                Username = "admin",
+                Role = 0,
+                StaffId = staff.Id.AsGuid()
             };
 
             _userRepositoryMock.Setup(repo => repo.GetUserByEmailAsync(dto.Email))
                 .ReturnsAsync((User)null);
+            _staffRepositoryMock.Setup(repo => repo.GetByEmailAsync(dto.Email))
+                               .ReturnsAsync(staff);
             _userRepositoryMock.Setup(repo => repo.GetUserByUsernameAsync(dto.Username))
-                .ReturnsAsync(new User("admin@gmail.com", "admin", Role.Admin));
+                .ReturnsAsync(new User(dto.Email, dto.Username, dto.Role, dto.StaffId));
 
             var exception = await Assert.ThrowsAsync<Exception>(() => _userService.CreateUser(dto));
             Assert.Equal("Username is already in use.", exception.Message);
@@ -126,13 +147,14 @@ namespace DDDSample1.Tests.Users.UnitTests
 
         //Unit Test for ActivateUser - US5.1.1
         [Fact]
-        public async Task ActivateUser_ExpiredToken_ThrowsSecurityTokenException()
+        public async Task ActivateUser_ExpiredToken()
         {
             // Arrange
+            var staff = CreateSampleStaff();
             var userId = Guid.NewGuid();
             var expiredToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiYWRtaW4iLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJhZG1pbkBnbWFpbC5jb20iLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9hbWFpZGVudGlmaWVyIjoic2VjdXJpdHkiLCJleHBhbml0eSI6MTcyOTYwNjIwMn0.9n-Z0lRhhg2I5D_vgh0ECjfjE1lQAWYw3He3Q9cS1to"; // Example of an expired token
             var newPassword = "newPassword123";
-            var user = new User("user@example.com", "username", Role.Admin);
+            var user = new User("user@example.com", "username", Role.Admin, staff.Id.AsGuid());
 
             _userRepositoryMock.Setup(repo => repo.GetByIdAsync(new UserID(userId))).ReturnsAsync(user);
 
@@ -146,15 +168,17 @@ namespace DDDSample1.Tests.Users.UnitTests
 
         //Unit Test for ActivateUser - US5.1.1
         [Fact]
-        public async Task ActivateUser_InvalidPassword_ThrowsArgumentException()
+        public async Task ActivateUser_InvalidPassword()
         {
-
-            var dto = new CreatingUserDTO("joaopereira@gmail.com", "joao.pereira", 0);
-            var user = new User(dto.Email, dto.Username, Role.Admin);
+            var staff = CreateSampleStaff();
+            var dto = new CreatingUserDTO("joaopereira@gmail.com", "joao.pereira", 0, staff.Id.AsGuid());
+            var user = new User(dto.Email, dto.Username, Role.Admin, dto.StaffId);
             var token = _userService.CreateToken(user);
 
             _userRepositoryMock.Setup(repo => repo.GetUserByEmailAsync(dto.Email))
                                .ReturnsAsync((User)null);
+            _staffRepositoryMock.Setup(repo => repo.GetByEmailAsync(dto.Email))
+                               .ReturnsAsync(staff);
             _userRepositoryMock.Setup(repo => repo.GetUserByUsernameAsync(dto.Username))
                                .ReturnsAsync((User)null);
 
@@ -179,14 +203,17 @@ namespace DDDSample1.Tests.Users.UnitTests
         public async Task ActivateUser_SuccessfullyActivatesUser()
         {
             // Arrange
-            var dto = new CreatingUserDTO("joaopereira@gmail.com", "joao.pereira", 0);
-            var user = new User(dto.Email, dto.Username, Role.Admin);
+            var staff = CreateSampleStaff();
+            var dto = new CreatingUserDTO("joaopereira@gmail.com", "joao.pereira", 0, staff.Id.AsGuid());
+            var user = new User(dto.Email, dto.Username, Role.Admin, dto.StaffId);
             var token = _userService.CreateToken(user);
 
             var expectedDto = new UserDTO(user.Id.AsGuid(), user.Email, user.Username, true);
 
             _userRepositoryMock.Setup(repo => repo.GetUserByEmailAsync(dto.Email))
                                .ReturnsAsync((User)null);
+            _staffRepositoryMock.Setup(repo => repo.GetByEmailAsync(dto.Email))
+                               .ReturnsAsync(staff);
             _userRepositoryMock.Setup(repo => repo.GetUserByUsernameAsync(dto.Username))
                                .ReturnsAsync((User)null);
 
@@ -196,14 +223,14 @@ namespace DDDSample1.Tests.Users.UnitTests
             _userRepositoryMock.Setup(repo => repo.AddAsync(user)).ReturnsAsync(user);
             _userMapperMock.Setup(mapper => mapper.ToDto(user))
                                     .Returns(expectedDto);
-            
+
 
             // Act
             var createdUser = await _userService.CreateUser(dto);
 
             _userRepositoryMock.Setup(repo => repo.UpdateAsync(user)).Returns(Task.CompletedTask);
             _userRepositoryMock.Setup(repo => repo.GetByIdAsync(user.Id)).ReturnsAsync(user);
-            
+
             var activatedUserDto = await _userService.ActivateUser(token, "PasswordCorrect123@");
 
             // Assert
@@ -229,11 +256,12 @@ namespace DDDSample1.Tests.Users.UnitTests
 
         //Unit Test for Login - US5.1.6
         [Fact]
-        public async Task Login_UserNotActive_ReturnsUserNotActiveMessage()
+        public async Task Login_UserNotActive()
         {
 
+            var staff = CreateSampleStaff();
             var dto = new LoginUserDTO { Email = "inactive@example.com", Password = "password123" };
-            var user = new User(dto.Email, "username", Role.Admin);
+            var user = new User(dto.Email, "username", Role.Admin, staff.Id.AsGuid());
 
             _userRepositoryMock.Setup(repo => repo.GetUserByEmailAsync(dto.Email))
                                .ReturnsAsync(user);
@@ -250,8 +278,9 @@ namespace DDDSample1.Tests.Users.UnitTests
         public async Task Login_UserLocked_ReturnsAccountLockedMessage()
         {
 
+            var staff = CreateSampleStaff();
             var dto = new LoginUserDTO { Email = "locked@example.com", Password = "password123" };
-            var user = new User(dto.Email, "username", Role.Admin);
+            var user = new User(dto.Email, "username", Role.Admin, staff.Id.AsGuid());
             user.Activate();
             user.LockAccount();
 
@@ -267,11 +296,12 @@ namespace DDDSample1.Tests.Users.UnitTests
 
         //Unit Test for Login - US5.1.6
         [Fact]
-        public async Task Login_WrongPassword_RegistersFailedAttempt_ReturnsRemainingAttemptsMessage()
+        public async Task Login_WrongPassword_RegistersFailedAttempt()
         {
 
+            var staff = CreateSampleStaff();
             var dto = new LoginUserDTO { Email = "wrongpassword@example.com", Password = "wrongPassword" };
-            var user = new User(dto.Email, "username", Role.Admin);
+            var user = new User(dto.Email, "username", Role.Admin, staff.Id.AsGuid());
             user.Activate();
             user.SetPassword("CorrectPassword1@");
             user.RegisterFailedLoginAttempt();
@@ -295,9 +325,9 @@ namespace DDDSample1.Tests.Users.UnitTests
         [Fact]
         public async Task Login_UserLockedAfterFailedAttempts_NotifiesAdmin()
         {
-
+            var staff = CreateSampleStaff();
             var dto = new LoginUserDTO { Email = "lockafterattempts@example.com", Password = "wrongPassword" };
-            var user = new User(dto.Email, "username", Role.Admin);
+            var user = new User(dto.Email, "username", Role.Admin, staff.Id.AsGuid());
             user.Activate();
             user.SetPassword("CorrectPassword1@");
             user.RegisterFailedLoginAttempt();
@@ -322,11 +352,12 @@ namespace DDDSample1.Tests.Users.UnitTests
 
         //Unit Test for Login - US5.1.6
         [Fact]
-        public async Task Login_SuccessfulLogin_ReturnsTokenAndMessage()
+        public async Task Login_SuccessfulLogin()
         {
 
             var dto = new LoginUserDTO { Email = "success@example.com", Password = "PasswordCorrect123@" };
-            var user = new User(dto.Email, "username", Role.Admin);
+            var staff = CreateSampleStaff();
+            var user = new User(dto.Email, "username", Role.Admin, staff.Id.AsGuid());
             user.Activate();
             user.SetPassword(dto.Password);
 
@@ -341,8 +372,49 @@ namespace DDDSample1.Tests.Users.UnitTests
 
             var result = await _userService.Login(dto);
 
-            Assert.Contains("User logged in successfully", result);
-            Assert.Contains("Token:", result);
+
+            Assert.NotNull(result);
+            Assert.True(IsJwtToken(result));
+        }
+
+        private bool IsJwtToken(string token)
+        {
+            if (string.IsNullOrEmpty(token))
+                return false;
+
+            var parts = token.Split('.');
+            if (parts.Length != 3)
+                return false;
+
+            try
+            {
+                var header = Base64UrlDecode(parts[0]);
+                var payload = Base64UrlDecode(parts[1]);
+
+                // Check if header and payload are valid JSON
+                var headerJson = System.Text.Json.JsonDocument.Parse(header);
+                var payloadJson = System.Text.Json.JsonDocument.Parse(payload);
+
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        private string Base64UrlDecode(string input)
+        {
+            var output = input.Replace('-', '+').Replace('_', '/');
+            switch (output.Length % 4)
+            {
+                case 0: break;
+                case 2: output += "=="; break;
+                case 3: output += "="; break;
+                default: throw new ArgumentException("Illegal base64url string!", nameof(input));
+            }
+            var converted = Convert.FromBase64String(output);
+            return System.Text.Encoding.UTF8.GetString(converted);
         }
     }
 }

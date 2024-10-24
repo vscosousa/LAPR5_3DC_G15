@@ -6,10 +6,12 @@ This document provides an overview of the tests related to the Patient Requireme
 
 The following is a summary of the number of tests for each service method:
 
-- **CreatePatient**: 3 tests
-- **UpdatePatient**: 5 tests
-- **DeletePatient**: 2 tests
-- **SearchPatients**: 11 tests
+- **CreatePatient**: 5 tests
+- **UpdatePatient**: 7 tests
+- **DeletePatient**: 4 tests
+- **SearchPatients**: 13 tests
+- **PatientMapper**: 3 tests
+- **PatientDomain**: 18 tests
 
 ## Table of Contents
 
@@ -34,6 +36,37 @@ The following is a summary of the number of tests for each service method:
 19. [SearchAllPatients](#searchallpatients)
 20. [GetNullListOfPatients](#getnulllistofpatients)
 21. [GetListWithMoreThanOneFilter](#getlistwithmorethanonefilter)
+22. [MapToPatientDTOSuccessfully](#maptopatientdtosuccessfully)
+23. [MapToDomainSuccessfully](#maptodomainuccessfully)
+24. [MapToCreatingPatientDTOSuccessfully](#maptocreatingpatientdtosuccessfully)
+25. [CreatePatientDirectlyFromDomainSuccessfully](#createpatientdirectlyfromdomainsuccessfully)
+26. [CreatePatientDirectlyFromDomainWithInvalidFirstName](#createpatientdirectlyfromdomainwithinvalidfirstname)
+27. [CreatePatientDirectlyFromDomainWithInvalidLastName](#createpatientdirectlyfromdomainwithinvalidlastname)
+28. [CreatePatientDirectlyFromDomainWithInvalidFullName](#createpatientdirectlyfromdomainwithinvalidfullname)
+29. [CreatePatientDirectlyFromDomainWithInvalidDateOfBirth](#createpatientdirectlyfromdomainwithinvaliddateofbirth)
+30. [CreatePatientDirectlyFromDomainWithInvalidGender](#createpatientdirectlyfromdomainwithinvalidgender)
+31. [CreatePatientDirectlyFromDomainWithInvalidEmail](#createpatientdirectlyfromdomainwithinvalidemail)
+32. [CreatePatientDirectlyFromDomainWithInvalidPhoneNumber](#createpatientdirectlyfromdomainwithinvalidphonenumber)
+33. [CreatePatientDirectlyFromDomainWithInvalidEmergencyContact](#createpatientdirectlyfromdomainwithinvalidemergencycontact)
+34. [ChangeFirstNameDirectlyFromDomainSuccessfully](#changefirstnamedirectlyfromdomainsuccessfully)
+35. [ChangeLastNameDirectlyFromDomainSuccessfully](#changelastnamedirectlyfromdomainsuccessfully)
+36. [ChangeFullNameDirectlyFromDomainSuccessfully](#changefullnamedirectlyfromdomainsuccessfully)
+37. [ChangeEmailDirectlyFromDomainSuccessfully](#changeemaildirectlyfromdomainsuccessfully)
+38. [ChangeEmailDirectlyFromDomainWithInvalidEmail](#changeemaildirectlyfromdomainwithinvalidemail)
+39. [ChangePhoneNumberDirectlyFromDomainSuccessfully](#changephonenumberdirectlyfromdomainsuccessfully)
+40. [ChangePhoneNumberDirectlyFromDomainWithInvalidPhoneNumber](#changephonenumberdirectlyfromdomainwithinvalidphonenumber)
+41. [ChangeEmergencyContactDirectlyFromDomainSuccessfully](#changeemergencycontactdirectlyfromdomainsuccessfully)
+42. [ChangeEmergencyContactDirectlyFromDomainWithInvalidEmergencyContact](#changeemergencycontactdirectlyfromdomainwithinvalidemergencycontact)
+43. [ChangeMedicalConditionsDirectlyFromDomainSuccessfully](#changemedicalconditionsdirectlyfromdomainsuccessfully)
+44. [CreatePatient_ShouldReturnOk_WhenPatientIsCreated](#createpatient_shouldreturnok_whenpatientiscreated)
+45. [CreatePatient_ShouldReturnError_WhenPatientAlreadyExists](#createpatient_shouldreturnerror_whenpatientalreadyexists)
+46. [DeletePatient_ShouldReturnOk_WhenPatientIsDeleted](#deletepatient_shouldreturnok_whenpatientisdeleted)
+47. [DeletePatient_ShouldReturnNotFound_WhenPatientDoesNotExist](#deletepatient_shouldreturnnotfound_whenpatientdoesnotexist)
+48. [UpdatePatient_ShouldReturnOk_WhenPatientIsUpdated](#updatepatient_shouldreturnok_whenpatientisupdated)
+49. [UpdatePatient_ShouldReturnNotFound_WhenPatientDoesNotExist](#updatepatient_shouldreturnnotfound_whenpatientdoesnotexist)
+50. [GetPatient_ShouldReturnOk_WhenPatientExists](#getpatient_shouldreturnok_whenpatientexists)
+51. [GetPatient_ShouldReturnNotFound_WhenPatientDoesNotExist](#getpatient_shouldreturnnotfound_whenpatientdoesnotexist)
+
 
 ## Test Descriptions
 
@@ -184,7 +217,216 @@ The following is a summary of the number of tests for each service method:
 | **Expected Result** | The result contains patients matching all specified filters. |
 | **Type of Test** | Unit Test |
 
+### MapToPatientDTOSuccessfully
+
+| **Purpose** | To verify that a patient can be mapped to a PatientDTO successfully. |
+|-------------|---------------------------------------------------------------------|
+| **Expected Result** | The PatientDTO contains all the expected values from the patient. |
+| **Type of Test** | Unit Test |
+
+### MapToDomainSuccessfully
+
+| **Purpose** | To verify that a CreatingPatientDTO can be mapped to a Patient domain object successfully. |
+|-------------|-------------------------------------------------------------------------------------------|
+| **Expected Result** | The Patient domain object contains all the expected values from the CreatingPatientDTO. |
+| **Type of Test** | Unit Test |
+
+### MapToCreatingPatientDTOSuccessfully
+
+| **Purpose** | To verify that a patient can be mapped to a CreatingPatientDTO successfully. |
+|-------------|----------------------------------------------------------------------------|
+| **Expected Result** | The CreatingPatientDTO contains all the expected values from the patient. |
+| **Type of Test** | Unit Test |
+
+### CreatePatientDirectlyFromDomainSuccessfully
+
+| **Purpose** | To verify that a patient can be created directly from the domain successfully. |
+|-------------|------------------------------------------------------------------------------|
+| **Expected Result** | The patient is created and all properties match the expected values. |
+| **Type of Test** | Unit Test |
+
+### CreatePatientDirectlyFromDomainWithInvalidFirstName
+
+| **Purpose** | To verify that creating a patient directly from the domain fails if the first name is invalid. |
+|-------------|------------------------------------------------------------------------------------------------|
+| **Expected Result** | A `BusinessRuleValidationException` is thrown. |
+| **Type of Test** | Unit Test |
+
+### CreatePatientDirectlyFromDomainWithInvalidLastName
+
+| **Purpose** | To verify that creating a patient directly from the domain fails if the last name is invalid. |
+|-------------|-----------------------------------------------------------------------------------------------|
+| **Expected Result** | A `BusinessRuleValidationException` is thrown. |
+| **Type of Test** | Unit Test |
+
+### CreatePatientDirectlyFromDomainWithInvalidFullName
+
+| **Purpose** | To verify that creating a patient directly from the domain fails if the full name is invalid. |
+|-------------|------------------------------------------------------------------------------------------------|
+| **Expected Result** | A `BusinessRuleValidationException` is thrown. |
+| **Type of Test** | Unit Test |
+
+### CreatePatientDirectlyFromDomainWithInvalidDateOfBirth
+
+| **Purpose** | To verify that creating a patient directly from the domain fails if the date of birth is invalid. |
+|-------------|---------------------------------------------------------------------------------------------------|
+| **Expected Result** | A `BusinessRuleValidationException` is thrown. |
+| **Type of Test** | Unit Test |
+
+### CreatePatientDirectlyFromDomainWithInvalidGender
+
+| **Purpose** | To verify that creating a patient directly from the domain fails if the gender is invalid. |
+|-------------|--------------------------------------------------------------------------------------------|
+| **Expected Result** | A `BusinessRuleValidationException` is thrown. |
+| **Type of Test** | Unit Test |
+
+### CreatePatientDirectlyFromDomainWithInvalidEmail
+
+| **Purpose** | To verify that creating a patient directly from the domain fails if the email is invalid. |
+|-------------|-------------------------------------------------------------------------------------------|
+| **Expected Result** | A `BusinessRuleValidationException` is thrown. |
+| **Type of Test** | Unit Test |
+
+### CreatePatientDirectlyFromDomainWithInvalidPhoneNumber
+
+| **Purpose** | To verify that creating a patient directly from the domain fails if the phone number is invalid. |
+|-------------|--------------------------------------------------------------------------------------------------|
+| **Expected Result** | A `BusinessRuleValidationException` is thrown. |
+| **Type of Test** | Unit Test |
+
+### CreatePatientDirectlyFromDomainWithInvalidEmergencyContact
+
+| **Purpose** | To verify that creating a patient directly from the domain fails if the emergency contact is invalid. |
+|-------------|-------------------------------------------------------------------------------------------------------|
+| **Expected Result** | A `BusinessRuleValidationException` is thrown. |
+| **Type of Test** | Unit Test |
+
+### ChangeFirstNameDirectlyFromDomainSuccessfully
+
+| **Purpose** | To verify that a patient's first name can be changed directly from the domain successfully. |
+|-------------|---------------------------------------------------------------------------------------------|
+| **Expected Result** | The patient's first name is updated. |
+| **Type of Test** | Unit Test |
+
+### ChangeLastNameDirectlyFromDomainSuccessfully
+
+| **Purpose** | To verify that a patient's last name can be changed directly from the domain successfully. |
+|-------------|--------------------------------------------------------------------------------------------|
+| **Expected Result** | The patient's last name is updated. |
+| **Type of Test** | Unit Test |
+
+### ChangeFullNameDirectlyFromDomainSuccessfully
+
+| **Purpose** | To verify that a patient's full name can be changed directly from the domain successfully. |
+|-------------|--------------------------------------------------------------------------------------------|
+| **Expected Result** | The patient's full name is updated. |
+| **Type of Test** | Unit Test |
+
+### ChangeEmailDirectlyFromDomainSuccessfully
+
+| **Purpose** | To verify that a patient's email can be changed directly from the domain successfully. |
+|-------------|--------------------------------------------------------------------------------------------|
+| **Expected Result** | The patient's email is updated. |
+| **Type of Test** | Unit Test |
+
+### ChangeEmailDirectlyFromDomainWithInvalidEmail
+
+| **Purpose** | To verify that changing a patient's email directly from the domain fails if the email is invalid. |
+|-------------|-------------------------------------------------------------------------------------------------|
+| **Expected Result** | An `ArgumentException` is thrown. |
+| **Type of Test** | Unit Test |
+
+### ChangePhoneNumberDirectlyFromDomainSuccessfully
+
+| **Purpose** | To verify that a patient's phone number can be changed directly from the domain successfully. |
+|-------------|-----------------------------------------------------------------------------------------------|
+| **Expected Result** | The patient's phone number is updated. |
+| **Type of Test** | Unit Test |
+
+### ChangePhoneNumberDirectlyFromDomainWithInvalidPhoneNumber
+
+| **Purpose** | To verify that changing a patient's phone number directly from the domain fails if the phone number is invalid. |
+|-------------|---------------------------------------------------------------------------------------------------------------|
+| **Expected Result** | A `BusinessRuleValidationException` is thrown. |
+| **Type of Test** | Unit Test |
+
+### ChangeEmergencyContactDirectlyFromDomainSuccessfully
+
+| **Purpose** | To verify that a patient's emergency contact can be changed directly from the domain successfully. |
+|-------------|--------------------------------------------------------------------------------------------------|
+| **Expected Result** | The patient's emergency contact is updated. |
+| **Type of Test** | Unit Test |
+
+### ChangeEmergencyContactDirectlyFromDomainWithInvalidEmergencyContact
+
+| **Purpose** | To verify that changing a patient's emergency contact directly from the domain fails if the emergency contact is invalid. |
+|-------------|-------------------------------------------------------------------------------------------------------------------------|
+| **Expected Result** | A `BusinessRuleValidationException` is thrown. |
+| **Type of Test** | Unit Test |
+
+### ChangeMedicalConditionsDirectlyFromDomainSuccessfully
+
+| **Purpose** | To verify that a patient's medical conditions can be changed directly from the domain successfully. |
+|-------------|----------------------------------------------------------------------------------------------------|
+| **Expected Result** | The patient's medical conditions are updated. |
+| **Type of Test** | Unit Test |
+
+### CreatePatient_ShouldReturnOk_WhenPatientIsCreated
+
+| **Purpose** | To verify that a patient can be created successfully. |
+|-------------|---------------------------------------------------------------------|
+| **Expected Result** | The response status is 200. |
+| **Type of Test** | Integration Test |
+
+### CreatePatient_ShouldReturnError_WhenPatientAlreadyExists
+
+| **Purpose** | To verify that creating a patient fails if the patient already exists. |
+|-------------|---------------------------------------------------------------------|
+| **Expected Result** | The response status is 400. |
+| **Type of Test** | Integration Test |
+
+### DeletePatient_ShouldReturnOk_WhenPatientIsDeleted
+
+| **Purpose** | To verify that a patient can be deleted successfully. |
+|-------------|---------------------------------------------------------------------|
+| **Expected Result** | The response status is 200. |
+| **Type of Test** | Integration Test |
+
+### DeletePatient_ShouldReturnNotFound_WhenPatientDoesNotExist
+
+| **Purpose** | To verify that deleting a patient fails if the patient does not exist. |
+|-------------|---------------------------------------------------------------------|
+| **Expected Result** | The response status is 404. |
+| **Type of Test** | Integration Test |
+
+### UpdatePatient_ShouldReturnOk_WhenPatientIsUpdated
+
+| **Purpose** | To verify that a patient can be updated successfully. |
+|-------------|---------------------------------------------------------------------|
+| **Expected Result** | The response status is 200. |
+| **Type of Test** | Integration Test |
+
+### UpdatePatient_ShouldReturnNotFound_WhenPatientDoesNotExist
+
+| **Purpose** | To verify that updating a patient fails if the patient does not exist. |
+|-------------|---------------------------------------------------------------------|
+| **Expected Result** | The response status is 404. |
+| **Type of Test** | Integration Test |
+
+### GetPatient_ShouldReturnOk_WhenPatientExists
+
+| **Purpose** | To verify that a patient can be retrieved successfully. |
+|-------------|---------------------------------------------------------------------|
+| **Expected Result** | The response status is 200. |
+| **Type of Test** | Integration Test |
+
+### GetPatient_ShouldReturnNotFound_WhenPatientDoesNotExist
+
+| **Purpose** | To verify that retrieving a patient fails if the patient does not exist. |
+|-------------|---------------------------------------------------------------------|
+| **Expected Result** | The response status is 404. |
+| **Type of Test** | Integration Test |
+
 ---
-<br>
 
 [Back to top](#patient-tests)

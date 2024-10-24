@@ -31,7 +31,7 @@ public class TestWebApplicationFactory<TStartup> : WebApplicationFactory<TStartu
 
         builder.ConfigureServices(services =>
         {
-        
+            // Remove the existing DbContext registration
             var descriptor = services.SingleOrDefault(d => d.ServiceType == typeof(DDDSample1DbContext));
             if (descriptor != null)
             {
@@ -44,19 +44,40 @@ public class TestWebApplicationFactory<TStartup> : WebApplicationFactory<TStartu
                 options.UseInMemoryDatabase("TestDatabase");
             });
 
+            // Add a mock mail service
             services.AddScoped<IMailService, MockMailService>();
 
             // Build the service provider
             var serviceProvider = services.BuildServiceProvider();
 
-            
-            using (var scope = serviceProvider.CreateScope())
+            // Ensure the database is created
+            try
             {
-                var scopedServices = scope.ServiceProvider;
-                var db = scopedServices.GetRequiredService<DDDSample1DbContext>();
+                using (var scope = serviceProvider.CreateScope())
+                {
+                    var scopedServices = scope.ServiceProvider;
+                    var db = scopedServices.GetRequiredService<DDDSample1DbContext>();
 
-                db.Database.EnsureCreated();
+                    db.Database.EnsureCreated();
+                }
+            }
+            catch (Exception ex)
+            {
+                // Log or handle the exception as needed
+                throw new Exception("An error occurred while creating the test database.", ex);
             }
         });
+    }
+
+    public void ResetDatabase()
+    {
+        using (var scope = Services.CreateScope())
+        {
+            var scopedServices = scope.ServiceProvider;
+            var db = scopedServices.GetRequiredService<DDDSample1DbContext>();
+
+            db.Database.EnsureDeleted();
+            db.Database.EnsureCreated();
+        }
     }
 }

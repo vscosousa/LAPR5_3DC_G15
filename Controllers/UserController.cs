@@ -21,19 +21,15 @@ namespace DDDSample1.Controllers
         [HttpPost("RegisterUser"), Authorize(Roles = "Admin")]
         public async Task<IActionResult> RegisterUser([FromBody] CreatingUserDTO userDTO)
         {
-            try
-            {
-                var user = await _userService.CreateUser(userDTO);
-                return Ok(user);
-            }
-            catch (Exception ex)
-            {
-                if (ex.Message == "Email is already in use."|| ex.Message == "Username is already in use.")
+                try
                 {
-                    return Conflict(new { message = ex.Message });
+                    await _userService.CreateUser(userDTO);
+                    return Ok();
                 }
-                return BadRequest(new { message = ex.Message });
-            }
+                catch (Exception ex)
+                {
+                    return StatusCode(500, $"An error occurred while registering the user: {ex.Message}");
+                }
         }
 
         [HttpPost("RegisterUserAsPatient")]
@@ -184,6 +180,18 @@ namespace DDDSample1.Controllers
             catch (Exception ex)
             {
                 return StatusCode(500, $"An error occurred while deleting the user: {ex.Message}");
+            }
+        }
+
+        [HttpGet("GetAllUsers"), Authorize(Roles = "Admin")]
+        public async Task<ActionResult<UserDTO>> GetAllUsers(){
+
+            try{
+                var users = await _userService.getAllUsers();
+                return Ok(users);
+            }
+            catch (Exception ex){
+                return StatusCode(500, $"An error occurred while getting all users: {ex.Message}");
             }
         }
     }

@@ -10,7 +10,7 @@ using Xunit;
 
 namespace DDDSample1.Tests.Patients.UnitTests
 {
-    [Collection("Patient Service Collection")]
+    [Collection("Patient Collection")]
     public class PatientServiceTests
     {
         private readonly PatientService _service;

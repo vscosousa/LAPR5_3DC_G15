@@ -60,7 +60,6 @@ namespace DDDSample1.Domain.Staffs
         public SpecializationId SpecializationId => _specializationId;
         public Specialization Specialization => _specialization;
 
-        // Internal methods to set or modify values
         internal void GenerateLicenseNumber() => _licenseNumber = Guid.NewGuid().ToString().Substring(0, 8).ToUpper();
 
         internal void ChangePhoneNumber(string phoneNumber)
