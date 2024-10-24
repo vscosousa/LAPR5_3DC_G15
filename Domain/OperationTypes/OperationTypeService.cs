@@ -2,7 +2,6 @@ using System.Threading.Tasks;
 using System.Collections.Generic;
 using DDDSample1.Domain.Shared;
 using DDDSample1.Domain.Specializations;
-using Projetos.LAPR5_3DC_G15.Mappers.Staffs;
 using System.Linq;
 using DDDSample1.Domain.Staffs;
 
@@ -35,7 +34,7 @@ namespace DDDSample1.Domain.OperationTypes
 
         //Create OperationType 
         // US 5.1.20
-        public async Task<OperationType> CreateOperationTypeAsync(CreatingOperationTypeDTO dto)
+        public async Task<OperationTypeDTO> CreateOperationTypeAsync(CreatingOperationTypeDTO dto)
         {
 
             var existingOperation = await _repository.GetByNameAsync(dto.Name);
@@ -79,7 +78,8 @@ namespace DDDSample1.Domain.OperationTypes
             await _repository.AddAsync(newOperationType);
             await _unitOfWork.CommitAsync();
 
-            return newOperationType;
+            var operationTypeDTO = _mapper.ToDto(newOperationType);
+            return operationTypeDTO;
         }
 
         // Update OperationType - US 5.1.21
@@ -141,7 +141,6 @@ namespace DDDSample1.Domain.OperationTypes
                 string message = "OperationType updated. The following fields were updated: " + string.Join(", ", updatedFields) + ".";
                 var log = new Log(TypeOfAction.Update,operationType.Id.ToString(), message);
                 await _logRepository.AddAsync(log);
-                await _unitOfWork.CommitAsync();
             }
 
             await _repository.UpdateAsync(operationType);

@@ -182,5 +182,17 @@ namespace DDDSample1.Controllers
                 return StatusCode(500, $"An error occurred while deleting the user: {ex.Message}");
             }
         }
+
+        [HttpGet("GetAllUsers"), Authorize(Roles = "Admin")]
+        public async Task<ActionResult<UserDTO>> GetAllUsers(){
+
+            try{
+                var users = await _userService.getAllUsers();
+                return Ok(users);
+            }
+            catch (Exception ex){
+                return StatusCode(500, $"An error occurred while getting all users: {ex.Message}");
+            }
+        }
     }
 }

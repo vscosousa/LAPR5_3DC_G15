@@ -9,6 +9,7 @@ using DDDSample1.Domain.Patients;
 using DDDSample1.Domain.Logs;
 using Microsoft.IdentityModel.Tokens;
 using DDDSample1.Domain.Staffs;
+using System.IdentityModel.Tokens.Jwt;
 using DDDSample1.Domain.Specializations;
 
 namespace DDDSample1.Tests.Users.UnitTests
@@ -146,7 +147,7 @@ namespace DDDSample1.Tests.Users.UnitTests
 
         //Unit Test for ActivateUser - US5.1.1
         [Fact]
-        public async Task ActivateUser_ExpiredToken_ThrowsSecurityTokenException()
+        public async Task ActivateUser_ExpiredToken()
         {
             // Arrange
             var staff = CreateSampleStaff();
@@ -167,7 +168,7 @@ namespace DDDSample1.Tests.Users.UnitTests
 
         //Unit Test for ActivateUser - US5.1.1
         [Fact]
-        public async Task ActivateUser_InvalidPassword_ThrowsArgumentException()
+        public async Task ActivateUser_InvalidPassword()
         {
             var staff = CreateSampleStaff();
             var dto = new CreatingUserDTO("joaopereira@gmail.com", "joao.pereira", 0, staff.Id.AsGuid());
@@ -255,7 +256,7 @@ namespace DDDSample1.Tests.Users.UnitTests
 
         //Unit Test for Login - US5.1.6
         [Fact]
-        public async Task Login_UserNotActive_ReturnsUserNotActiveMessage()
+        public async Task Login_UserNotActive()
         {
 
             var staff = CreateSampleStaff();
@@ -295,7 +296,7 @@ namespace DDDSample1.Tests.Users.UnitTests
 
         //Unit Test for Login - US5.1.6
         [Fact]
-        public async Task Login_WrongPassword_RegistersFailedAttempt_ReturnsRemainingAttemptsMessage()
+        public async Task Login_WrongPassword_RegistersFailedAttempt()
         {
 
             var staff = CreateSampleStaff();
@@ -351,7 +352,7 @@ namespace DDDSample1.Tests.Users.UnitTests
 
         //Unit Test for Login - US5.1.6
         [Fact]
-        public async Task Login_SuccessfulLogin_ReturnsTokenAndMessage()
+        public async Task Login_SuccessfulLogin()
         {
 
             var dto = new LoginUserDTO { Email = "success@example.com", Password = "PasswordCorrect123@" };
@@ -371,6 +372,8 @@ namespace DDDSample1.Tests.Users.UnitTests
 
             var result = await _userService.Login(dto);
 
+
+            Assert.NotNull(result);
             Assert.True(IsJwtToken(result));
         }
 
@@ -413,7 +416,6 @@ namespace DDDSample1.Tests.Users.UnitTests
             var converted = Convert.FromBase64String(output);
             return System.Text.Encoding.UTF8.GetString(converted);
         }
-
     }
 }
 

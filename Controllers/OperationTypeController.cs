@@ -24,11 +24,11 @@ namespace DDDSample1.Controllers
         // US 5.1.20
         [HttpPost]
         [Authorize(Roles = "Admin")]
-        public async Task<ActionResult<OperationType>> CreateOperationType(CreatingOperationTypeDTO operationTypeDTO) // Change the DTO
+        public async Task<ActionResult<OperationTypeDTO>> CreateOperationType(CreatingOperationTypeDTO operationTypeDTO) // Change the DTO
         {
             try
             {
-                var operationType = await this._operationTypeService.CreateOperationTypeAsync(operationTypeDTO);
+                var operationType = await _operationTypeService.CreateOperationTypeAsync(operationTypeDTO);
                 return Ok(operationType);
             }
             catch (Exception ex)
