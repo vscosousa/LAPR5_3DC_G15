@@ -18,6 +18,8 @@ using System.Collections.Generic;
 using DDDSample1.Domain.Specializations;
 using DDDSample1.Domain.Staffs;
 using Microsoft.OpenApi.Writers;
+using System.Diagnostics;
+using DDDSample1.Domain.Shared;
 
 namespace DDDSample1.Tests.Users.IntegrationTests
 {
@@ -27,6 +29,7 @@ namespace DDDSample1.Tests.Users.IntegrationTests
     {
         private readonly HttpClient _client;
         private readonly TestWebApplicationFactory<Startup> _factory;
+
 
 
         public UserControllerServiceIntegrationTests(TestWebApplicationFactory<Startup> factory)
@@ -132,6 +135,159 @@ namespace DDDSample1.Tests.Users.IntegrationTests
 
         }
 
+        [Fact]
+        public async Task RegisterUser_ShouldReturnError_WhenStaffDoesNotExist()
+        {
+            var token = GenerateAdminJwtToken();
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+            var userDTO = new CreatingUserDTO
+            {
+                Email = "user@gmail.com",
+                Username = "user",
+                Role = 0,
+                StaffId = Guid.NewGuid()
+            };
+
+            // Act
+            var response = await _client.PostAsJsonAsync("/api/user/RegisterUserAsPatient", userDTO);
+
+            // Assert
+            response.StatusCode.Equals(HttpStatusCode.InternalServerError);
+        }
+
+        [Fact]
+        public async Task RegisterUser_ShouldReturnError_WhenUserDoesNotHavePermission()
+        {
+            var userDTO = new CreatingUserDTO
+            {
+                Email = "joao@gmail.com",
+                Username = "jonas",
+                Role = 0,
+                StaffId = new Guid()
+            };
+
+            var response = await _client.PostAsJsonAsync("/api/user/RegisterUser", userDTO);
+            response.StatusCode.Equals(HttpStatusCode.Unauthorized);
+        }
+
+        [Fact]
+        public async Task RegisterUser_ShouldReturnError_WhenEmailAlreadyRegisted()
+        {
+            var token = GenerateAdminJwtToken();
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+            var dto = new CreatingSpecializationDTO
+            {
+                SpecOption = "Cardiology"
+            };
+
+            var specialization = await _client.PostAsJsonAsync("/api/specialization", dto);
+            specialization.EnsureSuccessStatusCode();
+
+            var createdSpecialization = await specialization.Content.ReadFromJsonAsync<SpecializationDTO>();
+
+            var specializationId = createdSpecialization.Id;
+
+            var staffDTO = new CreatingStaffDTO
+            {
+                FirstName = "Joao",
+                LastName = "Pereira",
+                FullName = "Joao Pereira",
+                Email = "joao@gmail.com",
+                PhoneNumber = "+351912325678",
+                SpecializationId = specializationId
+            };
+
+            var staff = await _client.PostAsJsonAsync("/api/staff", staffDTO);
+            staff.EnsureSuccessStatusCode();
+
+            var createdStaff = await staff.Content.ReadFromJsonAsync<StaffDTO>();
+
+            var staffId = createdStaff.Id;
+
+            var userDTO = new CreatingUserDTO
+            {
+                Email = "joao@gmail.com",
+                Username = "jonas",
+                Role = 0,
+                StaffId = staffId
+            };
+
+            var createdUser = await _client.PostAsJsonAsync("/api/user/RegisterUser", userDTO);
+
+
+            var newUserDTO = new CreatingUserDTO
+            {
+                Email = "joao@gmail.com",
+                Username = "joao",
+                Role = 0,
+                StaffId = staffId
+            };
+
+            var response = await _client.PostAsJsonAsync("/api/user/RegisterUser", newUserDTO);
+
+            Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task RegisterUser_ShouldReturnError_WhenUsernameAlreadyRegisted()
+        {
+            var token = GenerateAdminJwtToken();
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+            var dto = new CreatingSpecializationDTO
+            {
+                SpecOption = "Cardiology"
+            };
+
+            var specialization = await _client.PostAsJsonAsync("/api/specialization", dto);
+            specialization.EnsureSuccessStatusCode();
+
+            var createdSpecialization = await specialization.Content.ReadFromJsonAsync<SpecializationDTO>();
+
+            var specializationId = createdSpecialization.Id;
+
+            var staffDTO = new CreatingStaffDTO
+            {
+                FirstName = "Joao",
+                LastName = "Pereira",
+                FullName = "Joao Pereira",
+                Email = "joao@gmail.com",
+                PhoneNumber = "+351912325678",
+                SpecializationId = specializationId
+            };
+
+            var staff = await _client.PostAsJsonAsync("/api/staff", staffDTO);
+            staff.EnsureSuccessStatusCode();
+
+            var createdStaff = await staff.Content.ReadFromJsonAsync<StaffDTO>();
+
+            var staffId = createdStaff.Id;
+
+            var userDTO = new CreatingUserDTO
+            {
+                Email = "joao@gmail.com",
+                Username = "jonas",
+                Role = 0,
+                StaffId = staffId
+            };
+
+            var createdUser = await _client.PostAsJsonAsync("/api/user/RegisterUser", userDTO);
+
+
+            var newUserDTO = new CreatingUserDTO
+            {
+                Email = "jonas@gmail.com",
+                Username = "jonas",
+                Role = 0,
+                StaffId = staffId
+            };
+
+            var response = await _client.PostAsJsonAsync("/api/user/RegisterUser", newUserDTO);
+
+            Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
+        }
 
 
         [Fact]
@@ -178,6 +334,7 @@ namespace DDDSample1.Tests.Users.IntegrationTests
             Assert.Equal(userDTO.Email, user.Email);
             Assert.Equal(userDTO.Email, user.Username);
         }
+
 
         [Fact]
         public async Task RegisterPatientUser_ShouldReturnError_WhenPatientDoesNotExist()
@@ -365,13 +522,225 @@ namespace DDDSample1.Tests.Users.IntegrationTests
                 Email = "error@example.com",
                 Username = "error",
             });
-            
+
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             // Act
             var response = await _client.DeleteAsync($"/api/user/DeleteUser/{token}");
 
             // Assert
             Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
+        }
+
+
+        [Fact]
+        public async Task LoginUser_ShouldReturnOk()
+        {
+            var token = GenerateAdminJwtToken();
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+            var dto = new CreatingSpecializationDTO
+            {
+                SpecOption = "Cardiology"
+            };
+
+            var specialization = await _client.PostAsJsonAsync("/api/specialization", dto);
+            specialization.EnsureSuccessStatusCode();
+
+            var createdSpecialization = await specialization.Content.ReadFromJsonAsync<SpecializationDTO>();
+
+            var specializationId = createdSpecialization.Id;
+
+            var staffDTO = new CreatingStaffDTO
+            {
+                FirstName = "Joao",
+                LastName = "Pereira",
+                FullName = "Joao Pereira",
+                Email = "joao@gmail.com",
+                PhoneNumber = "+351912325678",
+                SpecializationId = specializationId
+            };
+
+            var staff = await _client.PostAsJsonAsync("/api/staff", staffDTO);
+            staff.EnsureSuccessStatusCode();
+
+            var createdStaff = await staff.Content.ReadFromJsonAsync<StaffDTO>();
+
+            var staffId = createdStaff.Id;
+
+            var userDTO = new CreatingUserDTO
+            {
+                Email = "joao@gmail.com",
+                Username = "jonas",
+                Role = 0,
+                StaffId = staffId
+            };
+
+            var user = await _client.PostAsJsonAsync("/api/user/RegisterUser", userDTO);
+            user.EnsureSuccessStatusCode();
+
+            if (user.IsSuccessStatusCode)
+            {
+                Debug.WriteLine($"Status Code: {user.StatusCode}");
+                Debug.WriteLine($"Response Content: {await user.Content.ReadAsStringAsync()}");
+            }
+
+
+            var createdUserDTO = await user.Content.ReadFromJsonAsync<UserDTO>();
+            Debug.WriteLine($"Response Content: {createdUserDTO}");
+
+            var domainUser = new User(createdUserDTO.Email, createdUserDTO.Username, 0, staffId);
+
+            domainUser.SetPassword("Password123@");
+
+            var loginDTO = new LoginUserDTO
+            {
+                Email = createdUserDTO.Email,
+                Password = "Password123@"
+            };
+
+
+            var response = await _client.PostAsJsonAsync("/api/user/Login", loginDTO);
+            response.EnsureSuccessStatusCode();
+        }
+
+        [Fact]
+        public async Task LoginUser_ShouldReturnError_UserNotActive()
+        {
+            var token = GenerateAdminJwtToken();
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+            var dto = new CreatingSpecializationDTO
+            {
+                SpecOption = "Cardiology"
+            };
+
+            var specialization = await _client.PostAsJsonAsync("/api/specialization", dto);
+            specialization.EnsureSuccessStatusCode();
+
+            var createdSpecialization = await specialization.Content.ReadFromJsonAsync<SpecializationDTO>();
+
+            var specializationId = createdSpecialization.Id;
+
+            var staffDTO = new CreatingStaffDTO
+            {
+                FirstName = "Joao",
+                LastName = "Pereira",
+                FullName = "Joao Pereira",
+                Email = "joao@gmail.com",
+                PhoneNumber = "+351912325678",
+                SpecializationId = specializationId
+            };
+
+            var staff = await _client.PostAsJsonAsync("/api/staff", staffDTO);
+            staff.EnsureSuccessStatusCode();
+
+            var createdStaff = await staff.Content.ReadFromJsonAsync<StaffDTO>();
+
+            var staffId = createdStaff.Id;
+
+            var userDTO = new CreatingUserDTO
+            {
+                Email = "joao@gmail.com",
+                Username = "jonas",
+                Role = 0,
+                StaffId = staffId
+            };
+
+            var user = await _client.PostAsJsonAsync("/api/user/RegisterUser", userDTO);
+            user.EnsureSuccessStatusCode();
+
+            if (user.IsSuccessStatusCode)
+            {
+                Debug.WriteLine($"Status Code: {user.StatusCode}");
+                Debug.WriteLine($"Response Content: {await user.Content.ReadAsStringAsync()}");
+            }
+
+
+            var createdUserDTO = await user.Content.ReadFromJsonAsync<UserDTO>();
+            Debug.WriteLine($"Response Content: {createdUserDTO}");
+
+
+            var loginDTO = new LoginUserDTO
+            {
+                Email = createdUserDTO.Email,
+                Password = "Password123@"
+            };
+
+
+            var response = await _client.PostAsJsonAsync("/api/user/Login", loginDTO);
+            response.StatusCode.Equals(HttpStatusCode.InternalServerError);
+        }
+
+        [Fact]
+        public async Task LoginUser_ShouldReturnError_UserIsLocked()
+        {
+            var token = GenerateAdminJwtToken();
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+            // Arrange - Create Specialization
+            var dto = new CreatingSpecializationDTO
+            {
+                SpecOption = "Cardiology"
+            };
+
+            var specialization = await _client.PostAsJsonAsync("/api/specialization", dto);
+            specialization.EnsureSuccessStatusCode();
+
+            var createdSpecialization = await specialization.Content.ReadFromJsonAsync<SpecializationDTO>();
+            var specializationId = createdSpecialization.Id;
+
+            // Arrange - Create Staff
+            var staffDTO = new CreatingStaffDTO
+            {
+                FirstName = "Joao",
+                LastName = "Pereira",
+                FullName = "Joao Pereira",
+                Email = "joao@gmail.com",
+                PhoneNumber = "+351912325678",
+                SpecializationId = specializationId
+            };
+
+            var staff = await _client.PostAsJsonAsync("/api/staff", staffDTO);
+            staff.EnsureSuccessStatusCode();
+
+            var createdStaff = await staff.Content.ReadFromJsonAsync<StaffDTO>();
+            var staffId = createdStaff.Id;
+
+            // Arrange - Create User
+            var userDTO = new CreatingUserDTO
+            {
+                Email = "joao@gmail.com",
+                Username = "jonas",
+                Role = 0,
+                StaffId = staffId
+            }; 
+            
+            
+            var user = await _client.PostAsJsonAsync("/api/user/RegisterUser", userDTO);
+            user.EnsureSuccessStatusCode();
+            
+
+            var createdUserDTO = await user.Content.ReadFromJsonAsync<UserDTO>();
+
+            
+
+            // Lock the user
+            var domainUser = new User(createdUserDTO.Email, createdUserDTO.Username, 0, staffId);
+            domainUser.SetPassword("Password123@");
+            domainUser.LockAccount();
+        
+            // Arrange - Login DTO
+            var loginDTO = new LoginUserDTO
+            {
+                Email = domainUser.Email,
+                Password = "Password123@"
+            };
+
+            // Act
+            var response = await _client.PostAsJsonAsync("/api/user/Login", loginDTO);
+
+            // Assert
+            response.StatusCode.Equals(HttpStatusCode.Forbidden);
         }
     }
 }

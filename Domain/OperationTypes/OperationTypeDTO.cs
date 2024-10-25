@@ -13,7 +13,7 @@ namespace DDDSample1.Domain.OperationTypes
         public List<StaffDTO> Staffs { get; set; }
 
 
-    
+        public OperationTypeDTO() { }
         public OperationTypeDTO(Guid id, string name, string estimatedDuration, List<Guid> specializations, List<StaffDTO> staffs)
         {
             Id = id;

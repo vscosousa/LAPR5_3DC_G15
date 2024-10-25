@@ -166,7 +166,8 @@ namespace DDDSample1.Tests.OperationTypes.UnitTests
                 .ReturnsAsync((OperationType)null); // OperationType not found
 
             // Act & Assert
-            var exception = await Assert.ThrowsAsync<KeyNotFoundException>(() => _operationTypeService.UpdateOperationTypeAsync(operationTypeName, dto));
+            var exception = await Assert.ThrowsAsync<KeyNotFoundException>(() =>
+                _operationTypeService.UpdateOperationTypeAsync(operationTypeName, dto));
 
             Assert.Equal($"OperationType with name {operationTypeName} not found.", exception.Message);
         }
@@ -174,7 +175,6 @@ namespace DDDSample1.Tests.OperationTypes.UnitTests
         [Fact]
         public async Task UpdateOperationTypeAsync_ShouldUpdateName()
         {
-            // Arrange
             var operationTypeName = "ExistingOperation";
             var dto = new UpdatingOperationTypeDTO
             {
@@ -182,20 +182,28 @@ namespace DDDSample1.Tests.OperationTypes.UnitTests
                 EstimatedDuration = null,
                 Specializations = new List<Guid>()
             };
-
             var existingOperationType = new OperationType("ExistingOperation", "2 hours");
+
 
             _repository.Setup(repo => repo.GetByNameAsync(operationTypeName))
                 .ReturnsAsync(existingOperationType);
 
-            // Act
+            _repository.Setup(repo => repo.UpdateAsync(existingOperationType))
+                .Returns(Task.CompletedTask);
+
+            _mapper.Setup(mapper => mapper.ToDto(It.IsAny<OperationType>()))
+                .Returns((OperationType op) => new OperationTypeDTO(op.Id.AsGuid(), op.Name, op.EstimatedDuration, new List<Guid>(), new List<StaffDTO>()));
+
             var result = await _operationTypeService.UpdateOperationTypeAsync(operationTypeName, dto);
 
-            // Assert
+            Assert.NotNull(result);
             Assert.Equal("Updated Operation", result.Name);
+
+            Assert.Equal("Updated Operation", existingOperationType.Name);
             _repository.Verify(repo => repo.UpdateAsync(existingOperationType), Times.Once);
             _unitOfWork.Verify(uow => uow.CommitAsync(), Times.Once);
         }
+
 
         [Fact]
         public async Task UpdateOperationTypeAsync_ShouldUpdateEstimatedDuration()
@@ -204,21 +212,28 @@ namespace DDDSample1.Tests.OperationTypes.UnitTests
             var operationTypeName = "ExistingOperation";
             var dto = new UpdatingOperationTypeDTO
             {
-                Name = null,
+                Name = "",
                 EstimatedDuration = "3 hours",
                 Specializations = new List<Guid>()
             };
 
             var existingOperationType = new OperationType("ExistingOperation", "2 hours");
 
+            // Set up the repository to return the existing operation type
             _repository.Setup(repo => repo.GetByNameAsync(operationTypeName))
                 .ReturnsAsync(existingOperationType);
+
+            _mapper.Setup(mapper => mapper.ToDto(It.IsAny<OperationType>()))
+           .Returns((OperationType op) => new OperationTypeDTO(op.Id.AsGuid(), op.Name, op.EstimatedDuration, new List<Guid>(), new List<StaffDTO>()));
+
 
             // Act
             var result = await _operationTypeService.UpdateOperationTypeAsync(operationTypeName, dto);
 
             // Assert
-            Assert.Equal("3 hours", result.EstimatedDuration);
+            Assert.NotNull(result);
+            Assert.Equal("3 hours", result.EstimatedDuration); // Verify the result
+            Assert.Equal("3 hours", existingOperationType.EstimatedDuration); // Ensure existing operation type is updated
             _repository.Verify(repo => repo.UpdateAsync(existingOperationType), Times.Once);
             _unitOfWork.Verify(uow => uow.CommitAsync(), Times.Once);
         }
@@ -226,13 +241,13 @@ namespace DDDSample1.Tests.OperationTypes.UnitTests
         [Fact]
         public async Task UpdateOperationTypeAsync_ShouldUpdateSpecializations()
         {
-            // Arrange
+
             var operationTypeName = "ExistingOperation";
             var specializationId = Guid.NewGuid();
             var dto = new UpdatingOperationTypeDTO
             {
-                Name = null,
-                EstimatedDuration = null,
+                Name = "",
+                EstimatedDuration = "",
                 Specializations = new List<Guid> { specializationId }
             };
 
@@ -243,15 +258,23 @@ namespace DDDSample1.Tests.OperationTypes.UnitTests
             _repository.Setup(repo => repo.GetByNameAsync(operationTypeName))
                 .ReturnsAsync(existingOperationType);
 
+
             _specializationRepository.Setup(repo => repo.GetByIdAsync(It.IsAny<SpecializationId>()))
                 .ReturnsAsync(specialization);
+
+            _mapper.Setup(mapper => mapper.ToDto(It.IsAny<OperationType>()))
+                .Returns((OperationType op) => new OperationTypeDTO(op.Id.AsGuid(), op.Name, op.EstimatedDuration, op.Specializations.Select(s => s.Id.AsGuid()).ToList(), new List<StaffDTO>()));
 
             // Act
             var result = await _operationTypeService.UpdateOperationTypeAsync(operationTypeName, dto);
 
             // Assert
+            Assert.NotNull(result);
             Assert.Single(result.Specializations);
-            Assert.Equal(specializationId, result.Specializations.First().Id.AsGuid());
+
+            Assert.Single(existingOperationType.Specializations);
+            Assert.Contains(specialization, existingOperationType.Specializations);
+
             _repository.Verify(repo => repo.UpdateAsync(existingOperationType), Times.Once);
             _unitOfWork.Verify(uow => uow.CommitAsync(), Times.Once);
         }
@@ -271,9 +294,11 @@ namespace DDDSample1.Tests.OperationTypes.UnitTests
 
             var existingOperationType = new OperationType("ExistingOperation", "2 hours");
 
+            // Set up the repository to return the existing operation type
             _repository.Setup(repo => repo.GetByNameAsync(operationTypeName))
                 .ReturnsAsync(existingOperationType);
 
+            // Set up the specialization repository to return null for the non-existing specialization
             _specializationRepository.Setup(repo => repo.GetByIdAsync(It.IsAny<SpecializationId>()))
                 .ReturnsAsync((Specialization)null); // Specialization does not exist
 
@@ -490,6 +515,8 @@ namespace DDDSample1.Tests.OperationTypes.UnitTests
             _staffMapper.Setup(mapper => mapper.ToDto(It.IsAny<Staff>()))
                 .Returns(new StaffDTO(staff.Id.AsGuid(), staff.FirstName, staff.LastName, staff.FullName, staff.LicenseNumber, staff.Email, staff.PhoneNumber, staff.AvailabilitySlots.Select(slot => slot.ToString()).ToArray(), staff.SpecializationId.AsGuid(), staff.IsActive));
 
+            _mapper.Setup(mapper => mapper.ToDto(It.IsAny<OperationType>()))
+                .Returns(new OperationTypeDTO(operationType.Id.AsGuid(), operationType.Name, operationType.EstimatedDuration, operationType.Specializations.Select(s => s.Id.AsGuid()).ToList(), new List<StaffDTO> { new StaffDTO(staff.Id.AsGuid(), staff.FirstName, staff.LastName, staff.FullName, staff.LicenseNumber, staff.Email, staff.PhoneNumber, staff.AvailabilitySlots.Select(slot => slot.ToString()).ToArray(), staff.SpecializationId.AsGuid(), staff.IsActive) }));
             // Act
             var result = await _operationTypeService.GetOperationTypeWithStaffsAsync(operationTypeId);
 
@@ -542,7 +569,7 @@ namespace DDDSample1.Tests.OperationTypes.UnitTests
             Assert.Equal(operationType.EstimatedDuration, returnedOperationType.EstimatedDuration);
         }
 
-         [Fact]
+        [Fact]
         public async Task GetOperationTypesByStatusFalseAsync()
         {
             // Arrange
