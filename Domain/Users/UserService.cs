@@ -324,7 +324,9 @@ namespace DDDSample1.Domain.Users
             string token = CreatePasswordResetToken(user);
             var resetLink = GenerateLink(token, "ResetPassword");
 
-            await _mailService.SendResetPasswordEmailAsync(email, "Password Reset", resetLink);
+            var name = user.Username;
+
+            await _mailService.SendResetPasswordEmailAsync(email, name, resetLink);
         }
 
         public string CreatePasswordResetToken(User user)
