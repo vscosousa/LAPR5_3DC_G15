@@ -30,9 +30,8 @@ jobs:
       run: chmod +x tools/papercut/Papercut.Service.exe
   
     - name: Start Papercut SMTP Server
-      run: tools/papercut/Papercut.Service.exe --host 127.0.0.1 --port 25 &
+      run: Start-Process -FilePath "LAPR5_3DC_G15/tools/papercut/Papercut.Service.exe" -ArgumentList "--host 127.0.0.1 --port 25" -NoNewWindow -PassThru
   
-
     - name: Restore dependencies
       run: dotnet restore
 
@@ -80,4 +79,4 @@ jobs:
       shell: bash
     
     - name: Stop Papercut SMTP Server
-      run: pkill -f Papercut.Service
+      run: taskkill /IM Papercut.Service.exe /F
