@@ -148,9 +148,9 @@ namespace DDDSample1.Domain.Staffs
             }
 
             // Update Specialization
-            if (!string.IsNullOrEmpty(dto.SpecializationId) && staff.SpecializationId.ToString() != dto.SpecializationId)
+            if (!string.IsNullOrEmpty(dto.SpecializationId.ToString()) && staff.SpecializationId.ToString() != dto.SpecializationId.ToString())
             {
-                var specializationId = new SpecializationId(Guid.Parse(dto.SpecializationId));
+                var specializationId = new SpecializationId(dto.SpecializationId);
                 if (await _specializationRepository.GetByIdAsync(specializationId) == null)
                     throw new BusinessRuleValidationException("Id of Specialization does not exist.");
 

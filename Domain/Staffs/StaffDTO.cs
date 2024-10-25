@@ -12,13 +12,13 @@ namespace DDDSample1.Domain.Staffs
         public string LicenseNumber { get; init; }
         public string Email { get; init; }
         public string PhoneNumber { get; init; }
-        public SpecializationId SpecializationId { get; init; }
+        public Guid SpecializationId { get; init; }
         public string[] AvailabilitySlots { get; init; }
         public bool IsActive { get; init; }
 
         public StaffDTO() { }
 
-         public StaffDTO(Guid id, string firstName, string lastName, string fullName, string email, string phoneNumber, string licenseNumber, string[] availabilitySlots, SpecializationId specializationId, bool isActive )
+         public StaffDTO(Guid id, string firstName, string lastName, string fullName, string email, string phoneNumber, string licenseNumber, string[] availabilitySlots, Guid specializationId, bool isActive )
         {
             Id = id;
             FirstName = firstName;

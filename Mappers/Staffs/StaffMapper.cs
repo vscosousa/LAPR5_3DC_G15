@@ -21,7 +21,7 @@ namespace Projetos.LAPR5_3DC_G15.Mappers.Staffs
                 Email = domain.Email,
                 PhoneNumber = domain.PhoneNumber,
                 AvailabilitySlots = domain.AvailabilitySlots.Select(date => date.ToString()).ToArray(),
-                SpecializationId = domain.SpecializationId,
+                SpecializationId = domain.SpecializationId.AsGuid(),
                 IsActive = domain.IsActive
             };
         }

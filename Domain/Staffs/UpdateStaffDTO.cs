@@ -7,11 +7,11 @@ namespace DDDSample1.Domain.Staffs
         public string PhoneNumber { get; set; }
         public string AddAvailabilitySlots { get; set; }
         public string RemoveAvailabilitySlots { get; set; }
-        public string SpecializationId { get; set; }
+        public Guid SpecializationId { get; set; }
 
         public UpdateStaffDTO() { }
 
-        public UpdateStaffDTO(string phoneNumber, string addSlots,string removeSlots, string specializationId)
+        public UpdateStaffDTO(string phoneNumber, string addSlots,string removeSlots, Guid specializationId)
         {
             PhoneNumber = phoneNumber;
             AddAvailabilitySlots = addSlots;

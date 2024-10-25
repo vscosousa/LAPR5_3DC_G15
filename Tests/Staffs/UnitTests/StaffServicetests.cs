@@ -168,7 +168,7 @@ namespace DDDSample1.Tests.Staffs.UnitTests
                 expectedStaff.Email,
                 expectedStaff.PhoneNumber,
                 expectedStaff.AvailabilitySlots.Select(slot => slot.ToString()).ToArray(),
-                expectedStaff.SpecializationId,
+                expectedStaff.SpecializationId.AsGuid(),
                 expectedStaff.IsActive
             );
         }
@@ -267,7 +267,7 @@ namespace DDDSample1.Tests.Staffs.UnitTests
                     Email = existingStaff.Email,
                     PhoneNumber = existingStaff.PhoneNumber,
                     AvailabilitySlots = existingStaff.AvailabilitySlots.Select(date => date.ToString()).ToArray(),
-                    SpecializationId = existingStaff.SpecializationId,
+                    SpecializationId = existingStaff.SpecializationId.AsGuid(),
                     IsActive = false
                 }
                 );
@@ -285,7 +285,7 @@ namespace DDDSample1.Tests.Staffs.UnitTests
             Assert.Equal(existingStaff.Email, result.Email);
             Assert.Equal(existingStaff.PhoneNumber, result.PhoneNumber);
             Assert.Equal(existingStaff.AvailabilitySlots.Select(date => date.ToString()).ToArray(), result.AvailabilitySlots);
-            Assert.Equal(existingStaff.SpecializationId, result.SpecializationId);
+            Assert.Equal(existingStaff.SpecializationId.AsGuid(), result.SpecializationId);
             Assert.False(result.IsActive);
             _staffRepositoryMock.Verify(r => r.GetByIdAsync(It.IsAny<StaffId>()), Times.Once);
             _logRepositoryMock.Verify(l => l.AddAsync(It.IsAny<Log>()), Times.Once);
@@ -342,7 +342,7 @@ namespace DDDSample1.Tests.Staffs.UnitTests
                 PhoneNumber = "+351912345679",
                 AddAvailabilitySlots = "2024-11-10 14:00,2024-11-11 09:00",
                 RemoveAvailabilitySlots = "2024-11-09 10:00",
-                SpecializationId = newspecialization.Id.ToString()
+                SpecializationId = newspecialization.Id.AsGuid()
             };
 
             string message = "Staff updated. The following fields were updated: Phone Number, Added Availability Slots, Removed Availability Slots, Specialization.";
@@ -368,7 +368,7 @@ namespace DDDSample1.Tests.Staffs.UnitTests
                 Email = existingStaff.Email,
                 PhoneNumber = dto.PhoneNumber,
                 AvailabilitySlots = addSlots.Select(date => date.ToString()).ToArray(),
-                SpecializationId = newspecialization.Id,
+                SpecializationId = newspecialization.Id.AsGuid(),
                 IsActive = existingStaff.IsActive
             });
 
@@ -379,7 +379,7 @@ namespace DDDSample1.Tests.Staffs.UnitTests
             Assert.NotNull(result);
             Assert.Equal(dto.PhoneNumber, result.PhoneNumber);
             Assert.Equal(addSlots.Select(date => date.ToString()).ToArray(), result.AvailabilitySlots);
-            Assert.Equal(dto.SpecializationId, result.SpecializationId.ToString());
+            Assert.Equal(dto.SpecializationId.ToString(), result.SpecializationId.ToString());
 
             _logRepositoryMock.Verify(l => l.AddAsync(It.IsAny<Log>()), Times.Once);
             _unitOfWorkMock.Verify(u => u.CommitAsync(), Times.Once);
@@ -395,7 +395,7 @@ namespace DDDSample1.Tests.Staffs.UnitTests
 
             var dto = new UpdateStaffDTO
             {
-                SpecializationId = Guid.NewGuid().ToString()
+                SpecializationId = Guid.NewGuid()
             };
 
             // Mock para buscar staff existente
@@ -440,7 +440,7 @@ namespace DDDSample1.Tests.Staffs.UnitTests
                 LicenseNumber = staff.LicenseNumber.ToString(),
                 Email = staff.Email,
                 PhoneNumber = staff.PhoneNumber,
-                SpecializationId = staff.SpecializationId,
+                SpecializationId = staff.SpecializationId.AsGuid(),
                 AvailabilitySlots = staff.AvailabilitySlots.Select(s => s.ToString()).ToArray(),
                 IsActive = staff.IsActive
             });

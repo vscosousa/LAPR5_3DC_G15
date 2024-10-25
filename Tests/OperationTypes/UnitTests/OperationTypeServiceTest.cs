@@ -72,7 +72,7 @@ namespace DDDSample1.Tests.OperationTypes.UnitTests
 
             var specialization = new Specialization("Cardiology");
             var staff = new Staff("Joao", "Pereira", "Joao Pereira", "joao@gmail.com", "+351965265129", specialization.Id);
-            var staffDto = new StaffDTO(staff.Id.AsGuid(), staff.FirstName, staff.LastName, staff.FullName, staff.LicenseNumber, staff.Email, staff.PhoneNumber, staff.AvailabilitySlots.Select(slot => slot.ToString()).ToArray(), staff.SpecializationId, staff.IsActive);
+            var staffDto = new StaffDTO(staff.Id.AsGuid(), staff.FirstName, staff.LastName, staff.FullName, staff.LicenseNumber, staff.Email, staff.PhoneNumber, staff.AvailabilitySlots.Select(slot => slot.ToString()).ToArray(), staff.SpecializationId.AsGuid(), staff.IsActive);
             var newOperationType = new OperationType("Cardiology Operation", "2 hours");
 
             _repository.Setup(repo => repo.GetByNameAsync(dto.Name))
@@ -384,7 +384,7 @@ namespace DDDSample1.Tests.OperationTypes.UnitTests
                 .ReturnsAsync(new List<OperationType> { operationType });
 
             _staffMapper.Setup(mapper => mapper.ToDto(It.IsAny<Staff>()))
-                .Returns(new StaffDTO(staff.Id.AsGuid(), staff.FirstName, staff.LastName, staff.FullName, staff.Email, staff.PhoneNumber, staff.LicenseNumber, staff.AvailabilitySlots.Select(slot => slot.ToString()).ToArray(), staff.SpecializationId, staff.IsActive));
+                .Returns(new StaffDTO(staff.Id.AsGuid(), staff.FirstName, staff.LastName, staff.FullName, staff.Email, staff.PhoneNumber, staff.LicenseNumber, staff.AvailabilitySlots.Select(slot => slot.ToString()).ToArray(), staff.SpecializationId.AsGuid(), staff.IsActive));
 
             // Act
             var result = await _operationTypeService.GetAllOperationsTypeAsync();
@@ -406,7 +406,7 @@ namespace DDDSample1.Tests.OperationTypes.UnitTests
             Assert.Equal(staff.LicenseNumber, staffDTO.LicenseNumber);
             Assert.Equal(staff.Email, staffDTO.Email);
             Assert.Equal(staff.PhoneNumber, staffDTO.PhoneNumber); // Ensure this matches the expected value
-            Assert.Equal(staff.SpecializationId, staffDTO.SpecializationId);
+            Assert.Equal(staff.SpecializationId.AsGuid(), staffDTO.SpecializationId);
         }
 
         [Fact]
@@ -440,7 +440,7 @@ namespace DDDSample1.Tests.OperationTypes.UnitTests
                 .ReturnsAsync(operationType);
 
             _staffMapper.Setup(mapper => mapper.ToDto(It.IsAny<Staff>()))
-                .Returns(new StaffDTO(staff.Id.AsGuid(), staff.FirstName, staff.LastName, staff.FullName, staff.LicenseNumber, staff.Email, staff.PhoneNumber, staff.AvailabilitySlots.Select(slot => slot.ToString()).ToArray(), staff.SpecializationId, staff.IsActive));
+                .Returns(new StaffDTO(staff.Id.AsGuid(), staff.FirstName, staff.LastName, staff.FullName, staff.LicenseNumber, staff.Email, staff.PhoneNumber, staff.AvailabilitySlots.Select(slot => slot.ToString()).ToArray(), staff.SpecializationId.AsGuid(), staff.IsActive));
 
             // Act
             var result = await _operationTypeService.GetOperationTypesByNameAsync(operationName);
@@ -488,7 +488,7 @@ namespace DDDSample1.Tests.OperationTypes.UnitTests
                 .ReturnsAsync(operationType);
 
             _staffMapper.Setup(mapper => mapper.ToDto(It.IsAny<Staff>()))
-                .Returns(new StaffDTO(staff.Id.AsGuid(), staff.FirstName, staff.LastName, staff.FullName, staff.LicenseNumber, staff.Email, staff.PhoneNumber, staff.AvailabilitySlots.Select(slot => slot.ToString()).ToArray(), staff.SpecializationId, staff.IsActive));
+                .Returns(new StaffDTO(staff.Id.AsGuid(), staff.FirstName, staff.LastName, staff.FullName, staff.LicenseNumber, staff.Email, staff.PhoneNumber, staff.AvailabilitySlots.Select(slot => slot.ToString()).ToArray(), staff.SpecializationId.AsGuid(), staff.IsActive));
 
             // Act
             var result = await _operationTypeService.GetOperationTypeWithStaffsAsync(operationTypeId);
