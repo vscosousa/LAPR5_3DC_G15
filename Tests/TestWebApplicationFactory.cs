@@ -7,9 +7,12 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using DDDSample1.Infrastructure;
 using System;
+using System.Threading.Tasks;
 
-public class TestWebApplicationFactory<TStartup> : WebApplicationFactory<TStartup> where TStartup : class
+public class TestWebApplicationFactory<TStartup> : WebApplicationFactory<TStartup>, IDisposable where TStartup : class
 {
+    private string _databaseName;
+
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         builder.UseEnvironment("Testing");
@@ -37,14 +40,17 @@ public class TestWebApplicationFactory<TStartup> : WebApplicationFactory<TStartu
                 services.Remove(descriptor);
             }
 
+            // Generate a unique database name for each test run
+            _databaseName = Guid.NewGuid().ToString();
+
             // Add an in-memory database for testing
             services.AddDbContext<DDDSample1DbContext>(options =>
             {
-                options.UseInMemoryDatabase("TestDatabase");
+                options.UseInMemoryDatabase(_databaseName);
             });
 
-            // Add a mock mail service
-            services.AddScoped<IMailService, MockMailService>();
+            // Add the real mail service
+            services.AddScoped<IMailService, MailService>();
 
             // Build the service provider
             var serviceProvider = services.BuildServiceProvider();

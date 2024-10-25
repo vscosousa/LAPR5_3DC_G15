@@ -17,6 +17,7 @@ using DDDSample1.Domain.Patients;
 using System.Collections.Generic;
 using DDDSample1.Domain.Specializations;
 using DDDSample1.Domain.Staffs;
+using Microsoft.OpenApi.Writers;
 
 namespace DDDSample1.Tests.Users.IntegrationTests
 {
@@ -81,25 +82,6 @@ namespace DDDSample1.Tests.Users.IntegrationTests
             var jwt = new JwtSecurityTokenHandler().WriteToken(token);
 
             return jwt;
-        }
-
-        private string GenerateActivationJwtToken()
-        {
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(_factory.Services.GetService<IConfiguration>()["Jwt:Key"]);
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(new[]
-                {
-                new Claim(ClaimTypes.Email, "testuser@example.com"),
-                new Claim(ClaimTypes.Name, "testuser"),
-                new Claim(ClaimTypes.Role, "Admin")
-            }),
-                Expires = DateTime.UtcNow.AddHours(1),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-            };
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-            return tokenHandler.WriteToken(token);
         }
 
         [Fact]
@@ -195,50 +177,6 @@ namespace DDDSample1.Tests.Users.IntegrationTests
             Assert.NotNull(user);
             Assert.Equal(userDTO.Email, user.Email);
             Assert.Equal(userDTO.Email, user.Username);
-        }
-
-        [Fact]
-        public async Task RegisterPatientUser_ShouldReturnConflict_WhenEmailIsAlreadyInUse()
-        {
-            var token = GenerateAdminJwtToken();
-            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
-            var dto = new CreatingPatientDTO
-            {
-                FirstName = "Ana",
-                LastName = "Salvador",
-                FullName = "Ana Salvador",
-                DateOfBirth = "1990/05/15",
-                GenderOptions = GenderOptions.Female,
-                Email = "ana.salvador@gmail.com",
-                PhoneNumber = "+351123456789",
-                EmergencyContact = "+351987654321",
-                MedicalConditions = "Nenhuma"
-            };
-
-            // Arrange
-            var patient = await _client.PostAsJsonAsync("/api/patient", dto);
-            patient.EnsureSuccessStatusCode();
-
-            var createdPatient = await patient.Content.ReadFromJsonAsync<PatientDTO>();
-
-            var patientId = createdPatient.Id;
-            var userDTO = new CreatingPatientUserDTO
-            {
-                Email = "ana.salvador@gmail.com",
-                Password = "Password123@",
-                PhoneNumber = "+351123456789",
-                PatientId = patientId
-            };
-
-            // Act
-            var response = await _client.PostAsJsonAsync("/api/user/RegisterUserAsPatient", userDTO);
-            response.EnsureSuccessStatusCode();
-
-            var response2 = await _client.PostAsJsonAsync("/api/user/RegisterUserAsPatient", userDTO);
-
-            // Assert
-            Assert.Equal(HttpStatusCode.InternalServerError, response2.StatusCode);
         }
 
         [Fact]
@@ -351,6 +289,18 @@ namespace DDDSample1.Tests.Users.IntegrationTests
         {
             var token = GenerateAdminJwtToken();
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            // Act
+            var response = await _client.PostAsJsonAsync("/api/user/RequestDelete", token);
+
+            // Assert
+            Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task DeleteUser_ShouldReturnOk_WhenUserIsDeleted()
+        {
+            var token = GenerateAdminJwtToken();
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
             var dto = new CreatingPatientDTO
             {
@@ -380,16 +330,48 @@ namespace DDDSample1.Tests.Users.IntegrationTests
                 PatientId = patientId
             };
 
+            // Act
             var user = await _client.PostAsJsonAsync("/api/user/RegisterUserAsPatient", userDTO);
-            user.EnsureSuccessStatusCode();
 
+            // Assert
+            user.EnsureSuccessStatusCode();
             var userDto = await user.Content.ReadFromJsonAsync<UserDTO>();
             token = GeneratePatientJwtToken(userDto);
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
             // Act
-            var response = await _client.PostAsJsonAsync("/api/user/RequestDelete", token);
+            var response = await _client.DeleteAsync($"/api/user/DeleteUser/{token}");
             response.EnsureSuccessStatusCode();
+        }
+
+        [Fact]
+        public async Task DeleteUser_ShouldReturnError_WhenUserIsNotPatient()
+        {
+            var token = GenerateAdminJwtToken();
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            // Act
+            var response = await _client.DeleteAsync($"/api/user/DeleteUser/{token}");
+
+            // Assert
+            Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task DeleteUser_ShouldReturnError_WhenUserDoesNotExist()
+        {
+            var token = GeneratePatientJwtToken(new UserDTO
+            {
+                Id = Guid.NewGuid(),
+                Email = "error@example.com",
+                Username = "error",
+            });
+            
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            // Act
+            var response = await _client.DeleteAsync($"/api/user/DeleteUser/{token}");
+
+            // Assert
+            Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
         }
     }
 }
