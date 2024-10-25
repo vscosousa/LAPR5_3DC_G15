@@ -27,7 +27,7 @@ jobs:
         dotnet-quality: 'ga'
 
     - name: Start Papercut SMTP Server
-      run: tools/papercut/Papercut.Server --host 127.0.0.1 --port 25 &
+      run: tools/papercut/Papercut.Service --host 127.0.0.1 --port 25 &
 
     - name: Restore dependencies
       run: dotnet restore
@@ -76,4 +76,4 @@ jobs:
       shell: bash
     
     - name: Stop Papercut SMTP Server
-      run: pkill -f Papercut.Server
+      run: pkill -f Papercut.Service
