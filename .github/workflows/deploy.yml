@@ -36,7 +36,7 @@ jobs:
       run: chmod +x tools/SMTP/run-fake-smtp.sh || true
     
     - name: Run Fake SMTP server in background
-      run: java -Djava.awt.headless=true -jar tools/SMTP/fakeSMTP-2.0.jar -s -m &
+      run: java -Djava.awt.headless=true -jar libs/fakeSMTP-2.0.jar -s -m &
 
     - name: Restore dependencies
       run: dotnet restore
