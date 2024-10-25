@@ -39,7 +39,7 @@ jobs:
       run: chmod +x tools/SMTP/run-fake-smtp.sh || true
         
     - name: Run Fake SMTP server in background
-      run: xvfb-run --auto-servernum --server-args='-screen 0 1024x768x24' java -jar libs/fakeSMTP-2.0.jar -s -m &
+      run: nohup xvfb-run --auto-servernum --server-args='-screen 0 1024x768x24' java -jar libs/fakeSMTP-2.0.jar -s -m > fakeSMTP.log 2>&1 &
 
     - name: Restore dependencies
       run: dotnet restore

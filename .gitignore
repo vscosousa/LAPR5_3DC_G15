@@ -125,3 +125,4 @@ _NCrunch*
 .vscode/
 *.code-workspace
 .fake
+received-emails/
