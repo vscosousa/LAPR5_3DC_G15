@@ -32,11 +32,14 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
     
+    - name: Install xvfb
+      run: sudo apt-get update && sudo apt-get install -y xvfb
+        
     - name: Set execute permissions on build scripts
       run: chmod +x tools/SMTP/run-fake-smtp.sh || true
-    
+        
     - name: Run Fake SMTP server in background
-      run: java -Djava.awt.headless=true -jar libs/fakeSMTP-2.0.jar -s -m &
+      run: xvfb-run --auto-servernum --server-args='-screen 0 1024x768x24' java -jar libs/fakeSMTP-2.0.jar -s -m &
 
     - name: Restore dependencies
       run: dotnet restore
