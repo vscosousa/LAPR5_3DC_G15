@@ -37,9 +37,6 @@ jobs:
         
     - name: Set execute permissions on build scripts
       run: chmod +x tools/SMTP/run-fake-smtp.sh || true
-        
-    - name: Run Fake SMTP server in background
-      run: nohup xvfb-run --auto-servernum --server-args='-screen 0 1024x768x24' java -jar libs/fakeSMTP-2.0.jar -s -m > fakeSMTP.log 2>&1 &
 
     - name: Restore dependencies
       run: dotnet restore
@@ -48,8 +45,8 @@ jobs:
       run: dotnet build --no-restore
 
     - name: Run tests and generate coverage report
-      run: dotnet test --no-build --collect:"XPlat Code Coverage" --results-directory ./TestResults
-
+      run: nohup xvfb-run --auto-servernum --server-args='-screen 0 1024x768x24' java -jar libs/fakeSMTP-2.0.jar -s -m > fakeSMTP.log 2>&1 & dotnet test --no-build --collect:"XPlat Code Coverage" --results-directory ./TestResults
+    
     - name: ReportGenerator
       uses: danielpalme/ReportGenerator-GitHub-Action@5.3.11
       with:
