@@ -31,12 +31,12 @@ jobs:
       with:
           java-version: '21'
           distribution: 'temurin'
-  
+    
     - name: Set execute permissions on build scripts
       run: chmod +x tools/SMTP/run-fake-smtp.sh || true
-  
+    
     - name: Run Fake SMTP server in background
-      run: ./tools/SMTP/run-fake-smtp.sh &
+      run: java -Djava.awt.headless=true -jar tools/SMTP/fakeSMTP-2.0.jar -s -m &
 
     - name: Restore dependencies
       run: dotnet restore
