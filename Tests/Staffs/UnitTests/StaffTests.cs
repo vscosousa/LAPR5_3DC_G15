@@ -130,7 +130,7 @@ namespace DDDSample1.Tests.Staffs.UnitTests
         {
             // Arrange
             var staff = new Staff("Test", "Afonso", "Test Afonso", "test@example.com", "+351923456789", new SpecializationId(Guid.NewGuid()));
-            var invalidSlot = DateTime.MinValue; 
+            var invalidSlot = new DateTime(new DateOnly(2021, 1, 1), new TimeOnly(1, 0, 0));
             // Act & Assert
             Assert.Throws<BusinessRuleValidationException>(() => staff.AddAvailabilitySlot(invalidSlot));
         }
