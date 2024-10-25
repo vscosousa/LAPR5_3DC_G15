@@ -18,8 +18,8 @@ public class MailService : IMailService
         {
             Host = _configuration["SmtpSettings:Server"],
             Port = int.Parse(_configuration["SmtpSettings:Port"]),
-            EnableSsl = bool.Parse(_configuration["SmtpSettings:EnableSsl"]),
-            Credentials = new NetworkCredential(_configuration["SmtpSettings:Username"], _configuration["SmtpSettings:Password"])
+            /* EnableSsl = bool.Parse(_configuration["SmtpSettings:EnableSsl"]),
+            Credentials = new NetworkCredential(_configuration["SmtpSettings:Username"], _configuration["SmtpSettings:Password"]) */
         };
 
         var mailMessage = new MailMessage
@@ -43,8 +43,8 @@ public class MailService : IMailService
             {
                 Host = _configuration["SmtpSettings:Server"],
                 Port = int.Parse(_configuration["SmtpSettings:Port"]),
-                EnableSsl = bool.Parse(_configuration["SmtpSettings:EnableSsl"]),
-                Credentials = new NetworkCredential(_configuration["SmtpSettings:Username"], _configuration["SmtpSettings:Password"])
+                /* EnableSsl = bool.Parse(_configuration["SmtpSettings:EnableSsl"]),
+                Credentials = new NetworkCredential(_configuration["SmtpSettings:Username"], _configuration["SmtpSettings:Password"]) */
             };
 
             var mailMessage = new MailMessage
@@ -71,8 +71,8 @@ public class MailService : IMailService
         {
             Host = _configuration["SmtpSettings:Server"],
             Port = int.Parse(_configuration["SmtpSettings:Port"]),
-            EnableSsl = bool.Parse(_configuration["SmtpSettings:EnableSsl"]),
-            Credentials = new NetworkCredential(_configuration["SmtpSettings:Username"], _configuration["SmtpSettings:Password"])
+            /* EnableSsl = bool.Parse(_configuration["SmtpSettings:EnableSsl"]),
+            Credentials = new NetworkCredential(_configuration["SmtpSettings:Username"], _configuration["SmtpSettings:Password"]) */
         };
 
         var mailMessage = new MailMessage
