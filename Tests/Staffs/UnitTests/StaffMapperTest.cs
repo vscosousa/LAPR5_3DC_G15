@@ -56,8 +56,7 @@ namespace Projetos.LAPR5_3DC_G15.Tests.Mappers.Staffs
                 LastName = "Afonso",
                 FullName = "Test Afonso",
                 Email = "teste@example.com",
-                PhoneNumber = "+351923456789",
-                SpecializationId = Guid.NewGuid()
+                PhoneNumber = "+351923456789"
             };
 
             // Act
@@ -76,14 +75,14 @@ namespace Projetos.LAPR5_3DC_G15.Tests.Mappers.Staffs
         public void MapToCreatingStaffDTOSuccessfully()
         {
             // Arrange
-            var specializationId = new SpecializationId(Guid.NewGuid());
+            var specialization = new Specialization("Specialization");
             var staff = new Staff(
                 "Test",
                 "Afonso",
                 "Test Afonso",
                 "test@example.com",
                 "+351923456789",
-                specializationId
+                specialization.Id
             );
 
             // Act
@@ -95,7 +94,6 @@ namespace Projetos.LAPR5_3DC_G15.Tests.Mappers.Staffs
             Assert.Equal(staff.FullName, dto.FullName);
             Assert.Equal(staff.Email, dto.Email);
             Assert.Equal(staff.PhoneNumber, dto.PhoneNumber);
-            Assert.Equal(specializationId.AsGuid(), dto.SpecializationId);
         }
     }
 }

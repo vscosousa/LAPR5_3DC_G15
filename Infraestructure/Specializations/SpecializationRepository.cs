@@ -28,11 +28,10 @@ namespace DDDSample1.Infrastructure.Specializations
             }
         }
 
-        public async Task<SpecializationId> GetSpecIdByOptionAsync(string option)
+        public async Task<Specialization> GetSpecIdByOptionAsync(string option)
         {
             return await _objs
                 .Where(x => x.SpecOption.ToLower() == option.ToLower())
-                .Select(x => x.Id)
                 .FirstOrDefaultAsync();
         }
     }

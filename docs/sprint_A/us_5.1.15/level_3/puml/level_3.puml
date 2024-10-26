@@ -1,6 +1,6 @@
 @startuml level_3
 
-title Level 3 Diagram
+title Level 3 Diagram for Searching Staff Profiles
 
 hide empty members
 'skinparam Linetype ortho
@@ -16,5 +16,86 @@ skinparam class {
 skinparam package {
     BackgroundColor #EBF5FB
 }
+
+actor Admin as A
+participant "User Interface" as UI
+participant "StaffController" as C
+participant "StaffService" as S
+participant "StaffRepository" as R
+participant "StaffMapper" as M
+participant "StaffDTO" as D
+participant "Database" as DB
+
+activate A
+A -> UI: Asks to list staff profiles
+activate UI
+UI --> A: Asks for the data to filter the staff profiles
+deactivate UI
+A -> UI: Sends the data to filter the staff profiles
+note right of UI: The data can be First Name and/or Last Name and/or Full Name and/or Email\nand/or SpecializationId
+activate UI
+UI -> C: searchStaffProfiles(SearchStaffDTO dto)
+activate C
+C -> S: searchStaffProfiles(SearchStaffDTO dto)
+activate S
+S -> R: searchStaffAsync(dto)
+activate R
+R -> DB: _objs.AsQueryable()
+activate DB
+note right of DB: This will return a queryable list of all staff profiles.\nThis means that other queries can be chained\nto this one in order to filter the staff profiles.
+DB --> R: Returns the queryable list of all staff profiles
+deactivate DB
+opt Filter queryable by First Name
+    R -> DB: query.Where(s => s.FirstName.Contains(dto.FirstName))
+    activate DB
+    DB --> R: Returns the queryable list of staff profiles filtered by First Name
+    deactivate DB
+end
+opt Filter queryable by Last Name
+    R -> DB: query.Where(s => s.LastName.Contains(dto.LastName))
+    activate DB
+    DB --> R: Returns the queryable list of staff profiles filtered by Last Name
+    deactivate DB
+end
+opt Filter queryable by Full Name
+    R -> DB: query.Where(s => s.FullName.Contains(dto.FullName))
+    activate DB
+    DB --> R: Returns the queryable list of staff profiles filtered by Full Name
+    deactivate DB
+end
+opt Filter queryable by Email
+    R -> DB: query.Where(s => s.Email.Contains(dto.Email))
+    activate DB
+    DB --> R: Returns the queryable list of staff profiles filtered by Email
+    deactivate DB
+end
+opt Filter queryable by SpecializationId
+    R -> DB: query.Where(s => s.SpecializationId.ToString() == dto.SpecializationId)
+    activate DB
+    DB --> R: Returns the queryable list of staff profiles filtered by SpecializationId
+    deactivate DB
+end
+R --> S: Returns the final list of staff profiles
+deactivate R
+alt list is null or empty
+    S --> C: Returns null
+else list is not null
+    loop for each staff in the list
+        S -> M: toDTO(staff)
+        activate M
+        M -> D: new StaffDTO(staff fields)
+        activate D
+        D -> D: StaffDTO()
+        deactivate D
+        M --> S: Returns the StaffDTO
+        deactivate M
+    end
+    S --> C: Returns the list of StaffDTOs
+    deactivate S
+end
+C --> UI: Returns Operation Status Response Code
+deactivate C
+UI --> A: Returns Operation In/Success message
+deactivate UI
 
 @enduml

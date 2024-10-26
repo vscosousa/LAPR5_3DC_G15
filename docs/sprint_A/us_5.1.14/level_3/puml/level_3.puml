@@ -1,6 +1,6 @@
 @startuml level_3
 
-title Level 3 Diagram
+title Level 3 Diagram for Deactivating Staff
 
 hide empty members
 'skinparam Linetype ortho
@@ -16,5 +16,65 @@ skinparam class {
 skinparam package {
     BackgroundColor #EBF5FB
 }
+
+actor Admin as A
+participant "User Interface" as UI
+participant "StaffController" as C
+participant "StaffService" as S
+participant "StaffMapper" as M
+participant "StaffRepository" as R
+participant "Staff" as P
+participant "LogRepository" as LR
+participant "Log" as L
+participant "StaffDTO" as DTO
+participant "Database" as DB
+
+activate A
+A -> UI: Asks to deactivate a Staff
+activate UI
+UI -> C: deactivateStaff(Guid id)
+activate C
+C -> S: deactivateStaffAsync(Guid id)
+activate S
+S -> R: getByIdAsync(new StaffId(id))
+activate R
+R -> DB: _objs.Where(x => id.Equals(x.Id)).FirstOrDefaultAsync()
+activate DB
+DB --> R: return staff
+deactivate DB
+R --> S: return staff
+deactivate R
+alt staff is not null
+    S -> P: Deactivate()
+    activate P
+    P -> P: staff.Deactivate()
+    deactivate P
+    S -> L: new Log(TypeOfAction.Deactivate, id.ToString(), logMessage)
+    activate L
+    L -> L: Log()
+    deactivate L
+    S -> LR: addAsync(log)
+    activate LR
+    LR -> DB: _objs.AddAsync(log)
+    activate DB
+    deactivate DB
+    deactivate LR
+    S -> M: ToDto(staff)
+    activate M
+    M -> DTO: new StaffDTO(staff fields)
+    activate DTO
+    DTO -> DTO: StaffDTO()
+    deactivate DTO
+    M --> S: return StaffDTO
+    deactivate M
+    S --> C: return StaffDTO
+else staff is null
+    S --> C: throw BusinessRuleValidationException("Staff not found.")
+    deactivate S
+end
+C --> UI: Returns Operation Status Response Code
+deactivate C
+UI --> A: Returns Operation In/Success message
+deactivate UI
 
 @enduml

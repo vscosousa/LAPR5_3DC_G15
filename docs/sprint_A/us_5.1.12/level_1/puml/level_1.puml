@@ -1,6 +1,6 @@
 @startuml level_1
 
-title Level 1 Diagram
+title Level 1 Diagram for Creating Staff
 
 hide empty members
 'skinparam Linetype ortho
@@ -16,5 +16,18 @@ skinparam class {
 skinparam package {
     BackgroundColor #EBF5FB
 }
+
+actor Admin as A
+
+activate A
+A -> System: Asks to create a Staff
+activate System
+System --> A: Asks for Staff's data
+deactivate System
+A -> System: Sends Staff's data (First name, Last name, Fullname, Email, Phone number, Specialization)
+activate System
+System -> System: Validates Staff's data and tries to create the Staff
+System --> A: Returns Operation In/Success message
+deactivate System
 
 @enduml

@@ -60,7 +60,9 @@ namespace DDDSample1.Domain.Staffs
         public SpecializationId SpecializationId => _specializationId;
         public Specialization Specialization => _specialization;
 
-        internal void GenerateLicenseNumber() => _licenseNumber = Guid.NewGuid().ToString().Substring(0, 8).ToUpper();
+        internal void SetLicenseNumber(string number) => _licenseNumber = number;
+
+        internal void SetSpecialization(Specialization specialization)=> _specialization = specialization;
 
         internal void ChangePhoneNumber(string phoneNumber)
         {
@@ -71,11 +73,9 @@ namespace DDDSample1.Domain.Staffs
 
         internal void AddAvailabilitySlot(DateTime newSlot)
         {
-            if (!DateTime.TryParseExact(newSlot.ToString("yyyy/MM/dd HH:mm"), "yyyy/MM/dd HH:mm", null, System.Globalization.DateTimeStyles.None, out _))
+            if (!DateTime.TryParseExact(newSlot.ToString("yyyy/MM/dd HH:mm:ss"), "yyyy/MM/dd HH:mm:ss", null, System.Globalization.DateTimeStyles.None, out _))
                 throw new BusinessRuleValidationException("Availability slot must be in the format YYYY/MM/DD HH:mm:ss.");
-
-            if (newSlot < DateTime.Now)
-                throw new BusinessRuleValidationException("Availability slot must be in the future.");
+    
 
             var updatedSlots = _availabilitySlots.ToList();
             updatedSlots.Add(newSlot);
