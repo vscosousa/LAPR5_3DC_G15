@@ -64,7 +64,15 @@ namespace DDDSample1.Domain.Staffs
         public async Task<StaffDTO> CreateStaffAsync(CreatingStaffDTO dto)
         {
             try
-            {
+            {   
+                if (!string.IsNullOrEmpty(dto.SpecializationName)){
+                    var specialization = _specializationRepository.GetSpecIdByOptionAsync(dto.SpecializationName).Result;
+                    if (specialization == null)
+                    {
+                        throw new BusinessRuleValidationException($"Specialization with name {dto.SpecializationName} not found.");
+                    }
+                    dto.SetSpecializationId(specialization.Id.AsGuid());
+                }
                 var staff = _mapper.ToDomain(dto);
                 // Verificar unicidade do email e telefone
                 if (await _repository.GetByEmailAsync(staff.Email) != null)
@@ -73,15 +81,9 @@ namespace DDDSample1.Domain.Staffs
                 if (await _repository.GetByPhoneNumberAsync(staff.PhoneNumber) != null)
                     throw new BusinessRuleValidationException("Phone number is already in use.");
 
-                if (await _specializationRepository.GetByIdAsync(staff.SpecializationId) == null)
-                    throw new BusinessRuleValidationException("Id of Specialization does not exist.");
-
-                do
-                {        
-                    staff.GenerateLicenseNumber();
-                }
-                while (await _repository.GetByLicenseNumberAsync(staff.LicenseNumber)!=null);
-
+                var list = await _repository.GetAllAsync();
+                staff.SetLicenseNumber(LicenseNumberGenerator.GenerateLicenseNumber(list.Count));
+                
                 await _repository.AddAsync(staff);
                 await _unitOfWork.CommitAsync();
                 Console.WriteLine("Transaction committed successfully");
@@ -148,14 +150,20 @@ namespace DDDSample1.Domain.Staffs
             }
 
             // Update Specialization
-            if (!string.IsNullOrEmpty(dto.SpecializationId.ToString()) && staff.SpecializationId.ToString() != dto.SpecializationId.ToString())
-            {
-                var specializationId = new SpecializationId(dto.SpecializationId);
-                if (await _specializationRepository.GetByIdAsync(specializationId) == null)
-                    throw new BusinessRuleValidationException("Id of Specialization does not exist.");
+            if (!string.IsNullOrEmpty(dto.SpecializationName))
+            {   
+                var specialization = _specializationRepository.GetSpecIdByOptionAsync(dto.SpecializationName).Result;
+                if (specialization == null)
+                {
+                    throw new BusinessRuleValidationException($"Specialization with name {dto.SpecializationName} not found.");
+                }
+                if (staff.SpecializationId.ToString() != dto.SpecializationId.ToString()){
+                    
+                    dto.SetSpecializationId(specialization.Id.AsGuid());
 
-                staff.ChangeSpecializationId(specializationId);
-                updatedFields.Add("Specialization");
+                    staff.ChangeSpecializationId(specialization.Id);
+                    updatedFields.Add("Specialization");
+                }
             }
 
             if (updatedFields.Count > 0)
@@ -200,7 +208,16 @@ namespace DDDSample1.Domain.Staffs
         }
 
         public async Task<List<StaffDTO>> SearchStaffProfiles(SearchStaffDTO dto)
-        {
+        {   
+            if (!string.IsNullOrEmpty(dto.SpecializationName)){
+                var specialization = _specializationRepository.GetSpecIdByOptionAsync(dto.SpecializationName).Result;
+                if (specialization == null)
+                {
+                    throw new BusinessRuleValidationException($"Specialization with name {dto.SpecializationName} not found.");
+                }
+                dto.SetSpecializationId(specialization.Id.AsGuid());
+            }
+            
             var staffProfiles = await _repository.SearchStaffAsync(dto);
 
             if (staffProfiles == null || staffProfiles.Count == 0)

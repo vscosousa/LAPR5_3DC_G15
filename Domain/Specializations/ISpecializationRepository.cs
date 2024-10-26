@@ -6,6 +6,6 @@ namespace DDDSample1.Domain.Specializations
     public interface ISpecializationRepository : IRepository<Specialization, SpecializationId>
     {
         Task<Specialization> GetByIdSpecAsync(SpecializationId id, bool includeStaff);
-        Task<SpecializationId> GetSpecIdByOptionAsync(string option);
+        Task<Specialization> GetSpecIdByOptionAsync(string option);
     }
 }

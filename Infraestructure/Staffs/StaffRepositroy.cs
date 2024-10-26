@@ -5,6 +5,7 @@ using DDDSample1.Domain.Staffs;
 using DDDSample1.Infrastructure.Shared;
 using DDDSample1.Domain.Specializations;
 using System.Linq;
+using System;
 
 namespace DDDSample1.Infrastructure.Staffs
 {
@@ -48,18 +49,22 @@ namespace DDDSample1.Infrastructure.Staffs
                 query = query.Where(s => s.LastName.Contains(dto.LastName));
             }
 
+            if (!string.IsNullOrEmpty(dto.FullName))
+            {
+                query = query.Where(s => s.FullName.Contains(dto.FullName));
+            }
+
             if (!string.IsNullOrEmpty(dto.Email))
             {
                 query = query.Where(s => s.Email.Contains(dto.Email));
             }
 
-            if (!string.IsNullOrEmpty(dto.SpecializationId))
+            if (!string.IsNullOrEmpty(dto.SpecializationName))
             {
-                query = query.Where(s => s.SpecializationId.ToString() == dto.SpecializationId);
+                query = query.Where(s => s.SpecializationId == new SpecializationId(dto.SpecializationId));
             }
 
             return await query.ToListAsync();
         }
-
     }
 }

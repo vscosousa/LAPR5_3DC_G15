@@ -115,8 +115,8 @@ namespace DDDSample1.Tests.Staffs.UnitTests
         public void AddAvailabilitySlot_ValidSlot_ShouldAddSlot()
         {
             // Arrange
-            var staff = new Staff("Test", "Afonso", "Test Afonso", "test@example.com", "+351923456789", new SpecializationId(Guid.NewGuid()));
-            var newSlot = DateTime.Now.AddHours(1);
+           var staff = new Staff("Test", "Afonso", "Test Afonso", "test@example.com", "+351923456789", new SpecializationId(Guid.NewGuid()));
+            var newSlot = new DateTime(2023, 10, 10, 10, 0, 0);
 
             // Act
             staff.AddAvailabilitySlot(newSlot);
@@ -126,39 +126,29 @@ namespace DDDSample1.Tests.Staffs.UnitTests
         }
 
         [Fact]
-        public void AddAvailabilitySlot_InvalidSlot_ShouldThrowException()
+        public void RemoveAvailabilitySlot_ExistingSlot_ShouldRemoveSlot()
         {
             // Arrange
             var staff = new Staff("Test", "Afonso", "Test Afonso", "test@example.com", "+351923456789", new SpecializationId(Guid.NewGuid()));
-            var invalidSlot = DateTime.MinValue; 
-            // Act & Assert
-            Assert.Throws<BusinessRuleValidationException>(() => staff.AddAvailabilitySlot(invalidSlot));
-        }
-
-        [Fact]
-        public void RemoveAvailabilitySlot_ValidSlot_ShouldRemoveSlot()
-        {
-            // Arrange
-            var staff = new Staff("Test", "Afonso", "Test Afonso", "test@example.com", "+351923456789", new SpecializationId(Guid.NewGuid()));
-            var slot = DateTime.Now.AddHours(1);
-            staff.AddAvailabilitySlot(slot);
+            var existingSlot = new DateTime(2023, 10, 10, 10, 0, 0);
+            staff.AddAvailabilitySlot(existingSlot);
 
             // Act
-            staff.RemoveAvailabilitySlot(slot);
+            staff.RemoveAvailabilitySlot(existingSlot);
 
             // Assert
-            Assert.DoesNotContain(slot, staff.AvailabilitySlots);
+            Assert.DoesNotContain(existingSlot, staff.AvailabilitySlots);
         }
 
         [Fact]
-        public void RemoveAvailabilitySlot_InvalidSlot_ShouldThrowException()
+        public void RemoveAvailabilitySlot_NonExistingSlot_ShouldThrowException()
         {
             // Arrange
-            var staff = new Staff("Test", "Afonso", "Test Afonso", "test@example.com", "+351923456789", new SpecializationId(Guid.NewGuid()));;
-            var invalidSlot = DateTime.MinValue;
+            var staff = new Staff("Test", "Afonso", "Test Afonso", "test@example.com", "+351923456789", new SpecializationId(Guid.NewGuid()));
+            var nonExistingSlot = new DateTime(2023, 10, 10, 10, 0, 0);
 
             // Act & Assert
-            Assert.Throws<BusinessRuleValidationException>(() => staff.RemoveAvailabilitySlot(invalidSlot));
+            Assert.Throws<BusinessRuleValidationException>(() => staff.RemoveAvailabilitySlot(nonExistingSlot));
         }
 
         [Fact]

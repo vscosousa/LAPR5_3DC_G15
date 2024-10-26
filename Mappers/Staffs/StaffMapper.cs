@@ -39,7 +39,8 @@ namespace Projetos.LAPR5_3DC_G15.Mappers.Staffs
         }
 
         public CreatingStaffDTO ToCreatingDto(Staff domain)
-        {
+        {   
+
             return new CreatingStaffDTO
             {
                 FirstName = domain.FirstName,

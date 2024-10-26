@@ -133,15 +133,15 @@ namespace DDDSample1.Controllers
 
         [HttpGet("search")]
         [Authorize(Roles = "Admin")]
-        public async Task<ActionResult<IEnumerable<StaffDTO>>> SearchStaffProfiles(
-            string firstName, string lastName, string email, string specializationId)
+        public async Task<ActionResult<IEnumerable<StaffDTO>>> SearchStaffProfiles(string firstName, string lastName, string email, string fullName, string specializationName)
         {
             var dto = new SearchStaffDTO
             {
                 FirstName = firstName,
                 LastName = lastName,
+                FullName = fullName,
                 Email = email,
-                SpecializationId = specializationId
+                SpecializationName = specializationName
             };
 
             try
