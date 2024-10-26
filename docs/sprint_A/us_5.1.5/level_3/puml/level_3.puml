@@ -57,33 +57,38 @@ activate C
 C -> S: DeleteUser(token)
 activate S
 S -> S: VerifyToken(token)
-S -> R: GetByIdAsync(userId)
-activate R
-R -> DB: _objs.Where(x => id.Equals(x.Id)).FirstOrDefaultAsync();
-activate DB
-DB --> R: Returns User
-deactivate DB
-R --> S: Returns User
-deactivate R
-S -> R: Remove(user)
-activate R
-R -> DB: _objs.Remove(user)
-activate DB
-deactivate DB
-deactivate R
-S -> L: new Log(TypeOfAction.Delete, userId, "User of Type Patient was deleted."
-activate L
-L -> L: Log()
-deactivate L
-S -> LR: AddAsync(log)
-activate LR
-LR -> DB: _objs.AddAsync(log)
-activate DB
-DB --> LR: Returns Log
-deactivate DB
-LR --> S: Returns Log
-deactivate LR
-S --> C: return
+alt token is valid
+    S -> R: GetByIdAsync(userId)
+    activate R
+    R -> DB: _objs.Where(x => id.Equals(x.Id)).FirstOrDefaultAsync();
+    activate DB
+    DB --> R: Returns User
+    deactivate DB
+    R --> S: Returns User
+    deactivate R
+    S -> R: Remove(user)
+    activate R
+    R -> DB: _objs.Remove(user)
+    activate DB
+    deactivate DB
+    deactivate R
+    S -> L: new Log(TypeOfAction.Delete, userId, "User of Type Patient was deleted."
+    activate L
+    L -> L: Log()
+    deactivate L
+    S -> LR: AddAsync(log)
+    activate LR
+    LR -> DB: _objs.AddAsync(log)
+    activate DB
+    DB --> LR: Returns Log
+    deactivate DB
+    LR --> S: Returns Log
+    deactivate LR
+    S --> C: return
+else token is invalid
+    S -> C: return exception message
+end
+deactivate S
 C --> UI: Returns Operation Status Response Code
 deactivate C
 UI --> P: Returns Operation In/Sucess message

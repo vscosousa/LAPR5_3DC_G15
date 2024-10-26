@@ -11,6 +11,9 @@ using Microsoft.IdentityModel.Tokens;
 using DDDSample1.Domain.Staffs;
 using System.IdentityModel.Tokens.Jwt;
 using DDDSample1.Domain.Specializations;
+using System.Text;
+using System.Text.Json;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace DDDSample1.Tests.Users.UnitTests
 {
@@ -411,9 +414,6 @@ namespace DDDSample1.Tests.Users.UnitTests
             _userMapperMock.Setup(mapper => mapper.ToCreatingPatientUser(dto))
                            .Returns(user);
 
-            _userMapperMock.Setup(mapper => mapper.ToDto(user))
-                           .Returns(new UserDTO(user.Id.AsGuid(), user.Email, user.Username, user.IsActive));
-
             _userRepositoryMock.Setup(repo => repo.AddAsync(user)).ReturnsAsync(user);
 
 
@@ -421,9 +421,7 @@ namespace DDDSample1.Tests.Users.UnitTests
 
             // Assert
             Assert.NotNull(createdUser);
-            Assert.Equal(dto.Email, createdUser.Email);
-            Assert.Equal(dto.Email, createdUser.Username);
-            Assert.False(createdUser.IsActive);
+            Assert.True(IsJwtToken(createdUser));
         }
 
         //Unit Test for Registering a new Patient User - US5.1.3
@@ -444,7 +442,6 @@ namespace DDDSample1.Tests.Users.UnitTests
             _patientRepositoryMock.Verify(repo => repo.GetByEmailAsync(dto.Email), Times.Never);
             _userRepositoryMock.Verify(repo => repo.AddAsync(It.IsAny<User>()), Times.Never);
             _userMapperMock.Verify(mapper => mapper.ToCreatingPatientUser(dto), Times.Never);
-            _userMapperMock.Verify(mapper => mapper.ToDto(It.IsAny<User>()), Times.Never);
         }
 
         //Unit Test for Registering a new Patient User - US5.1.3
@@ -467,7 +464,6 @@ namespace DDDSample1.Tests.Users.UnitTests
             _patientRepositoryMock.Verify(repo => repo.GetByEmailAsync(dto.Email), Times.Once);
             _userRepositoryMock.Verify(repo => repo.AddAsync(It.IsAny<User>()), Times.Never);
             _userMapperMock.Verify(mapper => mapper.ToCreatingPatientUser(dto), Times.Never);
-            _userMapperMock.Verify(mapper => mapper.ToDto(It.IsAny<User>()), Times.Never);
         }
 
         //Unit Test for ActivatePatientUser - US5.1.3
@@ -483,6 +479,7 @@ namespace DDDSample1.Tests.Users.UnitTests
             var expectedDto = new UserDTO(user.Id.AsGuid(), user.Email, user.Username, true);
 
             _userRepositoryMock.Setup(repo => repo.GetByIdAsync(user.Id)).ReturnsAsync(user);
+            _patientRepositoryMock.Setup(repo => repo.GetByEmailAsync(user.Email)).ReturnsAsync(patient);
             _userRepositoryMock.Setup(repo => repo.UpdateAsync(user)).Returns(Task.CompletedTask);
             _userMapperMock.Setup(mapper => mapper.ToDto(user))
                                     .Returns(expectedDto);
@@ -526,7 +523,9 @@ namespace DDDSample1.Tests.Users.UnitTests
 
             _userRepositoryMock.Setup(repo => repo.GetByIdAsync(user.Id)).ReturnsAsync((User)null);
 
-            var exception = await Assert.ThrowsAsync<Exception>(() => _userService.ActivateUserAsPatient(token));
+            var nullResponse = await _userService.ActivateUserAsPatient(token);
+
+            Assert.Null(nullResponse);
         }
 
         [Fact]
@@ -616,8 +615,8 @@ namespace DDDSample1.Tests.Users.UnitTests
                 var payload = Base64UrlDecode(parts[1]);
 
                 // Check if header and payload are valid JSON
-                var headerJson = System.Text.Json.JsonDocument.Parse(header);
-                var payloadJson = System.Text.Json.JsonDocument.Parse(payload);
+                var headerJson = JsonDocument.Parse(header);
+                var payloadJson = JsonDocument.Parse(payload);
 
                 return true;
             }
@@ -638,10 +637,8 @@ namespace DDDSample1.Tests.Users.UnitTests
                 default: throw new ArgumentException("Illegal base64url string!", nameof(input));
             }
             var converted = Convert.FromBase64String(output);
-            return System.Text.Encoding.UTF8.GetString(converted);
+            return Encoding.UTF8.GetString(converted);
         }
-
-
     }
 }
 

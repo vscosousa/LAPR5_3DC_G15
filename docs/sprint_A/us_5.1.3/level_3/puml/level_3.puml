@@ -58,6 +58,7 @@ alt var is null
         deactivate U
         M --> S: return User
         deactivate M
+        S -> S: GenerateToken(user)
         S -> ES: sendEmail(SendEmail(dto.Email, "Activate your account", GenerateLink(token, "ActivatePatientUser")
         activate ES
         ES --> ES: Sends email using SMTP configuration
@@ -69,15 +70,7 @@ alt var is null
         deactivate DB
         R --> S: return User
         deactivate R
-        S -> M: ToDto(User)
-        activate M
-        M -> DTO: new UserDTO(User fields)
-        activate DTO
-        DTO -> DTO: UserDTO()
-        deactivate DTO
-        M --> S: return UserDTO
-        deactivate M
-        S --> C: return UserDTO 
+        S --> C: return token
     else Phone number does not match the Patient's profile with the given email
         S -> C: return exception message
     end

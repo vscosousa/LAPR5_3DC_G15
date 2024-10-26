@@ -36,13 +36,16 @@ namespace DDDSample1.Domain.OperationTypes
         // US 5.1.20
         public async Task<OperationTypeDTO> CreateOperationTypeAsync(CreatingOperationTypeDTO dto)
         {
-
             var existingOperation = await _repository.GetByNameAsync(dto.Name);
             if (existingOperation != null)
             {
                 throw new InvalidOperationException($"An operation with the name '{dto.Name}' already exists.");
             }
 
+            if (dto.Specializations == null || !dto.Specializations.Any())
+            {
+                throw new InvalidOperationException("At least one specialization ID must be provided.");
+            }
 
             var specializations = new List<Specialization>();
             var staffs = new List<Staff>();
@@ -63,17 +66,14 @@ namespace DDDSample1.Domain.OperationTypes
                 }
                 else
                 {
-                    throw new ArgumentException("Specialization ID cannot be null.");
+                    throw new ArgumentException("Specialization ID cannot be empty.");
                 }
             }
 
-
             var newOperationType = _mapper.ToDomain(dto);
-
 
             newOperationType.AddSpecializations(specializations);
             newOperationType.AddStaffs(staffs);
-
 
             await _repository.AddAsync(newOperationType);
             await _unitOfWork.CommitAsync();
@@ -83,7 +83,7 @@ namespace DDDSample1.Domain.OperationTypes
         }
 
         // Update OperationType - US 5.1.21
-        public async Task<OperationType> UpdateOperationTypeAsync(string operationTypeName, UpdatingOperationTypeDTO dto)
+        public async Task<OperationTypeDTO> UpdateOperationTypeAsync(string operationTypeName, UpdatingOperationTypeDTO dto)
         {
             var operationType = await _repository.GetByNameAsync(operationTypeName);
 
@@ -94,7 +94,7 @@ namespace DDDSample1.Domain.OperationTypes
 
             var updatedFields = new List<string>();
 
-            
+
             var updateActions = new Dictionary<string, Func<Task>>
             {
                 { "Name", async () => {
@@ -130,7 +130,7 @@ namespace DDDSample1.Domain.OperationTypes
                 }}
             };
 
-            
+
             foreach (var action in updateActions.Values)
             {
                 await action();
@@ -139,14 +139,15 @@ namespace DDDSample1.Domain.OperationTypes
             if (updatedFields.Count > 0)
             {
                 string message = "OperationType updated. The following fields were updated: " + string.Join(", ", updatedFields) + ".";
-                var log = new Log(TypeOfAction.Update,operationType.Id.ToString(), message);
+                var log = new Log(TypeOfAction.Update, operationType.Id.ToString(), message);
                 await _logRepository.AddAsync(log);
             }
 
             await _repository.UpdateAsync(operationType);
             await _unitOfWork.CommitAsync();
 
-            return operationType;
+            var operationTypeDTO = _mapper.ToDto(operationType);
+            return operationTypeDTO;
         }
 
 
@@ -161,7 +162,7 @@ namespace DDDSample1.Domain.OperationTypes
             }
 
             operationType.Deactivate();
-            var log = new Log(TypeOfAction.Delete,operationType.Id.ToString(), $"OperationType '{operationName}' deactivated.");
+            var log = new Log(TypeOfAction.Delete, operationType.Id.ToString(), $"OperationType '{operationName}' deactivated.");
             await _logRepository.AddAsync(log);
 
             await _repository.UpdateAsync(operationType);
@@ -180,26 +181,23 @@ namespace DDDSample1.Domain.OperationTypes
             }
 
             operationType.Activate();
-            var log = new Log(TypeOfAction.Update, operationType.Id.ToString(),$"OperationType '{operationName}' activated.");
+            var log = new Log(TypeOfAction.Update, operationType.Id.ToString(), $"OperationType '{operationName}' activated.");
             await _logRepository.AddAsync(log);
             await _repository.UpdateAsync(operationType);
             await _unitOfWork.CommitAsync();
         }
 
 
-        //Get OperationType by Id
-        // US 5.1.23
-        public async Task<OperationTypeDTO> GetOperationTypeWithStaffsAsync(OperationTypeId operationTypeId)
+               public async Task<OperationTypeDTO> GetOperationTypeWithStaffsAsync(OperationTypeId operationTypeId)
         {
-
             var operationType = await _repository.GetOpStaffByIdAsync(operationTypeId, true);
             if (operationType == null)
             {
                 throw new KeyNotFoundException($"OperationType with ID {operationTypeId} not found.");
             }
-
+        
             List<StaffDTO> staffs = new List<StaffDTO>();
-
+        
             foreach (var spec in operationType.Specializations)
             {
                 foreach (var staff in spec.Staffs)
@@ -208,8 +206,8 @@ namespace DDDSample1.Domain.OperationTypes
                 }
             }
             var specializationIds = operationType.Specializations.Select(spec => spec.Id.AsGuid()).ToList();
-            var operationTypeDTO = new OperationTypeDTO(operationType.Id.AsGuid(), operationType.Name, operationType.EstimatedDuration, specializationIds, staffs);
-
+            var operationTypeDTO = _mapper.ToDto(operationType);
+        
             return operationTypeDTO;
         }
 

@@ -25,7 +25,7 @@ namespace DDDSample1.Controllers
             try
             {
                 var result = await _userService.CreateUser(userDTO);
-                return Ok();
+                return Ok(result);
             }
             catch (Exception ex)
             {
@@ -35,11 +35,15 @@ namespace DDDSample1.Controllers
 
         [HttpPost("RegisterUserAsPatient")]
         [AllowAnonymous]
-        public async Task<ActionResult<UserDTO>> RegisterUserAsPatient(CreatingPatientUserDTO userDTO)
+        public async Task<ActionResult<string>> RegisterUserAsPatient(CreatingPatientUserDTO userDTO)
         {
             try
             {
                 var user = await _userService.CreateUserAsPatient(userDTO);
+                if (user == null)
+                {
+                    return NotFound("There is no patient with the provided email registered in the system.");
+                }
                 return Ok(user);
             }
             catch (Exception ex)
@@ -118,6 +122,10 @@ namespace DDDSample1.Controllers
             try
             {
                 var user = await _userService.ActivateUserAsPatient(token);
+                if (user == null)
+                {
+                    return NotFound("User not found");
+                }
                 return Ok(user);
             }
             catch (Exception ex)
@@ -128,18 +136,27 @@ namespace DDDSample1.Controllers
 
         [HttpPost("Login")]
         [AllowAnonymous]
-        public async Task<ActionResult<string>> Login(LoginUserDTO userDTO)
+        public async Task<IActionResult> Login(LoginUserDTO userDTO)
         {
             try
             {
                 var token = await _userService.Login(userDTO);
+
+                if (token == null)
+                {
+                    // If token is null, login failed (e.g., invalid password or email)
+                    return Unauthorized("Invalid email or password.");
+                }
+
                 return Ok(token);
             }
             catch (Exception ex)
             {
+                // Return a 500 error for unexpected exceptions
                 return StatusCode(500, $"An error occurred while logging in: {ex.Message}");
             }
         }
+
 
         [HttpPost("RequestDelete"), Authorize(Roles = "Patient")]
         public async Task<ActionResult> RequestDelete([FromBody] string token)

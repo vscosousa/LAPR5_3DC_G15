@@ -24,12 +24,20 @@ namespace DDDSample1.Controllers
         // US 5.1.20
         [HttpPost]
         [Authorize(Roles = "Admin")]
-        public async Task<ActionResult<OperationTypeDTO>> CreateOperationType(CreatingOperationTypeDTO operationTypeDTO) // Change the DTO
+        public async Task<ActionResult<OperationTypeDTO>> CreateOperationType(CreatingOperationTypeDTO operationTypeDTO)
         {
             try
             {
                 var operationType = await _operationTypeService.CreateOperationTypeAsync(operationTypeDTO);
                 return Ok(operationType);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message); // Return BadRequest for already existing name
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
             }
             catch (Exception ex)
             {
@@ -39,10 +47,10 @@ namespace DDDSample1.Controllers
 
         //PUT api/operationType/update
         // US 5.1.21
-        [HttpPut("operationTypeName")]
+        [HttpPut("{operationTypeName}")]
         [Authorize(Roles = "Admin")]
 
-        public async Task<IActionResult> UpdateOperationType(string operationTypeName, [FromBody] UpdatingOperationTypeDTO dto)
+        public async Task<ActionResult<OperationTypeDTO>> UpdateOperationType(string operationTypeName, UpdatingOperationTypeDTO dto)
         {
             if (dto == null)
             {
@@ -68,9 +76,9 @@ namespace DDDSample1.Controllers
 
         // US 5.1.22
         // PUT: api/OperationType/deactivate
-        [HttpPut("deactivate")]
+        [HttpPut("deactivate/{operationName}")]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> DeactivateOperationType([FromBody] string operationName)
+        public async Task<IActionResult> DeactivateOperationType([FromRoute] string operationName)
         {
             try
             {
@@ -83,17 +91,17 @@ namespace DDDSample1.Controllers
             }
             catch (InvalidOperationException ex)
             {
-                
+
                 return BadRequest(new { message = ex.Message });
             }
             catch (ArgumentException ex)
             {
-                
+
                 return BadRequest(new { message = ex.Message });
             }
             catch (Exception ex)
             {
-                
+
                 return StatusCode(500, new { message = "An error occurred while deactivating the operation type.", error = ex.Message });
             }
         }
@@ -132,11 +140,9 @@ namespace DDDSample1.Controllers
 
 
 
-        // GET: api/OperationType
-        //US 5.1.23
         [HttpGet("id")]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> GetOperationType(Guid id)
+        public async Task<ActionResult<OperationTypeDTO>> GetOperationType(Guid id)
         {
             try
             {
@@ -153,12 +159,13 @@ namespace DDDSample1.Controllers
             }
         }
 
+
         //Get OperationType by status
         // US 5.1.23
         // GET: api/OperationType/status
         [HttpGet("status")]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> GetOperationTypeByStatus(bool status)
+        public async Task<ActionResult<OperationTypeDTO>> GetOperationTypeByStatus(bool status)
         {
             try
             {
@@ -178,9 +185,9 @@ namespace DDDSample1.Controllers
         //Get OperationType by name
         // US 5.1.23
         // GET: api/OperationType/name
-        [HttpGet("name")]
+        [HttpGet("name/{name}")]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> GetOperationTypeByName(string name)
+        public async Task<IActionResult> GetOperationTypeByName([FromRoute] string name)
         {
             try
             {

@@ -76,6 +76,9 @@ namespace DDDSample1.Domain.Staffs
             if (!DateTime.TryParseExact(newSlot.ToString("yyyy/MM/dd HH:mm:ss"), "yyyy/MM/dd HH:mm:ss", null, System.Globalization.DateTimeStyles.None, out _))
                 throw new BusinessRuleValidationException("Availability slot must be in the format YYYY/MM/DD HH:mm:ss.");
         
+            if (newSlot < DateTime.Now)
+                throw new BusinessRuleValidationException("Availability slot must be in the future.");
+
             var updatedSlots = _availabilitySlots.ToList();
             updatedSlots.Add(newSlot);
             _availabilitySlots = updatedSlots.OrderBy(slot => slot).ToArray();
