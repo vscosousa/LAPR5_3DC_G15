@@ -35,35 +35,7 @@ namespace DDDSample1.Domain.Staffs
             _mailService = mailService;
             _configuration = configuration;
         }
-        
-        // Método para listar todos os staffs
-        public async Task<List<StaffDTO>> GetAllStaffsAsync()
-        {
-            var listStaff = await _repository.GetAllAsync();
-
-            if (listStaff == null)
-            {
-                throw new KeyNotFoundException($"Staffs not found.");
-            }
-            
-            var listDto = listStaff.ConvertAll(_mapper.ToDto);
-
-            return listDto;
-        }
-
-        // Método para listar um staff por ID
-        public async Task<StaffDTO> GetStaffByIdAsync(Guid id)
-        {
-            var staff = await _repository.GetByIdAsync(new StaffId(id));
-
-            if (staff == null)
-            {
-                throw new KeyNotFoundException($"Staff with ID {id} not found.");
-            }
-
-            return _mapper.ToDto(staff);
-        }
-
+        // Create a new Staff
         public async Task<StaffDTO> CreateStaffAsync(CreatingStaffDTO dto)
         {
             try
@@ -105,6 +77,7 @@ namespace DDDSample1.Domain.Staffs
             }
         }
         
+        //Update Staff - Phone Number, Email, Specialization, Availability Slots
         public async Task<StaffDTO> UpdateStaffAsync(Guid id, UpdateStaffDTO dto)
         {
             var staff = await _repository.GetByIdAsync(new StaffId(id));
@@ -179,9 +152,7 @@ namespace DDDSample1.Domain.Staffs
                     throw new BusinessRuleValidationException($"Specialization with name {dto.SpecializationName} not found.");
                 }
                 if (staff.SpecializationId.ToString() != dto.SpecializationId.ToString()){
-                    
                     dto.SetSpecializationId(specialization.Id.AsGuid());
-
                     staff.ChangeSpecializationId(specialization.Id);
                     updatedFields.Add("Specialization");
                 }
@@ -315,6 +286,7 @@ namespace DDDSample1.Domain.Staffs
             }
         }
 
+        //Deactivate Staff - Staff is no longer available to work
         public async Task<StaffDTO> DeactivateStaffAsync(Guid id)
         {
             try
@@ -344,6 +316,7 @@ namespace DDDSample1.Domain.Staffs
             }
         }
 
+        //Search Staff Profiles - First Name, Last Name, Full Name, Email, SpecializationName
         public async Task<List<StaffDTO>> SearchStaffProfiles(SearchStaffDTO dto)
         {   
             if (!string.IsNullOrEmpty(dto.SpecializationName)){

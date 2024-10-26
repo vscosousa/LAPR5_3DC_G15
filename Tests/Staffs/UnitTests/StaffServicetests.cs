@@ -137,6 +137,8 @@ namespace DDDSample1.Tests.Staffs.UnitTests
                 expectedStaff.IsActive
             );
         }
+
+        //CreateStaffAsync Tests
         [Fact]
         public async Task CreateStaffAsynSuccessfullyTest()
         {
@@ -253,6 +255,7 @@ namespace DDDSample1.Tests.Staffs.UnitTests
             _unitOfWorkMock.Verify(u => u.CommitAsync(), Times.Never);
         }
 
+        //ActivateStaffAsync Tests
         [Fact]
         public async Task DeactivateStaffAsyncSuccessfullyTest()
         {
@@ -337,6 +340,7 @@ namespace DDDSample1.Tests.Staffs.UnitTests
             _unitOfWorkMock.Verify(u => u.CommitAsync(), Times.Never);
         }
 
+        //UpdateStaffAsync Tests
         [Fact]
         public async Task UpdateStaffAsync_SuccessfullyUpdatesStaff()
         {
@@ -540,6 +544,7 @@ namespace DDDSample1.Tests.Staffs.UnitTests
             _specializationRepositoryMock.Verify(s => s.GetSpecIdByOptionAsync(dto.SpecializationName), Times.Once);
         }
 
+        //SearchStaff Tests
         [Fact]
         public async Task SearchStaffProfiles_ReturnsListOfStaffDTO_WhenStaffProfilesFound()
         {

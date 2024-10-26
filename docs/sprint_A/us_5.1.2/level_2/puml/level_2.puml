@@ -1,6 +1,6 @@
 @startuml level_2
 
-title Level 2 Diagram
+title Level 2 Diagram for Password Reset
 
 hide empty members
 'skinparam Linetype ortho
@@ -16,5 +16,20 @@ skinparam class {
 skinparam package {
     BackgroundColor #EBF5FB
 }
+
+actor BackofficeUser as BU
+participant "MDR" as Backoffice
+
+activate BU
+BU -> Backoffice: Requests password reset
+activate Backoffice
+Backoffice --> BU: Asks for email address
+deactivate Backoffice
+BU -> Backoffice: Provides email address
+note right of Backoffice: The email must be associated with a valid user account
+activate Backoffice
+Backoffice -> Backoffice: Validates email and generates reset link
+Backoffice --> BU: Returns Operation In/Success message
+deactivate Backoffice
 
 @enduml

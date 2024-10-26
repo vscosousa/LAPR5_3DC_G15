@@ -1,6 +1,6 @@
 @startuml level_3
 
-title Level 3 Diagram
+title Level 3 Diagram for Updating Staff
 
 hide empty members
 'skinparam Linetype ortho
@@ -16,5 +16,149 @@ skinparam class {
 skinparam package {
     BackgroundColor #EBF5FB
 }
+
+actor Admin as A
+participant "User Interface" as UI
+participant "StaffController" as C
+participant "StaffService" as S
+participant "StaffRepository" as R
+participant "SpecializationRepository" as SR
+participant "LogRepository" as LR
+participant "Staff" as ST
+participant "UpdateStaffDTO" as USDTO
+participant "MailService" as MS
+participant "Specialization" as SP
+participant "Log" as L
+participant "StaffMapper" as M
+participant "StaffDTO" as D
+participant "Database" as DB
+
+activate A
+A -> UI: Asks to edit a Staff's Profile
+activate UI
+UI --> A: Asks for Staff's Id and the data to edit
+deactivate UI
+A -> UI: Sends Staff's ID and the data to edit
+note right of UI: The data can be Phone Number and/or Email \n and/or Availability Slots and/or Specialization
+activate UI
+UI -> C: updateStaff(Guid id, UpdateStaffDTO dto)
+activate C
+C -> S: updateStaff(Guid id, UpdateStaffDTO dto)
+activate S
+S -> R: getByIdAsync(new StaffId(id))
+activate R
+R -> DB: _objs.Where(x => id.Equals(x.Id)).FirstOrDefaultAsync()
+activate DB
+DB --> R: return staff
+deactivate DB
+R --> S: return staff
+deactivate R
+alt staff is not null
+    opt Phone Number is provided and different from the current data
+        S -> R: GetByPhoneNumberAsync(dto.PhoneNumber)
+        activate R
+        R -> DB: _objs.Where(x => x.PhoneNumber == dto.PhoneNumber).FirstOrDefaultAsync()
+        activate DB
+        DB --> R: return staff
+        deactivate DB
+        R --> S: return staff
+        deactivate R
+        alt staff is null
+            S -> USDTO: SetPhoneNumber(dto.PhoneNumber)
+            activate USDTO
+            USDTO -> USDTO: PhoneNumber == dto.PhoneNumber
+            deactivate USDTO
+        else staff is not null
+            S -> C: throw new BusinessRuleValidationException("Phone number is already in use")
+        end
+    end
+    opt Email is provided and different from the current data
+        S -> R: GetByEmailAsync(dto.Email)
+        activate R
+        R -> DB: _objs.Where(x => x.Email == dto.Email).FirstOrDefaultAsync()
+        activate DB
+        DB --> R: return staff
+        deactivate DB
+        R --> S: return staff
+        deactivate R
+        alt staff is null
+            S -> USDTO: SetEmail(dto.Email)
+            activate USDTO
+            USDTO -> USDTO: Email == dto.Email
+            deactivate USDTO
+        else staff is not null
+            S -> C: throw new BusinessRuleValidationException("Email is already in use")
+        end
+    end
+    opt if Phone Number is provided and different from the current data or Email is provided and different from the current data
+        S->S: CreateTokenStaff(staff);
+        S -> MS: SendEmailToStaff(staff.Email, staff.FullName, newUpdatedContacts, link)
+        activate MS
+        MS -> MS: SendEmail()
+        MS -> S: return Completed Task
+        deactivate MS
+    end
+    opt Add Availability Slots are provided
+        S -> ST: AddAvailabilitySlot(slot)
+        activate ST
+        ST -> ST: _availabilitySlots = updatedSlots.OrderBy(slot => slot).ToArray();
+        deactivate ST
+    end
+    opt Remove Availability Slots are provided
+        S -> ST: RemoveAvailabilitySlot(slot)
+        activate ST
+        ST -> ST: _availabilitySlots = _availabilitySlots.Where(slot => slot != remSlot).ToArray();
+        deactivate ST
+    end
+    opt Specialization Name is provided and different from the current data
+        S -> SR: GetSpecIdByOptionAsync(dto.SpecializationName).Result
+        activate SR
+        SR -> DB: _objs.Where(x => x.SpecOption.ToLower() == dto.SpecializationName.ToLower()).FirstOrDefaultAsync()
+        activate DB
+        DB --> SR: return specialization
+        deactivate DB
+        SR --> S: return specialization
+        deactivate SR
+        alt specialization is not null
+            opt if specialization is different from the current data
+                S -> ST: ChangeSpecializationId(specialization.Id);
+                activate ST
+                ST -> ST: _specializationId = specializationId;
+                deactivate ST
+            end
+        else staff is null
+            S -> C: throw new BusinessRuleValidationException($"Specialization with name {dto.SpecializationName} not found.");
+        end
+    end
+    loop At least one field was updated
+        S -> L: new Log(TypeOfAction.Update, staffId, "Staff updated. The following fields were updated:" + updatedFields)
+        activate L
+        L -> L: Log()
+        deactivate L
+        S -> LR: addAsync(log)
+        activate LR
+        LR -> DB: _objs.AddAsync(log)
+        activate DB
+        DB --> LR: return log
+        deactivate DB
+        LR --> S: return log
+        deactivate LR
+    end
+    S -> M: toDto(staff)
+    activate M
+    M -> D: new StaffDTO(staff fields)
+    activate D
+    D -> D: StaffDTO()
+    deactivate D
+    M --> S: return dto
+    deactivate M
+    S --> C: return dto
+else staff is null
+    S --> C: return Staff not found
+end
+C --> UI: Returns Operation Status Response Code
+deactivate C
+UI --> A: Returns Operation In/Success message
+deactivate UI
 
 @enduml

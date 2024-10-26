@@ -1,6 +1,6 @@
 @startuml level_2
 
-title Level 2 Diagram
+title Level 2 Diagram for Deactivating Staff
 
 hide empty members
 'skinparam Linetype ortho
@@ -16,5 +16,19 @@ skinparam class {
 skinparam package {
     BackgroundColor #EBF5FB
 }
+
+actor Admin as A
+participant "MDR" as Backoffice
+
+activate A
+A -> Backoffice: Asks to deactivate a Staff's Profile
+activate Backoffice
+Backoffice --> A: Asks for Staff's Id to deactivate
+deactivate Backoffice
+A -> Backoffice: Sends Staff's Id
+activate Backoffice
+Backoffice -> Backoffice: Validates the Staff's Id and deactivates the Staff's profile
+Backoffice --> A: Returns Operation In/Success message
+deactivate Backoffice
 
 @enduml

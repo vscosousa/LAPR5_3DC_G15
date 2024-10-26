@@ -1,6 +1,6 @@
 @startuml level_1
 
-title Level 1 Diagram
+title Level 1 Diagram for Password Reset
 
 hide empty members
 'skinparam Linetype ortho
@@ -16,5 +16,18 @@ skinparam class {
 skinparam package {
     BackgroundColor #EBF5FB
 }
+
+actor BackofficeUser as BU
+
+activate BU
+BU -> System: Requests password reset
+activate System
+System --> BU: Asks for email address
+deactivate System
+BU -> System: Provides email address
+activate System
+System -> System: Validates email and sends reset link
+System --> BU: Sends password reset link via email
+deactivate System
 
 @enduml

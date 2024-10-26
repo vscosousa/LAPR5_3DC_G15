@@ -34,7 +34,7 @@ activate UI
 UI --> A: Asks for the data to filter the staff profiles
 deactivate UI
 A -> UI: Sends the data to filter the staff profiles
-note right of UI: The data can be First Name and/or Last Name and/or Full Name and/or Email\nand/or Specialization Name
+note right of UI: The data can be First Name and/or Last Name and/or Full Name \n and/or Email and/or Specialization Name
 activate UI
 UI -> C: searchStaffProfiles(SearchStaffDTO dto)
 activate C
@@ -49,14 +49,13 @@ opt dto.SpecializationName is not null
     RS --> S: return specialization
     deactivate RS
 
-    alt specialization is null
-        S --> C: throw BusinessRuleValidationException("Specialization with this name not found.")
-    else specialization is not null
+    alt specialization is not null
         S -> SDTO: SetSpecializationId(specialization.Id.AsGuid())
         activate SDTO
         SDTO->SDTO: SpecializationId = specialization.Id.AsGuid()
         deactivate SDTO
-    end
+    else specialization is null
+        S --> C: throw BusinessRuleValidationException("Specialization with this name not found.")
 end
 
 activate S
