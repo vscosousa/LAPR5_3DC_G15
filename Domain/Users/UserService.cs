@@ -12,6 +12,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Xunit.Sdk;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 
 namespace DDDSample1.Domain.Users
@@ -73,7 +74,7 @@ namespace DDDSample1.Domain.Users
         }
 
 
-        public async Task<UserDTO> CreateUserAsPatient(CreatingPatientUserDTO dto)
+        public async Task<string> CreateUserAsPatient(CreatingPatientUserDTO dto)
         {
             var existingUserByEmail = await _userRepository.GetUserByEmailAsync(dto.Email);
             if (existingUserByEmail != null)
@@ -81,7 +82,12 @@ namespace DDDSample1.Domain.Users
                 throw new Exception("Email is already in use.");
             }
 
-            var patient = await _patientRepository.GetByEmailAsync(dto.Email) ?? throw new Exception("Patient not found.");
+            var patient = await _patientRepository.GetByEmailAsync(dto.Email);
+
+            if (patient == null)
+            {
+                return null;
+            }
 
             if (patient.PhoneNumber != dto.PhoneNumber)
             {
@@ -95,9 +101,7 @@ namespace DDDSample1.Domain.Users
             await _userRepository.AddAsync(user);
             await _unitOfWork.CommitAsync();
 
-            var userDTO = _userMapper.ToDto(user);
-
-            return userDTO;
+            return token;
         }
 
         // Activate a user and set the password
@@ -124,7 +128,16 @@ namespace DDDSample1.Domain.Users
                 throw new Exception("Invalid or expired token.");
             }
 
-            var user = await _userRepository.GetByIdAsync(userId) ?? throw new Exception("User not found.");
+            var user = await _userRepository.GetByIdAsync(userId);
+            if (user == null)
+            {
+                return null;
+            }
+            var patient = await _patientRepository.GetByEmailAsync(user.Email);
+            if (patient == null)
+            {
+                return null;
+            }
             user.Activate();
 
             await _userRepository.UpdateAsync(user);

@@ -20,6 +20,7 @@ using DDDSample1.Domain.Staffs;
 using Microsoft.OpenApi.Writers;
 using System.Diagnostics;
 using DDDSample1.Domain.Shared;
+using System.Text.Json;
 
 namespace DDDSample1.Tests.Users.IntegrationTests
 {
@@ -44,6 +45,8 @@ namespace DDDSample1.Tests.Users.IntegrationTests
             List<Claim> claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, "testadmin"),
+                new Claim(ClaimTypes.Email, "testadmin@gmail.com"),
+                new Claim(ClaimTypes.NameIdentifier, Guid.NewGuid().ToString()),
                 new Claim(ClaimTypes.Role, "Admin")
             };
 
@@ -329,10 +332,9 @@ namespace DDDSample1.Tests.Users.IntegrationTests
 
             // Assert
             response.EnsureSuccessStatusCode();
-            var user = await response.Content.ReadFromJsonAsync<UserDTO>();
+            var user = await response.Content.ReadAsStringAsync();
             Assert.NotNull(user);
-            Assert.Equal(userDTO.Email, user.Email);
-            Assert.Equal(userDTO.Email, user.Username);
+            Assert.True(IsJwtToken(user));
         }
 
 
@@ -351,7 +353,7 @@ namespace DDDSample1.Tests.Users.IntegrationTests
             var response = await _client.PostAsJsonAsync("/api/user/RegisterUserAsPatient", userDTO);
 
             // Assert
-            Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
         }
 
         [Fact]
@@ -396,6 +398,65 @@ namespace DDDSample1.Tests.Users.IntegrationTests
         }
 
         [Fact]
+        public async Task ActivatePatientUser_ShouldReturnOk_WhenUserIsActivated()
+        {
+            var token = GenerateAdminJwtToken();
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+            var dto = new CreatingPatientDTO
+            {
+                FirstName = "Ana",
+                LastName = "Salvador",
+                FullName = "Ana Salvador",
+                DateOfBirth = "1990/05/15",
+                GenderOptions = GenderOptions.Female,
+                Email = "ana.salvador@gmail.com",
+                PhoneNumber = "+351123456789",
+                EmergencyContact = "+351987654321",
+                MedicalConditions = "Nenhuma"
+            };
+
+            // Arrange
+            var patient = await _client.PostAsJsonAsync("/api/patient", dto);
+            patient.EnsureSuccessStatusCode();
+
+            var createdPatient = await patient.Content.ReadFromJsonAsync<PatientDTO>();
+
+            var patientId = createdPatient.Id;
+            var userDTO = new CreatingPatientUserDTO
+            {
+                Email = "ana.salvador@gmail.com",
+                Password = "Password123@",
+                PhoneNumber = "+351123456789",
+                PatientId = patientId
+            };
+
+            // Act
+            var response = await _client.PostAsJsonAsync("/api/user/RegisterUserAsPatient", userDTO);
+
+
+            // Assert
+            response.EnsureSuccessStatusCode();
+            token = await response.Content.ReadAsStringAsync();
+
+            // Act
+            var activate = await _client.PostAsync($"/api/user/ActivatePatientUser?token={token}", null);
+            activate.EnsureSuccessStatusCode();
+        }
+
+        [Fact]
+        public async Task ActivatePatientUser_ShouldReturnError_WhenUserIsNotPatient()
+        {
+            var token = GenerateAdminJwtToken();
+
+            // Act
+            var response = await _client.PostAsync($"/api/user/ActivatePatientUser?token={token}", null);
+
+            // Assert
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+        }
+
+        [Fact]
         public async Task RequestDeleteUser_ShouldReturnOk_WhenRequestIsMade()
         {
             var token = GenerateAdminJwtToken();
@@ -432,8 +493,7 @@ namespace DDDSample1.Tests.Users.IntegrationTests
             var user = await _client.PostAsJsonAsync("/api/user/RegisterUserAsPatient", userDTO);
             user.EnsureSuccessStatusCode();
 
-            var userDto = await user.Content.ReadFromJsonAsync<UserDTO>();
-            token = GeneratePatientJwtToken(userDto);
+            token = await user.Content.ReadAsStringAsync();
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
             // Act
@@ -492,8 +552,8 @@ namespace DDDSample1.Tests.Users.IntegrationTests
 
             // Assert
             user.EnsureSuccessStatusCode();
-            var userDto = await user.Content.ReadFromJsonAsync<UserDTO>();
-            token = GeneratePatientJwtToken(userDto);
+            token = await user.Content.ReadAsStringAsync();
+
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
             // Act
@@ -741,6 +801,47 @@ namespace DDDSample1.Tests.Users.IntegrationTests
 
             // Assert
             response.StatusCode.Equals(HttpStatusCode.Forbidden);
+        }
+
+        
+        private bool IsJwtToken(string token)
+        {
+            if (string.IsNullOrEmpty(token))
+                return false;
+
+            var parts = token.Split('.');
+            if (parts.Length != 3)
+                return false;
+
+            try
+            {
+                var header = Base64UrlDecode(parts[0]);
+                var payload = Base64UrlDecode(parts[1]);
+
+                // Check if header and payload are valid JSON
+                var headerJson = JsonDocument.Parse(header);
+                var payloadJson = JsonDocument.Parse(payload);
+
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        private string Base64UrlDecode(string input)
+        {
+            var output = input.Replace('-', '+').Replace('_', '/');
+            switch (output.Length % 4)
+            {
+                case 0: break;
+                case 2: output += "=="; break;
+                case 3: output += "="; break;
+                default: throw new ArgumentException("Illegal base64url string!", nameof(input));
+            }
+            var converted = Convert.FromBase64String(output);
+            return Encoding.UTF8.GetString(converted);
         }
     }
 }

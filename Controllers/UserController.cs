@@ -35,11 +35,15 @@ namespace DDDSample1.Controllers
 
         [HttpPost("RegisterUserAsPatient")]
         [AllowAnonymous]
-        public async Task<ActionResult<UserDTO>> RegisterUserAsPatient(CreatingPatientUserDTO userDTO)
+        public async Task<ActionResult<string>> RegisterUserAsPatient(CreatingPatientUserDTO userDTO)
         {
             try
             {
                 var user = await _userService.CreateUserAsPatient(userDTO);
+                if (user == null)
+                {
+                    return NotFound("There is no patient with the provided email registered in the system.");
+                }
                 return Ok(user);
             }
             catch (Exception ex)
@@ -118,6 +122,10 @@ namespace DDDSample1.Controllers
             try
             {
                 var user = await _userService.ActivateUserAsPatient(token);
+                if (user == null)
+                {
+                    return NotFound("User not found");
+                }
                 return Ok(user);
             }
             catch (Exception ex)
