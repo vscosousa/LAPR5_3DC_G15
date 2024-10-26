@@ -14,4 +14,6 @@ This folder contains all the global artifacts for your project, split by each im
 
 [_`Analysis`_](./02.analysis/readme.md)
 
+[_`Design`_](./03.design/readme.md)
+
 <img width=100% src="https://capsule-render.vercel.app/api?type=waving&height=120&color=4E1764&section=footer"/>

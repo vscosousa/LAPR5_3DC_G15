@@ -1,0 +1,16 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36 OPR/113.0.0.0" version="24.8.2">
+  <diagram name="Página-1" id="H5xfOcXILhlzlC3MEp8S">
+    <mxGraphModel dx="776" dy="451" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="KfgiDUAFI2g06yitJ3mN-1" value="Healthcare System" style="shape=folder;fontStyle=1;spacingTop=10;tabWidth=40;tabHeight=14;tabPosition=left;html=1;whiteSpace=wrap;align=center;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="188" y="140" width="292" height="230" as="geometry" />
+        </mxCell>
+        <mxCell id="KfgiDUAFI2g06yitJ3mN-2" value="Master Data" style="shape=folder;fontStyle=1;spacingTop=10;tabWidth=40;tabHeight=14;tabPosition=left;html=1;whiteSpace=wrap;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="230" y="190" width="144" height="140" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
