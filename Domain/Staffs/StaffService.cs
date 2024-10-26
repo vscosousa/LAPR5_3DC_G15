@@ -8,6 +8,7 @@ using DDDSample1.Infrastructure.Specializations;
 using System.Linq;
 using System.Diagnostics;
 using System.Security.Claims;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
@@ -22,8 +23,9 @@ namespace DDDSample1.Domain.Staffs
         private readonly ISpecializationRepository _specializationRepository;
         private readonly ILogRepository _logRepository;
         private readonly IMailService _mailService;
+        private readonly IConfiguration _configuration;
 
-        public StaffService(IUnitOfWork unitOfWork, IStaffRepository repository, IStaffMapper mapper, ISpecializationRepository specializationRepository, ILogRepository logRepository, IMailService mailService)
+        public StaffService(IUnitOfWork unitOfWork, IStaffRepository repository, IStaffMapper mapper, ISpecializationRepository specializationRepository, ILogRepository logRepository, IMailService mailService, IConfiguration configuration)
         {
             _unitOfWork = unitOfWork;
             _repository = repository;
@@ -31,6 +33,7 @@ namespace DDDSample1.Domain.Staffs
             _specializationRepository = specializationRepository;
             _logRepository = logRepository;
             _mailService = mailService;
+            _configuration = configuration;
         }
         
         // Método para listar todos os staffs
@@ -110,17 +113,35 @@ namespace DDDSample1.Domain.Staffs
                 return null;
 
             var updatedFields = new List<string>();
+            var newUpdatedContacts = new UpdateStaffDTO();
+            var sendEmail = false;
 
             // Update Phone Number
             if (!string.IsNullOrEmpty(dto.PhoneNumber) && staff.PhoneNumber != dto.PhoneNumber)
             {
                 if (await _repository.GetByPhoneNumberAsync(dto.PhoneNumber) != null)
                     throw new BusinessRuleValidationException("Phone number is already in use.");
+                sendEmail = true;
+                newUpdatedContacts.SetPhoneNumber(dto.PhoneNumber);
+                updatedFields.Add("Sent confirmation email to Staff to update phone number");
+            }
 
-                // Send confirmation email
-                //await _mailService.SendEmailToStaff(staff.Email, staff.FullName);
-                staff.ChangePhoneNumber(dto.PhoneNumber);
-                updatedFields.Add("Phone Number");
+            // Update Email
+            if (!string.IsNullOrEmpty(dto.Email) && staff.Email != dto.Email)
+            {
+                if (await _repository.GetByEmailAsync(dto.Email) != null)
+                    throw new BusinessRuleValidationException("Email is already in use.");
+
+                sendEmail = true;
+                newUpdatedContacts.SetEmail(dto.Email);
+                updatedFields.Add("Sent confirmation email to Staff to update email");
+            }
+
+            // Send Email
+            if(sendEmail){
+                var token = CreateTokenStaff(staff);
+                var link = GenerateLinkToStaff(token, newUpdatedContacts);
+                await _mailService.SendEmailToStaff(staff.Email, staff.FullName, newUpdatedContacts, link);
             }
 
             // Add Availability Slots
@@ -168,7 +189,7 @@ namespace DDDSample1.Domain.Staffs
 
             if (updatedFields.Count > 0)
             {
-                var logMessage = $"Staff updated. The following fields were updated:"+ string.Join(", ", updatedFields) +".";
+                var logMessage = $"Staff updated. The following fields were updated: "+ string.Join(", ", updatedFields) +".";
                 var log = new Log(TypeOfAction.Update, id.ToString(), logMessage);
                 await _logRepository.AddAsync(log);
 
@@ -176,6 +197,122 @@ namespace DDDSample1.Domain.Staffs
             }
 
             return _mapper.ToDto(staff);
+        }
+
+        public async Task<StaffDTO> UpdateContactInformationAsync(string token, string phoneNumber , string email)
+        {
+            try
+            {
+                var staffId = VerifyTokenStaff(token);
+                var staff = await _repository.GetByIdAsync(staffId);
+
+                if (staff == null)
+                    throw new BusinessRuleValidationException("Staff not found.");
+
+                var updatedFields = new List<string>();
+
+                if (!string.IsNullOrEmpty(phoneNumber))
+                    staff.ChangePhoneNumber(phoneNumber);
+                    updatedFields.Add("Phone Number Upadted");
+
+                if(!string.IsNullOrEmpty(email))
+                    staff.ChangeEmail(email);
+                    updatedFields.Add("Email confirmed Upadted");
+
+                if (updatedFields.Count > 0){
+                    var logMessage = "Staff confirmed update:"+ string.Join(", ", updatedFields) +".";
+                    var log = new Log(TypeOfAction.Update, staffId.ToString(), logMessage);
+                    await _logRepository.AddAsync(log);
+
+                    await _unitOfWork.CommitAsync();
+
+                }
+
+                return _mapper.ToDto(staff);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred: {ex.Message}");
+                if (ex.InnerException != null)
+                {
+                    Console.WriteLine($"Inner exception: {ex.InnerException.Message}");
+                }
+                throw;
+            }
+        }
+
+        public string CreateTokenStaff(Staff staff)
+        {
+            List<Claim> claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.NameIdentifier, staff.Id.AsGuid().ToString()),
+                new Claim(ClaimTypes.Email, staff.Email),
+                new Claim("PhoneNumber", staff.PhoneNumber)
+            };
+
+            var key = _configuration["Jwt:Key"];
+            if (string.IsNullOrEmpty(key))
+            {
+                throw new ArgumentNullException(nameof(key), "JWT key cannot be null or empty.");
+            }
+        
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));
+            var cred = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+
+            var token = new JwtSecurityToken(
+                claims: claims,
+                expires: DateTime.Now.AddHours(24),
+                signingCredentials: cred
+            );
+
+            var jwt = new JwtSecurityTokenHandler().WriteToken(token);
+
+            return jwt;
+        }
+
+        private static string GenerateLinkToStaff(string token, UpdateStaffDTO dto)
+        {
+            return $"https://localhost:5001/api/Staff/ConfirmUpdates?phoneNumber={dto.PhoneNumber}?email={dto.Email}?token={token}";
+        }
+
+        private StaffId VerifyTokenStaff(string token)
+        {
+            try
+            {
+                var tokenHandler = new JwtSecurityTokenHandler();
+                var validationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]))
+                };
+
+                var principal = tokenHandler.ValidateToken(token, validationParameters, out var validatedToken);
+
+                if (validatedToken is not JwtSecurityToken jwtToken ||
+                    !jwtToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    throw new SecurityTokenException("Invalid token");
+                }
+
+                var staffIdClaim = principal.FindFirst(ClaimTypes.NameIdentifier) ?? throw new Exception("Staff ID not found in token.");
+                if (!Guid.TryParse(staffIdClaim.Value, out Guid staffId))
+                {
+                    throw new Exception("Invalid user ID in token.");
+                }
+
+                return new StaffId(staffId);
+            }
+            catch (SecurityTokenException ex)
+            {
+                throw new SecurityTokenException("Token validation failed: " + ex.Message);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("An error occurred during token validation: " + ex.Message);
+            }
         }
 
         public async Task<StaffDTO> DeactivateStaffAsync(Guid id)

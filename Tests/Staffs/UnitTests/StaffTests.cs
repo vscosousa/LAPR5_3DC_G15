@@ -112,11 +112,36 @@ namespace DDDSample1.Tests.Staffs.UnitTests
         }
 
         [Fact]
+        public void ChangeEmail_ValidEmail_ShouldChangeEmail()
+        {
+            // Arrange
+            var staff = new Staff("Test", "Afonso", "Test Afonso", "test@example.com", "+351923456789", new SpecializationId(Guid.NewGuid()));
+            var newEmail = "newemail@example.com";
+
+            // Act
+            staff.ChangeEmail(newEmail);
+
+            // Assert
+            Assert.Equal(newEmail, staff.Email);
+        }
+
+        [Fact]
+        public void ChangeEmail_InvalidEmail_ShouldThrowException()
+        {
+            // Arrange
+            var staff = new Staff("Test", "Afonso", "Test Afonso", "test@example.com", "+351923456789", new SpecializationId(Guid.NewGuid()));
+            var invalidEmail = "invalid-email";
+
+            // Act & Assert
+            Assert.Throws<ArgumentException>(() => staff.ChangeEmail(invalidEmail));
+        }
+
+        [Fact]
         public void AddAvailabilitySlot_ValidSlot_ShouldAddSlot()
         {
             // Arrange
-           var staff = new Staff("Test", "Afonso", "Test Afonso", "test@example.com", "+351923456789", new SpecializationId(Guid.NewGuid()));
-            var newSlot = new DateTime(2023, 10, 10, 10, 0, 0);
+            var staff = new Staff("Test", "Afonso", "Test Afonso", "test@example.com", "+351923456789", new SpecializationId(Guid.NewGuid()));
+            var newSlot = new DateTime(2025, 10, 10, 10, 0, 0);
 
             // Act
             staff.AddAvailabilitySlot(newSlot);
@@ -126,11 +151,45 @@ namespace DDDSample1.Tests.Staffs.UnitTests
         }
 
         [Fact]
+        public void AddAvailabilitySlot_InvalidFormat_ShouldThrowException()
+        {
+            // Arrange
+            var staff = new Staff("Test", "Afonso", "Test Afonso", "test@example.com", "+351923456789", new SpecializationId(Guid.NewGuid()));
+            var invalidSlot = new DateTime(2023, 10, 10, 10, 0, 0);
+
+            // Act & Assert
+            Assert.Throws<BusinessRuleValidationException>(() => staff.AddAvailabilitySlot(invalidSlot));
+        }
+
+        [Fact]
+        public void AddAvailabilitySlot_ExistingSlot_ShouldThrowException()
+        {
+            // Arrange
+            var staff = new Staff("Test", "Afonso", "Test Afonso", "test@example.com", "+351923456789", new SpecializationId(Guid.NewGuid()));
+            var existingSlot = new DateTime(2025, 10, 10, 10, 0, 0);
+            staff.AddAvailabilitySlot(existingSlot);
+
+            // Act & Assert
+            Assert.Throws<BusinessRuleValidationException>(() => staff.AddAvailabilitySlot(existingSlot));
+        }
+
+        [Fact]
+        public void AddAvailabilitySlot_PastSlot_ShouldThrowException()
+        {
+            // Arrange
+            var staff = new Staff("Test", "Afonso", "Test Afonso", "test@example.com", "+351923456789", new SpecializationId(Guid.NewGuid()));
+            var pastSlot = new DateTime(2020, 10, 10, 10, 0, 0);
+
+            // Act & Assert
+            Assert.Throws<BusinessRuleValidationException>(() => staff.AddAvailabilitySlot(pastSlot));
+        }
+
+        [Fact]
         public void RemoveAvailabilitySlot_ExistingSlot_ShouldRemoveSlot()
         {
             // Arrange
             var staff = new Staff("Test", "Afonso", "Test Afonso", "test@example.com", "+351923456789", new SpecializationId(Guid.NewGuid()));
-            var existingSlot = new DateTime(2023, 10, 10, 10, 0, 0);
+            var existingSlot = new DateTime(2025, 10, 10, 10, 0, 0);
             staff.AddAvailabilitySlot(existingSlot);
 
             // Act

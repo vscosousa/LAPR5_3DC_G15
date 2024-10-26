@@ -24,6 +24,7 @@ participant "StaffService" as S
 participant "StaffMapper" as M
 participant "StaffRepository" as R
 participant "SpecializationRepository" as RS
+participant "CreatingStaffDTO" as CS
 participant "Staff" as P
 participant "StaffDTO" as DTO
 participant "LicenseNumberGenerator" as GLN
@@ -40,41 +41,45 @@ UI -> C: createStaff(CreatingStaffDTO dto)
 activate C
 C --> S: createStaff(CreatingStaffDTO dto)
 activate S
-S -> M: ToDomain(CreatingStaffDTO dto)
-activate M
-M -> P: new Staff(dto.FirstName, dto.LastName, dto.FullName, dto.Email, dto.PhoneNumber, new SpecializationId(dto.SpecializationId))
-activate P
-P -> P: Staff()
-deactivate P
-M --> S: return Staff
-deactivate M
-S -> R: getStaffByEmail(staff.Email)
-activate R
-R -> DB: _objs.Where(x => email.Equals(x.Email)).FirstOrDefaultAsync()
+S -> RS: GetSpecIdByOptionAsync(dto.SpecializationName).Result
+activate RS
+RS -> DB: _objs.Where(x => x.SpecOption.ToLower() == option.ToLower()).FirstOrDefaultAsync();
 activate DB
-DB --> R: return var
+DB --> RS: return specialization
 deactivate DB
-R --> S: return var
-deactivate R
-alt var is null
-    S -> R: getStaffByPhoneNumber(staff.PhoneNumber)
+RS --> S: return specialization
+deactivate RS
+alt specialization is not null
+    S -> CS: dto.SetSpecializationId(specialization.Id.AsGuid());
+    activate CS
+    CS-> CS: SpecializationId = specialization.Id.AsGuid()
+    deactivate CS
+    S -> M: ToDomain(CreatingStaffDTO dto)
+    activate M
+    M -> P: new Staff(dto.FirstName, dto.LastName, dto.FullName, dto.Email, dto.PhoneNumber, new SpecializationId(dto.SpecializationId))
+    activate P
+    P -> P: Staff()
+    deactivate P
+    M --> S: return Staff
+    deactivate M
+    S -> R: getStaffByEmail(staff.Email)
     activate R
-    R -> DB: _objs.Where(x => phoneNumber.Equals(x.PhoneNumber)).FirstOrDefaultAsync()
+    R -> DB: _objs.Where(x => email.Equals(x.Email)).FirstOrDefaultAsync()
     activate DB
     DB --> R: return var
     deactivate DB
     R --> S: return var
     deactivate R
     alt var is null
-        S -> RS: getByIdAsync(staff.SpecializationId)
+        S -> RS: GetByPhoneNumberAsync(staff.PhoneNumber)
         activate RS
-        RS -> DB: _objs.Where(x => id.Equals(x.Id)).FirstOrDefaultAsync()
+        RS -> DB: _objs.Where(x => phoneNumber.Equals(x.PhoneNumber)).FirstOrDefaultAsync();
         activate DB
         DB --> RS: return var
         deactivate DB
         RS --> S: return var
         deactivate RS
-        alt var is not null
+        alt var is null
             S -> R: getAllAsync()
             activate R
             R -> DB: _objs.ToListAsync()
@@ -107,14 +112,14 @@ alt var is null
             M --> S: return StaffDTO
             deactivate M
             S --> C: return StaffDTO
-        else var null
-            S --> C: return Specialization does not exist
+        else var is not null
+            S --> C: return Staff with same Phone Number already exists
         end
     else var is not null
-        S --> C: return Staff with same Phone Number already exists
+        S --> C: return Staff with same Email already exists
     end
-else var is not null
-    S --> C: return Staff with same Email already exists
+else specialization is null
+    S --> C: return Specialization with this name not found.
     deactivate S
 end
 C --> UI: Returns Operation Status Response Code

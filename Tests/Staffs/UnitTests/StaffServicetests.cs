@@ -8,6 +8,7 @@ using Xunit;
 using DDDSample1.Domain.Logs;
 using System.Linq;
 using System.Collections.Generic;
+using Microsoft.Extensions.Configuration;
 
 namespace DDDSample1.Tests.Staffs.UnitTests
 {
@@ -21,6 +22,8 @@ namespace DDDSample1.Tests.Staffs.UnitTests
         private readonly Mock<ISpecializationRepository> _specializationRepositoryMock;
         private readonly Mock<ILogRepository> _logRepositoryMock;
         private readonly Mock<IMailService> _mailServiceMock;
+        private readonly Mock<IConfiguration> _configurationMock;
+        
 
         public StaffServiceTests()
         {
@@ -30,6 +33,7 @@ namespace DDDSample1.Tests.Staffs.UnitTests
             _specializationRepositoryMock = new Mock<ISpecializationRepository>();
             _logRepositoryMock = new Mock<ILogRepository>();
             _mailServiceMock = new Mock<IMailService>();
+            _configurationMock = new Mock<IConfiguration>();
 
             _service = new StaffService(
                 _unitOfWorkMock.Object,
@@ -37,7 +41,8 @@ namespace DDDSample1.Tests.Staffs.UnitTests
                 _staffMapperMock.Object,
                 _specializationRepositoryMock.Object,
                 _logRepositoryMock.Object,
-                _mailServiceMock.Object
+                _mailServiceMock.Object,
+                _configurationMock.Object
             );
         }
 
@@ -345,19 +350,22 @@ namespace DDDSample1.Tests.Staffs.UnitTests
             var dto = new UpdateStaffDTO
             {
                 PhoneNumber = "+351912345679",
+                Email = "teste23123@gmail.com", 
                 AddAvailabilitySlots = "2024-11-10 14:00,2024-11-11 09:00",
                 RemoveAvailabilitySlots = "2024-11-09 10:00",
                 SpecializationName = newspecialization.SpecOption
             };
 
-            string message = "Staff updated. The following fields were updated: Phone Number, Added Availability Slots, Removed Availability Slots, Specialization.";
+            string message = "Staff updated. The following fields were updated: Sent confirmation email to Staff to update phone number, Sent confirmation email to Staff to update email, Added Availability Slots, Removed Availability Slots, Specialization.";
             var log = new Log(TypeOfAction.Update, existingStaff.Id.ToString(), message);
 
             _staffRepositoryMock.Setup(r => r.GetByIdAsync(existingStaff.Id)).ReturnsAsync(existingStaff);
             _staffRepositoryMock.Setup(r => r.GetByPhoneNumberAsync(dto.PhoneNumber)).ReturnsAsync((Staff)null);
+            _staffRepositoryMock.Setup(r => r.GetByEmailAsync(dto.Email)).ReturnsAsync((Staff)null);
+            _configurationMock.SetupGet(c => c["Jwt:Key"]).Returns("your-very-secure-key-that-is-at-least-256-bits-long");
+            _mailServiceMock.Setup(m => m.SendEmailToStaff(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<UpdateStaffDTO>(), It.IsAny<string>())).Returns(Task.CompletedTask);
             _specializationRepositoryMock.Setup(s => s.GetSpecIdByOptionAsync(dto.SpecializationName)).ReturnsAsync(newspecialization);
             _logRepositoryMock.Setup(l => l.AddAsync(It.IsAny<Log>())).ReturnsAsync(log);
-
 
             var addSlots = dto.AddAvailabilitySlots.Split(',')
                             .Select(slot => DateTime.Parse(slot.Trim()))
@@ -371,7 +379,7 @@ namespace DDDSample1.Tests.Staffs.UnitTests
                 FullName = existingStaff.FullName,
                 LicenseNumber = existingStaff.LicenseNumber.ToString(),
                 Email = existingStaff.Email,
-                PhoneNumber = dto.PhoneNumber,
+                PhoneNumber = existingStaff.PhoneNumber,
                 AvailabilitySlots = addSlots.Select(date => date.ToString()).ToArray(),
                 SpecializationId = newspecialization.Id.AsGuid(),
                 IsActive = existingStaff.IsActive
@@ -379,16 +387,19 @@ namespace DDDSample1.Tests.Staffs.UnitTests
 
             // Act
             var result = await _service.UpdateStaffAsync(staffId, dto);
-            
 
             // Assert
             Assert.NotNull(result);
-            Assert.Equal(dto.PhoneNumber, result.PhoneNumber);
+            Assert.IsType<StaffDTO>(result);
+
             Assert.Equal(addSlots.Select(date => date.ToString()).ToArray(), result.AvailabilitySlots);
             Assert.Equal(dto.SpecializationId.ToString(), result.SpecializationId.ToString());
-            
+
             _staffRepositoryMock.Verify(r => r.GetByIdAsync(It.IsAny<StaffId>()), Times.Once);
-            _staffRepositoryMock.Verify(r => r.GetByPhoneNumberAsync(existingStaff.PhoneNumber), Times.Once);
+            _staffRepositoryMock.Verify(r => r.GetByPhoneNumberAsync(dto.PhoneNumber), Times.Once);
+            _staffRepositoryMock.Verify(r => r.GetByEmailAsync(dto.Email), Times.Once);
+            _configurationMock.VerifyGet(c => c["Jwt:Key"], Times.Once);
+            _mailServiceMock.Verify(m => m.SendEmailToStaff(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<UpdateStaffDTO>(), It.IsAny<string>()), Times.Once);
             _specializationRepositoryMock.Verify(r => r.GetSpecIdByOptionAsync(dto.SpecializationName), Times.Once);
             _logRepositoryMock.Verify(l => l.AddAsync(It.IsAny<Log>()), Times.Once);
             _unitOfWorkMock.Verify(u => u.CommitAsync(), Times.Once);
@@ -396,7 +407,32 @@ namespace DDDSample1.Tests.Staffs.UnitTests
         }
 
         [Fact]
-        public async Task UpdateStaffAsync_WhenSpecializationIsInvalid_ShouldThrowBusinessRuleValidationException()
+        public async Task UpdateStaffAsync_StaffNotFound_ReturnsNull()
+        {
+            // Arrange
+            var staffId = Guid.NewGuid();
+            var dto = new UpdateStaffDTO
+            {
+                PhoneNumber = "+351912345679",
+                Email = "teste23123@gmail.com",
+                AddAvailabilitySlots = "2024-11-10 14:00,2024-11-11 09:00",
+                RemoveAvailabilitySlots = "2024-11-09 10:00",
+                SpecializationName = "newSpecialization"
+            };
+
+            _staffRepositoryMock.Setup(r => r.GetByIdAsync(It.IsAny<StaffId>())).ReturnsAsync((Staff)null);
+
+            // Act
+            var result = await _service.UpdateStaffAsync(staffId, dto);
+            
+
+            // Assert
+            Assert.Null(result);
+            _staffRepositoryMock.Verify(r => r.GetByIdAsync(It.IsAny<StaffId>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task UpdateStaffAsync_PhoneNumberAlreadyInUse_ThrowsException()
         {
             // Arrange
             var specialization = CreateSampleSpecialization();
@@ -405,20 +441,103 @@ namespace DDDSample1.Tests.Staffs.UnitTests
 
             var dto = new UpdateStaffDTO
             {
-                SpecializationName = "InvalidSpecialization"
+                PhoneNumber = "+351912345679"
             };
 
-            // Mock para buscar staff existente
+            _staffRepositoryMock.Setup(r => r.GetByIdAsync(existingStaff.Id)).ReturnsAsync(existingStaff);
+            _staffRepositoryMock.Setup(r => r.GetByPhoneNumberAsync(dto.PhoneNumber)).ReturnsAsync(new Staff());
+
+            // Act & Assert
+            await Assert.ThrowsAsync<BusinessRuleValidationException>(() => _service.UpdateStaffAsync(staffId, dto));
+            _staffRepositoryMock.Verify(r => r.GetByIdAsync(It.IsAny<StaffId>()), Times.Once);
+            _staffRepositoryMock.Verify(r => r.GetByPhoneNumberAsync(dto.PhoneNumber), Times.Once);
+        }
+
+        [Fact]
+        public async Task UpdateStaffAsync_EmailAlreadyInUse_ThrowsException()
+        {
+            // Arrange
+            var specialization = CreateSampleSpecialization();
+            var existingStaff = CreateSampleStaff(specialization);
+            var staffId = existingStaff.Id.AsGuid();
+
+            var dto = new UpdateStaffDTO
+            {
+                Email = "teste23123@gmail.com"
+            };
+
+            _staffRepositoryMock.Setup(r => r.GetByIdAsync(existingStaff.Id)).ReturnsAsync(existingStaff);
+            _staffRepositoryMock.Setup(r => r.GetByEmailAsync(dto.Email)).ReturnsAsync(new Staff());
+
+            // Act & Assert
+            await Assert.ThrowsAsync<BusinessRuleValidationException>(() => _service.UpdateStaffAsync(staffId, dto));
+            _staffRepositoryMock.Verify(r => r.GetByIdAsync(It.IsAny<StaffId>()), Times.Once);
+            _staffRepositoryMock.Verify(r => r.GetByEmailAsync(dto.Email), Times.Once);
+        }
+
+        [Fact]
+        public async Task UpdateStaffAsync_AddAvailabilitySlots_InvalidFormat_ThrowsException()
+        {
+            // Arrange
+            var specialization = CreateSampleSpecialization();
+            var existingStaff = CreateSampleStaff(specialization);
+            var staffId = existingStaff.Id.AsGuid();
+
+            var dto = new UpdateStaffDTO
+            {
+                AddAvailabilitySlots = "invalid-date-format"    
+            };
+
+            _staffRepositoryMock.Setup(r => r.GetByIdAsync(existingStaff.Id)).ReturnsAsync(existingStaff);
+            _configurationMock.SetupGet(c => c["Jwt:Key"]).Returns("your-very-secure-key-that-is-at-least-256-bits-long");
+
+            // Act & Assert
+            await Assert.ThrowsAsync<FormatException>(() => _service.UpdateStaffAsync(staffId, dto));
+            _staffRepositoryMock.Verify(r => r.GetByIdAsync(It.IsAny<StaffId>()), Times.Once);
+        }
+
+        
+        [Fact]
+        public async Task UpdateStaffAsync_RemvoveAvailabilitySlots_InvalidFormat_ThrowsException()
+        {
+            // Arrange
+            var specialization = CreateSampleSpecialization();
+            var existingStaff = CreateSampleStaff(specialization);
+            var staffId = existingStaff.Id.AsGuid();
+
+            var dto = new UpdateStaffDTO
+            {
+                RemoveAvailabilitySlots = "invalid-date-format"    
+            };
+
+            _staffRepositoryMock.Setup(r => r.GetByIdAsync(existingStaff.Id)).ReturnsAsync(existingStaff);
+            _configurationMock.SetupGet(c => c["Jwt:Key"]).Returns("your-very-secure-key-that-is-at-least-256-bits-long");
+
+            // Act & Assert
+            await Assert.ThrowsAsync<FormatException>(() => _service.UpdateStaffAsync(staffId, dto));
+            _staffRepositoryMock.Verify(r => r.GetByIdAsync(It.IsAny<StaffId>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task UpdateStaffAsync_SpecializationNotFound_ThrowsException()
+        {
+            // Arrange
+            var specialization = CreateSampleSpecialization();
+            var existingStaff = CreateSampleStaff(specialization);
+            var staffId = existingStaff.Id.AsGuid();
+
+            var dto = new UpdateStaffDTO
+            {
+                SpecializationName = "nonexistentSpecialization"
+            };
+
             _staffRepositoryMock.Setup(r => r.GetByIdAsync(existingStaff.Id)).ReturnsAsync(existingStaff);
             _specializationRepositoryMock.Setup(s => s.GetSpecIdByOptionAsync(dto.SpecializationName)).ReturnsAsync((Specialization)null);
 
             // Act & Assert
-            var exception = await Assert.ThrowsAsync<BusinessRuleValidationException>(() => _service.UpdateStaffAsync(staffId, dto));
-            Assert.Equal("Specialization with name InvalidSpecialization not found.", exception.Message);
-
-            // Verifica que o commit não foi chamado
-            _logRepositoryMock.Verify(l => l.AddAsync(It.IsAny<Log>()), Times.Never);
-            _unitOfWorkMock.Verify(u => u.CommitAsync(), Times.Never);
+            await Assert.ThrowsAsync<BusinessRuleValidationException>(() => _service.UpdateStaffAsync(staffId, dto));
+            _staffRepositoryMock.Verify(r => r.GetByIdAsync(It.IsAny<StaffId>()), Times.Once);
+            _specializationRepositoryMock.Verify(s => s.GetSpecIdByOptionAsync(dto.SpecializationName), Times.Once);
         }
 
         [Fact]
@@ -463,6 +582,138 @@ namespace DDDSample1.Tests.Staffs.UnitTests
         }
 
 
+        [Fact]
+        public async Task SearchStaffProfiles_ReturnsNull_WhenNoStaffProfilesFound()
+        {
+            // Arrange
+            var searchDto = new SearchStaffDTO
+            {
+                FirstName = "NonExistent"
+            };
 
+            _staffRepositoryMock.Setup(r => r.SearchStaffAsync(searchDto)).ReturnsAsync(new List<Staff>());
+
+            // Act
+            var result = await _service.SearchStaffProfiles(searchDto);
+
+            // Assert
+            Assert.Null(result);
+            _staffRepositoryMock.Verify(r => r.SearchStaffAsync(searchDto), Times.Once);
+        }
+
+
+
+        [Fact]
+        public async Task SearchStaffProfiles_ReturnsListOfStaffDTO_WhenSpecializationNameProvidedAndFound()
+        {
+            // Arrange
+            var specialization1 = CreateSampleSpecialization();
+            var specialization2 = new Specialization("Cardiology");
+            var specialization3 = new Specialization("Neurology");
+            var sampleStaffList = CreateSampleStaffs(specialization1, specialization2, specialization3);
+
+            var searchDto = new SearchStaffDTO
+            {
+                SpecializationName = "Cardiology"
+            };
+
+            _specializationRepositoryMock.Setup(r => r.GetSpecIdByOptionAsync(searchDto.SpecializationName)).ReturnsAsync(specialization2);
+            _staffRepositoryMock.Setup(r => r.SearchStaffAsync(searchDto)).ReturnsAsync(sampleStaffList.Where(s => s.SpecializationId == specialization2.Id).ToList());
+
+            _staffMapperMock.Setup(m => m.ToDto(It.IsAny<Staff>())).Returns((Staff staff) => new StaffDTO
+            {
+                Id = staff.Id.AsGuid(),
+                FirstName = staff.FirstName,
+                LastName = staff.LastName,
+                FullName = staff.FullName,
+                LicenseNumber = staff.LicenseNumber.ToString(),
+                Email = staff.Email,
+                PhoneNumber = staff.PhoneNumber,
+                SpecializationId = staff.SpecializationId.AsGuid(),
+                AvailabilitySlots = staff.AvailabilitySlots.Select(s => s.ToString()).ToArray(),
+                IsActive = staff.IsActive
+            });
+
+            // Act
+            var result = await _service.SearchStaffProfiles(searchDto);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.All(result, staff => Assert.Equal(searchDto.SpecializationId, staff.SpecializationId));
+            _specializationRepositoryMock.Verify(r => r.GetSpecIdByOptionAsync(searchDto.SpecializationName), Times.Once);
+            _staffRepositoryMock.Verify(r => r.SearchStaffAsync(searchDto), Times.Once);
+        }
+
+        [Fact]
+        public async Task SearchStaffProfiles_ThrowsException_WhenSpecializationNameProvidedAndNotFound()
+        {
+            // Arrange
+            var searchDto = new SearchStaffDTO
+            {
+                SpecializationName = "NonExistentSpecialization"
+            };
+
+            _specializationRepositoryMock.Setup(r => r.GetSpecIdByOptionAsync(searchDto.SpecializationName)).ReturnsAsync((Specialization)null);
+
+            // Act & Assert
+            await Assert.ThrowsAsync<BusinessRuleValidationException>(() => _service.SearchStaffProfiles(searchDto));
+            _specializationRepositoryMock.Verify(r => r.GetSpecIdByOptionAsync(searchDto.SpecializationName), Times.Once);
+        }
+
+        [Fact]
+        public async Task SearchStaffProfiles_ReturnsListOfStaffDTO_WhenSpecializationAllFiealdsProvidedAndFound()
+        {
+            // Arrange
+            var specialization1 = CreateSampleSpecialization();
+            var specialization2 = new Specialization("Cardiology");
+            var specialization3 = new Specialization("Neurology");
+            var sampleStaffList = CreateSampleStaffs(specialization1, specialization2, specialization3);
+
+            var searchDto = new SearchStaffDTO
+            {
+                FirstName = "João",
+                LastName = "Pereira",
+                FullName = "João Pereira",
+                Email = "joao.pereira@example.com",
+                SpecializationName = "Cardiology"
+            };
+
+            _specializationRepositoryMock.Setup(r => r.GetSpecIdByOptionAsync(searchDto.SpecializationName)).ReturnsAsync(specialization2);
+            _staffRepositoryMock.Setup(r => r.SearchStaffAsync(searchDto)).ReturnsAsync(sampleStaffList.Where(s =>
+                s.FirstName == searchDto.FirstName &&
+                s.LastName == searchDto.LastName &&
+                s.FullName == searchDto.FullName &&
+                s.Email == searchDto.Email &&
+                s.SpecializationId == specialization2.Id).ToList());
+
+            _staffMapperMock.Setup(m => m.ToDto(It.IsAny<Staff>())).Returns((Staff staff) => new StaffDTO
+            {
+                Id = staff.Id.AsGuid(),
+                FirstName = staff.FirstName,
+                LastName = staff.LastName,
+                FullName = staff.FullName,
+                LicenseNumber = staff.LicenseNumber.ToString(),
+                Email = staff.Email,
+                PhoneNumber = staff.PhoneNumber,
+                SpecializationId = staff.SpecializationId.AsGuid(),
+                AvailabilitySlots = staff.AvailabilitySlots.Select(s => s.ToString()).ToArray(),
+                IsActive = staff.IsActive
+            });
+
+            // Act
+            var result = await _service.SearchStaffProfiles(searchDto);
+
+            // Assert
+            Assert.NotNull(result);
+            
+            Assert.All(result, staff => Assert.Equal(searchDto.FirstName, staff.FirstName));
+            Assert.All(result, staff => Assert.Equal(searchDto.LastName, staff.LastName));
+            Assert.All(result, staff => Assert.Equal(searchDto.FullName, staff.FullName));
+            Assert.All(result, staff => Assert.Equal(searchDto.Email, staff.Email));
+            Assert.All(result, staff => Assert.Equal(specialization2.Id.AsGuid(), staff.SpecializationId));
+            
+            _specializationRepositoryMock.Verify(r => r.GetSpecIdByOptionAsync(searchDto.SpecializationName), Times.Once);
+            _staffRepositoryMock.Verify(r => r.SearchStaffAsync(searchDto), Times.Once);
+        }
     }
-}
+}   
