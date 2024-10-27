@@ -1,20 +1,113 @@
-@startuml level_3
+@startuml
+title Doctor Operation Request Flow - Level 3
 
-title Level 3 Diagram
+actor Doctor
+participant "Frontend" as FE
+participant "OperationRequest\nController" as ORC
+participant "OperationRequest\nService" as ORS
+participant "StaffService" as SS
+participant "PatientService" as PS
+participant "OperationType\nService" as OTS
+participant "AuditService" as AS
+database "Database" as DB
 
-hide empty members
-'skinparam Linetype ortho
+Doctor -> FE: submitOperationForm(formData)
+activate FE
 
-skinparam class {
-    BackgroundColor<<valueObject>> #D6EAF8
-    BackgroundColor<<root>> #FDEBD0
-    BackgroundColor<<service>> #D1F2EB
-    BackgroundColor #FEF9E7
-    ArrowColor Black
-}
+FE -> FE: validateForm() {\n  checkRequiredFields()\n  validateDeadline()\n  validatePriority()\n}
 
-skinparam package {
-    BackgroundColor #EBF5FB
-}
+FE -> ORC: POST /api/operationrequest\nHeaders: {\n  Authorization: Bearer JWT,\n  Content-Type: application/json\n}\nBody: CreatingOperationRequestDTO {\n  patientId: string,\n  staffId: string,\n  operationTypeId: string,\n  deadline: DateTime,\n  priority: PriorityLevel,\n  status: RequestStatus.Pending\n}
+activate ORC
+
+ORC -> ORC: [Authorize(Roles = "Doctor")]\nValidateJWT()\nExtract Claims
+
+ORC -> ORS: CreateOperationRequestAsync(dto)
+activate ORS
+
+' Detailed Validation
+ORS -> ORS: Validate Required Fields:\n- PatientId\n- StaffId\n- OperationTypeId\n- Deadline\n- Priority
+
+ORS -> SS: GetByIdAsync(new StaffId(dto.StaffId))
+SS -> DB: SELECT * FROM Staffs\nWHERE Id = @id AND IsActive = 1
+DB --> SS: StaffEntity
+SS --> ORS: Staff or null
+
+alt Staff Invalid
+    ORS --> ORC: throw BusinessRuleValidationException\n"Invalid or inactive doctor"
+    ORC --> FE: 400 Bad Request
+    FE --> Doctor: Show Error Message
+end
+
+ORS -> PS: GetByIdAsync(new PatientId(dto.PatientId))
+PS -> DB: SELECT * FROM Patients\nWHERE Id = @id
+DB --> PS: PatientEntity
+PS --> ORS: Patient or null
+
+alt Patient Invalid
+    ORS --> ORC: throw BusinessRuleValidationException\n"Invalid patient"
+    ORC --> FE: 400 Bad Request
+    FE --> Doctor: Show Error Message
+end
+
+ORS -> OTS: GetByIdAsync(new OperationTypeId(dto.OperationTypeId))
+OTS -> DB: SELECT * FROM OperationTypes\nWHERE Id = @id AND IsActive = 1
+DB --> OTS: OperationTypeEntity
+OTS --> ORS: OperationType or null
+
+alt OperationType Invalid
+    ORS --> ORC: throw BusinessRuleValidationException\n"Invalid or inactive operation type"
+    ORC --> FE: 400 Bad Request
+    FE --> Doctor: Show Error Message
+end
+
+ORS -> ORS: ValidateSpecialization() {\n  Check if staff.Specialization\n  matches operationType.Specializations\n}
+
+alt Invalid Specialization
+    ORS --> ORC: throw BusinessRuleValidationException\n"Staff's specialization does not match..."
+    ORC --> FE: 400 Bad Request
+    FE --> Doctor: Show Error Message
+end
+
+' Create Operation Request
+ORS -> DB: BEGIN TRANSACTION
+ORS -> DB: INSERT INTO OperationRequests (\n  Id, PatientId, StaffId,\n  OperationTypeId, Deadline,\n  Priority, Status, CreatedAt\n) VALUES (@values)
+DB --> ORS: OperationRequestId
+
+' Create Audit Log
+ORS -> AS: LogAsync(new Log(\n  TypeOfAction.Create,\n  request.Id.ToString(),\n  $"Operation request created for patient {patient.FullName}"\n))
+AS -> DB: INSERT INTO Logs (\n  Id, Action, EntityId,\n  Message, Timestamp\n) VALUES (@values)
+DB --> AS: LogId
+
+ORS -> DB: COMMIT
+DB --> ORS: Success
+
+ORS --> ORC: new OperationRequestDTO(\n  id, patientId, staffId,\n  operationTypeId, deadline,\n  priority, createdAt, status\n)
+deactivate ORS
+
+ORC --> FE: 201 Created\n{\n  operation: OperationRequestDTO,\n  message: "Operation request created successfully"\n}
+deactivate ORC
+
+FE -> FE: showSuccessToast()\nnavigateToOperations()
+FE --> Doctor: Show Success Message
+deactivate FE
+
+note right of DB #LightGreen
+Database Constraints:
+- FK_Operations_Patients
+- FK_Operations_Doctors
+- FK_Operations_OperationTypes
+- CHECK Priority IN ('Low','Medium','High')
+- CHECK Status IN ('Pending','Approved',\n'Scheduled','Completed','Cancelled')
+end note
+
+note right of ORC #LightBlue
+Error Handling:
+- 400: Invalid Request/Validation
+- 401: Unauthorized
+- 403: Invalid Specialization
+- 404: Entity Not Found
+- 500: Server Error
+All errors logged to AuditLogs
+end note
 
 @enduml
