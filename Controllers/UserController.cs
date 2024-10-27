@@ -1,10 +1,8 @@
 
 using System;
 using System.Threading.Tasks;
-using DDDSample1.Domain.Shared;
 using DDDSample1.Domain.Users;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Xunit.Sdk;
 
@@ -21,7 +19,7 @@ namespace DDDSample1.Controllers
             _userService = userService;
         }
 
-        [HttpPost("RegisterUser"), Authorize(Roles = "Admin")]
+        [HttpPost("RegisterUser"), AllowAnonymous]
         public async Task<ActionResult<UserDTO>> RegisterUser([FromBody] CreatingUserDTO userDTO)
         {
             try
@@ -54,12 +52,12 @@ namespace DDDSample1.Controllers
             }
         }
 
-        [HttpPost("RequestResetPassword"), Authorize(Roles = "Admin, Doctor, Nurse, Technician")]
-        public async Task<IActionResult> RequestPasswordReset([FromBody] string email)
+        [HttpPost("RequestResetPassword"), AllowAnonymous]
+        public async Task<IActionResult> RequestPasswordReset(string email)
         {
             if (string.IsNullOrWhiteSpace(email))
             {
-                return NotFound( "Email is required." );
+                return BadRequest("Email is required.");
             }
 
             try
@@ -67,19 +65,16 @@ namespace DDDSample1.Controllers
                 await _userService.RequestPasswordReset(email);
                 return Ok("Password reset link has been sent to your email.");
             }
-            catch (BusinessRuleValidationException ex)
-            {
-                return BadRequest(new { message = ex.Message });
-            }
             catch (Exception ex)
             {
-                return StatusCode(500, new { message = "An error occurred while deactivating the staff", details = ex.Message });
+                // Log exception (ex) if needed
+                return StatusCode(500, ex.Message);
             }
         }
 
         // POST: api/PasswordReset/Reset
         [HttpPost("ResetPassword"), AllowAnonymous]
-        public async Task<IActionResult> ResetPassword([FromQuery]string token, [FromBody]string newPassword)
+        public async Task<IActionResult> ResetPassword(string token, string newPassword)
         {
             if (string.IsNullOrWhiteSpace(token) ||
                 string.IsNullOrWhiteSpace(newPassword))
@@ -92,12 +87,13 @@ namespace DDDSample1.Controllers
                 await _userService.ResetPassword(token, newPassword);
                 return Ok("Your password has been reset successfully.");
             }
-            catch (BusinessRuleValidationException ex)
+            catch (ArgumentException ex)
             {
                 return BadRequest(ex.Message);
             }
             catch (Exception ex)
             {
+
                 return StatusCode(500, ex.Message);
             }
         }
@@ -206,6 +202,41 @@ namespace DDDSample1.Controllers
             catch (Exception ex)
             {
                 return StatusCode(500, $"An error occurred while getting all users: {ex.Message}");
+            }
+        }
+
+        //request user patient profile
+        [HttpPost("RequestUpdateUserPatient"), Authorize(Roles = "Patient")]
+        public async Task<IActionResult> RequestUpdateUserPatient(string email)
+        {
+            if (string.IsNullOrWhiteSpace(email))
+            {
+                return BadRequest("Email is required.");
+            }
+
+            try
+            {
+                await _userService.RequestUpdateUserPatient(email);
+                return Ok("Request sent successfully.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
+
+        //update user patient profile
+        [HttpPost("UpdateUserPatient"), Authorize (Roles = "Patient")]
+        public async Task<IActionResult> UpdateUserPatient(string token, UpdatePatientUserDTO userDTO)
+        {
+            try
+            {
+                await _userService.UpdateUserPatient(token, userDTO);
+                return Ok("User updated successfully.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
             }
         }
     }

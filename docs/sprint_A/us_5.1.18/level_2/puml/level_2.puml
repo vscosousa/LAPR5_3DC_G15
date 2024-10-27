@@ -1,69 +1,20 @@
-@startuml
-title Doctor Operation Request Deletion Flow - Level 2
+@startuml level_2
 
-actor Doctor
-participant "OperationRequest\nController" as ORC
-participant "OperationRequest\nService" as ORS
-participant "PlanningModule\nNotifier" as PMN
-participant "LogRepository" as LR
-participant "OperationRequest\nRepository" as OR
-database "Database" as DB
+title Level 2 Diagram
 
-Doctor -> ORC: DELETE /api/operationrequest/{id}
-activate ORC
+hide empty members
+'skinparam Linetype ortho
 
-ORC -> ORC: Extract Doctor ID from JWT
+skinparam class {
+    BackgroundColor<<valueObject>> #D6EAF8
+    BackgroundColor<<root>> #FDEBD0
+    BackgroundColor<<service>> #D1F2EB
+    BackgroundColor #FEF9E7
+    ArrowColor Black
+}
 
-ORC -> ORS: GetByIdAsync(id)
-activate ORS
-ORS -> OR: GetByIdAsync(id)
-OR -> DB: SELECT FROM OperationRequests
-DB --> OR: OperationRequest
-OR --> ORS: OperationRequest
-ORS --> ORC: OperationRequest
-
-' Initial validation
-ORC -> ORC: Validate:\n- Request exists\n- Doctor is creator\n- Not scheduled
-
-alt Confirmation Required
-    ORC --> Doctor: 202 Accepted\nConfirmation Required
-    Doctor -> ORC: DELETE with confirmed=true
-end
-
-ORC -> ORS: DeleteOperationRequestAsync(id, doctorId)
-activate ORS
-
-' Domain validation and soft delete
-ORS -> OR: GetByIdAsync(id)
-OR -> DB: SELECT FROM OperationRequests
-DB --> OR: OperationRequest
-
-ORS -> ORS: request.MarkAsDeleted(doctorId)
-
-' Create audit log
-ORS -> LR: AddAsync(new Log(\nTypeOfAction.Delete,\nrequestId,\n"Deleted by Dr. X"))
-LR -> DB: INSERT INTO Logs
-DB --> LR: Log ID
-
-' Notify planning module
-ORS -> PMN: NotifyOperationRequestDeleted(id)
-activate PMN
-PMN -> PMN: Send HTTP DELETE to\nplanning module
-PMN --> ORS: void
-deactivate PMN
-
-' Save changes
-ORS -> OR: RemoveAsync(request)
-OR -> DB: UPDATE OperationRequests\nSET IsDeleted = true
-DB --> OR: Success
-
-ORS -> DB: COMMIT Transaction
-DB --> ORS: Success
-
-ORS --> ORC: true
-deactivate ORS
-
-ORC --> Doctor: 204 No Content
-deactivate ORC
+skinparam package {
+    BackgroundColor #EBF5FB
+}
 
 @enduml

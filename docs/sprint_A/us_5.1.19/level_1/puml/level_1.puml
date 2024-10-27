@@ -1,45 +1,20 @@
-@startuml
-title Doctor Operation Request Search Flow - Level 1
+@startuml level_1
 
-actor Doctor
-participant "Healthcare\nSystem" as System
-database Database
+title Level 1 Diagram
 
-Doctor -> System: Search Operation Requests
-activate System
+hide empty members
+'skinparam Linetype ortho
 
-System -> System: Validate Search Criteria
-System -> Database: Fetch Matching Requests
-Database --> System: Operation Requests
+skinparam class {
+    BackgroundColor<<valueObject>> #D6EAF8
+    BackgroundColor<<root>> #FDEBD0
+    BackgroundColor<<service>> #D1F2EB
+    BackgroundColor #FEF9E7
+    ArrowColor Black
+}
 
-System -> System: Enrich with Details\n(Patient, Operation Type)
-
-System --> Doctor: Display Results List
-
-note right of System
-Search Criteria:
-- Patient Name
-- Operation Type
-- Priority Level
-- Status
-- Date Range
-end note
-
-note right of System
-Result Details:
-- Patient Name
-- Operation Type
-- Priority
-- Status
-- Created Date
-- Deadline
-end note
-
-Doctor -> System: Select Request
-activate System
-
-System --> Doctor: Show Detailed View\nwith Edit/Delete Options
-
-deactivate System
+skinparam package {
+    BackgroundColor #EBF5FB
+}
 
 @enduml

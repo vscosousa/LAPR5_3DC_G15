@@ -29,6 +29,13 @@ using Swashbuckle.AspNetCore.Filters;
 using DDDSample1.Domain.Logs;
 using Projetos.LAPR5_3DC_G15.Mappers.Staffs;
 using Projetos.LAPR5_3DC_G15.Mappers.Users;
+using DDDSample1.Domain.OperationRequests;
+using DDDSample1.Infrastructure.OperationRequests;
+using DDDSample1.Domain.SurgeryRooms;
+using DDDSample1.Infrastructure.SurgeryRooms;
+using Projetos.LAPR5_3DC_G15.Mappers.SurgeryRooms;
+using DDDSample1.Domain.Appointments;
+using DDDSample1.Infrastructure.Appointments;
 
 namespace DDDSample1
 {
@@ -166,6 +173,18 @@ namespace DDDSample1
             services.AddTransient<IMailService, MailService>();
 
             services.AddTransient<ILogRepository, LogRepository>();
+
+            services.AddTransient<IOperationRequestRepository, OperationRequestRepository>();
+            services.AddTransient<OperationRequestService>();
+            services.AddTransient<IOperationRequestMapper, OperationRequestMapper>();
+
+            services.AddTransient<ISurgeryRoomRepository, SurgeryRoomRepository>();
+            services.AddTransient<SurgeryRoomService>();
+            services.AddTransient<ISurgeryRoomMapper, SurgeryRoomMapper>();
+
+            services.AddTransient<IAppointmentRepository, AppointmentRepository>();
+            services.AddTransient<AppointmentService>();
+            services.AddTransient<IAppointmentMapper, AppointmentMapper>();
         }
     }
 }

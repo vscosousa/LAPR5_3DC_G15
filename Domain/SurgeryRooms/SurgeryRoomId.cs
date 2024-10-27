@@ -1,25 +1,27 @@
 using System;
 using DDDSample1.Domain.Shared;
+using Newtonsoft.Json;
 
-namespace Domain.SurgeryRooms
+namespace DDDSample1.Domain.SurgeryRooms
 {
     public class SurgeryRoomId : EntityId
     {
+        [JsonConstructor]
         public SurgeryRoomId(Guid value) : base(value)
         {
         }
 
-        public SurgeryRoomId(String value) : base(value)
+        public SurgeryRoomId(string value) : base(value)
         {
         }
 
         override
-        protected  Object createFromString(String text){
+        protected  Object createFromString(string text){
             return new Guid(text);
         }
 
         override
-        public String AsString(){
+        public string AsString(){
             Guid obj = (Guid) base.ObjValue;
             return obj.ToString();
         }

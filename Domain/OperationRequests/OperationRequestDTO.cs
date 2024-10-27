@@ -1,34 +1,30 @@
 using System;
-using DDDSample1.Domain.Shared;
-using DDDSample1.Domain.Patients;
-using DDDSample1.Domain.Staffs;
-using DDDSample1.Domain.OperationTypes;
 
 namespace DDDSample1.Domain.OperationRequests
 {
     public class OperationRequestDTO
     {
-        public Guid Id { get; set; }
-        public string PatientId { get; set; }
-        public string StaffId { get; set; }
-        public string OperationTypeId { get; set; }
-        public DateTime Deadline { get; set; }
-        public PriorityLevel Priority { get; set; }
-        public DateTime CreatedAt { get; set; }
-        public RequestStatus Status { get; set; }
-        public Patient PatientName { get; set; }
+        public Guid Id { get; init; }
+        public string DeadlineDate { get; init; }
+        public string Priority { get; init; }
+        public string Status { get; init; }
+        public Guid PatientId { get; init; }
+        public Guid DoctorId { get; init; }
+        public Guid OperationTypeId { get; init; }
 
-        public OperationRequestDTO(Guid id, string patientId, string staffId, string operationTypeId, DateTime deadline, PriorityLevel priority, DateTime createdAt, RequestStatus status, Patient patientName)
+        public OperationRequestDTO()
+        {
+        }
+
+        public OperationRequestDTO(Guid id, string deadlineDate, string priority, string status, Guid patientId, Guid doctorId, Guid operationTypeId)
         {
             Id = id;
-            PatientId = patientId;
-            StaffId = staffId;
-            OperationTypeId = operationTypeId;
-            Deadline = deadline;
+            DeadlineDate = deadlineDate;
             Priority = priority;
-            CreatedAt = createdAt;
             Status = status;
-            PatientName = patientName;
+            PatientId = patientId;
+            DoctorId = doctorId;
+            OperationTypeId = operationTypeId;
         }
     }
 }

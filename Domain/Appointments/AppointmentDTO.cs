@@ -1,28 +1,26 @@
 using System;
-using System.Collections.Generic;
-using Domain.Appointments;
 
 namespace DDDSample1.Domain.Appointments
 {
     public class AppointmentDTO
     {
-        public Guid Id { get; set; }
-        public DateTime DateTime { get; set; }
-        public Guid PatientId { get; set; }
-        public Guid StaffId { get; set; }
-        public Guid SurgeryRoomId { get; set; }
-        public AppointmentStatus Status { get; set; }
-        public ICollection<Guid> AssignedStaffIds { get; set; }
+        public Guid Id { get; init; }
+        public string DateTime { get; init; }
+        public string Status { get; init; }
+        public Guid RequestId { get; init; }
+        public Guid RoomId { get; init; }
 
-        public AppointmentDTO( Guid id,Guid requestId,  
-            Guid roomId,DateTime dateTime, string status, ICollection<Guid> assignedStaffIds)
+        public AppointmentDTO()
+        {
+        }
+
+        public AppointmentDTO(Guid id, string dateTime, string status, Guid requestId, Guid roomId)
         {
             Id = id;
-            PatientId = requestId;
-            SurgeryRoomId = roomId; 
             DateTime = dateTime;
-            Status = Enum.Parse<AppointmentStatus>(status);
-            AssignedStaffIds = assignedStaffIds;
+            Status = status;
+            RequestId = requestId;
+            RoomId = roomId;
         }
     }
 }

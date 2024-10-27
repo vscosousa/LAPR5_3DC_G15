@@ -1,280 +1,184 @@
 using System;
-using System.Threading.Tasks;
 using System.Collections.Generic;
-using DDDSample1.Domain.Shared;
-using DDDSample1.Domain.Patients;
-using DDDSample1.Domain.Staffs;
-using DDDSample1.Domain.OperationTypes;
+using System.Threading.Tasks;
 using DDDSample1.Domain.Logs;
-using System.Linq;
-using DDDSample1.Domain.Events;
-
-#nullable enable
+using DDDSample1.Domain.OperationTypes;
+using DDDSample1.Domain.Patients;
+using DDDSample1.Domain.Shared;
+using DDDSample1.Domain.Staffs;
 
 namespace DDDSample1.Domain.OperationRequests
 {
     public class OperationRequestService
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IOperationRequestRepository _repository;
-        private readonly IPatientRepository _patientRepository;
-        private readonly IStaffRepository _staffRepository;
-        private readonly IOperationTypeRepository _operationTypeRepository;
-        private readonly ILogRepository _logRepository;
-    
-        private readonly IPlanningModuleNotifier _planningModuleNotifier;
+        private readonly IOperationRequestRepository _repo;
+        private readonly IOperationRequestMapper _mapper;
+        private readonly IPatientRepository _patientRepo;
+        private readonly IStaffRepository _staffRepo;
+        private readonly IOperationTypeRepository _operationTypeRepo;
+        private readonly ILogRepository _logRepo;
 
-        public OperationRequestService(
-            IUnitOfWork unitOfWork,
-            IOperationRequestRepository repository,
-            IPatientRepository patientRepository,
-            IStaffRepository staffRepository,
-            IOperationTypeRepository operationTypeRepository,
-            ILogRepository logRepository,
-            IPlanningModuleNotifier planningModuleNotifier)
+        public OperationRequestService(IUnitOfWork unitOfWork, IOperationRequestRepository repo, IOperationRequestMapper mapper, IPatientRepository patientRepo, IStaffRepository staffRepo, IOperationTypeRepository operationTypeRepo, ILogRepository logRepo)
         {
             _unitOfWork = unitOfWork;
-            _repository = repository;
-            _patientRepository = patientRepository;
-            _staffRepository = staffRepository;
-            _operationTypeRepository = operationTypeRepository;
-            _logRepository = logRepository;
-            _planningModuleNotifier = planningModuleNotifier;
+            _repo = repo;
+            _mapper = mapper;
+            _patientRepo = patientRepo;
+            _staffRepo = staffRepo;
+            _operationTypeRepo = operationTypeRepo;
+            _logRepo = logRepo;
         }
 
-        public async Task<OperationRequestDTO> CreateOperationRequestAsync(CreatingOperationRequestDTO dto)
+        public async Task<OperationRequestDTO> AddOperationRequestAsync(CreatingOperationRequestDTO operationRequestDto)
         {
-            // Validate all required fields are present
-            if (string.IsNullOrEmpty(dto.PatientId) || string.IsNullOrEmpty(dto.StaffId) || 
-                string.IsNullOrEmpty(dto.OperationTypeId) || dto.Deadline == default || dto.Priority == default)
+            try
             {
-                throw new ArgumentException("All required fields must be provided.");
-            }
-
-            // Validate doctor exists and is active
-            var staff = await _staffRepository.GetByIdAsync(new StaffId(dto.StaffId));
-            if (staff == null || !staff.IsActive)
-                throw new BusinessRuleValidationException("Invalid or inactive doctor");
-
-            // Validate patient exists
-            var patient = await _patientRepository.GetByIdAsync(new PatientId(dto.PatientId));
-            if (patient == null)
-                throw new BusinessRuleValidationException("Invalid patient");
-
-            // Validate operation type exists and is active
-            var operationType = await _operationTypeRepository.GetByIdAsync(new OperationTypeId(dto.OperationTypeId));
-            if (operationType == null || !operationType.IsActive)
-                throw new BusinessRuleValidationException("Invalid or inactive operation type");
-
-            // Validate staff's specialization matches operation type
-            bool hasRequiredSpecialization = operationType.Specializations
-                .Any(s => staff.Specialization.Id.Equals(s.Id));
-            if (!hasRequiredSpecialization)
-                throw new BusinessRuleValidationException("Staff's specialization does not match operation type requirements");
-
-            // Create operation request
-            var request = new OperationRequest(
-                new OperationRequestId(Guid.NewGuid()),  // Add new ID
-                new PatientId(dto.PatientId),
-                new StaffId(dto.StaffId),
-                new OperationTypeId(dto.OperationTypeId),
-                dto.Deadline,
-                RequestStatus.Pending,
-                dto.Priority,
-                DateTime.Now,
-                patient  // Add the patient object here
-            );
-
-            // Save request
-            await _repository.AddAsync(request);  // Changed from CreateOperationRequestAsync to AddAsync
-
-            // Create log entry
-            var log = new Log(
-                TypeOfAction.Create,
-                request.Id.ToString(),
-                $"Operation request created for patient {patient.FullName} by Dr. {staff.FullName}"
-            );
-            await _logRepository.AddAsync(log);
-
-    
-
-            await _unitOfWork.CommitAsync();
-
-            // Return DTO
-            return new OperationRequestDTO(
-                request.Id.AsGuid(),
-                request.PatientId.ToString(),
-                request.StaffId.ToString(),
-                request.OperationTypeId.AsGuid().ToString(),
-                request.Deadline,
-                request.Priority,
-                request.CreatedAt,
-                request.Status,
-                request.Patient  // Add this parameter
-            );
-        }
-
-        public async Task<OperationRequest> GetOperationRequestByIdAsync(string id)
-        {
-            return await _repository.GetByIdAsync(new OperationRequestId(Guid.Parse(id)));
-        }
-
-        public async Task<List<OperationRequest>> GetAllAsync()
-        {
-            return await _repository.GetAllAsync();
-        }
-
-        public async Task<OperationRequest> UpdateOperationRequestAsync(string id, UpdateOperationRequestDTO dto, string requestingDoctorId)
-        {
-            var existingRequest = await _repository.GetByIdAsync(new OperationRequestId(Guid.Parse(id)));
-            if (existingRequest == null)
-                throw new KeyNotFoundException($"Operation Request with id {id} not found.");
-
-            // Validate requesting doctor is the original creator
-            if (existingRequest.StaffId.ToString() != requestingDoctorId)
-                throw new UnauthorizedAccessException("Only the requesting doctor can update this operation request.");
-
-            // Store old values for logging
-            var oldDeadline = existingRequest.Deadline;
-            var oldPriority = existingRequest.Priority;
-
-            // Update the existing request
-            existingRequest.UpdateDetails(
-                new PatientId(dto.PatientId),
-                new StaffId(dto.StaffId),
-                new OperationTypeId(dto.OperationTypeId),
-                dto.Deadline ?? throw new ArgumentException("Deadline cannot be null"),
-                dto.Priority
-            );
-
-            // Log changes
-            var changes = new List<string>();
-            if (oldDeadline != dto.Deadline) changes.Add($"Deadline changed from {oldDeadline} to {dto.Deadline}");
-            if (oldPriority != dto.Priority) changes.Add($"Priority changed from {oldPriority} to {dto.Priority}");
-
-            var log = new Log(
-                TypeOfAction.Update,
-                existingRequest.Id.ToString(),
-                $"Operation request updated: {string.Join(", ", changes)}"
-            );
-            await _logRepository.AddAsync(log);
-
-        
-
-            // Notify planning module
-            await _planningModuleNotifier.NotifyOperationRequestUpdateAsync(existingRequest);
-
-            await _repository.UpdateAsync(existingRequest);
-            await _unitOfWork.CommitAsync();
-
-            return existingRequest;
-        }
-
-        public async Task<OperationRequest> GetByIdAsync(OperationRequestId id)
-        {
-            return await _repository.GetByIdAsync(id);
-        }
-
-        public async Task<bool> DeleteOperationRequestAsync(string id, string requestingDoctorId)
-        {
-            var operationRequest = await _repository.GetByIdAsync(new OperationRequestId(Guid.Parse(id)));
-            
-            if (operationRequest == null)
-                return false;
-
-            // Check if requesting doctor is the creator
-            if (operationRequest.StaffId.ToString() != requestingDoctorId)
-                throw new UnauthorizedAccessException("Only the requesting doctor can delete this operation request.");
-
-            // Check if operation is not scheduled
-            if (operationRequest.Status == RequestStatus.Scheduled)
-                throw new BusinessRuleValidationException("Cannot delete a scheduled operation request.");
-
-    
-            await _planningModuleNotifier.NotifyOperationRequestCancelledAsync(operationRequest);
-
-            // Create deletion log
-            var log = new Log(
-                TypeOfAction.Delete,
-                operationRequest.Id.ToString(),
-                $"Operation request deleted by Dr. {requestingDoctorId}"
-            );
-            await _logRepository.AddAsync(log);
-
-            // Add domain event
-            var deletionEvent = new OperationRequestDeletedEvent(
-                operationRequest.Id,
-                requestingDoctorId,
-                DateTime.UtcNow
-            );
-            operationRequest.AddDomainEvent(deletionEvent);
-
-            await _repository.RemoveAsync(operationRequest);
-            await _unitOfWork.CommitAsync();
-            
-            return true;
-        }
-
-        public async Task<List<OperationRequest>> GetOperationRequestsByStaffAsync(string staffId)
-        {
-            return await _repository.GetByStaffIdAsync(new StaffId(staffId));
-        }
-
-        public async Task<List<OperationRequest>> SearchOperationRequestsAsync(OperationRequestSearchParams searchParams)
-        {
-            var allRequests = await _repository.GetAllAsync();
-            
-            var filteredRequests = new List<OperationRequest>();
-            foreach (var request in allRequests)
-            {
-                var patient = await _patientRepository.GetByIdAsync(request.PatientId);
-                var operationType = await _operationTypeRepository.GetByIdAsync(request.OperationTypeId);
-                
-                if ((string.IsNullOrEmpty(searchParams.PatientName) || patient?.FullName.Contains(searchParams.PatientName, StringComparison.OrdinalIgnoreCase) == true) &&
-                    (string.IsNullOrEmpty(searchParams.OperationType) || operationType?.Name.Contains(searchParams.OperationType, StringComparison.OrdinalIgnoreCase) == true) &&
-                    (!searchParams.Priority.HasValue || request.Priority == searchParams.Priority.Value) &&
-                    (!searchParams.Status.HasValue || request.Status == searchParams.Status) &&
-                    (!searchParams.StartDate.HasValue || request.CreatedAt >= searchParams.StartDate) &&
-                    (!searchParams.EndDate.HasValue || request.CreatedAt <= searchParams.EndDate))
+                var operationRequest = _mapper.ToDomain(operationRequestDto);
+                var patient = await _patientRepo.GetByIdAsync(operationRequest.PatientId);
+                if (patient == null)
                 {
-                    filteredRequests.Add(request);
+                    throw new BusinessRuleValidationException("The patient does not exist in the system.");
                 }
+                var doctor = await _staffRepo.GetByIdAsync(operationRequest.DoctorId);
+                if (doctor == null || doctor.StaffType != StaffType.Doctor)
+                {
+                    throw new BusinessRuleValidationException("The doctor does not exist in the system.");
+                }
+                var operationType = await _operationTypeRepo.GetByIdAsync(operationRequest.OperationTypeId);
+                if (operationType == null)
+                {
+                    throw new BusinessRuleValidationException("The operation type does not exist in the system.");
+                }
+                await _repo.AddAsync(operationRequest);
+
+                patient.AddOperationRequest(operationRequest.DeadlineDate.ToDateTime(TimeOnly.MinValue));
+                await _patientRepo.UpdateAsync(patient);
+
+                await _unitOfWork.CommitAsync();
+                Console.WriteLine("Transaction committed successfully");
+
+                var operationRequestDTO = _mapper.ToDto(operationRequest);
+
+                return operationRequestDTO;
             }
-            
-            return filteredRequests;
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred: {ex.Message}");
+                if (ex.InnerException != null)
+                {
+                    Console.WriteLine($"Inner exception: {ex.InnerException.Message}");
+                }
+                throw;
+            }
         }
-    }
 
-    public class OperationRequestResult
-    {
-        public bool Success { get; set; }
-        public string Message { get; set; } = string.Empty;
-        public OperationRequest? OperationRequest { get; set; }
-    }
-
-    public class OperationRequestSearchParams
-    {
-        public string? PatientName { get; }
-        public string? OperationType { get; }
-        public PriorityLevel? Priority { get; }
-        public RequestStatus? Status { get; }
-        public DateTime? StartDate { get; }  // Add this
-        public DateTime? EndDate { get; }    // Add this
-
-        public OperationRequestSearchParams(
-            string? patientName, 
-            string? operationType, 
-            PriorityLevel? priority, 
-            RequestStatus? status,
-            DateTime? startDate = null,  // Add these with default values
-            DateTime? endDate = null)
+        public async Task<OperationRequestDTO> UpdateOperationRequestAsync(Guid id, Guid doctorId, UpdatingOperationRequestDTO operationRequestDto)
         {
-            PatientName = patientName;
-            OperationType = operationType;
-            Priority = priority;
-            Status = status;
-            StartDate = startDate;
-            EndDate = endDate;
+            try
+            {
+                var doctor = await _staffRepo.GetByIdAsync(new StaffId(doctorId));
+                var operationRequest = await _repo.GetByIdAsync(new OperationRequestId(id));
+                if (doctorId != operationRequest.DoctorId.AsGuid())
+                {
+                    throw new BusinessRuleValidationException("You are not allowed to update this operation request, as you are not the doctor assigned to it.");
+                }
+                if (operationRequest == null)
+                {
+                    return null;
+                }
+
+                var updatedFields = new List<string>();
+
+                var updateActions = new Dictionary<string, Action>
+                {
+                    { "Deadline Date", () => { if (!string.IsNullOrEmpty(operationRequestDto.DeadlineDate) && operationRequest.DeadlineDate.ToString() != operationRequestDto.DeadlineDate) { operationRequest.ChangeDeadline(operationRequestDto.DeadlineDate); updatedFields.Add("Deadline Date"); } } },
+                    { "Priority", () => { if (!string.IsNullOrEmpty(operationRequestDto.Priority) && operationRequestDto.Priority != operationRequest.Priority.ToString()) { operationRequest.ChangePriority(operationRequestDto.Priority); updatedFields.Add("Priority"); } } },
+                };
+
+                foreach (var action in updateActions.Values)
+                {
+                    action();
+                }
+
+                if (updatedFields.Count > 0)
+                {
+                    await _repo.UpdateAsync(operationRequest);
+                    string message = "Operation Request updated. The following fields were updated: " + string.Join(", ", updatedFields) + ".";
+                    var log = new Log(TypeOfAction.Update, operationRequest.Id.ToString(), message);
+                    await _logRepo.AddAsync(log);
+                    await _unitOfWork.CommitAsync();
+                    Console.WriteLine("Transaction committed successfully");
+                }
+
+                var operationRequestDTO = _mapper.ToDto(operationRequest);
+                return operationRequestDTO;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred: {ex.Message}");
+                if (ex.InnerException != null)
+                {
+                    Console.WriteLine($"Inner exception: {ex.InnerException.Message}");
+                }
+                throw;
+            }
+        }
+
+        internal async Task<OperationRequestDTO> RemoveOperationRequestAsync(Guid id, Guid doctorId)
+        {
+            try
+            {
+                var doctor = await _staffRepo.GetByIdAsync(new StaffId(doctorId));
+                var operationRequest = await _repo.GetByIdAsync(new OperationRequestId(id));
+                var patient = await _patientRepo.GetByIdAsync(operationRequest.PatientId);
+                if (doctorId != operationRequest.DoctorId.AsGuid())
+                {
+                    throw new BusinessRuleValidationException("You are not allowed to delete this operation request, as you are not the doctor assigned to it.");
+                }
+                if (operationRequest == null)
+                {
+                    return null;
+                }
+
+                _repo.Remove(operationRequest);
+                patient.RemoveOperationRequest(operationRequest.DeadlineDate.ToDateTime(TimeOnly.MinValue));
+                await _patientRepo.UpdateAsync(patient);
+                var log = new Log(TypeOfAction.Delete, operationRequest.Id.ToString(), "Operation Request deleted.");
+                await _logRepo.AddAsync(log);
+                await _unitOfWork.CommitAsync();
+                Console.WriteLine("Transaction committed successfully");
+
+                var operationRequestDTO = _mapper.ToDto(operationRequest);
+                return operationRequestDTO;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred: {ex.Message}");
+                if (ex.InnerException != null)
+                {
+                    Console.WriteLine($"Inner exception: {ex.InnerException.Message}");
+                }
+                throw;
+            }
+        }
+
+        public async Task<List<SearchedOperationRequestDTO>> SearchOperationRequests(SearchOperationRequestDTO dto)
+        {
+            var operationRequests = await _repo.SearchOperationRequestsAsync(dto);
+            if (operationRequests == null || operationRequests.Count == 0)
+            {
+                return null;
+            }
+
+            var list = new List<SearchedOperationRequestDTO>();
+            foreach (var operationRequest in operationRequests)
+            {
+                var patient = await _patientRepo.GetByIdAsync(operationRequest.PatientId);
+                var searchedOperationRequestDTO = _mapper.ToSeachedDTO(operationRequest, patient.FullName);
+                list.Add(searchedOperationRequestDTO);
+            }
+            return list;
         }
     }
 }

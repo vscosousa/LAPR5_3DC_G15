@@ -18,10 +18,11 @@ namespace DDDSample1.Tests.Staffs.UnitTests
             var fullName = "Test Afonso";
             var email = "test@example.com";
             var phoneNumber = "+351923456789";
+            var staffType = StaffType.Admin;
             var specializationId = new SpecializationId(Guid.NewGuid());
 
             // Act
-            var staff = new Staff(firstName, lastName, fullName, email, phoneNumber, specializationId);
+            var staff = new Staff(firstName, lastName, fullName, email, phoneNumber, staffType, specializationId);
 
             // Assert
             Assert.Equal(firstName, staff.FirstName);
@@ -42,10 +43,11 @@ namespace DDDSample1.Tests.Staffs.UnitTests
             var fullName = "Test Afonso";
             var email = "invalid-email";
             var phoneNumber = "+351923456789";
+            var staffType = StaffType.Admin;
             var specializationId = new SpecializationId(Guid.NewGuid());
 
             // Act & Assert
-            Assert.Throws<ArgumentException>(() => new Staff(firstName, lastName, fullName, email, phoneNumber, specializationId));
+            Assert.Throws<ArgumentException>(() => new Staff(firstName, lastName, fullName, email, phoneNumber, staffType, specializationId));
         }
 
         [Fact]
@@ -56,17 +58,18 @@ namespace DDDSample1.Tests.Staffs.UnitTests
             var fullName = "Test Afonso";
             var email = "test@example.com";
             var phoneNumber = "351923456789";
+            var staffType = StaffType.Admin;
             var specializationId = new SpecializationId(Guid.NewGuid());
 
             // Act & Assert
-            Assert.Throws<ArgumentException>(() => new Staff(firstName, lastName, fullName, email, phoneNumber, specializationId));
+            Assert.Throws<ArgumentException>(() => new Staff(firstName, lastName, fullName, email, phoneNumber, staffType, specializationId));
         }
 
         [Fact]
         public void Deactivate_ActiveStaff_ShouldDeactivate()
         {
             // Arrange
-            var staff = new Staff("Test", "Afonso", "Test Afonso", "test@example.com", "+351923456789", new SpecializationId(Guid.NewGuid()));
+            var staff = new Staff("Test", "Afonso", "Test Afonso", "test@example.com", "+351923456789", StaffType.Admin, new SpecializationId(Guid.NewGuid()));
 
             // Act
             staff.Deactivate();
@@ -79,7 +82,7 @@ namespace DDDSample1.Tests.Staffs.UnitTests
         public void Deactivate_AlreadyDeactivatedStaff_ShouldThrowException()
         {
             // Arrange
-            var staff = new Staff("Test", "Afonso", "Test Afonso", "test@example.com", "+351923456789", new SpecializationId(Guid.NewGuid()));
+            var staff = new Staff("Test", "Afonso", "Test Afonso", "test@example.com", "+351923456789", StaffType.Admin, new SpecializationId(Guid.NewGuid()));
             staff.Deactivate();
 
             // Act & Assert
@@ -90,7 +93,7 @@ namespace DDDSample1.Tests.Staffs.UnitTests
         public void ChangePhoneNumber_ValidPhoneNumber_ShouldChangePhoneNumber()
         {
             // Arrange
-            var staff = new Staff("Test", "Afonso", "Test Afonso", "test@example.com", "+351923456789", new SpecializationId(Guid.NewGuid()));
+            var staff = new Staff("Test", "Afonso", "Test Afonso", "test@example.com", "+351923456789", StaffType.Admin, new SpecializationId(Guid.NewGuid()));
             var newPhoneNumber = "+351987654321";
 
             // Act
@@ -104,7 +107,7 @@ namespace DDDSample1.Tests.Staffs.UnitTests
         public void ChangePhoneNumber_InvalidPhoneNumber_ShouldThrowException()
         {
             // Arrange
-            var staff = new Staff("Test", "Afonso", "Test Afonso", "test@example.com", "+351923456789", new SpecializationId(Guid.NewGuid()));
+            var staff = new Staff("Test", "Afonso", "Test Afonso", "test@example.com", "+351923456789", StaffType.Admin, new SpecializationId(Guid.NewGuid()));
             var invalidPhoneNumber = "987654321"; 
 
             // Act & Assert
@@ -115,7 +118,7 @@ namespace DDDSample1.Tests.Staffs.UnitTests
         public void ChangeEmail_ValidEmail_ShouldChangeEmail()
         {
             // Arrange
-            var staff = new Staff("Test", "Afonso", "Test Afonso", "test@example.com", "+351923456789", new SpecializationId(Guid.NewGuid()));
+            var staff = new Staff("Test", "Afonso", "Test Afonso", "test@example.com", "+351923456789", StaffType.Admin, new SpecializationId(Guid.NewGuid()));
             var newEmail = "newemail@example.com";
 
             // Act
@@ -129,7 +132,7 @@ namespace DDDSample1.Tests.Staffs.UnitTests
         public void ChangeEmail_InvalidEmail_ShouldThrowException()
         {
             // Arrange
-            var staff = new Staff("Test", "Afonso", "Test Afonso", "test@example.com", "+351923456789", new SpecializationId(Guid.NewGuid()));
+            var staff = new Staff("Test", "Afonso", "Test Afonso", "test@example.com", "+351923456789", StaffType.Admin, new SpecializationId(Guid.NewGuid()));
             var invalidEmail = "invalid-email";
 
             // Act & Assert
@@ -140,7 +143,7 @@ namespace DDDSample1.Tests.Staffs.UnitTests
         public void AddAvailabilitySlot_ValidSlot_ShouldAddSlot()
         {
             // Arrange
-            var staff = new Staff("Test", "Afonso", "Test Afonso", "test@example.com", "+351923456789", new SpecializationId(Guid.NewGuid()));
+            var staff = new Staff("Test", "Afonso", "Test Afonso", "test@example.com", "+351923456789", StaffType.Admin, new SpecializationId(Guid.NewGuid()));
             var newSlot = new DateTime(2025, 10, 10, 10, 0, 0);
 
             // Act
@@ -154,7 +157,7 @@ namespace DDDSample1.Tests.Staffs.UnitTests
         public void AddAvailabilitySlot_InvalidFormat_ShouldThrowException()
         {
             // Arrange
-            var staff = new Staff("Test", "Afonso", "Test Afonso", "test@example.com", "+351923456789", new SpecializationId(Guid.NewGuid()));
+            var staff = new Staff("Test", "Afonso", "Test Afonso", "test@example.com", "+351923456789", StaffType.Admin, new SpecializationId(Guid.NewGuid()));
             var invalidSlot = new DateTime(2023, 10, 10, 10, 0, 0);
 
             // Act & Assert
@@ -165,7 +168,7 @@ namespace DDDSample1.Tests.Staffs.UnitTests
         public void AddAvailabilitySlot_ExistingSlot_ShouldThrowException()
         {
             // Arrange
-            var staff = new Staff("Test", "Afonso", "Test Afonso", "test@example.com", "+351923456789", new SpecializationId(Guid.NewGuid()));
+            var staff = new Staff("Test", "Afonso", "Test Afonso", "test@example.com", "+351923456789", StaffType.Admin, new SpecializationId(Guid.NewGuid()));
             var existingSlot = new DateTime(2025, 10, 10, 10, 0, 0);
             staff.AddAvailabilitySlot(existingSlot);
 
@@ -177,7 +180,7 @@ namespace DDDSample1.Tests.Staffs.UnitTests
         public void AddAvailabilitySlot_PastSlot_ShouldThrowException()
         {
             // Arrange
-            var staff = new Staff("Test", "Afonso", "Test Afonso", "test@example.com", "+351923456789", new SpecializationId(Guid.NewGuid()));
+            var staff = new Staff("Test", "Afonso", "Test Afonso", "test@example.com", "+351923456789", StaffType.Admin, new SpecializationId(Guid.NewGuid()));
             var pastSlot = new DateTime(2020, 10, 10, 10, 0, 0);
 
             // Act & Assert
@@ -188,7 +191,7 @@ namespace DDDSample1.Tests.Staffs.UnitTests
         public void RemoveAvailabilitySlot_ExistingSlot_ShouldRemoveSlot()
         {
             // Arrange
-            var staff = new Staff("Test", "Afonso", "Test Afonso", "test@example.com", "+351923456789", new SpecializationId(Guid.NewGuid()));
+            var staff = new Staff("Test", "Afonso", "Test Afonso", "test@example.com", "+351923456789", StaffType.Admin, new SpecializationId(Guid.NewGuid()));
             var existingSlot = new DateTime(2025, 10, 10, 10, 0, 0);
             staff.AddAvailabilitySlot(existingSlot);
 
@@ -203,7 +206,7 @@ namespace DDDSample1.Tests.Staffs.UnitTests
         public void RemoveAvailabilitySlot_NonExistingSlot_ShouldThrowException()
         {
             // Arrange
-            var staff = new Staff("Test", "Afonso", "Test Afonso", "test@example.com", "+351923456789", new SpecializationId(Guid.NewGuid()));
+            var staff = new Staff("Test", "Afonso", "Test Afonso", "test@example.com", "+351923456789", StaffType.Admin, new SpecializationId(Guid.NewGuid()));
             var nonExistingSlot = new DateTime(2023, 10, 10, 10, 0, 0);
 
             // Act & Assert
@@ -214,7 +217,7 @@ namespace DDDSample1.Tests.Staffs.UnitTests
         public void ChangeSpecializationId_ValidSpecializationId_ShouldChangeSpecializationId()
         {
             // Arrange
-            var staff = new Staff("Test", "Afonso", "Test Afonso", "test@example.com", "+351923456789", new SpecializationId(Guid.NewGuid()));
+            var staff = new Staff("Test", "Afonso", "Test Afonso", "test@example.com", "+351923456789", StaffType.Admin, new SpecializationId(Guid.NewGuid()));
             var newSpecializationId = new SpecializationId(Guid.NewGuid());
 
             // Act
@@ -228,7 +231,7 @@ namespace DDDSample1.Tests.Staffs.UnitTests
         public void ChangeSpecializationId_NullSpecializationId_ShouldThrowException()
         {
             // Arrange
-            var staff = new Staff("Test", "Afonso", "Test Afonso", "test@example.com", "+351923456789", new SpecializationId(Guid.NewGuid()));
+            var staff = new Staff("Test", "Afonso", "Test Afonso", "test@example.com", "+351923456789", StaffType.Admin, new SpecializationId(Guid.NewGuid()));
 
             // Act & Assert
             Assert.Throws<ArgumentException>(() => staff.ChangeSpecializationId(null));

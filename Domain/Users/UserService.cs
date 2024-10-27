@@ -296,8 +296,8 @@ namespace DDDSample1.Domain.Users
                 {
                     throw new Exception("User not found.");
                 }
-
-                await _mailService.SendEmail(user.Email, "Delete User Request", GenerateLink(token, "DeleteUser"));
+                var name = user.Username;
+                await _mailService.SendDeletePatientUserEmailAsync(user.Email, name, GenerateLink(token, "DeleteUser"));
                 return;
             }
             catch (Exception ex)
@@ -328,29 +328,18 @@ namespace DDDSample1.Domain.Users
         }
 
         public async Task RequestPasswordReset(string email)
-        {   try
+        {
+            var user = await _userRepository.GetUserByEmailAsync(email) ?? throw new Exception("Email not registered");
+            if (user.IsActive == false)
             {
-                var user = await _userRepository.GetUserByEmailAsync(email) ?? throw new BusinessRuleValidationException("Email not registered");
-                if (user.IsActive == false)
-                {
-                    throw new BusinessRuleValidationException("Account not ative yet, check your email to activate the account.");
-                }
-                string token = CreatePasswordResetToken(user);
-                var resetLink = GenerateLink(token, "ResetPassword");
-
-                var name = user.Username;
-
-                await _mailService.SendResetPasswordEmailAsync(email, name, resetLink);
+                throw new Exception("Account not ative yet,  check your email to activate the account.");
             }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"An error occurred: {ex.Message}");
-                if (ex.InnerException != null)
-                {
-                    Console.WriteLine($"Inner exception: {ex.InnerException.Message}");
-                }
-                throw;
-            }
+            string token = CreatePasswordResetToken(user);
+            var resetLink = GenerateLink(token, "ResetPassword");
+
+            var name = user.Username;
+
+            await _mailService.SendResetPasswordEmailAsync(email, name, resetLink);
         }
 
         public string CreatePasswordResetToken(User user)
@@ -378,26 +367,16 @@ namespace DDDSample1.Domain.Users
             return jwt;
         }
         public async Task ResetPassword(string token, string newPassword)
-        {   
-            try{
-                // Verify the token validade
-                var userID = VerifyToken(token);
+        {
+            // Verify the token validade
+            var userID = VerifyToken(token);
 
-                var user = await _userRepository.GetByIdAsync(userID) ?? throw new BusinessRuleValidationException("User not found.");
-                user.SetPassword(newPassword);
+            var user = await _userRepository.GetByIdAsync(userID) ?? throw new Exception("User not found.");
+            user.SetPassword(newPassword);
 
-                await _userRepository.UpdateAsync(user);
-                await _unitOfWork.CommitAsync();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"An error occurred: {ex.Message}");
-                if (ex.InnerException != null)
-                {
-                    Console.WriteLine($"Inner exception: {ex.InnerException.Message}");
-                }
-                throw;
-            }
+            await _userRepository.UpdateAsync(user);
+            await _unitOfWork.CommitAsync();
+
         }
         
         public async Task<List<UserDTO>> getAllUsers(){
@@ -408,6 +387,71 @@ namespace DDDSample1.Domain.Users
                 usersDTO.Add(_userMapper.ToDto(user));
             }
             return usersDTO;
+        }
+
+        //Update patient
+        public async Task RequestUpdateUserPatient(string email)
+        {
+            var user = await _userRepository.GetUserByEmailAsync(email) ?? throw new Exception("Email not registered");
+            if (user.IsActive == false)
+            {
+                throw new Exception("Account not ative yet,  check your email to activate the account.");
+            }
+            string token = CreateToken(user);
+            var updateLink = GenerateLink(token, "UpdatePatient");
+
+            var name = user.Username;
+
+            await _mailService.SendUpdateProfileAsync(email, name, updateLink);
+        }
+
+        //Update patient user profile when patient confirms the email
+        public async Task UpdateUserPatient(string token, UpdatePatientUserDTO dto)
+        {
+            var userId = VerifyToken(token) ?? throw new Exception("Invalid or expired token.");
+            var user = await _userRepository.GetByIdAsync(userId) ?? throw new Exception("User not found.");
+            var patient = await _patientRepository.GetByEmailAsync(user.Email) ?? throw new Exception("Patient not found.");
+
+            var updatedFields = new List<string>();
+
+           
+            var updateActions = new Dictionary<string, Action>
+            {
+                { "Email", () => {
+                    if (!string.IsNullOrEmpty(dto.Email) && user.Email != dto.Email)
+                    {
+                        user.ChangeEmail(dto.Email);
+                        patient.ChangeEmail(dto.Email); 
+                        updatedFields.Add("Email");
+                    }
+                }},
+                { "Password", () => {
+                    if (!string.IsNullOrEmpty(dto.Password) && user.PasswordHash != dto.Password)
+                    {
+                        user.SetPassword(dto.Password);
+                        updatedFields.Add("Password");
+                    }
+                }},
+                { "PhoneNumber", () => {
+                    if (!string.IsNullOrEmpty(dto.PhoneNumber) && patient.PhoneNumber != dto.PhoneNumber)
+                    {
+                        user.ChangePhoneNumber(dto.PhoneNumber);
+                        patient.ChangePhoneNumber(dto.PhoneNumber);
+                        updatedFields.Add("PhoneNumber");
+                    }
+                }}
+            };
+
+            
+            foreach (var action in updateActions.Values)
+            {
+                action();
+            }
+
+            
+            await _userRepository.UpdateAsync(user);
+            await _patientRepository.UpdateAsync(patient);
+            await _unitOfWork.CommitAsync();
         }
     }
 }

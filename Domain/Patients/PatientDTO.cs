@@ -17,8 +17,6 @@ namespace DDDSample1.Domain.Patients
         public string MedicalConditions { get; init; }
         public string[] AppointmentHistory { get; init; }
         public bool IsActive { get; init; }
-        public string EmailVerificationToken { get; set; }
-        public DateTime EmailVerificationExpiry { get; set; }
 
         public PatientDTO() { }
 

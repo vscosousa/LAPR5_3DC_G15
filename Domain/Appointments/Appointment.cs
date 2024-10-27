@@ -1,71 +1,47 @@
 using System;
-using System.Collections.Generic;
-using DDDSample1.Domain.Shared;
-using Domain.SurgeryRooms;
+using System.Text.Json.Serialization;
 using DDDSample1.Domain.OperationRequests;
-using DDDSample1.Domain.Appointments;
-using DDDSample1.Domain.Staffs; // Add this using statement
+using DDDSample1.Domain.OperationTypes;
+using DDDSample1.Domain.Patients;
+using DDDSample1.Domain.Shared;
+using DDDSample1.Domain.Staffs;
+using DDDSample1.Domain.SurgeryRooms;
 
-namespace Domain.Appointments
+namespace DDDSample1.Domain.Appointments
 {
-    public enum AppointmentStatus
-    {
-        Scheduled,
-        Completed,
-        Canceled
-    }
-
     public class Appointment : Entity<AppointmentId>, IAggregateRoot
     {
-        public new AppointmentId Id { get; private set; }
-        public OperationRequestId RequestId { get; private set; }  
-        public SurgeryRoomId RoomId { get; private set; }
-        public DateTime Date { get; private set; }
-        public AppointmentStatus Status { get; private set; }
-        public ICollection<StaffId> AssignedStaff { get; private set; }  
-        public virtual OperationRequest OperationRequest { get; set; }
+        private DateTime _dateTime;
+        private AppointmentStatus _status;
+        private OperationRequestId _requestId;
+        private SurgeryRoomId _roomId;
 
-    
-        private Appointment() { } 
+        [JsonIgnore]
+        private OperationRequest _request;
 
-        public Appointment(AppointmentId id, OperationRequestId requestId, DateTime date,SurgeryRoomId roomId,  AppointmentStatus status, ICollection<StaffId> assignedStaff)
+        [JsonIgnore]
+        private SurgeryRoom _room;
+
+        // Parameterless constructor for EF Core
+        private Appointment() { }
+
+        public Appointment(DateTime dateTime, OperationRequestId requestId, SurgeryRoomId roomId)
         {
-            Id = id;
-            RequestId = requestId;
-            RoomId = roomId;
-            Date = date;
-            Status = status;
-            AssignedStaff = assignedStaff;
+            if (dateTime < DateTime.Now)
+                throw new BusinessRuleValidationException("Appointment date must be in the future.");
+
+            Id = new AppointmentId(Guid.NewGuid());
+            _dateTime = dateTime;
+            _status = AppointmentStatus.Scheduled;
+            _requestId = requestId;
+            _roomId = roomId;
         }
 
-        public void UpdateStatus(AppointmentStatus newStatus)
-        {
-            Status = newStatus;
-        }
-
-        public void RescheduleTo(DateTime newDateAndTime)
-        {
-            Date = newDateAndTime;
-        }
-
-        public void AssignSurgeryRoom(SurgeryRoomId newRoomId)
-        {
-            RoomId = newRoomId;
-        }
-
-        public void AddStaffMember(StaffId staffId)
-        {
-            AssignedStaff.Add(staffId);
-        }
-
-        public void RemoveStaffMember(StaffId staffId)
-        {
-            AssignedStaff.Remove(staffId);
-        }
-
-        public void UpdateAssignedStaff(ICollection<StaffId> newStaffIds)
-        {
-            AssignedStaff = newStaffIds;
-        }
+        public DateTime DateTime => _dateTime;
+        public AppointmentStatus Status => _status;
+        public OperationRequestId RequestId => _requestId;
+        public SurgeryRoomId RoomId => _roomId;
+        public OperationRequest Request => _request;
+        public SurgeryRoom Room => _room;
     }
 }

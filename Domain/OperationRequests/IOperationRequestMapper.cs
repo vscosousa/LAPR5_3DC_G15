@@ -1,14 +1,10 @@
-using System;
-using System.Collections.Generic;
-using DDDSample1.Domain.OperationRequests;
-using DDDSample1.Domain.Shared;
+using DDDSample1.Domain.Patients;
+using Projetos.LAPR5_3DC_G15.Domain.Shared;
 
 namespace DDDSample1.Domain.OperationRequests
 {
-    public interface IOperationRequestMapper
+    public interface IOperationRequestMapper : IMapper<OperationRequest, OperationRequestDTO, CreatingOperationRequestDTO>
     {
-        OperationRequestDTO ToDTO(OperationRequest entity);
-        OperationRequest ToEntity(CreatingOperationRequestDTO dto);
-        void UpdateEntity(OperationRequest entity, CreatingOperationRequestDTO dto);
+        SearchedOperationRequestDTO ToSeachedDTO(OperationRequest input, string patientName);
     }
 }

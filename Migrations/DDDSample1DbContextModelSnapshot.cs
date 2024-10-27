@@ -22,6 +22,39 @@ namespace DDDNetCore.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("DDDSample1.Domain.Appointments.Appointment", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("DateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<string>("_requestId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("_roomId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.HasIndex("_requestId")
+                        .IsUnique();
+
+                    b.HasIndex("_roomId")
+                        .IsUnique();
+
+                    b.ToTable("Appointments");
+                });
+
             modelBuilder.Entity("DDDSample1.Domain.Logs.Log", b =>
                 {
                     b.Property<string>("Id")
@@ -48,6 +81,46 @@ namespace DDDNetCore.Migrations
                         .IsUnique();
 
                     b.ToTable("Logs");
+                });
+
+            modelBuilder.Entity("DDDSample1.Domain.OperationRequests.OperationRequest", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateOnly>("DeadlineDate")
+                        .HasColumnType("date");
+
+                    b.Property<int>("Priority")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<string>("_doctorId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("_operationTypeId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("_patientId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.HasIndex("_doctorId");
+
+                    b.HasIndex("_operationTypeId");
+
+                    b.HasIndex("_patientId");
+
+                    b.ToTable("OperationRequests");
                 });
 
             modelBuilder.Entity("DDDSample1.Domain.OperationTypes.OperationType", b =>
@@ -203,6 +276,9 @@ namespace DDDNetCore.Migrations
                     b.Property<string>("SpecializationId")
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<int>("StaffType")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("Email")
@@ -220,6 +296,46 @@ namespace DDDNetCore.Migrations
                     b.HasIndex("SpecializationId");
 
                     b.ToTable("Staffs");
+                });
+
+            modelBuilder.Entity("DDDSample1.Domain.SurgeryRooms.SurgeryRoom", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("Capacity")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Equipment")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RoomMaintenance")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RoomNumber")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.HasIndex("RoomNumber")
+                        .IsUnique();
+
+                    b.ToTable("SurgeryRooms");
                 });
 
             modelBuilder.Entity("DDDSample1.Domain.Users.User", b =>
@@ -295,6 +411,52 @@ namespace DDDNetCore.Migrations
                     b.HasIndex("SpecializationsId");
 
                     b.ToTable("OperationTypeSpecialization", (string)null);
+                });
+
+            modelBuilder.Entity("DDDSample1.Domain.Appointments.Appointment", b =>
+                {
+                    b.HasOne("DDDSample1.Domain.OperationRequests.OperationRequest", "Request")
+                        .WithOne()
+                        .HasForeignKey("DDDSample1.Domain.Appointments.Appointment", "_requestId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("DDDSample1.Domain.SurgeryRooms.SurgeryRoom", "Room")
+                        .WithOne()
+                        .HasForeignKey("DDDSample1.Domain.Appointments.Appointment", "_roomId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Request");
+
+                    b.Navigation("Room");
+                });
+
+            modelBuilder.Entity("DDDSample1.Domain.OperationRequests.OperationRequest", b =>
+                {
+                    b.HasOne("DDDSample1.Domain.Staffs.Staff", "Doctor")
+                        .WithMany()
+                        .HasForeignKey("_doctorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("DDDSample1.Domain.OperationTypes.OperationType", "OperationType")
+                        .WithMany()
+                        .HasForeignKey("_operationTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("DDDSample1.Domain.Patients.Patient", "Patient")
+                        .WithMany()
+                        .HasForeignKey("_patientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Doctor");
+
+                    b.Navigation("OperationType");
+
+                    b.Navigation("Patient");
                 });
 
             modelBuilder.Entity("DDDSample1.Domain.Staffs.Staff", b =>

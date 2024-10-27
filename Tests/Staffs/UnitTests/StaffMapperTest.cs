@@ -27,6 +27,7 @@ namespace Projetos.LAPR5_3DC_G15.Tests.Mappers.Staffs
                 "Test Afonso",
                 "teste@example.com",
                 "+351923456789",
+                StaffType.Admin,
                 new SpecializationId(Guid.NewGuid())
             );
 
@@ -56,7 +57,9 @@ namespace Projetos.LAPR5_3DC_G15.Tests.Mappers.Staffs
                 LastName = "Afonso",
                 FullName = "Test Afonso",
                 Email = "teste@example.com",
-                PhoneNumber = "+351923456789"
+                PhoneNumber = "+351923456789",
+                StaffType = "Admin",
+                SpecializationName = "Specialization",
             };
 
             // Act
@@ -82,6 +85,7 @@ namespace Projetos.LAPR5_3DC_G15.Tests.Mappers.Staffs
                 "Test Afonso",
                 "test@example.com",
                 "+351923456789",
+                StaffType.Admin,
                 specialization.Id
             );
 

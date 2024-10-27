@@ -34,6 +34,7 @@ namespace Projetos.LAPR5_3DC_G15.Mappers.Staffs
                 dto.FullName,
                 dto.Email,
                 dto.PhoneNumber,
+                (StaffType)Enum.Parse(typeof(StaffType), dto.StaffType),
                 new SpecializationId(dto.SpecializationId)
             );
         }

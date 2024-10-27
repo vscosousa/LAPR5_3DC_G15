@@ -15,6 +15,7 @@ namespace DDDSample1.Domain.Staffs
         private string _licenseNumber;
         private string _email;
         private string _phoneNumber;
+        private StaffType _staffType;
         private DateTime[] _availabilitySlots;
         private bool _isActive;
         private SpecializationId _specializationId;
@@ -24,7 +25,7 @@ namespace DDDSample1.Domain.Staffs
 
         public Staff() { }
 
-        public Staff(string firstName, string lastName, string fullName, string email, string phoneNumber, SpecializationId specializationId)
+        public Staff(string firstName, string lastName, string fullName, string email, string phoneNumber, StaffType staffType, SpecializationId specializationId)
         {
             if (!NameStartsWithCapital(firstName) || !NameStartsWithCapital(lastName) || !NameStartsWithCapital(fullName))
                 throw new BusinessRuleValidationException("Names must start with a capital letter.");
@@ -42,6 +43,7 @@ namespace DDDSample1.Domain.Staffs
             _licenseNumber = "";
             _email = email;
             _phoneNumber = phoneNumber;
+            _staffType = staffType;
             _availabilitySlots = Array.Empty<DateTime>();
             _specializationId = specializationId;
             _isActive = true;
@@ -54,6 +56,7 @@ namespace DDDSample1.Domain.Staffs
         public string LicenseNumber => _licenseNumber;
         public string Email => _email;
         public string PhoneNumber => _phoneNumber;
+        public StaffType StaffType => _staffType;
         public DateTime[] AvailabilitySlots => _availabilitySlots;
         public bool IsActive => _isActive;
         [JsonIgnore]

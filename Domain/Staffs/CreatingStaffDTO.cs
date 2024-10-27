@@ -9,17 +9,19 @@ namespace DDDSample1.Domain.Staffs
         public string FullName { get; init; }
         public string Email { get; init; }
         public string PhoneNumber { get; init; }
+        public string StaffType { get; init; }
         public string SpecializationName { get; init; }
         public Guid SpecializationId { get; set; }
 
         public CreatingStaffDTO() { }
-        public CreatingStaffDTO(string firstName, string lastName, string fullName, string email, string phoneNumber, string specializationName)
+        public CreatingStaffDTO(string firstName, string lastName, string fullName, string email, string phoneNumber, string staffType, string specializationName)
          {
             FirstName = firstName;
             LastName = lastName;
             FullName = fullName;
             Email = email;
             PhoneNumber = phoneNumber;
+            StaffType = staffType;
             SpecializationName = specializationName;
         }
 

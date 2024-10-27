@@ -1,34 +1,64 @@
+using Projetos.LAPR5_3DC_G15.Domain.Shared;
 using DDDSample1.Domain.SurgeryRooms;
-using DDDSample1.Infrastructure.Shared;
-using Domain.SurgeryRooms;
 using System.Collections.Generic;
-using System.Linq;
 
-namespace DDDSample1.Infrastructure.SurgeryRooms
+namespace Projetos.LAPR5_3DC_G15.Mappers.SurgeryRooms
 {
-    public class SurgeryRoomMapper
+    public class SurgeryRoomMapper : IMapper<SurgeryRoom, SurgeryRoomDTO, CreatingSurgeryRoomDTO>, ISurgeryRoomMapper
     {
-        public static SurgeryRoom ToDomain(SurgeryRoomDTO dto)
+        public SurgeryRoom toDomain(SurgeryRoomDTO dto)
+        {
+            return new SurgeryRoom(dto.roomNumber, dto.type, dto.capacity, dto.equipment, dto.status, dto.roomMaintenance);
+        }
+
+    
+        public SurgeryRoom toDomain(CreatingSurgeryRoomDTO dto)
         {
             return new SurgeryRoom(
-                dto.Number,
+                dto.RoomNumber,
                 dto.Type,
                 dto.Capacity,
-                dto.AssignedEquipment ?? new List<string>(),
-                dto.MaintenanceSlots ?? new List<string>()
+                new List<string>(dto.Equipment),
+                dto.Status,
+                dto.RoomMaintenance
             );
         }
 
-        public static SurgeryRoomDTO ToDTO(SurgeryRoom domain)
+         public CreatingSurgeryRoomDTO ToCreatingDto(SurgeryRoom domain)
         {
-            return new SurgeryRoomDTO(
-                domain.Id.AsGuid(),
-                domain.Number,
-                domain.Type,
-                domain.Capacity,
-                domain.AssignedEquipment,
-                domain.Status,
-                domain.MaintenanceSlots.Select(slot => slot.ToString()).ToList()
+            return new CreatingSurgeryRoomDTO
+            {
+                RoomNumber = domain.RoomNumber,
+                Type = domain.Type,
+                Capacity = domain.Capacity,
+                Equipment = domain.Equipment.ToArray(),
+                Status = domain.Status,
+                RoomMaintenance = domain.RoomMaintenance
+            };
+        }
+
+        public SurgeryRoomDTO ToDto(SurgeryRoom domain)
+        {
+            return new SurgeryRoomDTO
+            {
+                roomNumber = domain.RoomNumber,
+                type = domain.Type,
+                capacity = domain.Capacity,
+                equipment = domain.Equipment,
+                status = domain.Status,
+                roomMaintenance = domain.RoomMaintenance
+            };
+        }
+
+        public SurgeryRoom ToDomain(CreatingSurgeryRoomDTO dto)
+        {
+            return new SurgeryRoom(
+                dto.RoomNumber,
+                dto.Type,
+                dto.Capacity,
+                new List<string>(dto.Equipment),
+                dto.Status,
+                dto.RoomMaintenance
             );
         }
     }

@@ -1,24 +1,31 @@
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+using System;
 
-namespace Domain.SurgeryRooms
+namespace DDDSample1.Domain.SurgeryRooms
 {
     public class CreatingSurgeryRoomDTO
     {
-        [Required]
-        public int Number { get; set; }
 
-        [Required]
+
+        public string RoomNumber { get; set; }
         public string Type { get; set; }
-
-        [Required]
-        [Range(1, int.MaxValue, ErrorMessage = "Capacity must be greater than 0")]
         public int Capacity { get; set; }
+        public string[] Equipment { get; set; }
+        public SurgeryRoomStatus Status { get; set; }
+        public DateTime[] RoomMaintenance { get; set; }
 
-        [Required]
-        public List<string> AssignedEquipment { get; set; }
 
-        [Required]
-        public string Status { get; set; }
+        public CreatingSurgeryRoomDTO()
+        {
+        }
+
+        public CreatingSurgeryRoomDTO(string roomNumber, string type, int capacity, string[] equipment, SurgeryRoomStatus status, DateTime[] roomMaintenance)
+        {
+            this.RoomNumber = roomNumber;
+            this.Type = type;
+            this.Capacity = capacity;
+            this.Equipment = equipment;
+            this.Status = status;
+            this.RoomMaintenance = roomMaintenance;
+        }
     }
 }

@@ -1,61 +1,20 @@
-@startuml
-title Doctor Operation Request Update Flow - Level 2
+@startuml level_2
 
-actor Doctor
-participant "OperationRequest\nController" as ORC
-participant "OperationRequest\nService" as ORS
-participant "PlanningModule\nNotifier" as PMN
-participant "LogRepository" as LR
-participant "OperationRequest\nRepository" as OR
-database "Database" as DB
+title Level 2 Diagram
 
-Doctor -> ORC: PUT /api/operationrequest/{id}\n(UpdateOperationRequestDTO)
-activate ORC
+hide empty members
+'skinparam Linetype ortho
 
-ORC -> ORC: Extract Doctor ID from JWT
+skinparam class {
+    BackgroundColor<<valueObject>> #D6EAF8
+    BackgroundColor<<root>> #FDEBD0
+    BackgroundColor<<service>> #D1F2EB
+    BackgroundColor #FEF9E7
+    ArrowColor Black
+}
 
-ORC -> ORS: UpdateOperationRequestAsync(id, dto, doctorId)
-activate ORS
-
-' Get and validate existing request
-ORS -> OR: GetByIdAsync(id)
-OR -> DB: SELECT FROM OperationRequests
-DB --> OR: OperationRequest
-OR --> ORS: OperationRequest
-
-' Validate doctor authorization
-ORS -> ORS: Validate requesting doctor\nis original creator
-
-' Store old values for logging
-ORS -> ORS: Store current deadline\nand priority values
-
-' Update request
-ORS -> ORS: UpdateDetails(\npatientId,\nstaffId,\noperationTypeId,\ndeadline,\npriority)
-
-' Create audit log
-ORS -> LR: AddAsync(new Log(\nTypeOfAction.Update,\nrequestId,\nchanges))
-LR -> DB: INSERT INTO Logs
-DB --> LR: Log ID
-
-' Notify planning module
-ORS -> PMN: NotifyOperationRequestUpdateAsync(request)
-activate PMN
-PMN -> PMN: Send HTTP request to\nplanning module
-PMN --> ORS: Notification result
-deactivate PMN
-
-' Save changes
-ORS -> OR: UpdateAsync(request)
-OR -> DB: UPDATE OperationRequests
-DB --> OR: Success
-
-ORS -> DB: COMMIT Transaction
-DB --> ORS: Success
-
-ORS --> ORC: Updated OperationRequest
-deactivate ORS
-
-ORC --> Doctor: 200 OK with\nupdated request details
-deactivate ORC
+skinparam package {
+    BackgroundColor #EBF5FB
+}
 
 @enduml

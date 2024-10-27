@@ -1,64 +1,20 @@
-@startuml
-title Patient Profile Update Flow - Level 2
+@startuml level_2
 
-actor Patient
-participant "PatientController" as PC
-participant "PatientService" as PS
-participant "EmailService" as ES
-participant "AuditLogService" as ALS
-participant "PatientRepository" as PR
-database "Database" as DB
+title Level 2 Diagram
 
-Patient -> PC: PUT /api/patient/profile\n(UpdatePatientDTO)
-activate PC
+hide empty members
+'skinparam Linetype ortho
 
-PC -> PC: Extract Patient ID\nfrom JWT Token
+skinparam class {
+    BackgroundColor<<valueObject>> #D6EAF8
+    BackgroundColor<<root>> #FDEBD0
+    BackgroundColor<<service>> #D1F2EB
+    BackgroundColor #FEF9E7
+    ArrowColor Black
+}
 
-PC -> PS: GetPatientById(patientId)
-activate PS
-PS -> PR: GetByIdAsync(patientId)
-PR -> DB: SELECT FROM Patients
-DB --> PR: Current Patient Data
-PR --> PS: Patient
-PS --> PC: PatientDTO
-deactivate PS
-
-' Create audit log for changes
-PC -> ALS: LogAsync(AuditLog)
-activate ALS
-ALS -> DB: INSERT INTO AuditLogs
-DB --> ALS: Log ID
-deactivate ALS
-
-PC -> PS: UpdatePatientProfile(patientId, dto)
-activate PS
-
-PS -> PR: GetByIdAsync(patientId)
-PR -> DB: SELECT FROM Patients
-DB --> PR: Patient Data
-
-PS -> PS: Validate Changes
-PS -> PR: UpdateAsync(patient)
-PR -> DB: UPDATE Patients
-DB --> PR: Success
-PR --> PS: Updated Patient
-PS --> PC: PatientDTO
-deactivate PS
-
-alt Email Changed
-    PC -> ES: SendEmailVerificationRequest
-    activate ES
-    ES -> Patient: Send Verification Email
-    deactivate ES
-end
-
-PC -> ALS: LogAsync(ProfileUpdateLog)
-activate ALS
-ALS -> DB: INSERT INTO AuditLogs
-DB --> ALS: Log ID
-deactivate ALS
-
-PC --> Patient: 200 OK with Updated Profile
-deactivate PC
+skinparam package {
+    BackgroundColor #EBF5FB
+}
 
 @enduml

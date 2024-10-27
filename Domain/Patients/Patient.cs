@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
@@ -59,7 +60,7 @@ namespace DDDSample1.Domain.Patients
             _phoneNumber = phoneNumber;
             _emergencyContact = emergencyContact;
             _medicalConditions = medicalConditions;
-            _appointmentHistory = [];
+            _appointmentHistory = Array.Empty<DateTime>();
             _isActive = true;
         }
 
@@ -111,6 +112,16 @@ namespace DDDSample1.Domain.Patients
                     return false;
             }
             return true;
+        }
+
+        internal void AddOperationRequest(DateTime operationRequestDate)
+        {
+            _appointmentHistory.Append(operationRequestDate);
+        }
+
+        internal void RemoveOperationRequest(DateTime operationRequestDate)
+        {
+            _appointmentHistory = _appointmentHistory.Where(date => date != operationRequestDate).ToArray();
         }
     }
 }

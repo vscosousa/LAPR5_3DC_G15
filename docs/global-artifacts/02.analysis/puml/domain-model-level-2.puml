@@ -64,8 +64,6 @@ class Type <<valueObject>> <<(V, #FF8B40)>> {}
 class Capacity <<valueObject>> <<(V, #FF8B40)>> {}
 class AssignedEquipment <<valueObject>> <<(V, #FF8B40)>> {}
 class CurrentStatus <<valueObject>> <<(V, #FF8B40)>> {}
-class MaintenanceSlots <<valueObject>> <<(V, #FF8B40)>> {}
-
 
 
 /' -------------------------Patient and Staff------------------------------ '/
@@ -128,8 +126,6 @@ SurgeryRoom "1" --> "1" Type : has
 SurgeryRoom "1" --> "1" Capacity : has
 SurgeryRoom "1" --> "*" AssignedEquipment
 SurgeryRoom "1" --> "1" CurrentStatus : has
-SurgeryRoom "1" --> "*" MaintenanceSlots : has
-
 
 
 @enduml

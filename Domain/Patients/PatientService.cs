@@ -3,8 +3,6 @@ using DDDSample1.Domain.Shared;
 using System;
 using System.Collections.Generic;
 using DDDSample1.Domain.Logs;
-using Microsoft.EntityFrameworkCore;
-using DDDSample1.Infrastructure;
 
 namespace DDDSample1.Domain.Patients
 {
@@ -14,16 +12,13 @@ namespace DDDSample1.Domain.Patients
         private readonly IPatientRepository _repo;
         private readonly IPatientMapper _mapper;
         private readonly ILogRepository _logRepository;
-        private readonly DDDSample1DbContext _dbContext;  // Change from DbContext to DDDSample1DbContext
 
-        public PatientService(IUnitOfWork unitOfWork, IPatientRepository repo, IPatientMapper mapper, 
-            ILogRepository logRepository, DDDSample1DbContext dbContext)
+        public PatientService(IUnitOfWork unitOfWork, IPatientRepository repo, IPatientMapper mapper, ILogRepository logRepository)
         {
             _unitOfWork = unitOfWork;
             _repo = repo;
             _mapper = mapper;
             _logRepository = logRepository;
-            _dbContext = dbContext;
         }
 
         public async Task<PatientDTO> CreatePatient(CreatingPatientDTO dto)
@@ -126,45 +121,5 @@ namespace DDDSample1.Domain.Patients
             var list = patients.ConvertAll(_mapper.ToDto);
             return list;
         }
-
-        public async Task<DeletionRequest> CreateDeletionRequest(Guid patientId)
-        {
-            var request = new DeletionRequest
-            {
-                PatientId = patientId,
-                ConfirmationToken = Guid.NewGuid().ToString(),
-                ExpiryDate = DateTime.UtcNow.AddDays(7)
-            };
-
-            // Add to database and save
-            _dbContext.DeletionRequests.Add(request);
-            await _dbContext.SaveChangesAsync();
-
-            return request;
-        }
-        public async Task<PatientDTO> UpdatePatientProfile(Guid patientId, UpdatePatientDTO dto)
-        {
-            var patient = await _repo.GetByIdAsync(new PatientId(patientId));
-            if (patient == null)
-                throw new BusinessRuleValidationException("Patient not found.");
-            
-            // Reuse existing update logic
-            return await UpdatePatient(patientId, dto);
-        }
-        public async Task<PatientDTO> GetPatientById(Guid id)
-    {
-        var patient = await _repo.GetByIdAsync(new PatientId(id));
-        if (patient == null) return null;
-        return _mapper.ToDto(patient); 
     }
-
-    }
-    
-
-    public class DeletionRequest // Moved outside PatientService
-    {
-        public Guid PatientId { get; set; }
-        public string ConfirmationToken { get; set; }
-        public DateTime ExpiryDate { get; set; }
-    }
-} 
+}

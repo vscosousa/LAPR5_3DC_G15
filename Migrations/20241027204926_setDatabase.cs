@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace DDDNetCore.Migrations
 {
     /// <inheritdoc />
-    public partial class setDataBase : Migration
+    public partial class setDatabase : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -76,6 +76,23 @@ namespace DDDNetCore.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "SurgeryRooms",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    RoomNumber = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
+                    Type = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
+                    Capacity = table.Column<int>(type: "int", nullable: false),
+                    Equipment = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Status = table.Column<int>(type: "int", nullable: false),
+                    RoomMaintenance = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SurgeryRooms", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "OperationTypeSpecialization",
                 columns: table => new
                 {
@@ -110,6 +127,7 @@ namespace DDDNetCore.Migrations
                     LicenseNumber = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Email = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     PhoneNumber = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    StaffType = table.Column<int>(type: "int", nullable: false),
                     AvailabilitySlots = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
                     SpecializationId = table.Column<string>(type: "nvarchar(450)", nullable: true)
@@ -126,6 +144,41 @@ namespace DDDNetCore.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "OperationRequests",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    DeadlineDate = table.Column<DateOnly>(type: "date", nullable: false),
+                    Priority = table.Column<int>(type: "int", nullable: false),
+                    Status = table.Column<int>(type: "int", nullable: false),
+                    _patientId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    _doctorId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    _operationTypeId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OperationRequests", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_OperationRequests_OperationTypes__operationTypeId",
+                        column: x => x._operationTypeId,
+                        principalTable: "OperationTypes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_OperationRequests_Patients__patientId",
+                        column: x => x._patientId,
+                        principalTable: "Patients",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_OperationRequests_Staffs__doctorId",
+                        column: x => x._doctorId,
+                        principalTable: "Staffs",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Users",
                 columns: table => new
                 {
@@ -136,10 +189,10 @@ namespace DDDNetCore.Migrations
                     Role = table.Column<int>(type: "int", nullable: false),
                     IsActive = table.Column<bool>(type: "bit", nullable: false),
                     _patientId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    _staffId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     FailedLoginAttempts = table.Column<int>(type: "int", nullable: false),
                     LockedUntil = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    IsLocked = table.Column<bool>(type: "bit", nullable: false),
-                    _staffId = table.Column<string>(type: "nvarchar(450)", nullable: true)
+                    IsLocked = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -158,9 +211,78 @@ namespace DDDNetCore.Migrations
                         onDelete: ReferentialAction.SetNull);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Appointments",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    DateTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Status = table.Column<int>(type: "int", nullable: false),
+                    _requestId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    _roomId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Appointments", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Appointments_OperationRequests__requestId",
+                        column: x => x._requestId,
+                        principalTable: "OperationRequests",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Appointments_SurgeryRooms__roomId",
+                        column: x => x._roomId,
+                        principalTable: "SurgeryRooms",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Appointments__requestId",
+                table: "Appointments",
+                column: "_requestId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Appointments__roomId",
+                table: "Appointments",
+                column: "_roomId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Appointments_Id",
+                table: "Appointments",
+                column: "Id",
+                unique: true);
+
             migrationBuilder.CreateIndex(
                 name: "IX_Logs_Id",
                 table: "Logs",
+                column: "Id",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OperationRequests__doctorId",
+                table: "OperationRequests",
+                column: "_doctorId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OperationRequests__operationTypeId",
+                table: "OperationRequests",
+                column: "_operationTypeId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OperationRequests__patientId",
+                table: "OperationRequests",
+                column: "_patientId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OperationRequests_Id",
+                table: "OperationRequests",
                 column: "Id",
                 unique: true);
 
@@ -247,6 +369,18 @@ namespace DDDNetCore.Migrations
                 column: "SpecializationId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_SurgeryRooms_Id",
+                table: "SurgeryRooms",
+                column: "Id",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SurgeryRooms_RoomNumber",
+                table: "SurgeryRooms",
+                column: "RoomNumber",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Users__patientId",
                 table: "Users",
                 column: "_patientId",
@@ -283,6 +417,9 @@ namespace DDDNetCore.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "Appointments");
+
+            migrationBuilder.DropTable(
                 name: "Logs");
 
             migrationBuilder.DropTable(
@@ -290,6 +427,12 @@ namespace DDDNetCore.Migrations
 
             migrationBuilder.DropTable(
                 name: "Users");
+
+            migrationBuilder.DropTable(
+                name: "OperationRequests");
+
+            migrationBuilder.DropTable(
+                name: "SurgeryRooms");
 
             migrationBuilder.DropTable(
                 name: "OperationTypes");

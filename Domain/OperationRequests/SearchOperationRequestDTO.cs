@@ -1,14 +1,20 @@
-using System;
-
-namespace DDDSample1.Domain.OperationRequests
+namespace DDDSample1.Domain.Patients
 {
     public class SearchOperationRequestDTO
     {
-        public string? PatientName { get; set; }
-        public string? OperationType { get; set; }
-        public string? PriorityLevel { get; set; }
-        public string? Status { get; set; }
-        public DateTime? StartDate { get; set; }
-        public DateTime? EndDate { get; set; }
+        public string PatientName { get; init; }
+        public string OperationType { get; init; }
+        public string Status { get; init; }
+        public string Priority { get; init; }
+        
+        public SearchOperationRequestDTO() { }
+
+        public SearchOperationRequestDTO(string patientName, string operationType, string status, string priority)
+        {
+            PatientName = patientName;
+            OperationType = operationType;
+            Status = status;
+            Priority = priority;
+        }
     }
 }

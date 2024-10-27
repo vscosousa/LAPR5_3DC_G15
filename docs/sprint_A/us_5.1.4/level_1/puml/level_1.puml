@@ -1,25 +1,20 @@
-@startuml
-title Patient Profile Update Flow - Level 1
+@startuml level_1
 
-actor Patient
-participant "Healthcare\nSystem" as System
-database Database
+title Level 1 Diagram
 
-Patient -> System: Update Profile
-activate System
+hide empty members
+'skinparam Linetype ortho
 
-System -> System: Validate Changes
-System -> Database: Update Profile Data
-Database --> System: Confirmation
+skinparam class {
+    BackgroundColor<<valueObject>> #D6EAF8
+    BackgroundColor<<root>> #FDEBD0
+    BackgroundColor<<service>> #D1F2EB
+    BackgroundColor #FEF9E7
+    ArrowColor Black
+}
 
-alt Email Changed
-    System -> System: Generate Verification Token
-    System -> Patient: Send Verification Email
-end
-
-System -> Database: Log Profile Update
-Database --> System: Log Confirmation
-
-System --> Patient: Success Message
+skinparam package {
+    BackgroundColor #EBF5FB
+}
 
 @enduml
