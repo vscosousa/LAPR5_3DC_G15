@@ -32,10 +32,13 @@ namespace DDDSample1.Controllers
                 // Retorna o staff criado com o status 201 Created
                 return Ok(createdStaff);
             }
+            catch (BusinessRuleValidationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
             catch (Exception ex)
             {
-                // Lida com outros tipos de erros
-                return StatusCode(500, $"An error occurred while creating the staff: {ex.Message}");
+                return StatusCode(500, new { message = "An error occurred while deactivating the staff", details = ex.Message });
             }
         }   
 
@@ -97,9 +100,13 @@ namespace DDDSample1.Controllers
                 await _staffService.UpdateContactInformationAsync(token, phoneNumber, email);
                 return Ok("Updated Profile Staff successfully.");
             }
+            catch (BusinessRuleValidationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
             catch (Exception ex)
             {
-                return BadRequest($"An error occurred: {ex.Message}");
+                return StatusCode(500, new { message = "An error occurred while deactivating the staff", details = ex.Message });
             }
         }
         
@@ -128,9 +135,13 @@ namespace DDDSample1.Controllers
 
                 return Ok(staffProfiles);
             }
+            catch (BusinessRuleValidationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
             catch (Exception ex)
             {
-                return StatusCode(500, $"An error occurred while searching for staff profiles: {ex.Message}");
+                return StatusCode(500, new { message = "An error occurred while deactivating the staff", details = ex.Message });
             }
         }
 

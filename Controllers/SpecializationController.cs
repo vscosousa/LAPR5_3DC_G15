@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using DDDSample1.Domain.Shared;
 using DDDSample1.Domain.Specializations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -15,7 +16,7 @@ namespace DDDSample1.Controllers
         private readonly SpecializationService _specializationService;
         public SpecializationController(SpecializationService specializationService)
         {
-            this._specializationService = specializationService;
+            _specializationService = specializationService;
         }
 
         // POST api/specilization
@@ -25,12 +26,16 @@ namespace DDDSample1.Controllers
         {
             try
             {
-                var specialization = await this._specializationService.CreateSpecializationAsync(specializationDTO);
+                var specialization = await _specializationService.CreateSpecializationAsync(specializationDTO);
                 return Ok(specialization);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"An error occurred while creating the operation type: {ex.Message}");
+                if (ex is BusinessRuleValidationException)
+                {
+                    return BadRequest(new { Message = ex.Message });
+                }
+                return StatusCode(500, $"An error occurred while creating the Specialization: {ex.Message}");
             }
         }
 

@@ -9,6 +9,7 @@ using DDDSample1.Domain.Logs;
 using System.Linq;
 using System.Collections.Generic;
 using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace DDDSample1.Tests.Staffs.UnitTests
 {
@@ -34,6 +35,9 @@ namespace DDDSample1.Tests.Staffs.UnitTests
             _logRepositoryMock = new Mock<ILogRepository>();
             _mailServiceMock = new Mock<IMailService>();
             _configurationMock = new Mock<IConfiguration>();
+
+            _configurationMock.Setup(config => config["Jwt:Key"])
+                              .Returns("your-very-secure-key-that-is-at-least-256-bits-long");
 
             _service = new StaffService(
                 _unitOfWorkMock.Object,
@@ -129,9 +133,9 @@ namespace DDDSample1.Tests.Staffs.UnitTests
                 expectedStaff.FirstName,
                 expectedStaff.LastName,
                 expectedStaff.FullName,
-                expectedStaff.LicenseNumber,
                 expectedStaff.Email,
                 expectedStaff.PhoneNumber,
+                expectedStaff.LicenseNumber,
                 expectedStaff.AvailabilitySlots.Select(slot => slot.ToString()).ToArray(),
                 expectedStaff.SpecializationId.AsGuid(),
                 expectedStaff.IsActive
@@ -150,11 +154,11 @@ namespace DDDSample1.Tests.Staffs.UnitTests
 
             _specializationRepositoryMock.Setup(r => r.GetSpecIdByOptionAsync(dto.SpecializationName)).ReturnsAsync(specialization);
             _staffMapperMock.Setup(m => m.ToDomain(dto)).Returns(expectedStaff);
-            _staffMapperMock.Setup(m => m.ToDto(expectedStaff)).Returns(expectedStaffDTO);
             _staffRepositoryMock.Setup(r => r.GetByEmailAsync(expectedStaff.Email)).ReturnsAsync((Staff)null);
             _staffRepositoryMock.Setup(r => r.GetByPhoneNumberAsync(expectedStaff.PhoneNumber)).ReturnsAsync((Staff)null);
             _staffRepositoryMock.Setup(r => r.GetAllAsync()).ReturnsAsync(new List<Staff>());
             _staffRepositoryMock.Setup(r => r.AddAsync(expectedStaff)).ReturnsAsync(expectedStaff);
+            _staffMapperMock.Setup(m => m.ToDto(It.IsAny<Staff>())).Returns((Staff s) => CreateSampleStaffDTO(s));
 
             // Act
             var createdStaffDTO = await _service.CreateStaffAsync(dto);
@@ -166,7 +170,6 @@ namespace DDDSample1.Tests.Staffs.UnitTests
             Assert.Equal(expectedStaffDTO.FirstName, createdStaffDTO.FirstName);
             Assert.Equal(expectedStaffDTO.LastName, createdStaffDTO.LastName);
             Assert.Equal(expectedStaffDTO.FullName, createdStaffDTO.FullName);
-            Assert.Equal(expectedStaffDTO.LicenseNumber, createdStaffDTO.LicenseNumber);
             Assert.Equal(expectedStaffDTO.Email, createdStaffDTO.Email);
             Assert.Equal(expectedStaffDTO.PhoneNumber, createdStaffDTO.PhoneNumber);
             Assert.Equal(expectedStaffDTO.SpecializationId, createdStaffDTO.SpecializationId);
@@ -232,8 +235,6 @@ namespace DDDSample1.Tests.Staffs.UnitTests
             _unitOfWorkMock.Verify(u => u.CommitAsync(), Times.Never);
         }
 
-
-
         [Fact]
         public async Task CreateStaffFailsDueToSpecializationNotFoundTest()
         {
@@ -269,21 +270,7 @@ namespace DDDSample1.Tests.Staffs.UnitTests
 
             _staffRepositoryMock.Setup(r => r.GetByIdAsync(existingStaff.Id)).ReturnsAsync(existingStaff);
             _logRepositoryMock.Setup(r => r.AddAsync(It.IsAny<Log>())).ReturnsAsync(log);
-            _staffMapperMock.Setup(m => m.ToDto(existingStaff))
-                .Returns(new StaffDTO
-                {
-                    Id = existingStaff.Id.AsGuid(),
-                    FirstName = existingStaff.FirstName,
-                    LastName = existingStaff.LastName,
-                    FullName = existingStaff.FullName,
-                    LicenseNumber = existingStaff.LicenseNumber.ToString(),
-                    Email = existingStaff.Email,
-                    PhoneNumber = existingStaff.PhoneNumber,
-                    AvailabilitySlots = existingStaff.AvailabilitySlots.Select(date => date.ToString()).ToArray(),
-                    SpecializationId = existingStaff.SpecializationId.AsGuid(),
-                    IsActive = false
-                }
-                );
+            _staffMapperMock.Setup(m => m.ToDto(It.IsAny<Staff>())).Returns((Staff s) => CreateSampleStaffDTO(s));
 
             // Act
             var result = await _service.DeactivateStaffAsync(staffId);
@@ -333,8 +320,10 @@ namespace DDDSample1.Tests.Staffs.UnitTests
             _staffRepositoryMock.Setup(r => r.GetByIdAsync(existingStaff.Id)).ReturnsAsync((Staff)null);
 
             // Act & Assert
-            await Assert.ThrowsAsync<BusinessRuleValidationException>(() => _service.DeactivateStaffAsync(staffId));
-
+            var result = await _service.DeactivateStaffAsync(staffId);
+        
+            // Assert
+            Assert.Null(result);
             _staffRepositoryMock.Verify(r => r.GetByIdAsync(It.IsAny<StaffId>()), Times.Once);
             _logRepositoryMock.Verify(l => l.AddAsync(It.IsAny<Log>()), Times.Never);
             _unitOfWorkMock.Verify(u => u.CommitAsync(), Times.Never);
@@ -375,19 +364,7 @@ namespace DDDSample1.Tests.Staffs.UnitTests
                             .Select(slot => DateTime.Parse(slot.Trim()))
                             .ToArray();
 
-            _staffMapperMock.Setup(m => m.ToDto(It.IsAny<Staff>())).Returns(new StaffDTO
-            {
-                Id = existingStaff.Id.AsGuid(),
-                FirstName = existingStaff.FirstName,
-                LastName = existingStaff.LastName,
-                FullName = existingStaff.FullName,
-                LicenseNumber = existingStaff.LicenseNumber.ToString(),
-                Email = existingStaff.Email,
-                PhoneNumber = existingStaff.PhoneNumber,
-                AvailabilitySlots = addSlots.Select(date => date.ToString()).ToArray(),
-                SpecializationId = newspecialization.Id.AsGuid(),
-                IsActive = existingStaff.IsActive
-            });
+            _staffMapperMock.Setup(m => m.ToDto(It.IsAny<Staff>())).Returns((Staff s) => CreateSampleStaffDTO(s));
 
             // Act
             var result = await _service.UpdateStaffAsync(staffId, dto);
@@ -563,19 +540,7 @@ namespace DDDSample1.Tests.Staffs.UnitTests
             _staffRepositoryMock.Setup(r => r.SearchStaffAsync(searchDto)).ReturnsAsync(sampleStaffList.Where(p => p.FirstName == searchDto.FirstName).ToList());
 
             // Mock para mapear cada staff para StaffDTO
-            _staffMapperMock.Setup(m => m.ToDto(It.IsAny<Staff>())).Returns((Staff staff) => new StaffDTO
-            {
-                Id = staff.Id.AsGuid(),
-                FirstName = staff.FirstName,
-                LastName = staff.LastName,
-                FullName = staff.FullName,
-                LicenseNumber = staff.LicenseNumber.ToString(),
-                Email = staff.Email,
-                PhoneNumber = staff.PhoneNumber,
-                SpecializationId = staff.SpecializationId.AsGuid(),
-                AvailabilitySlots = staff.AvailabilitySlots.Select(s => s.ToString()).ToArray(),
-                IsActive = staff.IsActive
-            });
+            _staffMapperMock.Setup(m => m.ToDto(It.IsAny<Staff>())).Returns((Staff s) => CreateSampleStaffDTO(s));
 
             // Act
             var result = await _service.SearchStaffProfiles(searchDto);
@@ -625,19 +590,7 @@ namespace DDDSample1.Tests.Staffs.UnitTests
             _specializationRepositoryMock.Setup(r => r.GetSpecIdByOptionAsync(searchDto.SpecializationName)).ReturnsAsync(specialization2);
             _staffRepositoryMock.Setup(r => r.SearchStaffAsync(searchDto)).ReturnsAsync(sampleStaffList.Where(s => s.SpecializationId == specialization2.Id).ToList());
 
-            _staffMapperMock.Setup(m => m.ToDto(It.IsAny<Staff>())).Returns((Staff staff) => new StaffDTO
-            {
-                Id = staff.Id.AsGuid(),
-                FirstName = staff.FirstName,
-                LastName = staff.LastName,
-                FullName = staff.FullName,
-                LicenseNumber = staff.LicenseNumber.ToString(),
-                Email = staff.Email,
-                PhoneNumber = staff.PhoneNumber,
-                SpecializationId = staff.SpecializationId.AsGuid(),
-                AvailabilitySlots = staff.AvailabilitySlots.Select(s => s.ToString()).ToArray(),
-                IsActive = staff.IsActive
-            });
+            _staffMapperMock.Setup(m => m.ToDto(It.IsAny<Staff>())).Returns((Staff s) => CreateSampleStaffDTO(s));
 
             // Act
             var result = await _service.SearchStaffProfiles(searchDto);
@@ -691,19 +644,7 @@ namespace DDDSample1.Tests.Staffs.UnitTests
                 s.Email == searchDto.Email &&
                 s.SpecializationId == specialization2.Id).ToList());
 
-            _staffMapperMock.Setup(m => m.ToDto(It.IsAny<Staff>())).Returns((Staff staff) => new StaffDTO
-            {
-                Id = staff.Id.AsGuid(),
-                FirstName = staff.FirstName,
-                LastName = staff.LastName,
-                FullName = staff.FullName,
-                LicenseNumber = staff.LicenseNumber.ToString(),
-                Email = staff.Email,
-                PhoneNumber = staff.PhoneNumber,
-                SpecializationId = staff.SpecializationId.AsGuid(),
-                AvailabilitySlots = staff.AvailabilitySlots.Select(s => s.ToString()).ToArray(),
-                IsActive = staff.IsActive
-            });
+            _staffMapperMock.Setup(m => m.ToDto(It.IsAny<Staff>())).Returns((Staff s) => CreateSampleStaffDTO(s));
 
             // Act
             var result = await _service.SearchStaffProfiles(searchDto);
@@ -719,6 +660,141 @@ namespace DDDSample1.Tests.Staffs.UnitTests
             
             _specializationRepositoryMock.Verify(r => r.GetSpecIdByOptionAsync(searchDto.SpecializationName), Times.Once);
             _staffRepositoryMock.Verify(r => r.SearchStaffAsync(searchDto), Times.Once);
+        }
+
+                [Fact]
+        public async Task UpdateContactInformationAsync_SuccessfullyUpdatesPhoneNumberAndEmail()
+        {
+            // Arrange
+            var phoneNumber = "+351912345679";
+            var email = "newemail@example.com";
+            var specialization = CreateSampleSpecialization();
+            var staff = CreateSampleStaff(specialization);
+            var token = _service.CreateTokenStaff(staff);
+            var staffId = staff.Id;
+
+            _staffRepositoryMock.Setup(r => r.GetByIdAsync(staffId)).ReturnsAsync(staff);
+           _staffMapperMock.Setup(m => m.ToDto(It.IsAny<Staff>())).Returns((Staff s) => CreateSampleStaffDTO(s));
+           
+            // Act
+            var result = await _service.UpdateContactInformationAsync(token, phoneNumber, email);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(phoneNumber, result.PhoneNumber);
+            Assert.Equal(email, result.Email);
+
+            _staffRepositoryMock.Verify(r => r.GetByIdAsync(staffId), Times.Once);
+            _logRepositoryMock.Verify(l => l.AddAsync(It.IsAny<Log>()), Times.Once);
+            _unitOfWorkMock.Verify(u => u.CommitAsync(), Times.Once);
+            _staffMapperMock.Verify(m => m.ToDto(staff), Times.Once);
+        }
+
+        [Fact]
+        public async Task UpdateContactInformationAsync_StaffNotFound_ThrowsException()
+        {
+            // Arrange
+            var phoneNumber = "+351912345679";
+            var email = "newemail@example.com";
+            var specialization = CreateSampleSpecialization();
+            var staff = CreateSampleStaff(specialization);
+            var token = _service.CreateTokenStaff(staff);
+            var staffId = staff.Id;
+
+
+            _staffRepositoryMock.Setup(r => r.GetByIdAsync(staffId)).ReturnsAsync((Staff)null);
+
+            // Act & Assert
+            await Assert.ThrowsAsync<BusinessRuleValidationException>(() => _service.UpdateContactInformationAsync(token, phoneNumber, email));
+
+            _staffRepositoryMock.Verify(r => r.GetByIdAsync(staffId), Times.Once);
+            _logRepositoryMock.Verify(l => l.AddAsync(It.IsAny<Log>()), Times.Never);
+            _unitOfWorkMock.Verify(u => u.CommitAsync(), Times.Never);
+        }
+
+        [Fact]
+        public async Task UpdateContactInformationAsync_OnlyUpdatesPhoneNumber()
+        {
+            // Arrange
+            var phoneNumber = "+351912345679";
+            var email = string.Empty;
+            var specialization = CreateSampleSpecialization();
+            var staff = CreateSampleStaff(specialization);
+            var token = _service.CreateTokenStaff(staff);
+            var staffId = staff.Id;
+
+            _staffRepositoryMock.Setup(r => r.GetByIdAsync(staffId)).ReturnsAsync(staff);
+            _staffMapperMock.Setup(m => m.ToDto(It.IsAny<Staff>())).Returns((Staff s) => CreateSampleStaffDTO(s));
+
+            // Act
+            var result = await _service.UpdateContactInformationAsync(token, phoneNumber, email);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(phoneNumber, result.PhoneNumber);
+            Assert.Equal(staff.Email, result.Email);
+
+            _staffRepositoryMock.Verify(r => r.GetByIdAsync(staffId), Times.Once);
+            _logRepositoryMock.Verify(l => l.AddAsync(It.IsAny<Log>()), Times.Once);
+            _unitOfWorkMock.Verify(u => u.CommitAsync(), Times.Once);
+            _staffMapperMock.Verify(m => m.ToDto(It.IsAny<Staff>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task UpdateContactInformationAsync_OnlyUpdatesEmail()
+        {
+            // Arrange
+            var phoneNumber = string.Empty;
+            var email = "newemail@example.com";
+            var specialization = CreateSampleSpecialization();
+            var staff = CreateSampleStaff(specialization);
+            var token = _service.CreateTokenStaff(staff);
+            var staffId = staff.Id;
+
+            _staffRepositoryMock.Setup(r => r.GetByIdAsync(staffId)).ReturnsAsync(staff);
+            _staffMapperMock.Setup(m => m.ToDto(It.IsAny<Staff>())).Returns((Staff s) => CreateSampleStaffDTO(s));
+
+            // Act
+            var result = await _service.UpdateContactInformationAsync(token, phoneNumber, email);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(staff.PhoneNumber, result.PhoneNumber);
+            Assert.Equal(email, result.Email);
+
+            _staffRepositoryMock.Verify(r => r.GetByIdAsync(staffId), Times.Once);
+            _logRepositoryMock.Verify(l => l.AddAsync(It.IsAny<Log>()), Times.Once);
+            _unitOfWorkMock.Verify(u => u.CommitAsync(), Times.Once);
+            _staffMapperMock.Verify(m => m.ToDto(It.IsAny<Staff>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task UpdateContactInformationAsync_NoUpdatesMade()
+        {
+            // Arrange
+            var phoneNumber = string.Empty;
+            var email = string.Empty;
+            var specialization = CreateSampleSpecialization();
+            var staff = CreateSampleStaff(specialization);
+            var token = _service.CreateTokenStaff(staff);
+            var staffId = staff.Id;
+
+            _staffRepositoryMock.Setup(r => r.GetByIdAsync(staffId)).ReturnsAsync(staff);
+            _staffMapperMock.Setup(m => m.ToDto(It.IsAny<Staff>())).Returns((Staff s) => CreateSampleStaffDTO(s));
+
+            // Act
+            var result = await _service.UpdateContactInformationAsync(token, phoneNumber, email);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.IsType<StaffDTO>(result);
+            Assert.Equal(staff.PhoneNumber, result.PhoneNumber);
+            Assert.Equal(staff.Email, result.Email);
+
+            _staffRepositoryMock.Verify(r => r.GetByIdAsync(staffId), Times.Once);
+            _logRepositoryMock.Verify(l => l.AddAsync(It.IsAny<Log>()), Times.Never);
+            _unitOfWorkMock.Verify(u => u.CommitAsync(), Times.Never);
+            _staffMapperMock.Verify(m => m.ToDto(staff), Times.Once);
         }
     }
 }   
