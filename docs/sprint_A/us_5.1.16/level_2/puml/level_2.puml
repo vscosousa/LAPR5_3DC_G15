@@ -1,20 +1,60 @@
-@startuml level_2
+@startuml
+title Doctor Operation Request Flow - Level 2
 
-title Level 2 Diagram
+actor Doctor
+participant "Frontend" as FE
+participant "OperationRequest\nController" as ORC
+participant "OperationRequest\nService" as ORS
+participant "StaffService" as SS
+participant "PatientService" as PS
+participant "OperationType\nService" as OTS
+participant "AuditService" as AS
+database "Database" as DB
 
-hide empty members
-'skinparam Linetype ortho
+Doctor -> FE: Fill Operation Request Form
+activate FE
 
-skinparam class {
-    BackgroundColor<<valueObject>> #D6EAF8
-    BackgroundColor<<root>> #FDEBD0
-    BackgroundColor<<service>> #D1F2EB
-    BackgroundColor #FEF9E7
-    ArrowColor Black
-}
+FE -> ORC: POST /api/operationrequest\n(CreatingOperationRequestDTO)
+activate ORC
 
-skinparam package {
-    BackgroundColor #EBF5FB
-}
+ORC -> ORS: CreateOperationRequestAsync(dto)
+activate ORS
+
+' Validation Steps
+ORS -> SS: GetByIdAsync(staffId)
+SS -> DB: SELECT FROM Staffs
+DB --> SS: Staff Data
+SS --> ORS: Staff Details
+
+ORS -> PS: GetByIdAsync(patientId)
+PS -> DB: SELECT FROM Patients
+DB --> PS: Patient Data
+PS --> ORS: Patient Details
+
+ORS -> OTS: GetByIdAsync(operationTypeId)
+OTS -> DB: SELECT FROM OperationTypes
+DB --> OTS: OperationType Data
+OTS --> ORS: OperationType Details
+
+' Specialization Validation
+ORS -> ORS: Validate Staff Specialization\nMatches Operation Type
+
+' Save Operation Request
+ORS -> DB: INSERT INTO OperationRequests
+DB --> ORS: OperationRequest ID
+
+' Create Audit Log
+ORS -> AS: LogAsync(new Log(TypeOfAction.Create))
+AS -> DB: INSERT INTO Logs
+DB --> AS: Log ID
+
+ORS --> ORC: OperationRequestDTO
+deactivate ORS
+
+ORC --> FE: 201 Created
+deactivate ORC
+
+FE --> Doctor: Show Success Message
+deactivate FE
 
 @enduml
