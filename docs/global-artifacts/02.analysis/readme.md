@@ -15,8 +15,8 @@ An association is a relationship between instances of objects that indicates a r
 
 | Concept (A)          | Association              | Concept (B)           |
 |----------------------|--------------------------|------------------------|
-| User                 | has                      | Patient               |
-| User                 | has                      | Staff                 |
+| User                 | can be                   | Patient               |
+| User                 | can be                   | Staff                 |
 | User                 | has                      | Username              |
 | User                 | has                      | Role                  |
 | User                 | has                      | Email                 |
@@ -58,6 +58,7 @@ An association is a relationship between instances of objects that indicates a r
 | SurgeryRoom          | has                      | Capacity              |
 | SurgeryRoom          | has                      | AssignedEquipment     |
 | SurgeryRoom          | has                      | CurrentStatus         |
+| SurgeryRoom          | has                      | Maintenance Slots     |
 
 
 ## Domain Model

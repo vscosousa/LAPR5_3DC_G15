@@ -106,8 +106,8 @@ class FullName <<valueObject>> <<(V, #FF8B40)>> {}
 class Email <<valueObject>> <<(V, #FF8B40)>> {}
 class PhoneNumber <<valueObject>> <<(V, #FF8B40)>> {}
 
-User "1" -right-> "1" Patient : has
-User "1" -left-> "1" Staff : has
+User "1" -right-> "1" Patient : can be
+User "1" -left-> "1" Staff : can be
 User "1" --> "1" Username : has
 User "1" --> "1" Role : has
 User "1" --> "1" Email : has

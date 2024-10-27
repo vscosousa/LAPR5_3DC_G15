@@ -33,8 +33,8 @@ entity Appointment <<Entity>> {}
 
 entity SurgeryRoom <<Entity>> {}
 
-User "1" -left-> "1" Patient : has
-User "1" -right-> "1" Staff : has
+User "1" -left-> "1" Patient : can be
+User "1" -right-> "1" Staff : can be
 
 Staff "1" --> "1" Specialization : has
 Staff "1" -right-> "*" OperationRequest : if doctor then it manages
