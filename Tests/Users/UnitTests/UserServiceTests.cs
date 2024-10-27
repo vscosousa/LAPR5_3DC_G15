@@ -641,6 +641,108 @@ namespace DDDSample1.Tests.Users.UnitTests
             var converted = Convert.FromBase64String(output);
             return Encoding.UTF8.GetString(converted);
         }
+
+        // Unit Test for RequestPasswordReset - US5.1.2
+        [Fact]
+        public async Task RequestPasswordReset_Successfully()
+        {
+            // Arrange
+            var user = new User("afonsotest@gmail.com", "Afonso", Role.Admin, Guid.NewGuid());
+            user.Activate();
+
+            _userRepositoryMock.Setup(repo => repo.GetUserByEmailAsync(user.Email))
+                               .ReturnsAsync(user);
+
+            _mailServiceMock.Setup(mail => mail.SendResetPasswordEmailAsync(user.Email, user.Username, It.IsAny<string>()))
+                            .Returns(Task.CompletedTask);
+
+            // Act
+            await _userService.RequestPasswordReset(user.Email);
+
+            // Assert
+            _userRepositoryMock.Verify(repo => repo.GetUserByEmailAsync(user.Email), Times.Once);
+            _mailServiceMock.Verify(mail => mail.SendResetPasswordEmailAsync(user.Email, user.Username, It.IsAny<string>()), Times.Once);
+        }
+
+        
+        [Fact]
+        public async Task RequestPasswordReset_EmailNotRegistered_ThrowsException()
+        {
+            // Arrange
+            var email = "nonexistent@example.com";
+
+            _userRepositoryMock.Setup(repo => repo.GetUserByEmailAsync(email))
+                               .ReturnsAsync((User)null);
+
+            // Act & Assert
+            var exception = await Assert.ThrowsAsync<BusinessRuleValidationException>(() => _userService.RequestPasswordReset(email));
+            Assert.Equal("Email not registered", exception.Message);
+        }
+
+        [Fact]
+        public async Task RequestPasswordReset_AccountNotActive_ThrowsException()
+        {
+            // Arrange
+            var user = new User("afonsotest@gmail.com", "Afonso", Role.Admin, Guid.NewGuid());
+
+            _userRepositoryMock.Setup(repo => repo.GetUserByEmailAsync(user.Email))
+                               .ReturnsAsync(user);
+
+            // Act & Assert
+            var exception = await Assert.ThrowsAsync<BusinessRuleValidationException>(() => _userService.RequestPasswordReset(user.Email));
+            Assert.Equal("Account not ative yet, check your email to activate the account.", exception.Message);
+        }
+
+        // Unit Test for ResetPassword - US5.1.2
+        [Fact]
+        public async Task ResetPassword_Successfully()
+        {
+            // Arrange
+            var user = new User("afonsotest@gmail.com", "Afonso", Role.Admin, Guid.NewGuid());
+            user.Activate();
+            var token = _userService.CreatePasswordResetToken(user);
+            var newPassword = "NewPassword123@";
+
+            _userRepositoryMock.Setup(repo => repo.GetByIdAsync(user.Id))
+                               .ReturnsAsync(user);
+
+            // Act
+            await _userService.ResetPassword(token, newPassword);
+
+            // Assert
+            _userRepositoryMock.Verify(repo => repo.GetByIdAsync(user.Id), Times.Once);
+            _userRepositoryMock.Verify(repo => repo.UpdateAsync(user), Times.Once);
+            _unitOfWorkMock.Verify(uow => uow.CommitAsync(), Times.Once);
+        }
+
+        [Fact]
+        public async Task ResetPassword_InvalidToken_ThrowsException()
+        {
+            // Arrange
+            var expiredtoken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiYWRtaW4iLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJhZG1pbkBnbWFpbC5jb20iLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9hbWFpZGVudGlmaWVyIjoic2VjdXJpdHkiLCJleHBhbml0eSI6MTcyOTYwNjIwMn0.9n-Z0lRhhg2I5D_vgh0ECjfjE1lQAWYw3He3Q9cS1to";
+            var newPassword = "NewPassword123@";
+
+            // Act & Assert
+            var exception = await Assert.ThrowsAsync<SecurityTokenException>(() => _userService.ResetPassword(expiredtoken, newPassword));
+            Assert.Contains("Token validation failed", exception.Message);
+        }
+
+        [Fact]
+        public async Task ResetPassword_UserNotFound_ThrowsException()
+        {
+            // Arrange
+            var user = new User("afonsotest@gmail.com", "Afonso", Role.Admin, Guid.NewGuid());
+            user.Activate();
+            var token = _userService.CreatePasswordResetToken(user);
+            var newPassword = "NewPassword123@";
+
+            _userRepositoryMock.Setup(repo => repo.GetByIdAsync(user.Id))
+                               .ReturnsAsync((User)null);
+
+            // Act & Assert
+            var exception = await Assert.ThrowsAsync<BusinessRuleValidationException>(() => _userService.ResetPassword(token, newPassword));
+            Assert.Equal("User not found.", exception.Message);
+        }
     }
 }
 

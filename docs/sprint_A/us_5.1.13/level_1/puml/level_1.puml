@@ -25,7 +25,7 @@ activate System
 System --> A: Asks for Staff's Id and the data to edit
 deactivate System
 A -> System: Sends Staff's data
-note right of System: The data can be Phone Number and/or Email and/or Avaliability Slots \nand/or Specialization
+note right of System: The data can be Phone Number and/or Email\n and/or Avaliability Slots and/or Specialization
 activate System
 System -> System: Validates Staff's data and tries to update Staff's data
 System --> A: Returns Operation In/Success message

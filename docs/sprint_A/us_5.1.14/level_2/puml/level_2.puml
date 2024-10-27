@@ -27,7 +27,7 @@ Backoffice --> A: Asks for Staff's Id to deactivate
 deactivate Backoffice
 A -> Backoffice: Sends Staff's Id
 activate Backoffice
-Backoffice -> Backoffice: Validates the Staff's Id and deactivates the Staff's profile
+Backoffice -> Backoffice: Validates the Staff's Id and\n deactivates the Staff's profile
 Backoffice --> A: Returns Operation In/Success message
 deactivate Backoffice
 

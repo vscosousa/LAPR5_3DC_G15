@@ -12,6 +12,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace DDDSample1.Domain.Staffs
 {
@@ -80,94 +81,106 @@ namespace DDDSample1.Domain.Staffs
         //Update Staff - Phone Number, Email, Specialization, Availability Slots
         public async Task<StaffDTO> UpdateStaffAsync(Guid id, UpdateStaffDTO dto)
         {
-            var staff = await _repository.GetByIdAsync(new StaffId(id));
+            try{
+                var staff = await _repository.GetByIdAsync(new StaffId(id));
 
-            if (staff == null)
-                return null;
+                if (staff == null)
+                    return null;
 
-            var updatedFields = new List<string>();
-            var newUpdatedContacts = new UpdateStaffDTO();
-            var sendEmail = false;
+                var updatedFields = new List<string>();
+                var newUpdatedContacts = new UpdateStaffDTO();
+                var sendEmail = false;
 
-            // Update Phone Number
-            if (!string.IsNullOrEmpty(dto.PhoneNumber) && staff.PhoneNumber != dto.PhoneNumber)
-            {
-                if (await _repository.GetByPhoneNumberAsync(dto.PhoneNumber) != null)
-                    throw new BusinessRuleValidationException("Phone number is already in use.");
-                sendEmail = true;
-                newUpdatedContacts.SetPhoneNumber(dto.PhoneNumber);
-                updatedFields.Add("Sent confirmation email to Staff to update phone number");
-            }
-
-            // Update Email
-            if (!string.IsNullOrEmpty(dto.Email) && staff.Email != dto.Email)
-            {
-                if (await _repository.GetByEmailAsync(dto.Email) != null)
-                    throw new BusinessRuleValidationException("Email is already in use.");
-
-                sendEmail = true;
-                newUpdatedContacts.SetEmail(dto.Email);
-                updatedFields.Add("Sent confirmation email to Staff to update email");
-            }
-
-            // Send Email
-            if(sendEmail){
-                var token = CreateTokenStaff(staff);
-                var link = GenerateLinkToStaff(token, newUpdatedContacts);
-                await _mailService.SendEmailToStaff(staff.Email, staff.FullName, newUpdatedContacts, link);
-            }
-
-            // Add Availability Slots
-            if (!string.IsNullOrEmpty(dto.AddAvailabilitySlots))
-            {
-                var addSlots = dto.AddAvailabilitySlots.Split(',')
-                                .Select(slot => DateTime.Parse(slot.Trim()))
-                                .ToArray();
-                foreach (var slot in addSlots)
+                // Update Phone Number
+                if (!string.IsNullOrEmpty(dto.PhoneNumber) && staff.PhoneNumber != dto.PhoneNumber)
                 {
-                    staff.AddAvailabilitySlot(slot);
+                    if (await _repository.GetByPhoneNumberAsync(dto.PhoneNumber) != null)
+                        throw new BusinessRuleValidationException("Phone number is already in use.");
+                    sendEmail = true;
+                    newUpdatedContacts.SetPhoneNumber(dto.PhoneNumber);
+                    updatedFields.Add("Sent confirmation email to Staff to update phone number");
                 }
-                updatedFields.Add("Added Availability Slots");
-            }
 
-            // Remove Availability Slots
-            if (!string.IsNullOrEmpty(dto.RemoveAvailabilitySlots))
-            {
-                var removeSlots = dto.RemoveAvailabilitySlots.Split(',')
+                // Update Email
+                if (!string.IsNullOrEmpty(dto.Email) && staff.Email != dto.Email)
+                {
+                    if (await _repository.GetByEmailAsync(dto.Email) != null)
+                        throw new BusinessRuleValidationException("Email is already in use.");
+
+                    sendEmail = true;
+                    newUpdatedContacts.SetEmail(dto.Email);
+                    updatedFields.Add("Sent confirmation email to Staff to update email");
+                }
+
+                // Send Email
+                if(sendEmail){
+                    var token = CreateTokenStaff(staff);
+                    Console.WriteLine("---------------- Token: " + token);
+                    var link = GenerateLinkToStaff(token, newUpdatedContacts);
+                    await _mailService.SendEmailToStaff(staff.Email, staff.FullName, newUpdatedContacts, link);
+                }
+
+                // Add Availability Slots
+                if (!string.IsNullOrEmpty(dto.AddAvailabilitySlots))
+                {
+                    var addSlots = dto.AddAvailabilitySlots.Split(',')
                                     .Select(slot => DateTime.Parse(slot.Trim()))
                                     .ToArray();
-                foreach (var slot in removeSlots)
-                {
-                    staff.RemoveAvailabilitySlot(slot);
+                    foreach (var slot in addSlots)
+                    {
+                        staff.AddAvailabilitySlot(slot);
+                    }
+                    updatedFields.Add("Added Availability Slots");
                 }
-                updatedFields.Add("Removed Availability Slots");
-            }
 
-            // Update Specialization
-            if (!string.IsNullOrEmpty(dto.SpecializationName))
-            {   
-                var specialization = _specializationRepository.GetSpecIdByOptionAsync(dto.SpecializationName).Result;
-                if (specialization == null)
+                // Remove Availability Slots
+                if (!string.IsNullOrEmpty(dto.RemoveAvailabilitySlots))
                 {
-                    throw new BusinessRuleValidationException($"Specialization with name {dto.SpecializationName} not found.");
+                    var removeSlots = dto.RemoveAvailabilitySlots.Split(',')
+                                        .Select(slot => DateTime.Parse(slot.Trim()))
+                                        .ToArray();
+                    foreach (var slot in removeSlots)
+                    {
+                        staff.RemoveAvailabilitySlot(slot);
+                    }
+                    updatedFields.Add("Removed Availability Slots");
                 }
-                if (staff.SpecializationId.ToString() != dto.SpecializationId.ToString()){
-                    dto.SetSpecializationId(specialization.Id.AsGuid());
-                    staff.ChangeSpecializationId(specialization.Id);
-                    updatedFields.Add("Specialization");
-                }
-            }
 
-            if (updatedFields.Count > 0)
+                // Update Specialization
+                if (!string.IsNullOrEmpty(dto.SpecializationName))
+                {   
+                    var specialization = _specializationRepository.GetSpecIdByOptionAsync(dto.SpecializationName).Result;
+                    if (specialization == null)
+                    {
+                        throw new BusinessRuleValidationException($"Specialization with name {dto.SpecializationName} not found.");
+                    }
+                    if (staff.SpecializationId.ToString() != dto.SpecializationId.ToString()){
+                        dto.SetSpecializationId(specialization.Id.AsGuid());
+                        staff.ChangeSpecializationId(specialization.Id);
+                        updatedFields.Add("Specialization");
+                    }
+                }
+
+                if (updatedFields.Count > 0)
+                {
+                    var logMessage = $"Staff updated. The following fields were updated: "+ string.Join(", ", updatedFields) +".";
+                    var log = new Log(TypeOfAction.Update, id.ToString(), logMessage);
+                    await _logRepository.AddAsync(log);
+
+                    await _unitOfWork.CommitAsync();
+                }
+
+                return _mapper.ToDto(staff);
+            }
+            catch (Exception ex)
             {
-                var logMessage = $"Staff updated. The following fields were updated: "+ string.Join(", ", updatedFields) +".";
-                var log = new Log(TypeOfAction.Update, id.ToString(), logMessage);
-                await _logRepository.AddAsync(log);
-
-                await _unitOfWork.CommitAsync();
+                Console.WriteLine($"An error occurred: {ex.Message}");
+                if (ex.InnerException != null)
+                {
+                    Console.WriteLine($"Inner exception: {ex.InnerException.Message}");
+                }
+                throw;
             }
-
-            return _mapper.ToDto(staff);
         }
 
         public async Task<StaffDTO> UpdateContactInformationAsync(string token, string phoneNumber , string email)
@@ -182,13 +195,15 @@ namespace DDDSample1.Domain.Staffs
 
                 var updatedFields = new List<string>();
 
-                if (!string.IsNullOrEmpty(phoneNumber))
+                if (!string.IsNullOrEmpty(phoneNumber)) {
                     staff.ChangePhoneNumber(phoneNumber);
-                    updatedFields.Add("Phone Number Upadted");
-
-                if(!string.IsNullOrEmpty(email))
+                    updatedFields.Add("Phone Number Updated");
+                }
+                
+                if (!string.IsNullOrEmpty(email)) {
                     staff.ChangeEmail(email);
-                    updatedFields.Add("Email confirmed Upadted");
+                    updatedFields.Add("Email Updated");
+                }
 
                 if (updatedFields.Count > 0){
                     var logMessage = "Staff confirmed update:"+ string.Join(", ", updatedFields) +".";
@@ -196,7 +211,6 @@ namespace DDDSample1.Domain.Staffs
                     await _logRepository.AddAsync(log);
 
                     await _unitOfWork.CommitAsync();
-
                 }
 
                 return _mapper.ToDto(staff);
@@ -294,7 +308,7 @@ namespace DDDSample1.Domain.Staffs
                 var staff = await _repository.GetByIdAsync(new StaffId(id));
 
                 if (staff == null)
-                    throw new BusinessRuleValidationException("Staff not found.");
+                    return null;
 
                 staff.Deactivate();
 
@@ -319,24 +333,35 @@ namespace DDDSample1.Domain.Staffs
         //Search Staff Profiles - First Name, Last Name, Full Name, Email, SpecializationName
         public async Task<List<StaffDTO>> SearchStaffProfiles(SearchStaffDTO dto)
         {   
-            if (!string.IsNullOrEmpty(dto.SpecializationName)){
-                var specialization = _specializationRepository.GetSpecIdByOptionAsync(dto.SpecializationName).Result;
-                if (specialization == null)
-                {
-                    throw new BusinessRuleValidationException($"Specialization with name {dto.SpecializationName} not found.");
-                }
-                dto.SetSpecializationId(specialization.Id.AsGuid());
-            }
-            
-            var staffProfiles = await _repository.SearchStaffAsync(dto);
-
-            if (staffProfiles == null || staffProfiles.Count == 0)
+            try
             {
-                return null;
+                if (!string.IsNullOrEmpty(dto.SpecializationName)){
+                    var specialization = _specializationRepository.GetSpecIdByOptionAsync(dto.SpecializationName).Result;
+                    if (specialization == null)
+                    {
+                        throw new BusinessRuleValidationException($"Specialization with name {dto.SpecializationName} not found.");
+                    }
+                    dto.SetSpecializationId(specialization.Id.AsGuid());
+                }
+
+                var staffProfiles = await _repository.SearchStaffAsync(dto);
+
+                if (staffProfiles == null || staffProfiles.Count == 0)
+                {
+                    return null;
+                }
+
+                return staffProfiles.ConvertAll(_mapper.ToDto);
             }
-
-            return staffProfiles.ConvertAll(_mapper.ToDto);
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred: {ex.Message}");
+                if (ex.InnerException != null)
+                {
+                    Console.WriteLine($"Inner exception: {ex.InnerException.Message}");
+                }
+                throw;
+            }
         }
-
     }
 }

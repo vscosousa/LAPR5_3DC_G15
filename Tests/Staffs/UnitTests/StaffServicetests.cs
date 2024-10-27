@@ -342,8 +342,10 @@ namespace DDDSample1.Tests.Staffs.UnitTests
             _staffRepositoryMock.Setup(r => r.GetByIdAsync(existingStaff.Id)).ReturnsAsync((Staff)null);
 
             // Act & Assert
-            await Assert.ThrowsAsync<BusinessRuleValidationException>(() => _service.DeactivateStaffAsync(staffId));
-
+            var result = await _service.DeactivateStaffAsync(staffId);
+        
+            // Assert
+            Assert.Null(result);
             _staffRepositoryMock.Verify(r => r.GetByIdAsync(It.IsAny<StaffId>()), Times.Once);
             _logRepositoryMock.Verify(l => l.AddAsync(It.IsAny<Log>()), Times.Never);
             _unitOfWorkMock.Verify(u => u.CommitAsync(), Times.Never);

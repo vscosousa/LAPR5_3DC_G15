@@ -1,6 +1,7 @@
 
 using System;
 using System.Threading.Tasks;
+using DDDSample1.Domain.Shared;
 using DDDSample1.Domain.Users;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -52,12 +53,12 @@ namespace DDDSample1.Controllers
             }
         }
 
-        [HttpPost("RequestResetPassword"), AllowAnonymous]
-        public async Task<IActionResult> RequestPasswordReset(string email)
+        [HttpPost("RequestResetPassword"), Authorize(Roles = "Admin, Doctor, Nurse, Technician")]
+        public async Task<IActionResult> RequestPasswordReset([FromBody] string email)
         {
             if (string.IsNullOrWhiteSpace(email))
             {
-                return BadRequest("Email is required.");
+                return NotFound( "Email is required." );
             }
 
             try
@@ -65,16 +66,19 @@ namespace DDDSample1.Controllers
                 await _userService.RequestPasswordReset(email);
                 return Ok("Password reset link has been sent to your email.");
             }
+            catch (BusinessRuleValidationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
             catch (Exception ex)
             {
-                // Log exception (ex) if needed
-                return StatusCode(500, ex.Message);
+                return StatusCode(500, new { message = "An error occurred while deactivating the staff", details = ex.Message });
             }
         }
 
         // POST: api/PasswordReset/Reset
         [HttpPost("ResetPassword"), AllowAnonymous]
-        public async Task<IActionResult> ResetPassword(string token, string newPassword)
+        public async Task<IActionResult> ResetPassword([FromQuery]string token, [FromBody]string newPassword)
         {
             if (string.IsNullOrWhiteSpace(token) ||
                 string.IsNullOrWhiteSpace(newPassword))
@@ -87,17 +91,15 @@ namespace DDDSample1.Controllers
                 await _userService.ResetPassword(token, newPassword);
                 return Ok("Your password has been reset successfully.");
             }
-            catch (ArgumentException ex)
+            catch (BusinessRuleValidationException ex)
             {
                 return BadRequest(ex.Message);
             }
             catch (Exception ex)
             {
-
                 return StatusCode(500, ex.Message);
             }
         }
-
 
         //Activate user and set password
         [HttpPost("Activate")]

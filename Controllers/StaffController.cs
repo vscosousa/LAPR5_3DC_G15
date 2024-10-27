@@ -22,7 +22,7 @@ namespace DDDSample1.Controllers
         }
 
         [HttpPost]
-        [AllowAnonymous]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<StaffDTO>> CreateStaff(CreatingStaffDTO dto)
         {
             try
@@ -32,10 +32,13 @@ namespace DDDSample1.Controllers
                 // Retorna o staff criado com o status 201 Created
                 return Ok(createdStaff);
             }
+            catch (BusinessRuleValidationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
             catch (Exception ex)
             {
-                // Lida com outros tipos de erros
-                return StatusCode(500, $"An error occurred while creating the staff: {ex.Message}");
+                return StatusCode(500, new { message = "An error occurred while deactivating the staff", details = ex.Message });
             }
         }   
 
@@ -64,6 +67,33 @@ namespace DDDSample1.Controllers
             }
         }
 
+        // PUT: api/Staff/ConfirmUpdates
+        [HttpPut("ConfirmUpdates")] 
+        public async Task<IActionResult> UpdatePhoneNumberAsync([FromQuery] string  phoneNumber, [FromQuery]string email, [FromQuery] string token)
+        {   
+            if (string.IsNullOrWhiteSpace(token))
+            {
+                return BadRequest("Token are required.");
+            }
+            if (string.IsNullOrWhiteSpace(phoneNumber) && string.IsNullOrWhiteSpace(email))
+            {
+                return BadRequest("Phone number or email are required.");
+            }
+            try
+            {
+                await _staffService.UpdateContactInformationAsync(token, phoneNumber, email);
+                return Ok("Updated Profile Staff successfully.");
+            }
+            catch (BusinessRuleValidationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An error occurred while deactivating the staff", details = ex.Message });
+            }
+        }
+
         [HttpPut("deactivate/{id}")]
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult<StaffDTO>> DeactivateStaff(Guid id)
@@ -89,21 +119,6 @@ namespace DDDSample1.Controllers
             }
         }
 
-        [HttpPut("ConfirmUpdates")]
-        public async Task<IActionResult> UpdatePhoneNumberAsync([FromQuery] string  phoneNumber, [FromQuery]string email, [FromQuery] string token)
-        {
-            try
-            {
-                await _staffService.UpdateContactInformationAsync(token, phoneNumber, email);
-                return Ok("Updated Profile Staff successfully.");
-            }
-            catch (Exception ex)
-            {
-                return BadRequest($"An error occurred: {ex.Message}");
-            }
-        }
-        
-
         [HttpGet("search")]
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult<IEnumerable<StaffDTO>>> SearchStaffProfiles(string firstName, string lastName, string email, string fullName, string specializationName)
@@ -128,9 +143,13 @@ namespace DDDSample1.Controllers
 
                 return Ok(staffProfiles);
             }
+            catch (BusinessRuleValidationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
             catch (Exception ex)
             {
-                return StatusCode(500, $"An error occurred while searching for staff profiles: {ex.Message}");
+                return StatusCode(500, new { message = "An error occurred while deactivating the staff", details = ex.Message });
             }
         }
 

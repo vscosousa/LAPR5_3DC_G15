@@ -18,7 +18,7 @@ skinparam package {
 }
 
 actor Admin as A
-participant "Backoffice" as BO
+participant "MRD" as BO
 
 activate A
 A -> BO: Asks to create a Staff
