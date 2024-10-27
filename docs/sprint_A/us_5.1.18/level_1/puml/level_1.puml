@@ -1,20 +1,38 @@
-@startuml level_1
+@startuml
+title Doctor Operation Request Deletion Flow - Level 1
 
-title Level 1 Diagram
+actor Doctor
+participant "Healthcare\nSystem" as System
+participant "Planning\nModule" as Planning
+database Database
 
-hide empty members
-'skinparam Linetype ortho
+Doctor -> System: Delete Operation Request
+activate System
 
-skinparam class {
-    BackgroundColor<<valueObject>> #D6EAF8
-    BackgroundColor<<root>> #FDEBD0
-    BackgroundColor<<service>> #D1F2EB
-    BackgroundColor #FEF9E7
-    ArrowColor Black
-}
+System -> System: Request Confirmation
+System --> Doctor: Confirmation Prompt
 
-skinparam package {
-    BackgroundColor #EBF5FB
-}
+Doctor -> System: Confirm Deletion
+activate System
+
+System -> System: Validate Authorization
+System -> System: Check Request Status
+
+alt Request Can Be Deleted
+    System -> Database: Mark as Deleted
+    Database --> System: Confirmation
+    
+    System -> Planning: Notify Deletion
+    Planning --> System: Acknowledgment
+    
+    System -> Database: Log Deletion
+    Database --> System: Log Confirmation
+    
+    System --> Doctor: Success Message
+else Cannot Delete
+    System --> Doctor: Error Message
+end
+
+deactivate System
 
 @enduml

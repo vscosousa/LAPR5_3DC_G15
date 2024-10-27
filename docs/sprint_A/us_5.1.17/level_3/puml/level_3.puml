@@ -1,20 +1,100 @@
-@startuml level_3
+@startuml
+title Doctor Operation Request Update Flow - Level 3
 
-title Level 3 Diagram
+actor Doctor
+participant "OperationRequest\nController" as ORC
+participant "OperationRequest\nService" as ORS
+participant "PlanningModule\nNotifier" as PMN
+participant "LogRepository" as LR
+participant "OperationRequest\nRepository" as OR
+database "Database" as DB
 
-hide empty members
-'skinparam Linetype ortho
+Doctor -> ORC: PUT /api/operationrequest/{id}\nHeaders: {\n  Authorization: Bearer JWT,\n  Content-Type: application/json\n}\nBody: UpdateOperationRequestDTO {\n  id: string,\n  patientId: string,\n  staffId: string,\n  operationTypeId: string,\n  deadline: DateTime,\n  priority: PriorityLevel,\n  status: RequestStatus\n}
+activate ORC
 
-skinparam class {
-    BackgroundColor<<valueObject>> #D6EAF8
-    BackgroundColor<<root>> #FDEBD0
-    BackgroundColor<<service>> #D1F2EB
-    BackgroundColor #FEF9E7
-    ArrowColor Black
-}
+ORC -> ORC: [Authorize(Roles = "Doctor")]\nValidateJWT()\ndoctorId = User.FindFirst(\n  ClaimTypes.NameIdentifier)?.Value
 
-skinparam package {
-    BackgroundColor #EBF5FB
-}
+alt id != dto.Id
+    ORC --> Doctor: 400 Bad Request\n"ID mismatch"
+end
+
+ORC -> ORS: UpdateOperationRequestAsync(id, dto, doctorId)
+activate ORS
+
+' Get and validate existing request
+ORS -> OR: GetByIdAsync(new OperationRequestId(Guid.Parse(id)))
+OR -> DB: SELECT * FROM OperationRequests\nWHERE Id = @id AND IsDeleted = 0
+DB --> OR: OperationRequest
+OR --> ORS: OperationRequest
+
+alt Request Not Found
+    ORS --> ORC: throw KeyNotFoundException\n"Operation Request not found"
+    ORC --> Doctor: 404 Not Found
+end
+
+' Validate doctor authorization
+alt existingRequest.StaffId.ToString() != requestingDoctorId
+    ORS --> ORC: throw UnauthorizedAccessException\n"Only the requesting doctor can update"
+    ORC --> Doctor: 403 Forbidden
+end
+
+' Store old values for logging
+ORS -> ORS: var oldDeadline = existingRequest.Deadline;\nvar oldPriority = existingRequest.Priority;
+
+' Update request details
+ORS -> ORS: existingRequest.UpdateDetails(\n  new PatientId(dto.PatientId),\n  new StaffId(dto.StaffId),\n  new OperationTypeId(dto.OperationTypeId),\n  dto.Deadline ?? throw new ArgumentException(),\n  dto.Priority\n)
+
+' Track changes for logging
+ORS -> ORS: var changes = new List<string>();\nif (oldDeadline != dto.Deadline)\n  changes.Add($"Deadline: {oldDeadline} -> {dto.Deadline}");\nif (oldPriority != dto.Priority)\n  changes.Add($"Priority: {oldPriority} -> {dto.Priority}");
+
+' Create audit log
+ORS -> LR: AddAsync(new Log(\n  TypeOfAction.Update,\n  existingRequest.Id.ToString(),\n  $"Operation request updated: {string.Join(", ", changes)}"\n))
+LR -> DB: INSERT INTO Logs (\n  Id, Action, EntityId,\n  Message, Timestamp\n) VALUES (@values)
+DB --> LR: LogId
+
+' Notify planning module
+ORS -> PMN: NotifyOperationRequestUpdateAsync(existingRequest)
+activate PMN
+PMN -> PMN: var response = await _httpClient.PutAsync(\n  $"{_planningModuleUrl}/api/planning/operations/{id}",\n  new StringContent(JsonSerializer.Serialize(request))\n)
+alt HTTP Request Failed
+    PMN -> PMN: Log error but continue\nConsole.WriteLine($"Failed to notify planning module: {ex.Message}")
+end
+PMN --> ORS: void
+deactivate PMN
+
+' Save changes
+ORS -> OR: UpdateAsync(existingRequest)
+OR -> DB: UPDATE OperationRequests\nSET PatientId = @patientId,\n    StaffId = @staffId,\n    OperationTypeId = @operationTypeId,\n    Deadline = @deadline,\n    Priority = @priority,\n    UpdatedAt = @now\nWHERE Id = @id
+DB --> OR: Success
+
+ORS -> DB: COMMIT Transaction
+DB --> ORS: Success
+
+ORS --> ORC: existingRequest
+deactivate ORS
+
+ORC --> Doctor: 200 OK {\n  message: "Operation request updated successfully",\n  operationRequest: OperationRequestDTO\n}
+deactivate ORC
+
+note right of DB #LightGreen
+Database Constraints:
+- PK_OperationRequests (Id)
+- FK_OperationRequests_Patients (PatientId)
+- FK_OperationRequests_Staffs (StaffId)
+- FK_OperationRequests_OperationTypes (OperationTypeId)
+- CK_OperationRequests_Status IN ('Pending','Approved',\n'Scheduled','Completed','Cancelled')
+- CK_OperationRequests_Priority IN ('Low','Medium','High')
+end note
+
+note right of ORC #LightBlue
+Error Handling:
+- 400: Invalid Request/Validation
+- 401: Unauthorized
+- 403: Not Original Doctor
+- 404: Request Not Found
+- 409: Conflict
+- 500: Server Error
+All errors logged to AuditLogs
+end note
 
 @enduml
