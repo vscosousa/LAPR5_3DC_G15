@@ -46,8 +46,8 @@ The assignment of tasks (requirements/user stories/use cases) during the project
 
 | Student Name            | Vasco Sousa (1221700) | João Pereira (1211503) | Tiago Sousa (1150736) |
 |-------------------------|:---------------------:|:----------------------:|:---------------------:|
-| Vasco Sousa (1221700)   |                       |                        |                       |
-| João Pereira (1211503)  |                       |                        |                       |
+| Vasco Sousa (1221700)   |           5           |            5           |           1           |
+| João Pereira (1211503)  |           5           |            5           |           1           |
 | Tiago Sousa (1150736)   |                       |                        |                       |
 
 ### Sprint B
