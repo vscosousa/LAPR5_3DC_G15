@@ -1,20 +1,110 @@
-@startuml level_3
+@startuml
+title Patient Profile Update Flow - Level 3
 
-title Level 3 Diagram
+actor Patient
+participant "PatientController" as PC
+participant "PatientService" as PS
+participant "EmailService" as ES
+participant "AuditLogService" as ALS
+participant "PatientRepository" as PR
+database "Database" as DB
 
-hide empty members
-'skinparam Linetype ortho
+Patient -> PC: PUT /api/patient/profile\nHeaders: {\n  Authorization: Bearer JWT,\n  Content-Type: application/json\n}\nBody: UpdatePatientDTO {\n  firstName?: string,\n  lastName?: string,\n  fullName?: string,\n  email?: string,\n  phoneNumber?: string,\n  emergencyContact?: string,\n  medicalConditions?: string\n}
+activate PC
 
-skinparam class {
-    BackgroundColor<<valueObject>> #D6EAF8
-    BackgroundColor<<root>> #FDEBD0
-    BackgroundColor<<service>> #D1F2EB
-    BackgroundColor #FEF9E7
-    ArrowColor Black
-}
+PC -> PC: [Authorize(Roles = "Patient")]\nvar patientId = User.FindFirst(\n  ClaimTypes.NameIdentifier)?.Value
 
-skinparam package {
-    BackgroundColor #EBF5FB
-}
+PC -> PS: GetPatientById(Guid.Parse(patientId))
+activate PS
+PS -> PR: GetByIdAsync(new PatientId(patientId))
+PR -> DB: SELECT *\nFROM Patients\nWHERE Id = @patientId
+DB --> PR: PatientEntity
+PR --> PS: Patient
+PS --> PC: PatientDTO
+deactivate PS
+
+' Track field changes
+PC -> PC: var changes = new Dictionary<string, object>();\nif (dto.FirstName != currentPatient.FirstName)\n  changes.Add("FirstName", new { Old = currentPatient.FirstName, New = dto.FirstName });\n// ... similar for other fields
+
+PC -> ALS: LogAsync(new AuditLog {\n  UserId = patientId,\n  TypeOfAction = TypeOfAction.ProfileUpdate,\n  Changes = JsonSerializer.Serialize(new {\n    UpdatedFields = changes,\n    UpdatedBy = User.FindFirst(ClaimTypes.Name)?.Value,\n    UpdatedAt = DateTime.UtcNow\n  })\n})
+activate ALS
+ALS -> DB: INSERT INTO AuditLogs (\n  Id, UserId, TypeOfAction,\n  Changes, Timestamp\n) VALUES (@values)
+DB --> ALS: AuditLogId
+deactivate ALS
+
+PC -> PS: UpdatePatientProfile(Guid.Parse(patientId), dto)
+activate PS
+
+PS -> PR: GetByIdAsync(new PatientId(patientId))
+PR -> DB: SELECT *\nFROM Patients\nWHERE Id = @patientId\nFOR UPDATE
+DB --> PR: Patient
+
+PS -> PS: var updatedFields = new List<string>();\nforeach (var action in updateActions) {\n  action();\n}
+
+alt FirstName Changed
+    PS -> PS: patient.ChangeFirstName(dto.FirstName);\nupdatedFields.Add("First Name");
+end
+alt LastName Changed
+    PS -> PS: patient.ChangeLastName(dto.LastName);\nupdatedFields.Add("Last Name");
+end
+alt Email Changed
+    PS -> PS: ValidateEmail(dto.Email);\npatient.ChangeEmail(dto.Email);\nupdatedFields.Add("Email");
+end
+alt PhoneNumber Changed
+    PS -> PS: ValidatePhoneNumber(dto.PhoneNumber);\npatient.ChangePhoneNumber(dto.PhoneNumber);\nupdatedFields.Add("Phone Number");
+end
+alt EmergencyContact Changed
+    PS -> PS: ValidatePhoneNumber(dto.EmergencyContact);\npatient.ChangeEmergencyContact(dto.EmergencyContact);\nupdatedFields.Add("Emergency Contact");
+end
+alt MedicalConditions Changed
+    PS -> PS: patient.ChangeMedicalConditions(dto.MedicalConditions);\nupdatedFields.Add("Medical Conditions");
+end
+
+PS -> PR: UpdateAsync(patient)
+PR -> DB: UPDATE Patients\nSET FirstName = @firstName,\n    LastName = @lastName,\n    ...\nWHERE Id = @patientId
+DB --> PR: Success
+
+PS -> ALS: LogAsync(new Log(\n  TypeOfAction.Update,\n  patient.Id.ToString(),\n  "Patient updated. Fields: " +\n  string.Join(", ", updatedFields)\n))
+ALS -> DB: INSERT INTO Logs
+DB --> ALS: LogId
+
+PS --> PC: PatientDTO
+deactivate PS
+
+alt Email Changed
+    PC -> ES: SendEmailVerificationRequest(\n  dto.Email,\n  patient.EmailVerificationToken,\n  patient.EmailVerificationExpiry\n)
+    activate ES
+    ES -> Patient: Send Email:\nSubject: "Verify Your New Email"\nBody: "Click link to verify..."
+    deactivate ES
+    
+    PC -> ALS: LogAsync(new AuditLog {\n  UserId = patientId,\n  TypeOfAction = TypeOfAction.EmailChange,\n  Changes = JsonSerializer.Serialize(new {\n    OldEmail = currentPatient.Email,\n    NewEmail = dto.Email,\n    VerificationRequired = true\n  })\n})
+    activate ALS
+    ALS -> DB: INSERT INTO AuditLogs
+    DB --> ALS: LogId
+    deactivate ALS
+    
+    PC --> Patient: 200 OK {\n  message: "Profile updated. Please verify email.",\n  patient: PatientDTO\n}
+else No Email Change
+    PC --> Patient: 200 OK {\n  message: "Profile updated successfully",\n  patient: PatientDTO\n}
+end
+
+note right of DB #LightGreen
+Database Constraints:
+- PK_Patients (Id)
+- UQ_Patients_Email
+- UQ_Patients_PhoneNumber
+- CK_Patients_Email_Format
+- CK_Patients_Phone_Format
+end note
+
+note right of PC #LightBlue
+Error Handling:
+- 400: Invalid Input
+- 401: Unauthorized
+- 404: Patient Not Found
+- 409: Email/Phone Conflict
+- 500: Server Error
+All errors logged to AuditLogs
+end note
 
 @enduml
