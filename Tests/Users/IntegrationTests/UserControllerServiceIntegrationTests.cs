@@ -849,5 +849,81 @@ namespace DDDSample1.Tests.Users.IntegrationTests
             var converted = Convert.FromBase64String(output);
             return Encoding.UTF8.GetString(converted);
         }
+
+        /*
+        // RequestResetpassword Tests
+        [Fact]
+        public async Task RequestPasswordReset_ShouldReturnOk_WhenEmailIsValid()
+        {
+            var token = GenerateAdminJwtToken();
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            
+            // Arrange
+            var dto = new CreatingSpecializationDTO
+            {
+                SpecOption = "Cardiology"
+            };
+
+            var specialization = await _client.PostAsJsonAsync("/api/specialization", dto);
+            specialization.EnsureSuccessStatusCode();
+
+            var createdSpecialization = await specialization.Content.ReadFromJsonAsync<SpecializationDTO>();
+
+            var specializationId = createdSpecialization.Id;
+
+            var staffDTO = new CreatingStaffDTO
+            {
+                FirstName = "Joao",
+                LastName = "Pereira",
+                FullName = "Joao Pereira",
+                Email = "joao@gmail.com",
+                PhoneNumber = "+351912325678",
+                SpecializationId = specializationId
+            };
+
+            var staff = await _client.PostAsJsonAsync("/api/staff", staffDTO);
+            staff.EnsureSuccessStatusCode();
+
+            var createdStaff = await staff.Content.ReadFromJsonAsync<StaffDTO>();
+
+            var staffId = createdStaff.Id;
+
+            var userDTO = new CreatingUserDTO
+            {
+                Email = "joao@gmail.com",
+                Username = "jonas",
+                Role = 0,
+                StaffId = staffId
+            };
+
+            var createdUser = await _client.PostAsJsonAsync("/api/user/RegisterUser", userDTO);
+
+            // Act
+            var response = await _client.PostAsJsonAsync("/api/user/RequestResetPassword",  "joao@gmail.com" );
+
+            // Assert
+            response.EnsureSuccessStatusCode();
+            var content = await response.Content.ReadAsStringAsync();
+            Assert.Contains("Password reset link has been sent to your email.", content);
+        }
+
+        [Fact]
+        public async Task RequestPasswordReset_ShouldReturnBadRequest_WhenEmailIsEmpty()
+        {
+            var token = GenerateAdminJwtToken();
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+            // Arrange
+            var email = "";
+
+            // Act
+            var response = await _client.PostAsJsonAsync("/api/user/RequestResetPassword", new { email });
+
+            // Assert
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+            var content = await response.Content.ReadAsStringAsync();
+            Assert.Contains("Email is required.", content);
+        }*/
+
     }
 }
