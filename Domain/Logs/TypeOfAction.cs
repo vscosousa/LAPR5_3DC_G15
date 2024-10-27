@@ -1,6 +1,10 @@
 public enum TypeOfAction
 {
+    Create,
     Update,
     Delete, 
-    Deactivate
+    Deactivate,
+    ProfileUpdate,
+    EmailChange,
+    Error
 }
