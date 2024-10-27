@@ -1,20 +1,66 @@
-@startuml level_2
+@startuml
+title Doctor Operation Request Search Flow - Level 2
 
-title Level 2 Diagram
+actor Doctor
+participant "OperationRequest\nController" as ORC
+participant "OperationRequest\nService" as ORS
+participant "OperationRequest\nMapper" as ORM
+participant "OperationRequest\nRepository" as OR
+participant "Patient\nRepository" as PR
+participant "OperationType\nRepository" as OTR
+database "Database" as DB
 
-hide empty members
-'skinparam Linetype ortho
+Doctor -> ORC: GET /api/operationrequest/search\nwith search parameters
+activate ORC
 
-skinparam class {
-    BackgroundColor<<valueObject>> #D6EAF8
-    BackgroundColor<<root>> #FDEBD0
-    BackgroundColor<<service>> #D1F2EB
-    BackgroundColor #FEF9E7
-    ArrowColor Black
-}
+ORC -> ORC: Validate JWT & Doctor Role
 
-skinparam package {
-    BackgroundColor #EBF5FB
-}
+' Convert search parameters
+ORC -> ORC: Create SearchParams from DTO:\n- PatientName\n- OperationType\n- Priority\n- Status\n- DateRange
+
+ORC -> ORS: SearchOperationRequestsAsync(params)
+activate ORS
+
+' Get base requests
+ORS -> OR: SearchOperationRequestsAsync(params)
+OR -> DB: Query with Filters
+DB --> OR: Filtered Requests
+
+' Enrich with patient data
+loop For each request
+    ORS -> PR: GetByIdAsync(patientId)
+    PR -> DB: SELECT FROM Patients
+    DB --> PR: Patient Data
+    
+    ORS -> OTR: GetByIdAsync(operationTypeId)
+    OTR -> DB: SELECT FROM OperationTypes
+    DB --> OTR: OperationType Data
+end
+
+OR --> ORS: Enriched Requests
+
+' Map to DTOs
+ORS -> ORM: ToDTO(requests)
+ORM --> ORS: OperationRequestDTOs
+
+ORS --> ORC: List<OperationRequestDTO>
+deactivate ORS
+
+ORC --> Doctor: 200 OK with Results
+deactivate ORC
+
+' Detail View
+Doctor -> ORC: GET /api/operationrequest/{id}
+activate ORC
+
+ORC -> ORS: GetByIdAsync(id)
+ORS -> OR: GetByIdAsync(id)
+OR -> DB: SELECT with Details
+DB --> OR: Full Request Data
+OR --> ORS: OperationRequest
+ORS --> ORC: OperationRequestDTO
+
+ORC --> Doctor: 200 OK with\nDetailed View
+deactivate ORC
 
 @enduml
