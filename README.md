@@ -69,5 +69,9 @@ To run Postman tests for the Surgical Appointment and Resource Management system
 5. Click on the "Run" button to execute all the requests in the collection.
 6. Postman will display the results of each request, including any assertions and test results.
 
+## 7. Notes about SMTP Server Configuration
+
+To send emails from the Surgical Appointment and Resource Management system, you need to configure the SMTP server settings. You can do this by updating the [appsetting.json](appsettings.json) file with the appropriate SMTP server details. Make sure to provide the correct credentials and server information to enable email functionality. Right now we are using a fake SMTP server for testing purposes. You can check the emails sent by the system in the fake SMTP server's web interface at [vs-gate.dei.isep.ipp.pt:10850](https://vs-gate.dei.isep.ipp.pt:10850).
+
 
 <img width=100% src="https://capsule-render.vercel.app/api?type=waving&height=120&color=4E1764&section=footer"/>
