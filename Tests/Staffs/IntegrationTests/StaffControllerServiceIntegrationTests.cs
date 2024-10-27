@@ -12,6 +12,7 @@ using System;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using DDDSample1.Domain.Specializations;
+using System.Collections.Generic;
 
 namespace DDDSample1.Tests.Staffs.IntegrationTests
 {
@@ -19,12 +20,18 @@ namespace DDDSample1.Tests.Staffs.IntegrationTests
     {
         private readonly HttpClient _client;
         private readonly TestWebApplicationFactory<Startup> _factory;
+        private readonly StaffService _service;
+        private readonly IStaffMapper _mappers;
+        private readonly IConfiguration _configuration;
 
         public StaffControllerServiceIntegrationTests(TestWebApplicationFactory<Startup> factory)
         {
             _factory = factory;
             _client = factory.CreateClient();
             _factory.ResetDatabase();
+            _configuration = factory.Services.GetService<IConfiguration>();
+            _service = factory.Services.GetService<StaffService>();
+            _mappers = factory.Services.GetService<IStaffMapper>();
         }
 
         private string GenerateAdminJwtToken()
@@ -45,6 +52,36 @@ namespace DDDSample1.Tests.Staffs.IntegrationTests
             return tokenHandler.WriteToken(token);
         }
 
+        public string CreateTokenStaffDTO(StaffDTO staff)
+        {
+            List<Claim> claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.NameIdentifier, staff.Id.ToString()),
+                new Claim(ClaimTypes.Email, staff.Email),
+                new Claim("PhoneNumber", staff.PhoneNumber)
+            };
+
+            var key = _configuration["Jwt:Key"];
+            if (string.IsNullOrEmpty(key))
+            {
+                throw new ArgumentNullException(nameof(key), "JWT key cannot be null or empty.");
+            }
+        
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));
+            var cred = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+
+            var token = new JwtSecurityToken(
+                claims: claims,
+                expires: DateTime.Now.AddHours(24),
+                signingCredentials: cred
+            );
+
+            var jwt = new JwtSecurityTokenHandler().WriteToken(token);
+
+            return jwt;
+        }
+        
+        //Creat Staff Test Ingration
         [Fact]
         public async Task CreateStaff_ShouldReturnOk_WhenStaffIsCreated()
         {
@@ -113,6 +150,7 @@ namespace DDDSample1.Tests.Staffs.IntegrationTests
             Assert.Equal(System.Net.HttpStatusCode.BadRequest, response2.StatusCode);
         }
 
+        //Update Staff Test Ingration
         [Fact]
         public async Task UpdateStaff_ShouldReturnOk_WhenStaffIsUpdated()
         {
@@ -172,6 +210,74 @@ namespace DDDSample1.Tests.Staffs.IntegrationTests
             Assert.Equal(System.Net.HttpStatusCode.NotFound, response.StatusCode);
         }
 
+        
+        //Update Staff contact info Test Ingration
+        /*
+        [Fact]
+        public async Task UpdatePhoneNumberAsync_ShouldReturnOk_WhenPhoneNumberIsUpdated()
+        {
+            var token = GenerateAdminJwtToken();
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            
+            // Arrange
+            var specializationDTO = new CreatingSpecializationDTO
+            {
+                SpecOption = "Specialization"
+            };
+
+            await _client.PostAsJsonAsync("/api/Specialization", specializationDTO);
+            
+            var staffDTO = new CreatingStaffDTO
+            {
+                FirstName = "Afonso",
+                LastName = "Test",
+                FullName = "Afonso Test",
+                Email = "test@example.com",
+                PhoneNumber = "+351932395521",
+                SpecializationName = "Specialization"
+            };
+
+            var createResponse = await _client.PostAsJsonAsync("/api/Staff", staffDTO);
+            createResponse.EnsureSuccessStatusCode();
+            var createdStaff = await createResponse.Content.ReadFromJsonAsync<StaffDTO>();
+            var tokenStaff = CreateTokenStaffDTO(createdStaff);
+
+            // Act
+            var response = await _client.PutAsync($"/api/Staff/ConfirmUpdates?phoneNumber=+351987655678&email=test222@example.com&token={tokenStaff}", null);
+
+            // Assert
+            response.EnsureSuccessStatusCode();
+        }*/
+
+        [Fact]
+        public async Task UpdatePhoneNumberAsync_ShouldReturnBadRequest_WhenTokenIsMissing()
+        {
+            // Arrange
+
+            // Act
+            var response = await _client.PutAsync($"/api/Staff/ConfirmUpdates?phoneNumber=+351987654321&email=test@example.com", null);
+
+            // Assert
+            Assert.Equal(System.Net.HttpStatusCode.BadRequest, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task UpdatePhoneNumberAsync_ShouldReturnBadRequest_WhenPhoneNumberAndEmailAreMissing()
+        {
+            var token = GenerateAdminJwtToken();
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+            // Arrange
+            var staff = new Staff("Afonso", "Test", "Afonso Test","test@example.com","+351987654322", new SpecializationId(Guid.NewGuid()) );
+            var tokenStaff = _service.CreateTokenStaff(staff);
+            // Act
+            var response = await _client.PutAsync($"/api/Staff/ConfirmUpdates?token={token}", null);
+
+            // Assert
+            Assert.Equal(System.Net.HttpStatusCode.BadRequest, response.StatusCode);
+        }
+    
+        //Deattive Staff Test Ingration
         [Fact]
         public async Task DeactivateStaff_ShouldReturnOk_WhenStaffIsDeactivated()
         {
@@ -181,11 +287,11 @@ namespace DDDSample1.Tests.Staffs.IntegrationTests
             // Arrange
             var staffDTO = new CreatingStaffDTO
             {
-                FirstName = "John",
-                LastName = "Doe",
-                FullName = "John Doe",
-                Email = "john.doe@example.com",
-                PhoneNumber = "+123456789",
+                FirstName = "Afosno",
+                LastName = "Test",
+                FullName = "Afonso Test",
+                Email = "teste@example.com",
+                PhoneNumber = "+351932395506",
                 SpecializationId = Guid.NewGuid()
             };
 
@@ -214,6 +320,7 @@ namespace DDDSample1.Tests.Staffs.IntegrationTests
             Assert.Equal(System.Net.HttpStatusCode.NotFound, response.StatusCode);
         }
 
+        //Search Staffs Test Ingration
         [Fact]
         public async Task SearchStaffProfiles_ShouldReturnOk_WhenStaffProfilesAreFound()
         {

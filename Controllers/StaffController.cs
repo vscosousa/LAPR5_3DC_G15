@@ -67,6 +67,33 @@ namespace DDDSample1.Controllers
             }
         }
 
+        // PUT: api/Staff/ConfirmUpdates
+        [HttpPut("ConfirmUpdates")] 
+        public async Task<IActionResult> UpdatePhoneNumberAsync([FromQuery] string  phoneNumber, [FromQuery]string email, [FromQuery] string token)
+        {   
+            if (string.IsNullOrWhiteSpace(token))
+            {
+                return BadRequest("Token are required.");
+            }
+            if (string.IsNullOrWhiteSpace(phoneNumber) && string.IsNullOrWhiteSpace(email))
+            {
+                return BadRequest("Phone number or email are required.");
+            }
+            try
+            {
+                await _staffService.UpdateContactInformationAsync(token, phoneNumber, email);
+                return Ok("Updated Profile Staff successfully.");
+            }
+            catch (BusinessRuleValidationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An error occurred while deactivating the staff", details = ex.Message });
+            }
+        }
+
         [HttpPut("deactivate/{id}")]
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult<StaffDTO>> DeactivateStaff(Guid id)
@@ -91,25 +118,6 @@ namespace DDDSample1.Controllers
                 return StatusCode(500, new { message = "An error occurred while deactivating the staff", details = ex.Message });
             }
         }
-
-        [HttpPut("ConfirmUpdates")]
-        public async Task<IActionResult> UpdatePhoneNumberAsync([FromQuery] string  phoneNumber, [FromQuery]string email, [FromQuery] string token)
-        {
-            try
-            {
-                await _staffService.UpdateContactInformationAsync(token, phoneNumber, email);
-                return Ok("Updated Profile Staff successfully.");
-            }
-            catch (BusinessRuleValidationException ex)
-            {
-                return BadRequest(new { message = ex.Message });
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, new { message = "An error occurred while deactivating the staff", details = ex.Message });
-            }
-        }
-        
 
         [HttpGet("search")]
         [Authorize(Roles = "Admin")]

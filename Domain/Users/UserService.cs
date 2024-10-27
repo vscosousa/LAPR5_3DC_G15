@@ -328,18 +328,29 @@ namespace DDDSample1.Domain.Users
         }
 
         public async Task RequestPasswordReset(string email)
-        {
-            var user = await _userRepository.GetUserByEmailAsync(email) ?? throw new Exception("Email not registered");
-            if (user.IsActive == false)
+        {   try
             {
-                throw new Exception("Account not ative yet,  check your email to activate the account.");
+                var user = await _userRepository.GetUserByEmailAsync(email) ?? throw new BusinessRuleValidationException("Email not registered");
+                if (user.IsActive == false)
+                {
+                    throw new BusinessRuleValidationException("Account not ative yet, check your email to activate the account.");
+                }
+                string token = CreatePasswordResetToken(user);
+                var resetLink = GenerateLink(token, "ResetPassword");
+
+                var name = user.Username;
+
+                await _mailService.SendResetPasswordEmailAsync(email, name, resetLink);
             }
-            string token = CreatePasswordResetToken(user);
-            var resetLink = GenerateLink(token, "ResetPassword");
-
-            var name = user.Username;
-
-            await _mailService.SendResetPasswordEmailAsync(email, name, resetLink);
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred: {ex.Message}");
+                if (ex.InnerException != null)
+                {
+                    Console.WriteLine($"Inner exception: {ex.InnerException.Message}");
+                }
+                throw;
+            }
         }
 
         public string CreatePasswordResetToken(User user)
@@ -367,16 +378,26 @@ namespace DDDSample1.Domain.Users
             return jwt;
         }
         public async Task ResetPassword(string token, string newPassword)
-        {
-            // Verify the token validade
-            var userID = VerifyToken(token);
+        {   
+            try{
+                // Verify the token validade
+                var userID = VerifyToken(token);
 
-            var user = await _userRepository.GetByIdAsync(userID) ?? throw new Exception("User not found.");
-            user.SetPassword(newPassword);
+                var user = await _userRepository.GetByIdAsync(userID) ?? throw new BusinessRuleValidationException("User not found.");
+                user.SetPassword(newPassword);
 
-            await _userRepository.UpdateAsync(user);
-            await _unitOfWork.CommitAsync();
-
+                await _userRepository.UpdateAsync(user);
+                await _unitOfWork.CommitAsync();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred: {ex.Message}");
+                if (ex.InnerException != null)
+                {
+                    Console.WriteLine($"Inner exception: {ex.InnerException.Message}");
+                }
+                throw;
+            }
         }
         
         public async Task<List<UserDTO>> getAllUsers(){

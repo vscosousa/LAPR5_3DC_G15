@@ -115,6 +115,7 @@ namespace DDDSample1.Domain.Staffs
                 // Send Email
                 if(sendEmail){
                     var token = CreateTokenStaff(staff);
+                    Console.WriteLine("---------------- Token: " + token);
                     var link = GenerateLinkToStaff(token, newUpdatedContacts);
                     await _mailService.SendEmailToStaff(staff.Email, staff.FullName, newUpdatedContacts, link);
                 }
