@@ -1,6 +1,8 @@
+
 using System.Collections.Generic;
 using System.Net.Mail;
 using System.Threading.Tasks;
+using DDDSample1.Domain.Staffs;
 using Microsoft.Extensions.Configuration;
 
 public class MockMailService : IMailService
@@ -30,6 +32,25 @@ public class MockMailService : IMailService
     public Task SendResetPasswordEmailAsync(string email, string username, string resetLink)
     {
         var mailMessage = CreateMailMessage(email, username, resetLink, "Reset your password");
+        SentEmails.Add(mailMessage);
+        return Task.CompletedTask;
+    }
+
+    public Task SendEmailToStaff(string email, string username, UpdateStaffDTO dto, string activationLink)
+    {
+        var message = new List<string>();
+        if (!string.IsNullOrEmpty(dto.PhoneNumber))
+        {
+            message.Add($"your phone number has been updated to {dto.PhoneNumber}");
+        }
+        if (!string.IsNullOrEmpty(dto.Email))
+        {
+            message.Add($"your email has been updated to {dto.Email}");
+        }
+        var body = $"Hi {username}, " + string.Join(" and ", message) + $", please click here to confirm: {activationLink}";
+        var mailMessage = CreateMailMessage(email, username, activationLink, "Update Phone Number Staff", body);
+
+        mailMessage.To.Add(email);
         SentEmails.Add(mailMessage);
         return Task.CompletedTask;
     }

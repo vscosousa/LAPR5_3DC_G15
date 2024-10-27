@@ -1,6 +1,6 @@
 @startuml level_2
 
-title Level 2 Diagram
+title Level 2 Diagram for Updating Staff
 
 hide empty members
 'skinparam Linetype ortho
@@ -16,5 +16,20 @@ skinparam class {
 skinparam package {
     BackgroundColor #EBF5FB
 }
+
+actor Admin as A
+participant "MRD" as BO
+
+activate A
+A -> BO: Asks to edit a Staff's Profile
+activate BO
+BO --> A: Asks for Staff's Id and the data to edit
+deactivate BO
+A -> BO: Sends Staff's data
+note right of BO: The data can be Phone Number and/or Email \n and/or Availability Slots and/or Specialization
+activate BO
+BO -> BO: Validates Staff's data and tries to update Staff's data
+BO --> A: Returns Operation In/Success message
+deactivate BO
 
 @enduml

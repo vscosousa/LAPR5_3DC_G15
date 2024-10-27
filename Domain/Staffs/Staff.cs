@@ -64,6 +64,13 @@ namespace DDDSample1.Domain.Staffs
 
         internal void SetSpecialization(Specialization specialization)=> _specialization = specialization;
 
+        internal void ChangeEmail(string email)
+        {
+            if (!Regex.IsMatch(email, @"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"))
+                throw new ArgumentException("Email must be in a valid format.");
+            _email = email;
+        }
+
         internal void ChangePhoneNumber(string phoneNumber)
         {
             if (!phoneNumber.StartsWith("+") || !phoneNumber.Substring(1).All(char.IsDigit))
@@ -71,12 +78,18 @@ namespace DDDSample1.Domain.Staffs
             _phoneNumber = phoneNumber;
         }
 
+
         internal void AddAvailabilitySlot(DateTime newSlot)
         {
             if (!DateTime.TryParseExact(newSlot.ToString("yyyy/MM/dd HH:mm:ss"), "yyyy/MM/dd HH:mm:ss", null, System.Globalization.DateTimeStyles.None, out _))
                 throw new BusinessRuleValidationException("Availability slot must be in the format YYYY/MM/DD HH:mm:ss.");
     
-
+            if (_availabilitySlots.Contains(newSlot))
+                throw new BusinessRuleValidationException("The specified new availability slot already exists.");
+                
+            if (newSlot < DateTime.Now)
+                throw new BusinessRuleValidationException("Availability slot must be in the future.");
+            
             var updatedSlots = _availabilitySlots.ToList();
             updatedSlots.Add(newSlot);
             _availabilitySlots = updatedSlots.OrderBy(slot => slot).ToArray();

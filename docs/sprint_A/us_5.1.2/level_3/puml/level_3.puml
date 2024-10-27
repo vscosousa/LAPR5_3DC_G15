@@ -1,6 +1,6 @@
 @startuml level_3
 
-title Level 3 Diagram
+title Level 3 Diagram for Password Reset
 
 hide empty members
 'skinparam Linetype ortho
@@ -16,5 +16,51 @@ skinparam class {
 skinparam package {
     BackgroundColor #EBF5FB
 }
+
+actor BackofficeUser as BU
+participant "User Interface" as UI
+participant "UserController" as C
+participant "UserService" as S
+participant "EmailService" as ES
+participant "UserRepository" as R
+participant "User" as U
+participant "Database" as DB
+
+activate BU
+BU -> UI: Requests password reset
+activate UI
+UI --> BU: Asks for email address
+deactivate UI
+BU -> UI: Provides email address
+activate UI
+UI -> C: RequestPasswordReset(string email)
+activate C
+C -> S: RequestPasswordReset(string email)
+activate S
+S -> R: getUserByEmailAsync(email)
+activate R
+R -> DB: _objs.Where(x => x.Email == email).FirstOrDefaultAsync()
+activate DB
+DB --> R: return user
+deactivate DB
+R --> S: return user
+deactivate R
+alt user is not null and active
+    S -> S: CreatePasswordResetToken(user)
+    S -> ES: sendResetPasswordEmailAsync(email, user.Username, resetLink)
+    activate ES
+    ES --> BU: Sends by email a link to reset password
+    deactivate ES
+else user is null
+    S --> C: throw new Exception("Email not registered")
+else user is not active
+    S --> C: throw new Exception("Account not active yet, check your email to activate the account.")
+end
+S --> C: return Operation Status Response Code
+deactivate S
+C --> UI: return Operation Status Response Code
+deactivate C
+UI --> BU: Returns Operation In/Success message
+deactivate UI
 
 @enduml
