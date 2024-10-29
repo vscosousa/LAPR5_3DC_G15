@@ -5,6 +5,7 @@ using DDDSample1.Domain.Shared;
 using DDDSample1.Domain.Staffs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 
 
 namespace DDDSample1.Controllers
@@ -38,7 +39,7 @@ namespace DDDSample1.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { message = "An error occurred while deactivating the staff", details = ex.Message });
+                return StatusCode(500, new { message = "An error occurred while creating the staff", details = ex.Message });
             }
         }   
 
@@ -73,7 +74,7 @@ namespace DDDSample1.Controllers
         {   
             if (string.IsNullOrWhiteSpace(token))
             {
-                return BadRequest("Token are required.");
+                return Unauthorized("Token are required.");
             }
             if (string.IsNullOrWhiteSpace(phoneNumber) && string.IsNullOrWhiteSpace(email))
             {
@@ -84,13 +85,17 @@ namespace DDDSample1.Controllers
                 await _staffService.UpdateContactInformationAsync(token, phoneNumber, email);
                 return Ok("Updated Profile Staff successfully.");
             }
+            catch (SecurityTokenException ex)
+            {
+                return Unauthorized(new { message = "Invalid token.", details = ex.Message });
+            }
             catch (BusinessRuleValidationException ex)
             {
                 return BadRequest(new { message = ex.Message });
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { message = "An error occurred while deactivating the staff", details = ex.Message });
+                return StatusCode(500, new { message = "An error occurred while confirmation staff update", details = ex.Message });
             }
         }
 
@@ -149,7 +154,7 @@ namespace DDDSample1.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { message = "An error occurred while deactivating the staff", details = ex.Message });
+                return StatusCode(500, new { message = "An error occurred while search the staff profiles", details = ex.Message });
             }
         }
 

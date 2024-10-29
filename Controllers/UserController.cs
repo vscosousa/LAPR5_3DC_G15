@@ -54,16 +54,16 @@ namespace DDDSample1.Controllers
         }
 
         [HttpPost("RequestResetPassword"), Authorize(Roles = "Admin, Doctor, Nurse, Technician")]
-        public async Task<IActionResult> RequestPasswordReset([FromBody] string email)
+        public async Task<IActionResult> RequestPasswordReset(RequestPasswordResetDTO dto)
         {
-            if (string.IsNullOrWhiteSpace(email))
+            if (string.IsNullOrWhiteSpace(dto.Email))
             {
                 return NotFound( "Email is required." );
             }
 
             try
             {
-                await _userService.RequestPasswordReset(email);
+                await _userService.RequestPasswordReset(dto.Email);
                 return Ok("Password reset link has been sent to your email.");
             }
             catch (BusinessRuleValidationException ex)
@@ -78,17 +78,19 @@ namespace DDDSample1.Controllers
 
         // POST: api/PasswordReset/Reset
         [HttpPost("ResetPassword"), AllowAnonymous]
-        public async Task<IActionResult> ResetPassword([FromQuery]string token, [FromBody]string newPassword)
+        public async Task<IActionResult> ResetPassword([FromQuery]string token, ResetPasswordDTO dto)
         {
-            if (string.IsNullOrWhiteSpace(token) ||
-                string.IsNullOrWhiteSpace(newPassword))
+            if (string.IsNullOrWhiteSpace(token))
+            {
+                return Unauthorized("Token required.");
+            }
+            if (string.IsNullOrWhiteSpace(dto.NewPassword) && string.IsNullOrWhiteSpace(dto.NewPasswordConfirm))
             {
                 return BadRequest("Token and new password are required.");
             }
-
             try
             {
-                await _userService.ResetPassword(token, newPassword);
+                await _userService.ResetPassword(token, dto);
                 return Ok("Your password has been reset successfully.");
             }
             catch (BusinessRuleValidationException ex)

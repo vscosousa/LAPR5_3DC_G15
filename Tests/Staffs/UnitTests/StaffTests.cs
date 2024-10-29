@@ -47,7 +47,7 @@ namespace DDDSample1.Tests.Staffs.UnitTests
             var specializationId = new SpecializationId(Guid.NewGuid());
 
             // Act & Assert
-            Assert.Throws<ArgumentException>(() => new Staff(firstName, lastName, fullName, email, phoneNumber, staffType, specializationId));
+            Assert.Throws<BusinessRuleValidationException>(() => new Staff(firstName, lastName, fullName, email, phoneNumber, staffType, specializationId));
         }
 
         [Fact]
@@ -62,7 +62,7 @@ namespace DDDSample1.Tests.Staffs.UnitTests
             var specializationId = new SpecializationId(Guid.NewGuid());
 
             // Act & Assert
-            Assert.Throws<ArgumentException>(() => new Staff(firstName, lastName, fullName, email, phoneNumber, staffType, specializationId));
+            Assert.Throws<BusinessRuleValidationException>(() => new Staff(firstName, lastName, fullName, email, phoneNumber, staffType, specializationId));
         }
 
         [Fact]
@@ -111,7 +111,7 @@ namespace DDDSample1.Tests.Staffs.UnitTests
             var invalidPhoneNumber = "987654321"; 
 
             // Act & Assert
-            Assert.Throws<ArgumentException>(() => staff.ChangePhoneNumber(invalidPhoneNumber));
+            Assert.Throws<BusinessRuleValidationException>(() => staff.ChangePhoneNumber(invalidPhoneNumber));
         }
 
         [Fact]
@@ -136,7 +136,7 @@ namespace DDDSample1.Tests.Staffs.UnitTests
             var invalidEmail = "invalid-email";
 
             // Act & Assert
-            Assert.Throws<ArgumentException>(() => staff.ChangeEmail(invalidEmail));
+            Assert.Throws<BusinessRuleValidationException>(() => staff.ChangeEmail(invalidEmail));
         }
 
         [Fact]

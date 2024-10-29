@@ -31,10 +31,10 @@ namespace DDDSample1.Domain.Staffs
                 throw new BusinessRuleValidationException("Names must start with a capital letter.");
 
             if (!Regex.IsMatch(email, @"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"))
-                throw new ArgumentException("Email must be in a valid format.");
+                throw new BusinessRuleValidationException("Email must be in a valid format.");
 
             if (!phoneNumber.StartsWith("+") || !phoneNumber.Substring(1).All(char.IsDigit))
-                throw new ArgumentException("Phone number must start with an identifier and contain only digits.");
+                throw new BusinessRuleValidationException("Phone number must start with an identifier and contain only digits.");
             
             Id = new StaffId(Guid.NewGuid());
             _firstName = firstName;
@@ -70,14 +70,14 @@ namespace DDDSample1.Domain.Staffs
         internal void ChangeEmail(string email)
         {
             if (!Regex.IsMatch(email, @"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"))
-                throw new ArgumentException("Email must be in a valid format.");
+                throw new BusinessRuleValidationException("Email must be in a valid format.");
             _email = email;
         }
 
         internal void ChangePhoneNumber(string phoneNumber)
         {
             if (!phoneNumber.StartsWith("+") || !phoneNumber.Substring(1).All(char.IsDigit))
-                throw new ArgumentException("Phone number must start with an identifier and contain only digits.");
+                throw new BusinessRuleValidationException("Phone number must start with an identifier and contain only digits.");
             _phoneNumber = phoneNumber;
         }
 

@@ -701,13 +701,13 @@ namespace DDDSample1.Tests.Users.UnitTests
             var user = new User("afonsotest@gmail.com", "Afonso", Role.Admin, Guid.NewGuid());
             user.Activate();
             var token = _userService.CreatePasswordResetToken(user);
-            var newPassword = "NewPassword123@";
+            var dto = new ResetPasswordDTO{ NewPassword = "NewPassword123@", NewPasswordConfirm = "NewPassword123@"};
 
             _userRepositoryMock.Setup(repo => repo.GetByIdAsync(user.Id))
                                .ReturnsAsync(user);
 
             // Act
-            await _userService.ResetPassword(token, newPassword);
+            await _userService.ResetPassword(token, dto);
 
             // Assert
             _userRepositoryMock.Verify(repo => repo.GetByIdAsync(user.Id), Times.Once);
@@ -720,10 +720,10 @@ namespace DDDSample1.Tests.Users.UnitTests
         {
             // Arrange
             var expiredtoken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiYWRtaW4iLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJhZG1pbkBnbWFpbC5jb20iLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9hbWFpZGVudGlmaWVyIjoic2VjdXJpdHkiLCJleHBhbml0eSI6MTcyOTYwNjIwMn0.9n-Z0lRhhg2I5D_vgh0ECjfjE1lQAWYw3He3Q9cS1to";
-            var newPassword = "NewPassword123@";
+            var dto = new ResetPasswordDTO{ NewPassword = "NewPassword123@", NewPasswordConfirm = "NewPassword123@"};
 
             // Act & Assert
-            var exception = await Assert.ThrowsAsync<SecurityTokenException>(() => _userService.ResetPassword(expiredtoken, newPassword));
+            var exception = await Assert.ThrowsAsync<SecurityTokenException>(() => _userService.ResetPassword(expiredtoken, dto));
             Assert.Contains("Token validation failed", exception.Message);
         }
 
@@ -734,13 +734,13 @@ namespace DDDSample1.Tests.Users.UnitTests
             var user = new User("afonsotest@gmail.com", "Afonso", Role.Admin, Guid.NewGuid());
             user.Activate();
             var token = _userService.CreatePasswordResetToken(user);
-            var newPassword = "NewPassword123@";
+            var dto = new ResetPasswordDTO{ NewPassword = "NewPassword123@", NewPasswordConfirm = "NewPassword123@"};
 
             _userRepositoryMock.Setup(repo => repo.GetByIdAsync(user.Id))
                                .ReturnsAsync((User)null);
 
             // Act & Assert
-            var exception = await Assert.ThrowsAsync<BusinessRuleValidationException>(() => _userService.ResetPassword(token, newPassword));
+            var exception = await Assert.ThrowsAsync<BusinessRuleValidationException>(() => _userService.ResetPassword(token, dto));
             Assert.Equal("User not found.", exception.Message);
         }
     }

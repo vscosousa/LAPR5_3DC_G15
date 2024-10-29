@@ -13,6 +13,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Xunit.Sdk;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.Payloads;
 
 
 namespace DDDSample1.Domain.Users
@@ -336,6 +337,7 @@ namespace DDDSample1.Domain.Users
                     throw new BusinessRuleValidationException("Account not ative yet, check your email to activate the account.");
                 }
                 string token = CreatePasswordResetToken(user);
+                Console.WriteLine("---------------- Token: " + token);
                 var resetLink = GenerateLink(token, "ResetPassword");
 
                 var name = user.Username;
@@ -377,14 +379,18 @@ namespace DDDSample1.Domain.Users
 
             return jwt;
         }
-        public async Task ResetPassword(string token, string newPassword)
+        public async Task ResetPassword(string token, ResetPasswordDTO dto)
         {   
             try{
                 // Verify the token validade
                 var userID = VerifyToken(token);
 
                 var user = await _userRepository.GetByIdAsync(userID) ?? throw new BusinessRuleValidationException("User not found.");
-                user.SetPassword(newPassword);
+                if(dto.NewPassword != dto.NewPasswordConfirm){
+                    throw new BusinessRuleValidationException("Passwords do not match.");
+                }
+                
+                user.SetPassword(dto.NewPassword);
 
                 await _userRepository.UpdateAsync(user);
                 await _unitOfWork.CommitAsync();

@@ -261,7 +261,7 @@ namespace DDDSample1.Tests.Staffs.IntegrationTests
             var response = await _client.PutAsync($"/api/Staff/ConfirmUpdates?phoneNumber=+351987654321&email=test@example.com", null);
 
             // Assert
-            Assert.Equal(System.Net.HttpStatusCode.BadRequest, response.StatusCode);
+            Assert.Equal(System.Net.HttpStatusCode.Unauthorized, response.StatusCode);
         }
 
         [Fact]
