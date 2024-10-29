@@ -15,7 +15,7 @@ namespace DDDSample1.Controllers
         private readonly OperationTypeService _operationTypeService;
         public OperationTypeController(OperationTypeService operationTypeService)
         {
-            this._operationTypeService = operationTypeService;
+            _operationTypeService = operationTypeService;
         }
 
 

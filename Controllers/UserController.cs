@@ -1,11 +1,9 @@
-
 using System;
 using System.Threading.Tasks;
 using DDDSample1.Domain.Shared;
 using DDDSample1.Domain.Users;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Xunit.Sdk;
 
 namespace DDDSample1.Controllers
 {
@@ -20,7 +18,7 @@ namespace DDDSample1.Controllers
             _userService = userService;
         }
 
-        [HttpPost("RegisterUser"), AllowAnonymous]
+        [HttpPost("RegisterUser"), Authorize(Roles = "Admin")]
         public async Task<ActionResult<UserDTO>> RegisterUser([FromBody] CreatingUserDTO userDTO)
         {
             try

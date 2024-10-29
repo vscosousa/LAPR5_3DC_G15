@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace DDDSample1.Controllers
 {
     [Route("api/[controller]")]
-    [Authorize (Roles = "Admin")]
+    [Authorize (Roles = "Doctor")]
     [ApiController]
     public class OperationRequestController : ControllerBase
     {

@@ -15,7 +15,7 @@ namespace DDDSample1.Controllers
         private readonly SpecializationService _specializationService;
         public SpecializationController(SpecializationService specializationService)
         {
-            this._specializationService = specializationService;
+            _specializationService = specializationService;
         }
 
         // POST api/specilization
@@ -25,7 +25,7 @@ namespace DDDSample1.Controllers
         {
             try
             {
-                var specialization = await this._specializationService.CreateSpecializationAsync(specializationDTO);
+                var specialization = await _specializationService.CreateSpecializationAsync(specializationDTO);
                 return Ok(specialization);
             }
             catch (Exception ex)
