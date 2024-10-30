@@ -13,6 +13,19 @@
 | **A**  | [_`US 5.1.21`_](../../sprint_A/us_5.1.21/readme.md) |
 | **A**  | [_`US 5.1.22`_](../../sprint_A/us_5.1.22/readme.md) |
 | **A**  | [_`US 5.1.23`_](../../sprint_A/us_5.1.23/readme.md) |
+| **B**  | [_`US 6.1.3`_](../../sprint_B/us_6.1.3/readme.md) |
+| **B**  | [_`US 6.1.5`_](../../sprint_B/us_6.1.5/readme.md) |
+| **B**  | [_`US 6.2.4`_](../../sprint_B/us_6.2.4/readme.md) |
+| **B**  | [_`US 6.2.18`_](../../sprint_B/us_6.2.18/readme.md) |
+| **B**  | [_`US 6.2.19`_](../../sprint_B/us_6.2.19/readme.md) |
+| **B**  | [_`US 6.2.20`_](../../sprint_B/us_6.2.20/readme.md) |
+| **B**  | [_`US 6.2.21`_](../../sprint_B/us_6.2.21/readme.md) |
+| **B**  | [_`US 6.3.1`_](../../sprint_B/us_6.3.1/readme.md) |
+| **B**  | [_`US 6.4.2`_](../../sprint_B/us_6.4.2/readme.md) |
+| **B**  | [_`US 6.4.6`_](../../sprint_B/us_6.4.6/readme.md) |
+| **B**  | [_`US 6.5.1`_](../../sprint_B/us_6.5.1/readme.md) |
+| **B**  | [_`US 6.6.1`_](../../sprint_B/us_6.6.1/readme.md) |
+| **B**  | [_`US 6.6.2`_](../../sprint_B/us_6.6.2/readme.md) |
 
 ## Developed Tasks
 
