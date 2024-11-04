@@ -13,7 +13,7 @@
 | **A**  | [_`US 5.1.10`_](../../sprint_A/us_5.1.10/readme.md) |
 | **A**  | [_`US 5.1.11`_](../../sprint_A/us_5.1.11/readme.md) |
 | **B**  | [_`US 6.1.1`_](../../sprint_B/us_6.1.1/readme.md) |
-| **B**  | [_`US 6.1.5`_](../../sprint_B/us_6.1.4/readme.md) |
+| **B**  | [_`US 6.1.4`_](../../sprint_B/us_6.1.4/readme.md) |
 | **B**  | [_`US 6.2.1`_](../../sprint_B/us_6.2.1/readme.md) |
 | **B**  | [_`US 6.2.3`_](../../sprint_B/us_6.2.3/readme.md) |
 | **B**  | [_`US 6.2.6`_](../../sprint_B/us_6.2.6/readme.md) |
