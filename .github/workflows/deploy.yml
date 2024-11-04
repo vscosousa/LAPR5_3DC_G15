@@ -31,18 +31,21 @@ jobs:
 
     - name: Restore dependencies
       run: dotnet restore
+      working-directory: Backoffice
 
     - name: Build
       run: dotnet build --no-restore
+      working-directory: Backoffice
 
     - name: Run tests and generate coverage report
       run: dotnet test --no-build --collect:"XPlat Code Coverage" --results-directory ./TestResults
       continue-on-error: true
+      working-directory: Backoffice
 
     - name: ReportGenerator
       uses: danielpalme/ReportGenerator-GitHub-Action@5.3.11
       with:
-        reports: './TestResults/**/coverage.cobertura.xml'
+        reports: './Backoffice/TestResults/**/coverage.cobertura.xml'
         targetdir: 'coveragereport'
         reporttypes: 'HtmlInline;Cobertura;MarkdownSummaryGithub'
         sourcedirs: ''
@@ -71,7 +74,9 @@ jobs:
       run: gh pr comment ${{ github.event.pull_request.number }} --body-file coveragereport/SummaryGithub.md
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      working-directory: Backoffice
 
     - name: Publish coverage in build summary
       run: cat coveragereport/SummaryGithub.md >> $GITHUB_STEP_SUMMARY
       shell: bash
+      working-directory: Backoffice
