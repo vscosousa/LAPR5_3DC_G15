@@ -28,6 +28,7 @@ jobs:
 
     - name: Clean
       run: dotnet clean
+      working-directory: Backoffice
 
     - name: Restore dependencies
       run: dotnet restore
