@@ -75,9 +75,7 @@ jobs:
       run: gh pr comment ${{ github.event.pull_request.number }} --body-file coveragereport/SummaryGithub.md
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      working-directory: Backoffice
 
     - name: Publish coverage in build summary
-      run: cat coveragereport/SummaryGithub.md >> $GITHUB_STEP_SUMMARY
+      run: if [ -f coveragereport/SummaryGithub.md ]; then cat coveragereport/SummaryGithub.md >> $GITHUB_STEP_SUMMARY; fi
       shell: bash
-      working-directory: Backoffice
