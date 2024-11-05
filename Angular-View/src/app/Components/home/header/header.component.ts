@@ -12,7 +12,7 @@ import { RouterModule } from '@angular/router';
 export class HeaderComponent {
   menuValue: boolean = false;
   menu_icon: string = 'bi bi-list';
-  menuItems: string[] = ['Home', 'Login', 'Signup', 'Contact'];
+  menuItems: string[] = ['Home', 'Login', 'Register', 'Contact'];
 
   openMenu() {
     this.menuValue = !this.menuValue;
