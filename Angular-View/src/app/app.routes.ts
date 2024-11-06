@@ -3,18 +3,22 @@ import { LoginComponent } from './Components/login/login.component';
 import { NavbarAdminComponent } from './Components/navbar-admin/navbar-admin.component';
 import { RegisterComponent } from './Components/register/register.component';
 import { HomeComponent } from './Components/home/home.component';
+import { NotFoundComponent } from './Components/not-found/not-found.component';
 
 export const routes: Routes = [
     {
-    path: 'login', component: LoginComponent
+        path: 'login', component: LoginComponent
     },
     {
-    path: "navbarAdmin", component: NavbarAdminComponent
+        path: "navbarAdmin", component: NavbarAdminComponent
     },
     {
-    path: "register", component: RegisterComponent
+        path: "register", component: RegisterComponent
     },
     {
-    path: "", component: HomeComponent
+        path: "", component: HomeComponent
+    },
+    {
+        path: "**", component: NotFoundComponent
     }
 ];

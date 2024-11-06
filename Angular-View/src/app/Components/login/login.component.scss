@@ -52,7 +52,11 @@
   padding: 0.5rem;
   margin-top: 0.5rem;
   border: 1px solid #ccc;
-  border-radius: 50px;
+  border-radius: 15px;
+}
+
+form input[type = "password"] {
+  margin-bottom: 1rem;
 }
 
 .login-left .btn {
@@ -161,4 +165,14 @@
   &:focus {
     outline: none;
   }
+}
+
+.button {
+  color: #4a90e2;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+footer {
+  display: none !important;
 }
