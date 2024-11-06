@@ -4,9 +4,14 @@
             <img src="logo.png" alt="logo" />
             <p>Hospital Management App</p>
         </div>
-        <img class="hero-img" src="arrow.png" alt="Hero Image" />
+        <div class="buttons">
+            <a href="login" class="btn">Login</a>
+            <a href="register" class="btn">Register</a>
+        </div>
+        <img class="hero-img" src="arrow.png" alt="Hero Image" onclick="document.querySelector('.articles-container').scrollIntoView({ behavior: 'smooth' });" />
     </section>
     <div class="articles-container">
+        <h1>Health & Wellness Articles</h1>
         <section class="articles">
             <article>
                 <img src="lifestyle.jpg" alt="Article 1 Image">
