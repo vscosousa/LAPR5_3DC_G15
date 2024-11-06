@@ -1,4 +1,5 @@
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Tiny5&display=swap');
 
 body {
     font-family: Arial, sans-serif;
@@ -23,12 +24,23 @@ body {
     position: absolute;
     top: 20px;
     left: 20px;
-    max-width: 100px;
+    max-width: 400px;
     margin: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.hero .logo p {
+    font-size: 1.5em;
+    font-family: "Tiny5", sans-serif;
+    padding: 0;
+    margin: 0;
 }
 
 .hero .logo img {
-    width:60%;
+    width:60px;
+    margin-right: 20px;
 }
 
 
@@ -81,21 +93,6 @@ body {
 .hero-buttons .button:hover {
     background-color: #007BFF;
     color: white;
-}
-
-.hero .arrow {
-    position: absolute;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    animation: bounce 2s infinite;
-    cursor: pointer;
-    filter: invert(1);
-}
-
-.hero .arrow img {
-    width: 50px;
-    height: 50px;
 }
 
 .articles-container {
