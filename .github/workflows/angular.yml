@@ -32,5 +32,5 @@ jobs:
       working-directory: Angular-View
 
     - name: Run Angular tests
-      run: npm run test --if-present
+      run: npm run test -- --browsers=ChromeHeadless --no-watch
       working-directory: Angular-View
