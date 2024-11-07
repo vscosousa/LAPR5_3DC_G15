@@ -86,6 +86,15 @@ form input[type = "password"] {
   color: white;
 }
 
+.login-left .btn-signin:hover {
+  background-color: #357ABD;
+  transition: background-color 0.3s ease;
+}
+
+
+
+
+
 .login-right {
   background-image: url('https://online-learning-college.com/wp-content/uploads/2023/01/Qualifications-to-Become-a-Doctor--scaled.jpg');
   background-size: cover;
@@ -172,6 +181,7 @@ form input[type = "password"] {
   text-decoration: none;
   cursor: pointer;
 }
+
 
 footer {
   display: none !important;

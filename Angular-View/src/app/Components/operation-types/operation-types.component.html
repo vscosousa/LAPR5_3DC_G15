@@ -1,0 +1,28 @@
+<div class="operationType-container">
+    <h2 class="operation-title" style="text-align: center;">Operation Types</h2>
+    <div>
+        <a [routerLink]="['/operation-types/create-operation-type']" class="btn btn-create">Create Operation Type</a>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Operation Type</th>
+                    <th>Estimated Time</th>
+                    <th>Specializations</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let operationType of operationTypes">
+                    <td>{{operationType.name}}</td>
+                    <td>{{operationType.estimatedTime}}</td>
+                    <td>{{operationType.specializations}}</td>
+                    <td>
+                        <a routerLink="/operation-type/update/{{operationType.id}}" class="btn btn-update">Edit</a>
+                        <a routerLink="/operation-type/delete/{{operationType.id}}" class="btn btn-delete">Delete</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <router-outlet></router-outlet>
+</div>

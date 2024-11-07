@@ -226,40 +226,35 @@ namespace DDDSample1.Domain.Users
 
         public async Task<string> Login(LoginUserDTO dto)
         {
-
             var user = await _userRepository.GetUserByEmailAsync(dto.Email) ?? throw new Exception("Email not registered");
-
 
             if (!user.IsActive)
             {
-                return "User is not active. Check your Email to activate the account.";
+            throw new Exception("User is not active. Check your Email to activate the account.");
             }
 
             if (user.IsAccountLocked())
             {
-                return $"Your account is locked until {user.LockedUntil.Value.ToLocalTime()}. Please try again later.";
+            throw new Exception($"Your account is locked until {user.LockedUntil.Value.ToLocalTime()}. Please try again later.");
             }
 
             if (!BCrypt.Net.BCrypt.Verify(dto.Password, user.PasswordHash))
             {
+            user.RegisterFailedLoginAttempt();
 
-                user.RegisterFailedLoginAttempt();
+            await _userRepository.UpdateAsync(user);
+            await _unitOfWork.CommitAsync();
 
-
-                await _userRepository.UpdateAsync(user);
-                await _unitOfWork.CommitAsync();
-
-
-                if (user.IsAccountLocked())
-                {
-                    await NotifyAdmin(user);
-                    return "Your account has been locked due to multiple failed login attempts. Please try again in 30 minutes. An admin has been notified.";
-                }
-
-                return $"Wrong password. You have {5 - user.FailedLoginAttempts} attempts left before your account is locked.";
+            if (user.IsAccountLocked())
+            {
+                await NotifyAdmin(user);
+                throw new Exception("Your account has been locked due to multiple failed login attempts. Please try again in 30 minutes. An admin has been notified.");
             }
 
-            //reset failed attemps after sucesseful login
+            throw new Exception($"Wrong password. You have {5 - user.FailedLoginAttempts} attempts left before your account is locked.");
+            }
+
+            // Reset failed attempts after successful login
             user.ResetFailedLoginAttempts();
             user.UnlockAccount();
 

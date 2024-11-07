@@ -1,0 +1,34 @@
+<div class="operationType-container">
+    <h2 class="operation-title">Create Operation Type</h2>
+    <div class="form-and-table-container">
+        <div class="form-container">
+            <form (ngSubmit)="onSubmit()">
+                <div class="form-group">
+                    <label for="name">Name</label>
+                    <input type="text" class="form-control" id="name" name="name" [(ngModel)]="operationType.name" required>
+                </div>
+                <div class="form-group">
+                    <label for="estimatedTime">Estimated Time</label>
+                    <input type="text" class="form-control" id="estimatedTime" name="estimatedTime" [(ngModel)]="operationType.estimatedTime" required>
+                </div>
+                <div class="form-group">
+                    <label for="specializations">Available Specializations</label>
+                    <div class="checkboxes-container">
+                        <div *ngFor="let specialization of availableSpecializations" class="checkbox-group">
+                            <input type="checkbox" 
+                                id="specialization-{{specialization}}" 
+                                name="specializations" 
+                                [(ngModel)]="operationType.specializations" 
+                                [value]="specialization">
+                            <label for="specialization-{{specialization}}">{{specialization}}</label>
+                        </div>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-create">Create</button>
+                <a [routerLink]="['/operationTypes']" class="btn btn-back">Back</a>
+            </form>
+        </div>
+        <div class="specializations-container">
+        </div>
+    </div>
+</div>

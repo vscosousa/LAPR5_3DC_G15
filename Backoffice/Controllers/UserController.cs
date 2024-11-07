@@ -146,7 +146,6 @@ namespace DDDSample1.Controllers
 
                 if (token == null)
                 {
-                    // If token is null, login failed (e.g., invalid password or email)
                     return Unauthorized("Invalid email or password.");
                 }
 
