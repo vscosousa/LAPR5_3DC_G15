@@ -67,6 +67,13 @@ namespace DDDSample1.Domain.Specializations
 
             return specialization;
         }
+        
+        // Get All Specializations
+        public async Task<IEnumerable<Specialization>> GetAllSpecializationsAsync()
+        {
+            var specializations = await _repository.GetAllAsync();
+            return specializations;
+        }
 
     }
 }

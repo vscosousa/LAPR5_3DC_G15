@@ -23,7 +23,7 @@ namespace DDDSample1.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Admin")]
+        [AllowAnonymous]
         public async Task<ActionResult<StaffDTO>> CreateStaff(CreatingStaffDTO dto)
         {
             try

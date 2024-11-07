@@ -54,5 +54,21 @@ namespace DDDSample1.Controllers
                 return StatusCode(500, $"An error occurred while retrieving the specialization: {ex.Message}");
             }
         }
+
+        // GET api/specialization
+        [HttpGet]
+        [AllowAnonymous]
+        public async Task<ActionResult<IEnumerable<SpecializationDTO>>> GetAllSpecializations()
+        {
+            try
+            {
+                var specializations = await _specializationService.GetAllSpecializationsAsync();
+                return Ok(specializations);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred while retrieving the specializations: {ex.Message}");
+            }
+        }
     }
 }

@@ -1,0 +1,41 @@
+<app-sidebar></app-sidebar>
+<div class="create-staff-container">
+    <div class="create-staff-middle">
+        <div class="top">
+            <h2>Create Staff</h2>
+        </div>
+        <form (ngSubmit)="onSubmit()" novalidate>
+            <label for="firstName">First Name</label>
+            <input type="text" id="firstName" name="firstName" placeholder="First Name" [(ngModel)]="firstName" required>
+
+            <label for="lastName">Last Name</label>
+            <input type="text" id="lastName" name="lastName" placeholder="Last Name" [(ngModel)]="lastName" required>
+
+            <label for="fullName">Full Name</label>
+            <input type="text" id="fullName" name="fullName" placeholder="Full Name" [(ngModel)]="fullName" required>
+
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" placeholder="example@email.com" [(ngModel)]="email" required>
+
+            <label for="phoneNumber">Phone Number</label>
+            <input type="tel" id="phoneNumber" name="phoneNumber" placeholder="Phone Number" [(ngModel)]="phoneNumber" required>
+
+            <label for="staffType">Staff Type</label>
+            <select id="staffType" name="staffType" [(ngModel)]="staffType" required>
+                <option value="" hidden>Choose Staff Type</option>
+                <option value="0">Admin</option>
+                <option value="1">Doctor</option>
+                <option value="2">Nurse</option>
+            </select>
+
+            <label for="specializationName">Specialization Name</label>
+            <input type="text" id="specializationName" name="specializationName" placeholder="Specialization Name" [(ngModel)]="specializationName" required>
+
+            
+            <button  type="submit">
+                Create Staff
+            </button>
+    
+        </form>
+    </div>
+</div>

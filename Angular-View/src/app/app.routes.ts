@@ -11,6 +11,7 @@ import { FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { LoginService } from './services/login.service';
 import { RegisterService } from './services/register.service';
+import { CreateStaffComponent } from './Components/create-staff/create-staff.component';
 
 export const routes: Routes = [
     {
@@ -22,7 +23,9 @@ export const routes: Routes = [
     {
         path: "navbar-admin", component: NavbarAdminComponent
     },
-
+    {
+        path: "createStaff", component: CreateStaffComponent
+    },
     {
         path: "operation-types", component: OperationTypesComponent, children: [
             { path: "create-operation-type", component: CreateOperationTypeComponent }

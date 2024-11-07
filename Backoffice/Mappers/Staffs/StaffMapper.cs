@@ -17,9 +17,10 @@ namespace Projetos.LAPR5_3DC_G15.Mappers.Staffs
                 FirstName = domain.FirstName,
                 LastName = domain.LastName,
                 FullName = domain.FullName,
-                LicenseNumber = domain.LicenseNumber.ToString(),
                 Email = domain.Email,
                 PhoneNumber = domain.PhoneNumber,
+                StaffType = domain.StaffType.ToString(),
+                LicenseNumber= domain.LicenseNumber,
                 AvailabilitySlots = domain.AvailabilitySlots.Select(date => date.ToString()).ToArray(),
                 SpecializationId = domain.SpecializationId.AsGuid(),
                 IsActive = domain.IsActive
