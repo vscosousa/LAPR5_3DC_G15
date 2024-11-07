@@ -17,7 +17,7 @@ describe('NavbarAdminComponent', () => {
     fixture.detectChanges();
   });
 
-  new it('should create', () => {
+  it('should create', () => {
     expect(component).toBeTruthy();
   });
 });

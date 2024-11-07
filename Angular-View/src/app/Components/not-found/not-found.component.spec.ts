@@ -17,7 +17,7 @@ describe('NotFoundComponent', () => {
     fixture.detectChanges();
   });
 
-  new it('should create', () => {
+  it('should create', () => {
     expect(component).toBeTruthy();
   });
 });

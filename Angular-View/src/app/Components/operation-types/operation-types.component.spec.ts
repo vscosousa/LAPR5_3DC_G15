@@ -1,4 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ActivatedRoute } from '@angular/router';
+import { of } from 'rxjs';
 
 import { OperationTypesComponent } from './operation-types.component';
 
@@ -8,7 +10,15 @@ describe('OperationTypesComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [OperationTypesComponent]
+      imports: [OperationTypesComponent],
+      providers: [
+        {
+          provide: ActivatedRoute,
+          useValue: {
+            params: of({}) // Mock any required parameters here
+          }
+        }
+      ]
     })
     .compileComponents();
 
@@ -17,7 +27,7 @@ describe('OperationTypesComponent', () => {
     fixture.detectChanges();
   });
 
-  new it('should create', () => {
+  it('should create', () => {
     expect(component).toBeTruthy();
   });
 });

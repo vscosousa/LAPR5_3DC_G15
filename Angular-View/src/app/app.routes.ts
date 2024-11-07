@@ -10,7 +10,6 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { LoginService } from './services/login.service';
-import { Hospital3dComponent } from './Components/hospital3d/hospital3d.component';
 import { RegisterService } from './services/register.service';
 
 export const routes: Routes = [

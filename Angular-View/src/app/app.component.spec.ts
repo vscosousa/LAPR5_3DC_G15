@@ -8,13 +8,13 @@ describe('AppComponent', () => {
     }).compileComponents();
   });
 
-  new it('should create the app', () => {
+  it('should create the app', () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.componentInstance;
     expect(app).toBeTruthy();
   });
 
-  new it(`should have the 'Angular-View' title`, () => {
+  it(`should have the 'Angular-View' title`, () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.componentInstance;
     expect(app.title).toEqual('Angular-View');
