@@ -17,7 +17,7 @@ describe('SidebarComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  new it('should create', () => {
     expect(component).toBeTruthy();
   });
 });

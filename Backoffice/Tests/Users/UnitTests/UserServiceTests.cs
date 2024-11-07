@@ -403,7 +403,7 @@ namespace DDDSample1.Tests.Users.UnitTests
         {
 
             var patient = createSamplePatient();
-            var dto = new CreatingPatientUserDTO(patient.Email, "PasswordCorrect123@", "+123456789", patient.Id.AsGuid());
+            var dto = new CreatingPatientUserDTO(patient.Email, "PasswordCorrect123@", "+123456789");
             var user = new User(patient.Email, dto.Password, dto.PhoneNumber, patient.Id.AsGuid());
 
             _userRepositoryMock.Setup(repo => repo.GetUserByEmailAsync(dto.Email))
@@ -412,7 +412,7 @@ namespace DDDSample1.Tests.Users.UnitTests
             _patientRepositoryMock.Setup(repo => repo.GetByEmailAsync(dto.Email))
                                .ReturnsAsync(patient);
 
-            _userMapperMock.Setup(mapper => mapper.ToCreatingPatientUser(dto))
+            _userMapperMock.Setup(mapper => mapper.ToCreatingPatientUser(dto, patient.Id.AsGuid()))
                            .Returns(user);
 
             _userRepositoryMock.Setup(repo => repo.AddAsync(user)).ReturnsAsync(user);
@@ -431,10 +431,10 @@ namespace DDDSample1.Tests.Users.UnitTests
         {
             var patient = createSamplePatient();
             var user = new User(patient.Email, "PasswordCorrect123@", patient.PhoneNumber, patient.Id.AsGuid());
-            var dto = new CreatingPatientUserDTO("joao.pereira@gmail.com", "PasswordCorrect123@", "+123456789", patient.Id.AsGuid());
+            var dto = new CreatingPatientUserDTO("joao.pereira@gmail.com", "PasswordCorrect123@", "+123456789");
 
             _userRepositoryMock.Setup(repo => repo.GetUserByEmailAsync(dto.Email))
-                               .ReturnsAsync(new User(dto.Email, dto.Password, dto.PhoneNumber, dto.PatientId));
+                               .ReturnsAsync(new User(dto.Email, dto.Password, dto.PhoneNumber, patient.Id.AsGuid()));
 
             var exception = await Assert.ThrowsAsync<Exception>(() => _userService.CreateUserAsPatient(dto));
 
@@ -442,7 +442,7 @@ namespace DDDSample1.Tests.Users.UnitTests
             _userRepositoryMock.Verify(repo => repo.GetUserByEmailAsync(dto.Email), Times.Once);
             _patientRepositoryMock.Verify(repo => repo.GetByEmailAsync(dto.Email), Times.Never);
             _userRepositoryMock.Verify(repo => repo.AddAsync(It.IsAny<User>()), Times.Never);
-            _userMapperMock.Verify(mapper => mapper.ToCreatingPatientUser(dto), Times.Never);
+            _userMapperMock.Verify(mapper => mapper.ToCreatingPatientUser(dto, patient.Id.AsGuid()), Times.Never);
         }
 
         //Unit Test for Registering a new Patient User - US5.1.3
@@ -451,7 +451,7 @@ namespace DDDSample1.Tests.Users.UnitTests
         {
             var patient = createSamplePatient();
             var user = new User(patient.Email, "PasswordCorrect123@", patient.PhoneNumber, patient.Id.AsGuid());
-            var dto = new CreatingPatientUserDTO("joao.pereira@gmail.com", "PasswordCorrect123@", "+123489", patient.Id.AsGuid());
+            var dto = new CreatingPatientUserDTO("joao.pereira@gmail.com", "PasswordCorrect123@", "+123489");
 
             _userRepositoryMock.Setup(repo => repo.GetUserByEmailAsync(dto.Email))
                                 .ReturnsAsync((User)null);
@@ -464,7 +464,7 @@ namespace DDDSample1.Tests.Users.UnitTests
             _userRepositoryMock.Verify(repo => repo.GetUserByEmailAsync(dto.Email), Times.Once);
             _patientRepositoryMock.Verify(repo => repo.GetByEmailAsync(dto.Email), Times.Once);
             _userRepositoryMock.Verify(repo => repo.AddAsync(It.IsAny<User>()), Times.Never);
-            _userMapperMock.Verify(mapper => mapper.ToCreatingPatientUser(dto), Times.Never);
+            _userMapperMock.Verify(mapper => mapper.ToCreatingPatientUser(dto, patient.Id.AsGuid()), Times.Never);
         }
 
         //Unit Test for ActivatePatientUser - US5.1.3
@@ -473,7 +473,7 @@ namespace DDDSample1.Tests.Users.UnitTests
         {
             // Arrange
             var patient = createSamplePatient();
-            var dto = new CreatingPatientUserDTO("joao.pereira@gmail.com", "PasswordCorrect123@", "+123489", patient.Id.AsGuid());
+            var dto = new CreatingPatientUserDTO("joao.pereira@gmail.com", "PasswordCorrect123@", "+123489");
             var user = new User(patient.Email, "PasswordCorrect123@", patient.PhoneNumber, patient.Id.AsGuid());
             var token = _userService.CreateToken(user);
 
@@ -499,7 +499,7 @@ namespace DDDSample1.Tests.Users.UnitTests
         {
             // Arrange
             var patient = createSamplePatient();
-            var dto = new CreatingPatientUserDTO("joao.pereira@gmail.com", "PasswordCorrect123@", "+123489", patient.Id.AsGuid());
+            var dto = new CreatingPatientUserDTO("joao.pereira@gmail.com", "PasswordCorrect123@", "+123489");
             var user = new User(patient.Email, "PasswordCorrect123@", patient.PhoneNumber, patient.Id.AsGuid());
             var token = _userService.CreateToken(user);
             var expiredToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiYWRtaW4iLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJhZG1pbkBnbWFpbC5jb20iLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9hbWFpZGVudGlmaWVyIjoic2VjdXJpdHkiLCJleHBhbml0eSI6MTcyOTYwNjIwMn0.9n-Z0lRhhg2I5D_vgh0ECjfjE1lQAWYw3He3Q9cS1to";
@@ -516,7 +516,7 @@ namespace DDDSample1.Tests.Users.UnitTests
         {
             // Arrange
             var patient = createSamplePatient();
-            var dto = new CreatingPatientUserDTO("joao.pereira@gmail.com", "PasswordCorrect123@", "+123489", patient.Id.AsGuid());
+            var dto = new CreatingPatientUserDTO("joao.pereira@gmail.com", "PasswordCorrect123@", "+123489");
             var user = new User(patient.Email, "PasswordCorrect123@", patient.PhoneNumber, patient.Id.AsGuid());
             var token = _userService.CreateToken(user);
 

@@ -326,8 +326,7 @@ namespace DDDSample1.Tests.Users.IntegrationTests
             {
                 Email = "ana.salvador@gmail.com",
                 Password = "Password123@",
-                PhoneNumber = "+351123456789",
-                PatientId = patientId
+                PhoneNumber = "+351123456789"
             };
 
             // Act
@@ -348,8 +347,7 @@ namespace DDDSample1.Tests.Users.IntegrationTests
             {
                 Email = "ana.salvador@gmail.com",
                 Password = "Password123@",
-                PhoneNumber = "+351123456789",
-                PatientId = Guid.NewGuid()
+                PhoneNumber = "+351123456789"
             };
 
             // Act
@@ -389,8 +387,7 @@ namespace DDDSample1.Tests.Users.IntegrationTests
             {
                 Email = "ana.salvador@gmail.com",
                 Password = "Password123@",
-                PhoneNumber = "+351123456245",
-                PatientId = patientId
+                PhoneNumber = "+351123456245"
             };
 
             // Act
@@ -430,8 +427,7 @@ namespace DDDSample1.Tests.Users.IntegrationTests
             {
                 Email = "ana.salvador@gmail.com",
                 Password = "Password123@",
-                PhoneNumber = "+351123456789",
-                PatientId = patientId
+                PhoneNumber = "+351123456789"
             };
 
             // Act
@@ -489,8 +485,7 @@ namespace DDDSample1.Tests.Users.IntegrationTests
             {
                 Email = "ana.salvador@gmail.com",
                 Password = "Password123@",
-                PhoneNumber = "+351123456789",
-                PatientId = patientId
+                PhoneNumber = "+351123456789"
             };
 
             var user = await _client.PostAsJsonAsync("/api/user/RegisterUserAsPatient", userDTO);
@@ -546,8 +541,7 @@ namespace DDDSample1.Tests.Users.IntegrationTests
             {
                 Email = "ana.salvador@gmail.com",
                 Password = "Password123@",
-                PhoneNumber = "+351123456789",
-                PatientId = patientId
+                PhoneNumber = "+351123456789"
             };
 
             // Act

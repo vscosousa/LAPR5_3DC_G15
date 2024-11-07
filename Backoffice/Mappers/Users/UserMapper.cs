@@ -1,3 +1,4 @@
+using System;
 using DDDSample1.Domain.Users;
 using Projetos.LAPR5_3DC_G15.Domain.Shared;
 
@@ -36,14 +37,14 @@ namespace Projetos.LAPR5_3DC_G15.Mappers.Users
             };
         }
 
-        public User ToCreatingPatientUser(CreatingPatientUserDTO dto)
+        public User ToCreatingPatientUser(CreatingPatientUserDTO dto, Guid patientId)
         {
             return new User
             (
               dto.Email,
               dto.Password,
               dto.PhoneNumber,
-              dto.PatientId
+              patientId
             );   
         }
     }

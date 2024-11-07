@@ -1,2 +1,38 @@
-<app-sidebar></app-sidebar>
-
+<div class="register-container">
+    <a href="/" class="btn btn-home">
+        <img src="home.png" alt="Home">
+    </a>
+    <div class="register-left">
+        <div class="top">
+            <img src="logo.png" alt="logo" />
+            <h2>Hospital Management App</h2>
+        </div>
+        <form (ngSubmit)="onSubmit()">
+            <a href="" class="btn btn-google">
+                <img src="google.png" alt="Google logo"> Register with Google
+            </a>
+            <option>⎯⎯ Or Register with your email ⎯⎯</option>
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" placeholder="example@email.com" [(ngModel)]="email" required>
+            <label for="identifier">Phone Number</label>
+            <div style="display: flex; gap: 2px;">
+                <input type="text" id="identifier" name="identifier" placeholder="+1" style="width: 50px;" [(ngModel)]="identifier" required>
+                <input type="tel" id="phone" name="phoneNumber" placeholder="123456789" [(ngModel)]="phoneNumber" required>
+            </div>
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" placeholder="******" [(ngModel)]="password" required>
+            <label for="confirm-password">Confirm Password</label>
+            <input type="password" id="confirm-password" name="confirm-password" placeholder="******" [(ngModel)]="confirmPassword" required>
+            <button type="submit" class="btn btn-register">Register</button>
+        </form>
+        <p>Already have an account? <a class="button" href="login">Login Now</a></p>
+    </div>
+    <div class="register-right">
+        <div class="register-info">
+            <h3>Why should I register?</h3>
+            <p>By registering, you can access your personal dashboard, where you can manage your account, view your
+                profile, and much more.</p>
+            <img src="healthcare-dashboard.png" alt="Dashboard example">
+        </div>
+    </div>
+</div>

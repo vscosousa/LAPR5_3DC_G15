@@ -95,7 +95,7 @@ namespace DDDSample1.Domain.Users
                 throw new Exception("Phone number does not match the Patient's profile with the given email.");
             }
 
-            var user = _userMapper.ToCreatingPatientUser(dto);
+            var user = _userMapper.ToCreatingPatientUser(dto, patient.Id.AsGuid());
             string token = CreateToken(user);
 
             await _mailService.SendEmail(dto.Email, "Activate your account", GenerateLink(token, "ActivatePatientUser"));
