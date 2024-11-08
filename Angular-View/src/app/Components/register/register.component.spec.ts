@@ -1,5 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { ActivatedRoute } from '@angular/router';
+import { of } from 'rxjs';
 
 import { RegisterComponent } from './register.component';
 
@@ -9,7 +11,15 @@ describe('RegisterComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule, RegisterComponent]
+      imports: [HttpClientTestingModule, RegisterComponent],
+      providers: [
+        {
+          provide: ActivatedRoute,
+          useValue: {
+            params: of({})
+          }
+        }
+      ]
     })
     .compileComponents();
 

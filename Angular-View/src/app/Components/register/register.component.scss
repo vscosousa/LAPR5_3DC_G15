@@ -44,17 +44,54 @@
 }
 
 .register-left form input {
-    padding: 0.4rem; // Reduced padding
-    margin-top: 0.4rem; // Reduced margin
+    padding: 0.4rem;
+    margin-top: 0.4rem;
     border: 1px solid #ccc;
     border-radius: 10px;
+}
+
+.register-left form input.ng-touched.ng-invalid {
+    border: 2px solid red;
+}
+
+.register-left form input.ng-touched.ng-valid {
+    border: 1px solid green;
 }
 
 .register-left form option {
     margin: 0.5rem 0;
     text-align: center;
     color: rgb(160, 159, 159);
-  }
+}
+
+.identifier-container {
+    display: flex;
+    gap: 2px;
+}
+
+.identifier-input {
+    width: 50px;
+}
+
+.input-container {
+    position: relative;
+}
+
+.input-container input {
+    width: 100%;
+    padding-right: 30px;
+}
+
+.input-container .eye-icon {
+    position: absolute;
+    right: 10px;
+    top: 100%;
+    transform: translateY(-150%);
+    cursor: pointer;
+    width: 20px;
+    height: 20px;
+    filter: invert(0.5);
+}
 
 .register-left .btn {
     padding: 0.5rem;
@@ -81,6 +118,10 @@
 .register-left .btn-register {
     background-color: #4a90e2;
     color: white;
+}
+
+.register-left .btn-register:hover {
+    background-color: #0056b3;
 }
 
 .register-right {
