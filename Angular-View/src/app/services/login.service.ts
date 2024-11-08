@@ -17,4 +17,9 @@ export class LoginService {
       responseType: 'text' as 'json'
     });
   }
+
+  getRoleFromToken(token: string): string {
+    const tokenPayload = JSON.parse(atob(token.split('.')[1]));
+    return tokenPayload['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
+  }
 }

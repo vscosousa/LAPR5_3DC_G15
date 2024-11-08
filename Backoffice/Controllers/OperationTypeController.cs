@@ -204,10 +204,10 @@ namespace DDDSample1.Controllers
             }
         }
 
-        // Get all OperationTypes
+        
         // GET: api/OperationType
         [HttpGet]
-        [Authorize(Roles = "Admin")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetAllOperationTypes()
         {
             try

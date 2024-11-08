@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common'; // Import CommonModule to access ngFor
 import { RouterModule } from '@angular/router';
+import { OperationTypeService } from '../../services/operation-type.service';
 
 @Component({
   selector: 'app-operation-types',
@@ -10,14 +11,26 @@ import { RouterModule } from '@angular/router';
   styleUrls: ['./operation-types.component.scss']
 })
 export class OperationTypesComponent implements OnInit {
-  operationTypes = [
-    { id: 1, name: 'Type 1', estimatedTime: '1 hour', specializations: ['Spec 1', 'Spec 2'] },
-    { id: 2, name: 'Type 2', estimatedTime: '2 hours', specializations: ['Spec 3', 'Spec 4'] }
-  ];
+  operationTypes: any[] = [];
+  staffs: any[] = [];
 
   visibleSpecializations = new Map<number, boolean>();
 
-  constructor() { }
+  constructor(private operationTypeService: OperationTypeService) { }
 
-  ngOnInit(): void { }
+  ngOnInit(): void { 
+    this.fetchOperationTypes();
+  }
+
+  fetchOperationTypes(): void{
+    this.operationTypeService.getOperationTypes().subscribe(
+      (data: any[]) => {
+        this.operationTypes = data;
+        this.staffs = data.map(operationType => operationType.staffs);
+      },
+      error => {
+        console.error('Error fetching operation types', error);
+      }
+    );
+  }
 }

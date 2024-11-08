@@ -6,12 +6,8 @@ import { HomeComponent } from './Components/home/home.component';
 import { NotFoundComponent } from './Components/not-found/not-found.component';
 import { OperationTypesComponent } from './Components/operation-types/operation-types.component';
 import { CreateOperationTypeComponent } from './Components/operation-types/create-operation-type/create-operation-type.component';
-import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { BrowserModule } from '@angular/platform-browser';
-import { LoginService } from './services/login.service';
-import { RegisterService } from './services/register.service';
 import { CreateStaffComponent } from './Components/create-staff/create-staff.component';
+import { AuthGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
     {
@@ -21,16 +17,21 @@ export const routes: Routes = [
         path: 'login', component: LoginComponent
     },
     {
-        path: "navbar-admin", component: NavbarAdminComponent
+        path: "navbar-admin", component: NavbarAdminComponent, canActivate: [AuthGuard]
     },
     {
         path: "createStaff", component: CreateStaffComponent
     },
     {
-        path: "operation-types", component: OperationTypesComponent, children: [
-            { path: "create-operation-type", component: CreateOperationTypeComponent }
-        ]
+        path: "operation-types", component: OperationTypesComponent, canActivate: [AuthGuard]
     },
+    
+    { 
+        path: "create-operation-type", component: CreateOperationTypeComponent , canActivate: [AuthGuard]
+    },
+
+    
+
     {
         path: "", component: HomeComponent
     },
