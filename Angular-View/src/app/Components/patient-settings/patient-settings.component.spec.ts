@@ -3,15 +3,15 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ActivatedRoute } from '@angular/router';
 import { of } from 'rxjs';
 
-import { CreateStaffComponent } from './create-staff.component';
+import { PatientSettingsComponent } from './patient-settings.component';
 
-describe('CreateStaffComponent', () => {
-  let component: CreateStaffComponent;
-  let fixture: ComponentFixture<CreateStaffComponent>;
+describe('PatientSettingsComponent', () => {
+  let component: PatientSettingsComponent;
+  let fixture: ComponentFixture<PatientSettingsComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule, CreateStaffComponent],
+      imports: [HttpClientTestingModule, PatientSettingsComponent],
       providers: [
         {
           provide: ActivatedRoute,
@@ -23,7 +23,7 @@ describe('CreateStaffComponent', () => {
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(CreateStaffComponent);
+    fixture = TestBed.createComponent(PatientSettingsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

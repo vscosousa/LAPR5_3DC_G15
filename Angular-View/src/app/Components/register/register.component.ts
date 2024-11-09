@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
-import { SidebarComponent } from '../sidebar/sidebar.component';
-import { RegisterService } from '../../services/register.service';
+import { RegisterService } from '../../Services/register.service';
 import { Router } from '@angular/router';
 import { FormsModule, ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
 import { RouterModule } from '@angular/router';
@@ -8,7 +7,7 @@ import { RouterModule } from '@angular/router';
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [SidebarComponent, FormsModule, ReactiveFormsModule, RouterModule],
+  imports: [FormsModule, ReactiveFormsModule, RouterModule],
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.scss']
 })

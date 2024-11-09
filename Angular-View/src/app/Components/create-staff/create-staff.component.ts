@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { StaffService } from '../../services/staff-sevice.service'; 
+import { StaffService } from '../../Services/staff-sevice.service';
 import { SidebarComponent } from '../sidebar/sidebar.component';
 
 @Component({
@@ -11,7 +11,7 @@ import { SidebarComponent } from '../sidebar/sidebar.component';
   styleUrls: ['./create-staff.component.scss']
 })
 export class CreateStaffComponent {
-  
+
   firstName: string = "";
   lastName: string = "";
   fullName: string = "";
@@ -34,5 +34,5 @@ export class CreateStaffComponent {
       }
     });
   }
-  
+
 }

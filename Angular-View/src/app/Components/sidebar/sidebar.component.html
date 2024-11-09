@@ -9,7 +9,7 @@
             <div class="menu-separator"></div>
         </h4>
         <li>
-            <a href="#"><img src="dashboard.png" alt="icon" />Dashboard</a>
+            <a [routerLink]="['/', dashboardId]"><img src="dashboard.png" alt="icon" />Dashboard</a>
         </li>
         <h4>
             <span>General</span>
@@ -26,7 +26,7 @@
             <a href="#"><img src="profile.png" alt="icon" />Profile</a>
         </li>
         <li>
-            <a href="#"><img src="settings.png" alt="icon" />Settings</a>
+            <a [routerLink]="['/', settingsId]"><img src="settings.png" alt="icon" />Settings</a>
         </li>
         <li>
             <a href="/" (click)="logout()"><img src="logout.png" alt="icon" />Logout</a>

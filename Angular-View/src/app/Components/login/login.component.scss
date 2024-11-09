@@ -1,215 +1,207 @@
-/* Overall login container style */
 .login-container {
-  display: flex;
-  height: 100vh;
+    display: flex;
+    height: 100vh;
 }
 
-/* Style for the left side of the login (form area) */
+.login-left,
+.login-right {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+}
+
 .login-left {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 2rem;
-  background-color: #f5f5f5;
+    flex-direction: column;
+    background-color: #f5f5f5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem; // Reduced padding
 }
 
 .login-left h2 {
-  font-size: 2rem;
-  margin-bottom: 1rem;
-  font-weight: 700;
+    font-size: 1.5rem; // Reduced font size
+    margin-bottom: 0.5rem; // Reduced margin
+    font-weight: 700;
 }
 
 .login-left p {
-  margin-top: 1rem;
-  margin-bottom: 1rem;
+    margin-bottom: 0.5rem; // Reduced margin
+    margin-top: 0.5rem; // Reduced margin
 }
 
 .login-left form {
-  width: 100%;
-  max-width: 300px;
-  display: flex;
-  flex-direction: column;
-}
-
-.login-left form option {
-  margin: 0.5rem 0;
-  text-align: center;
-  color: rgb(160, 159, 159);
+    width: 100%;
+    max-width: 250px; // Reduced max-width
+    display: flex;
+    flex-direction: column;
 }
 
 .login-left form label {
-  margin-top: 1rem;
+    margin-top: 0.5rem; // Reduced margin
 }
 
 .login-left form input {
-  padding: 0.5rem;
-  margin-top: 0.5rem;
-  border: 1px solid #ccc;
-  border-radius: 15px;
-  width: 100%;
+    padding: 0.4rem;
+    margin-top: 0.4rem;
+    border: 1px solid #ccc;
+    border-radius: 10px;
 }
 
-form input[type="password"] {
-  margin-bottom: 1rem;
+.login-left form input.ng-touched.ng-invalid {
+    border: 2px solid red;
 }
 
-.login-left .btn {
-  padding: 0.6rem;
-  margin-top: 1.5rem;
-  border-radius: 50px;
-  border: 3px solid #4a90e2;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.login-left form input.ng-touched.ng-valid {
+    border: 1px solid green;
 }
 
-.login-left .btn-google {
-  background-color: #ffffff;
-  color: #4a90e2;
-  margin-bottom: 1rem;
+.login-left form option {
+    margin: 0.5rem 0;
+    text-align: center;
+    color: rgb(160, 159, 159);
 }
 
-.login-left .btn-google img {
-  width: 30px;
-  margin-right: 0.5rem;
-}
-
-.login-left .btn-signin {
-  background-color: #4a90e2;
-  color: white;
-}
-
-.login-left .btn-signin:hover {
-  background-color: #357ABD;
-  transition: background-color 0.3s ease;
-}
-
-/* Right side of the login (info section) */
-.login-right {
-  flex: 1;
-  background-image: url('https://online-learning-college.com/wp-content/uploads/2023/01/Qualifications-to-Become-a-Doctor--scaled.jpg');
-  background-size: cover;
-  background-position: center;
-  color: black;
-}
-
-.login-info {
-  background-color: white;
-  padding: 2rem;
-  border-radius: 6px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  width: 400px;
-}
-
-.login-info h3 {
-  font-size: 1.5rem;
-  margin-bottom: 1rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.login-info p {
-  margin-bottom: 1rem;
-  text-align: justify;
-}
-
-.login-info img {
-  max-width: 100%;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-}
-
-/* Style for the top section inside login-left */
-.top {
-  display: contents;
-  align-items: center;
-  justify-content: center;
-  border-bottom: 1px solid #ccc;
-}
-
-.top img {
-  height: 200px;
-  padding-bottom: 2rem;
-}
-
-.top h2 {
-  font-size: 1.5rem;
-  color: #333;
-}
-
-/* Home button style */
-.btn-home {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  background-color: #ffffff;
-  border: 3px solid #4a90e2;
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: background-color 0.3s;
-  padding: 0;
-}
-
-.btn-home img {
-  width: 24px;
-  height: 24px;
-}
-
-.btn-home:hover {
-  background-color: #0056b3;
-}
-
-.btn-home:focus {
-  outline: none;
-}
-
-/* Style for the button in the footer */
-.button {
-  color: #4a90e2;
-  text-decoration: none;
-  cursor: pointer;
-}
-
-/* Hide footer */
-footer {
-  display: none !important;
-}
-
-/* Additional Styles for Password Visibility Toggle (Eye Icon) */
 .input-container {
-  position: relative;
-  width: 100%;
+    position: relative;
 }
 
 .input-container input {
-  padding: 0.5rem;
-  margin-top: 0.5rem;
-  border: 1px solid #ccc;
-  border-radius: 15px;
-  width: 100%;
-  padding-right: 40px; /* Space for the eye icon */
+    width: 100%;
+    padding-right: 30px;
 }
 
-.eye-icon {
-  position: absolute;
-  right: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  cursor: pointer;
-  width: 20px;
-  height: 20px;
+.input-container .eye-icon {
+    position: absolute;
+    right: 10px;
+    top: 100%;
+    transform: translateY(-150%);
+    cursor: pointer;
+    width: 20px;
+    height: 20px;
+    filter: invert(0.5);
 }
 
-/* Prevent any form movement when eye icon is clicked */
-.login-left form {
-  position: relative;
+.login-left .btn {
+    padding: 0.5rem;
+    margin-top: 1rem;
+    border-radius: 30px;
+    border: 2px solid #4a90e2;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.login-left .btn-google {
+    background-color: #ffffff;
+    color: #4a90e2;
+    margin-bottom: 0.5rem; // Reduced margin
+}
+
+.login-left .btn-google img {
+    width: 25px; // Reduced width
+    margin-right: 0.3rem; // Reduced margin
+}
+
+.login-left .btn-signin {
+    background-color: #4a90e2;
+    color: white;
+}
+
+.login-left .btn-signin:hover {
+    background-color: #0056b3;
+}
+
+.login-right {
+    background-image: url('https://online-learning-college.com/wp-content/uploads/2023/01/Qualifications-to-Become-a-Doctor--scaled.jpg');
+    background-size: cover;
+    background-position: center;
+    color: black;
+}
+
+.login-info {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 6px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 400px;
+}
+
+.login-info h3 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.login-info p {
+    margin-bottom: 1rem;
+    text-align: justify;
+}
+
+.login-info img {
+    max-width: 100%;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+}
+
+.top {
+    display: contents;
+    align-items: center;
+    justify-content: center;
+    border-bottom: 1px solid #ccc;
+}
+
+.top img {
+    height: 200px;
+    padding-bottom: 2rem;
+}
+
+.top h2 {
+    font-size: 1.5rem;
+    color: #333;
+}
+
+.btn-home {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background-color: #ffffff;
+    border: 3px solid #4a90e2;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    padding: 0;
+
+    img {
+        width: 24px;
+        height: 24px;
+    }
+
+    &:hover {
+        background-color: #0056b3;
+    }
+
+    &:focus {
+        outline: none;
+    }
+}
+
+.button {
+    color: #4a90e2;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+footer {
+    display: none !important;
 }

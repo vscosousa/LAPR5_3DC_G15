@@ -1,0 +1,23 @@
+<div class="settings-container">
+  <app-sidebar></app-sidebar>
+  <div class="settings-content">
+    <div class="header">
+      <h1>Settings</h1>
+    </div>
+    <div class="settings-details">
+      <section id="theme-settings" class="box">
+        <h2>Theme</h2>
+        <label> <input type="radio" name="theme" value="light" /> Light </label>
+        <label>
+          <input type="radio" name="theme" value="dark" checked /> Dark
+        </label>
+      </section>
+      <section id="account-settings" class="box">
+        <h2>Account</h2>
+        <button class="delete-account" (click)="onSubmit()">
+          Request Account Delete
+        </button>
+      </section>
+    </div>
+  </div>
+</div>
