@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { DashboardService } from '../../ervices/dashboard.service';
-import { SettingsService } from '../../ervices/settings.service';
+import { DashboardService } from '../../Services/dashboard.service';
+import { SettingsService } from '../../Services/settings.service';
 import { Router } from '@angular/router';
 
 @Component({

@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { StaffService } from '../../ervices/staff-sevice.service';
+import { StaffService } from '../../Services/staff-sevice.service';
 import { SidebarComponent } from '../sidebar/sidebar.component';
 
 @Component({

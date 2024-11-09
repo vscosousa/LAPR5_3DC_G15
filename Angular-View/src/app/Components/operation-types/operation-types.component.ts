@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common'; // Import CommonModule to access ngFor
 import { RouterModule } from '@angular/router';
-import { OperationTypeService } from '../../ervices/operation-type.service';
+import { OperationTypeService } from '../../Services/operation-type.service';
 
 @Component({
   selector: 'app-operation-types',

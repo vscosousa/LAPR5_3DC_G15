@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { SidebarComponent } from '../sidebar/sidebar.component';
 import { Router } from '@angular/router';
-import { DashboardService } from '../../ervices/dashboard.service';
-import { SettingsService } from '../../ervices/settings.service';
+import { DashboardService } from '../../Services/dashboard.service';
+import { SettingsService } from '../../Services/settings.service';
 
 @Component({
   selector: 'app-patient-settings',
