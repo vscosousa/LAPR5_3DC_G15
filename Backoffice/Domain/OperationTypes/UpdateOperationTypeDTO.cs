@@ -5,5 +5,5 @@ public class UpdatingOperationTypeDTO
 {
     public string Name { get; set; }
     public string EstimatedDuration { get; set; }
-    public List<Guid> Specializations { get; set; } 
+    public List<string> Specializations { get; set; } 
 }

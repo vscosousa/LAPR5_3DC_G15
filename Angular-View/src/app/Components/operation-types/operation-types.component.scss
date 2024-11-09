@@ -1,104 +1,233 @@
-
 .operationType-container {
-    margin: 0 auto;
-    padding: 20px;
-    max-width: 1200px;
-    font-family: 'Arial', sans-serif;
-  }
-  
-  .operation-title {
-    text-align: center;
-    margin-bottom: 20px;
-    font-size: 2rem;
-    color: #333;
-  }
-  
-  .btn {
-    padding: 8px 16px;
-    font-size: 14px;
-    border-radius: 4px;
-    cursor: pointer;
-    text-decoration: none;
-  }
-  
-  .btn-create {
-    background-color: #4CAF50;
-    color: white;
-    margin-bottom: 20px;
-    display: inline-block;
-  }
-  
-  .btn-create:hover {
-    background-color: #45a049;
-  }
-  
-  .table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-  }
-  
+  margin: 0 auto;
+  padding: 20px;
+  max-width: 1200px;
+  font-family: 'Arial', sans-serif;
+  background-color: #f8f8f8; /* Slight background color for better contrast */
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.operation-title {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 2rem;
+  color: #333; /* Slightly darker text color for contrast */
+}
+
+.btn {
+  padding: 8px 16px;
+  font-size: 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  text-decoration: none;
+  border: none;
+  transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.btn-back {
+  background-color: #ff6f61;
+  color: white;
+  margin-top: 20px;
+  display: inline-block;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.btn-create {
+  background-color: #4CAF50;
+  color: white;
+  margin-bottom: 20px;
+  display: inline-block;
+}
+
+.btn-create:hover {
+  background-color: #45a049;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.table th, .table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.table th {
+  background-color: #f2f2f2;
+  font-weight: 600;
+  color: #333;
+}
+
+.table td {
+  font-size: 14px;
+  color: #555;
+}
+
+.table tr:hover {
+  background-color: #f5f5f5;
+  cursor: pointer;
+}
+
+.btn-update, .btn-delete {
+  display: inline-block;
+  margin-right: 10px;
+  padding: 6px 12px;
+  font-size: 14px;
+  text-decoration: none;
+  border-radius: 4px;
+}
+
+.btn-update {
+  background-color: #ffa500;
+  color: white;
+}
+
+.btn-update:hover {
+  background-color: #ff8c00;
+}
+
+.btn-delete {
+  background-color: #f44336;
+  color: white;
+}
+
+.btn-delete:hover {
+  background-color: #e53935;
+}
+
+.router-outlet {
+  margin-top: 40px;
+}
+
+@media (max-width: 768px) {
   .table th, .table td {
-    padding: 12px;
-    text-align: left;
-    border-bottom: 1px solid #ddd;
-  }
-  
-  .table th {
-    background-color: #f2f2f2;
-  }
-  
-  .table td {
-    font-size: 14px;
-    color: #555;
-  }
-  
-  .table tr:hover {
-    background-color: #f5f5f5;
-  }
-  
-  .btn-update, .btn-delete {
-    display: inline-block;
-    margin-right: 10px;
-    padding: 6px 12px;
-    font-size: 14px;
-    text-decoration: none;
-    border-radius: 4px;
-  }
-  
-  .btn-update {
-    background-color: #ffa500;
-    color: white;
-  }
-  
-  .btn-update:hover {
-    background-color: #ff8c00;
-  }
-  
-  .btn-delete {
-    background-color: #f44336;
-    color: white;
-  }
-  
-  .btn-delete:hover {
-    background-color: #e53935;
-  }
-  
-  .router-outlet {
-    margin-top: 40px;
-  }
-  
-  /* Optional: For smaller screens, make the table more responsive */
-  @media (max-width: 768px) {
-    .table th, .table td {
       font-size: 12px;
       padding: 8px;
-    }
-  
-    .btn {
+  }
+
+  .btn {
       font-size: 12px;
       padding: 6px 12px;
-    }
   }
-  
-  
+
+  .operation-title {
+    font-size: 1.5rem;
+  }
+
+  .staff-list {
+    grid-template-columns: 1fr; /* Stack staff list items on smaller screens */
+  }
+}
+
+/* New CSS for better separation and grouping */
+.table td h5 {
+  font-size: 16px;
+  margin-top: 10px;
+  margin-bottom: 5px;
+  color: #333;
+}
+
+.table td ul {
+  padding-left: 20px;
+}
+
+.table td ul li {
+  font-size: 14px;
+  color: #555;
+}
+
+.table td ul li span {
+  display: block;
+  margin-bottom: 5px;
+}
+
+ul {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+ul li {
+  padding: 5px;
+}
+
+ul li ul {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease-out;
+}
+
+ul li ul.ng-tns-c0-0 {
+  max-height: 500px; /* Adjust according to your content */
+}
+
+a {
+  cursor: pointer;
+}
+
+.specialization-link {
+  color: #007bff;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.staff-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+  color: black;
+  margin-top: 20px;
+}
+
+.staff-list li {
+  background-color: #f9f9f9;
+  padding: 10px;
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.staff-list li:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  background-color: #f1f1f1;
+}
+
+.staff-list li .staff-name {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.staff-list li .staff-details {
+  font-size: 14px;
+  color: #777;
+}
+
+.deactivated {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.deactivated td {
+  text-decoration: line-through;
+}
+
+.btn-activate {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.btn-activate:hover {
+  background-color: #45a049;
+}

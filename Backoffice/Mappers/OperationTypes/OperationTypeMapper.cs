@@ -13,7 +13,7 @@ namespace DDDSample1.Mappers.OperationTypes
                 domain.Id.AsGuid(),
                 domain.Name,
                 domain.EstimatedDuration,
-                domain.Specializations.Select(s => s.Id.AsGuid()).ToList(),
+                domain.Specializations,
                 domain.Staffs.Select(s => new StaffMapper().ToDto(s)).ToList()
             );
         }
@@ -31,7 +31,8 @@ namespace DDDSample1.Mappers.OperationTypes
             return new CreatingOperationTypeDTO(
                 domain.Name,
                 domain.EstimatedDuration,
-                domain.Specializations.Select(s => s.Id.AsGuid()).ToList()
+                domain.Specializations.Select(s => s.Id.AsGuid().ToString()).ToList()
+    
             );
         }
     }

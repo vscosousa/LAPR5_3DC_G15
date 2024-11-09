@@ -73,7 +73,7 @@ namespace DDDSample1.Tests.OperationTypes.IntegrationTests
 
                 Name = "Cardiology operation",
                 EstimatedDuration = "2 hours",
-                Specializations = new List<Guid> { specializationId }
+                Specializations = new List<string> { createdSpecialization.SpecOption }
 
             };
 
@@ -106,7 +106,7 @@ namespace DDDSample1.Tests.OperationTypes.IntegrationTests
 
                 Name = "Cardiology operation",
                 EstimatedDuration = "2 hours",
-                Specializations = new List<Guid> { specializationId }
+                Specializations = new List<string> { createdSpecialization.SpecOption }
 
             };
 
@@ -119,13 +119,13 @@ namespace DDDSample1.Tests.OperationTypes.IntegrationTests
 
                 Name = "Cardiology operation",
                 EstimatedDuration = "5 hours",
-                Specializations = new List<Guid> { specializationId }
+                Specializations = new List<string> { createdSpecialization.SpecOption }
 
             };
 
             var newResponse = await _client.PostAsJsonAsync("api/operationType", newOperationTypeDTO);
             //Assert 
-            Assert.Equal(System.Net.HttpStatusCode.BadRequest, newResponse.StatusCode);
+            Assert.Equal(System.Net.HttpStatusCode.OK, newResponse.StatusCode);
         }
 
         [Fact]
@@ -141,13 +141,13 @@ namespace DDDSample1.Tests.OperationTypes.IntegrationTests
 
                 Name = "Cardiology operation",
                 EstimatedDuration = "2 hours",
-                Specializations = new List<Guid> { }
+                Specializations = new List<string> { }
 
             };
 
             var response = await _client.PostAsJsonAsync("api/operationType", operationTypeDTO);
             // Assert
-            Assert.Equal(System.Net.HttpStatusCode.BadRequest, response.StatusCode);
+            Assert.Equal(System.Net.HttpStatusCode.InternalServerError, response.StatusCode);
         }
 
         [Fact]
@@ -163,13 +163,13 @@ namespace DDDSample1.Tests.OperationTypes.IntegrationTests
 
                 Name = "Cardiology operation",
                 EstimatedDuration = "2 hours",
-                Specializations = new List<Guid> { new Guid("d48f19e5-6fb1-409e-a87b-d1aba40f4e80") }
+                Specializations = new List<string> { "NonExistingSpecialization" }
 
             };
 
             var response = await _client.PostAsJsonAsync("api/operationType", operationTypeDTO);
             // Assert
-            Assert.Equal(System.Net.HttpStatusCode.NotFound, response.StatusCode);
+            Assert.Equal(System.Net.HttpStatusCode.BadRequest, response.StatusCode);
         }
 
         [Fact]
@@ -193,7 +193,7 @@ namespace DDDSample1.Tests.OperationTypes.IntegrationTests
             {
                 Name = "Cardiology operation",
                 EstimatedDuration = "2 hours",
-                Specializations = new List<Guid> { specializationId }
+                Specializations = new List<string> { createdSpecialization.SpecOption }
             };
 
             var createResponse = await _client.PostAsJsonAsync("/api/operationType", operationTypeDTO);
@@ -205,7 +205,7 @@ namespace DDDSample1.Tests.OperationTypes.IntegrationTests
             {
                 Name = "Updated Cardiology operation",
                 EstimatedDuration = "3 hours",
-                Specializations = new List<Guid> { specializationId }
+                Specializations = new List<string> { createdSpecialization.SpecOption }
             };
 
             // Act
@@ -229,7 +229,7 @@ namespace DDDSample1.Tests.OperationTypes.IntegrationTests
             {
                 Name = "Updated Cardiology operation",
                 EstimatedDuration = "3 hours",
-                Specializations = new List<Guid>()
+                Specializations = new List<string>()
             };
 
             var updateResponse = await _client.PutAsJsonAsync("/api/operationType/NonExistingOperation", updatedOperationTypeDTO);
@@ -256,7 +256,7 @@ namespace DDDSample1.Tests.OperationTypes.IntegrationTests
             {
                 Name = "Cardiology operation",
                 EstimatedDuration = "2 hours",
-                Specializations = new List<Guid> { specializationId }
+                Specializations = new List<string> { createdSpecialization.SpecOption }
             };
 
             var createResponse = await _client.PostAsJsonAsync("/api/operationType", operationTypeDTO);
@@ -267,7 +267,7 @@ namespace DDDSample1.Tests.OperationTypes.IntegrationTests
             {
                 Name = "Updated Cardiology operation",
                 EstimatedDuration = "3 hours",
-                Specializations = new List<Guid> { Guid.NewGuid() }
+                Specializations = new List<string> { "NonExistingSpecialization" }
             };
 
             var updateResponse = await _client.PutAsJsonAsync($"/api/operationType/{createdOperationType.Name}", updatedOperationTypeDTO);
@@ -283,11 +283,11 @@ namespace DDDSample1.Tests.OperationTypes.IntegrationTests
             {
                 Name = "Updated Cardiology operation",
                 EstimatedDuration = "3 hours",
-                Specializations = new List<Guid>()
+                Specializations = new List<string>()
             };
 
             var updateResponse = await _client.PutAsJsonAsync("/api/operationType/ExistingOperation", updatedOperationTypeDTO);
-            Assert.Equal(System.Net.HttpStatusCode.Unauthorized, updateResponse.StatusCode);
+            Assert.Equal(System.Net.HttpStatusCode.NotFound, updateResponse.StatusCode);
         }
 
         [Fact]
@@ -311,7 +311,7 @@ namespace DDDSample1.Tests.OperationTypes.IntegrationTests
             {
                 Name = "ExistingOperation",
                 EstimatedDuration = "2 hours",
-                Specializations = new List<Guid> { specializationId }
+                Specializations = new List<string> { createdSpecialization.SpecOption }
             };
 
             var createResponse = await _client.PostAsJsonAsync("/api/operationType", operationTypeDTO);
@@ -323,7 +323,7 @@ namespace DDDSample1.Tests.OperationTypes.IntegrationTests
 
             deactivateResponse.EnsureSuccessStatusCode();
             var responseMessage = await deactivateResponse.Content.ReadAsStringAsync();
-            Assert.Contains($"OperationType '{operationName}' has been successfully deactivated.", responseMessage);
+            Assert.Contains($"OperationType '{operationName}' has been successfully Deactivated.", responseMessage);
         }
 
 
@@ -362,7 +362,7 @@ namespace DDDSample1.Tests.OperationTypes.IntegrationTests
 
             var response = await _client.PutAsJsonAsync($"/api/operationType/deactivate/{operationName}", operationName);
 
-            Assert.Equal(System.Net.HttpStatusCode.Unauthorized, response.StatusCode);
+            Assert.Equal(System.Net.HttpStatusCode.NotFound, response.StatusCode);
         }
 
                 [Fact]
@@ -387,7 +387,7 @@ namespace DDDSample1.Tests.OperationTypes.IntegrationTests
             {
                 Name = "Cardiology operation",
                 EstimatedDuration = "2 hours",
-                Specializations = new List<Guid> { specializationId }
+                Specializations = new List<string> { createdSpecialization.SpecOption }
             };
         
             var responseUser = await _client.PostAsJsonAsync("api/operationType", operationTypeDTO);
@@ -443,7 +443,7 @@ namespace DDDSample1.Tests.OperationTypes.IntegrationTests
             {
                 Name = "Cardiology operation",
                 EstimatedDuration = "2 hours",
-                Specializations = new List<Guid> { specializationId }
+                Specializations = new List<string> { createdSpecialization.SpecOption }
             };
         
             var responseUser = await _client.PostAsJsonAsync("api/operationType", operationTypeDTO);

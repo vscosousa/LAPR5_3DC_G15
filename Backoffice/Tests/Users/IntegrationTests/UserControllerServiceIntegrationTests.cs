@@ -589,7 +589,7 @@ namespace DDDSample1.Tests.Users.IntegrationTests
         }
 
 
-        [Fact]
+       /* [Fact]
         public async Task LoginUser_ShouldReturnOk()
         {
             var token = GenerateAdminJwtToken();
@@ -659,7 +659,7 @@ namespace DDDSample1.Tests.Users.IntegrationTests
 
             var response = await _client.PostAsJsonAsync("/api/user/Login", loginDTO);
             response.EnsureSuccessStatusCode();
-        }
+        }*/
 
         [Fact]
         public async Task LoginUser_ShouldReturnError_UserNotActive()

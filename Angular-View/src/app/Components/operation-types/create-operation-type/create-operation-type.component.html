@@ -9,26 +9,23 @@
                 </div>
                 <div class="form-group">
                     <label for="estimatedTime">Estimated Time</label>
-                    <input type="text" class="form-control" id="estimatedTime" name="estimatedTime" [(ngModel)]="operationType.estimatedTime" required>
+                    <input type="text" class="form-control" id="estimatedTime" name="estimatedTime" [(ngModel)]="operationType.estimatedDuration" required>
                 </div>
                 <div class="form-group">
                     <label for="specializations">Available Specializations</label>
                     <div class="checkboxes-container">
                         <div *ngFor="let specialization of availableSpecializations" class="checkbox-group">
                             <input type="checkbox" 
-                                id="specialization-{{specialization}}" 
-                                name="specializations" 
-                                [(ngModel)]="operationType.specializations" 
-                                [value]="specialization">
-                            <label for="specialization-{{specialization}}">{{specialization}}</label>
+                                id="specialization-{{specialization.id}}" 
+                                [checked]="operationType.specializations.includes(specialization.specOption)"
+                                (change)="onSpecializationChange(specialization, $event)">
+                            <label for="specialization-{{specialization.id}}">{{specialization.specOption}}</label>
                         </div>
                     </div>
                 </div>
                 <button type="submit" class="btn btn-create">Create</button>
                 <a [routerLink]="['/operation-types']" class="btn btn-back">Back</a>
             </form>
-        </div>
-        <div class="specializations-container">
         </div>
     </div>
 </div>

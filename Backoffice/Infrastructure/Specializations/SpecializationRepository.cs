@@ -4,6 +4,8 @@ using DDDSample1.Domain.Specializations;
 using DDDSample1.Infrastructure.Shared;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
+using System.Collections.Generic;
+using DDDSample1.Domain.Staffs;
 
 namespace DDDSample1.Infrastructure.Specializations
 {
@@ -33,6 +35,16 @@ namespace DDDSample1.Infrastructure.Specializations
             return await _objs
                 .Where(x => x.SpecOption.ToLower() == option.ToLower())
                 .FirstOrDefaultAsync();
+        }
+
+        public async Task<IEnumerable<Staff>> GetStaffBySpecializationAsync(string specOption)
+        {
+            var specialization = await _objs
+                .Include(s => s.Staffs)
+                .Where(x => x.SpecOption.ToLower() == specOption.ToLower())
+                .FirstOrDefaultAsync();
+
+            return specialization.Staffs;
         }
     }
 }

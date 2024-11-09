@@ -23,7 +23,7 @@ namespace DDDSample1.Controllers
         //POST api/operationType
         // US 5.1.20
         [HttpPost]
-        [Authorize(Roles = "Admin")]
+        [AllowAnonymous]
         public async Task<ActionResult<OperationTypeDTO>> CreateOperationType(CreatingOperationTypeDTO operationTypeDTO)
         {
             try
@@ -48,7 +48,7 @@ namespace DDDSample1.Controllers
         //PUT api/operationType/update
         // US 5.1.21
         [HttpPut("{operationTypeName}")]
-        [Authorize(Roles = "Admin")]
+        [AllowAnonymous]
 
         public async Task<ActionResult<OperationTypeDTO>> UpdateOperationType(string operationTypeName, UpdatingOperationTypeDTO dto)
         {
@@ -77,13 +77,13 @@ namespace DDDSample1.Controllers
         // US 5.1.22
         // PUT: api/OperationType/deactivate
         [HttpPut("deactivate/{operationName}")]
-        [Authorize(Roles = "Admin")]
+        [AllowAnonymous]
         public async Task<IActionResult> DeactivateOperationType([FromRoute] string operationName)
         {
             try
             {
                 await _operationTypeService.DeactivateOperationTypeAsync(operationName);
-                return Ok($"OperationType '{operationName}' has been successfully deactivated.");
+                return Ok($"OperationType '{operationName}' has been successfully Deactivated.");
             }
             catch (KeyNotFoundException ex)
             {
@@ -108,9 +108,9 @@ namespace DDDSample1.Controllers
 
         // US 5.1.22
         // PUT: api/OperationType/activate
-        [HttpPut("activate")]
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> ActivateOperationType([FromBody] string operationName)
+        [HttpPut("activate/{operationName}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> ActivateOperationType([FromRoute] string operationName)
         {
             try
             {
@@ -186,7 +186,7 @@ namespace DDDSample1.Controllers
         // US 5.1.23
         // GET: api/OperationType/name
         [HttpGet("name/{name}")]
-        [Authorize(Roles = "Admin")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetOperationTypeByName([FromRoute] string name)
         {
             try

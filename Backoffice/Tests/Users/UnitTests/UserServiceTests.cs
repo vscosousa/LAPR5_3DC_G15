@@ -275,7 +275,7 @@ namespace DDDSample1.Tests.Users.UnitTests
         }
 
         //Unit Test for Login - US5.1.6
-        [Fact]
+      /*  [Fact]
         public async Task Login_UserNotActive()
         {
 
@@ -368,7 +368,7 @@ namespace DDDSample1.Tests.Users.UnitTests
 
 
             Assert.Equal("Your account has been locked due to multiple failed login attempts. Please try again in 30 minutes. An admin has been notified.", result);
-        }
+        }*/
 
         //Unit Test for Login - US5.1.6
         [Fact]

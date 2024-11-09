@@ -10,6 +10,8 @@ import { CreateStaffComponent } from './Components/create-staff/create-staff.com
 import { PatientDashboardComponent } from './Components/patient-dashboard/patient-dashboard.component';
 import { PatientSettingsComponent } from './Components/patient-settings/patient-settings.component';
 import { AuthGuard } from './Guards/auth.guard';
+import { UpdateOperationTypeComponent } from './Components/operation-types/update-operation-type/update-operation-type.component';
+
 
 export const routes: Routes = [
     {
@@ -26,6 +28,9 @@ export const routes: Routes = [
     },
     {
         path: "operation-types", component: OperationTypesComponent, canActivate: [AuthGuard]
+    },
+    {
+        path: "update-operation-type/:name", component: UpdateOperationTypeComponent , canActivate: [AuthGuard]
     },
     {
         path: "create-operation-type", component: CreateOperationTypeComponent , canActivate: [AuthGuard]

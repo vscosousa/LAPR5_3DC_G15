@@ -1,0 +1,130 @@
+.update-operation-type-container {
+    max-width: 700px;
+    margin: 40px auto;
+    padding: 30px;
+    background-color: #fdfdfd;
+    border-radius: 12px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e6e6e6;
+}
+
+.operation-title {
+    text-align: center;
+    font-size: 26px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 25px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 15px;
+    font-weight: 500;
+    color: #555;
+    margin-bottom: 6px;
+}
+
+.form-control {
+    width: 100%;
+    padding: 12px;
+    font-size: 15px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    transition: border-color 0.3s ease;
+    box-sizing: border-box;
+}
+
+.form-control:focus {
+    border-color: #0069d9;
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+}
+
+.is-invalid {
+    border-color: #e63946;
+    box-shadow: 0 0 5px rgba(230, 57, 70, 0.3);
+}
+
+.invalid-feedback {
+    color: #e63946;
+    font-size: 14px;
+    margin-top: 5px;
+}
+
+button.btn {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+button.btn-primary {
+    background-color: #007bff;
+    color: #fff;
+    margin-top: 10px;
+}
+
+button.btn-primary:hover {
+    background-color: #0056b3;
+    box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2);
+}
+
+.btn-secondary {
+    background-color: #e63946;
+    color: #fff;
+    margin-top: 30px;
+    text-align: center;
+}
+
+button.btn-secondary:hover {
+    background-color: #5a6268;
+    box-shadow: 0 4px 8px rgba(108, 117, 125, 0.2);
+}
+
+.button-group {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+a {
+    display: inline-block;
+    margin-top: 20px;
+    font-size: 15px;
+    color: #007bff;
+    font-weight: 600;
+    text-decoration: none;
+    text-align: center;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+.btn-addSpecialization{
+    background-color: #28a745;
+    color: #fff;
+    margin-top: 10px;
+}
+
+/* Style for deactivated operation types */
+.deactivated {
+    background-color: #e20000; /* Light gray background for deactivated rows */
+    color: #999; /* Lighter text color */
+    text-decoration: line-through; /* Strike-through text to show deactivation */
+}
+
+/* Optionally style the deactivated button */
+.deactivated .btn-delete {
+    pointer-events: none; /* Disable clicking on deactivated operation types */
+    opacity: 0.5; /* Make the button look inactive */
+}
+

@@ -74,6 +74,13 @@ namespace DDDSample1.Domain.Specializations
             var specializations = await _repository.GetAllAsync();
             return specializations;
         }
+        
+        // Get Staffs by Specialization specOption
+        public async Task<IEnumerable<Staff>> GetStaffBySpecializationAsync(string specOption)
+        {
+            var staffs = await _repository.GetStaffBySpecializationAsync(specOption);
+            return staffs;
+        }
 
     }
 }

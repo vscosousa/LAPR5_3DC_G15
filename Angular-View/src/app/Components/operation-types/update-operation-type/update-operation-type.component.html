@@ -1,0 +1,43 @@
+<div class="update-operation-type-container">
+    <app-sidebar></app-sidebar>
+  
+    <h2 class="operation-title" style="text-align: center;">Update Operation Type</h2>
+  
+    <form [formGroup]="updateForm" (ngSubmit)="updateOperationType()">
+      <div class="form-group">
+        <label for="name">Name</label>
+        <input type="text" id="name" formControlName="name" class="form-control" 
+               [ngClass]="{'is-invalid': updateForm.get('name')?.touched && updateForm.get('name')?.invalid}">
+        <div *ngIf="updateForm.get('name')?.touched && updateForm.get('name')?.invalid" class="invalid-feedback">
+          Name is required.
+        </div>
+      </div>
+  
+      <div class="form-group">
+        <label for="estimatedDuration">Estimated Duration</label>
+        <input type="text" id="estimatedDuration" formControlName="estimatedDuration" class="form-control" 
+               [ngClass]="{'is-invalid': updateForm.get('estimatedDuration')?.touched && updateForm.get('estimatedDuration')?.invalid}">
+        <div *ngIf="updateForm.get('estimatedDuration')?.touched && updateForm.get('estimatedDuration')?.invalid" class="invalid-feedback">
+          Estimated Duration is required.
+        </div>
+      </div>
+  
+      <div formArrayName="specializations" class="form-group">
+        <label>Specializations</label>
+        <div *ngFor="let specialization of specializations.controls; let i = index" class="input-group mb-2">
+          <input type="text" [formControlName]="i" class="form-control" placeholder="Specialization" 
+                 [ngClass]="{'is-invalid': specialization.invalid && specialization.touched}">
+          <button type="button" class="btn btn-danger" (click)="removeSpecialization(i)">Remove</button>
+        </div>
+  
+        <button type="button" class="btn btn-addSpecialization" (click)="addSpecialization()">Add Specialization</button>
+        <div *ngIf="specializations.invalid && specializations.touched" class="invalid-feedback d-block">
+          At least one specialization is required.
+        </div>
+      </div>
+  
+      <button type="submit" class="btn btn-primary">Update</button>
+      <a [routerLink]="['/operation-types']" class="btn btn-secondary">Cancel</a>
+    </form>
+  </div>
+  
