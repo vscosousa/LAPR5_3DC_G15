@@ -50,6 +50,35 @@ form {
     outline: none;
 }
 
+/* Style for required fields */
+.form-control:required {
+    border-color: #ff4d4d;
+    background-color: #fff6f6;
+}
+
+.form-control:required:focus {
+    border-color: #ff1a1a;
+}
+
+/* Style for valid fields */
+.form-control:valid {
+    border-color: #28a745;  /* Green border when valid */
+    background-color: #e6ffe6;  /* Light green background when valid */
+}
+
+/* Error icon or indicator */
+.form-group input:invalid {
+    border-color: #ff4d4d;
+}
+
+.form-group input:invalid + label::after {
+    content: "*";
+    color: #ff4d4d;
+    font-size: 18px;
+    margin-left: 5px;
+}
+
+/* Hover and focus effects for buttons */
 .btn {
     padding: 12px 25px;
     font-size: 16px;
@@ -124,4 +153,10 @@ form {
 
 .form-group input[type="checkbox"]:hover {
     transform: scale(1.4);
+}
+
+.error-message {
+    margin-top: 10px;
+    font-size: 14px;
+    color: #ff4d4d;  /* Red color for the error message */
 }

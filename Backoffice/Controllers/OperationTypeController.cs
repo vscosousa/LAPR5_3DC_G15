@@ -187,7 +187,7 @@ namespace DDDSample1.Controllers
         // GET: api/OperationType/name
         [HttpGet("name/{name}")]
         [AllowAnonymous]
-        public async Task<IActionResult> GetOperationTypeByName([FromRoute] string name)
+        public async Task<ActionResult> GetOperationTypeByName([FromRoute] string name)
         {
             try
             {

@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { SidebarComponent } from '../sidebar/sidebar.component';
 import { RouterModule } from '@angular/router';
+import { DashboardService } from '../../Services/dashboard.service';
+import { SettingsService } from '../../Services/settings.service';
 
 @Component({
   selector: 'app-navbar-admin',
@@ -11,9 +13,12 @@ import { RouterModule } from '@angular/router';
 })
 export class NavbarAdminComponent {
 
-  constructor() {}
+  constructor(private dashBoardService: DashboardService, private settingsService: SettingsService) {}
 
   ngOnInit(): void {
+    this.dashBoardService.setDashboardId('navbar-admin');
+    
+
   }
 
 }

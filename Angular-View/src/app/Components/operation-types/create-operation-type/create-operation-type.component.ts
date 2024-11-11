@@ -54,7 +54,7 @@ export class CreateOperationTypeComponent {
         this.operationType = {
           name: '',
           estimatedDuration: '',
-          specializations: [] as string[]
+          specializations: [] as string[]  // Reset form
         };
       },
       error => {

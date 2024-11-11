@@ -36,17 +36,32 @@ namespace DDDSample1.Domain.OperationTypes
         // US 5.1.20
         public async Task<OperationTypeDTO> CreateOperationTypeAsync(CreatingOperationTypeDTO dto)
         {
+            if (string.IsNullOrEmpty(dto.Name))
+            {
+            throw new ArgumentException("OperationType name cannot be empty.");
+            }
+
+            if (string.IsNullOrEmpty(dto.EstimatedDuration))
+            {
+            throw new ArgumentException("Estimated duration cannot be empty.");
+            }
+
+            if (dto.Specializations == null || dto.Specializations.Count == 0)
+            {
+            throw new ArgumentException("At least one specialization must be provided.");
+            }
+
             var specializations = new List<Specialization>();
             
             // Fetch specialization IDs based on the names sent from frontend
             foreach (var specName in dto.Specializations)
             {
-                var spec = await _specializationRepository.GetSpecIdByOptionAsync(specName);
-                if (spec == null)
-                {
-                    throw new InvalidOperationException($"Specialization with name {specName} not found.");
-                }
-                specializations.Add(spec);
+            var spec = await _specializationRepository.GetSpecIdByOptionAsync(specName);
+            if (spec == null)
+            {
+                throw new InvalidOperationException($"Specialization with name {specName} not found.");
+            }
+            specializations.Add(spec);
             }
 
             var newOperationType = _mapper.ToDomain(dto);

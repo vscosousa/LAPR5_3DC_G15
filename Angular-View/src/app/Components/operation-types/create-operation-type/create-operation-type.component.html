@@ -2,7 +2,7 @@
     <h2 class="operation-title">Create Operation Type</h2>
     <div class="form-and-table-container">
         <div class="form-container">
-            <form (ngSubmit)="onSubmit()">
+            <form (ngSubmit)="onSubmit()" #operationForm="ngForm">
                 <div class="form-group">
                     <label for="name">Name</label>
                     <input type="text" class="form-control" id="name" name="name" [(ngModel)]="operationType.name" required>
@@ -22,8 +22,12 @@
                             <label for="specialization-{{specialization.id}}">{{specialization.specOption}}</label>
                         </div>
                     </div>
+                    <!-- Message when no specialization is selected -->
+                    <div *ngIf="operationType.specializations.length === 0" class="error-message">
+                        <p class="text-danger">You must add at least one specialization to the operation type.</p>
+                    </div>
                 </div>
-                <button type="submit" class="btn btn-create">Create</button>
+                <button type="submit" class="btn btn-create" [disabled]="!operationForm.valid || operationType.specializations.length === 0">Create</button>
                 <a [routerLink]="['/operation-types']" class="btn btn-back">Back</a>
             </form>
         </div>

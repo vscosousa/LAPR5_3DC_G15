@@ -36,7 +36,7 @@ export class OperationTypeService {
   }
 
   getOperationTypeByName(operationTypeName: string): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/OperationType/${operationTypeName}`);
+    return this.http.get<any>(`${this.apiUrl}/OperationType/name/${operationTypeName}`);
   }
 
   deactivateOperationTypeByName(operationTypeName: string) {

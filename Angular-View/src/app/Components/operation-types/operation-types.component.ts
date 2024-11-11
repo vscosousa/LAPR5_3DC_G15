@@ -29,6 +29,7 @@ export class OperationTypesComponent implements OnInit {
     this.operationTypeService.getOperationTypes().subscribe(
       (data: any[]) => {
         this.operationTypes = data;
+        console.log('Operation types fetched:', data);
 
         this.staffs = data.reduce((acc, operationType) => {
           acc[operationType.name] = operationType.staffs || [];

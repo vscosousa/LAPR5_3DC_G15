@@ -1,10 +1,10 @@
-/*import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ActivatedRoute, convertToParamMap } from '@angular/router';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ActivatedRoute } from '@angular/router';
 import { of } from 'rxjs';
-import { HttpClientModule } from '@angular/common/http'; // Import HttpClientModule
-import { ReactiveFormsModule } from '@angular/forms'; // Import ReactiveFormsModule
+import { HttpClientModule } from '@angular/common/http';
+import { ReactiveFormsModule } from '@angular/forms';
 import { UpdateOperationTypeComponent } from './update-operation-type.component';
-import { OperationTypeService } from '../../../Services/operation-type.service'; // Import the service
+import { OperationTypeService } from '../../../Services/operation-type.service';
 
 describe('UpdateOperationTypeComponent', () => {
   let component: UpdateOperationTypeComponent;
@@ -13,15 +13,20 @@ describe('UpdateOperationTypeComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [
-        HttpClientModule, // Add HttpClientModule here
-        ReactiveFormsModule // Add ReactiveFormsModule here
+        HttpClientModule,
+        ReactiveFormsModule,
+        UpdateOperationTypeComponent
       ],
       providers: [
-        OperationTypeService, // Provide the service
+        OperationTypeService,
         {
           provide: ActivatedRoute,
           useValue: {
-            paramMap: of(convertToParamMap({ name: 'Cardiology Operation' })) // Mock route parameters with ParamMap
+            snapshot: {
+              paramMap: {
+                get: (name: string) => 'Cardiology Operation'
+              }
+            }
           }
         }
       ]
@@ -37,4 +42,3 @@ describe('UpdateOperationTypeComponent', () => {
     expect(component).toBeTruthy();
   });
 });
-*/
