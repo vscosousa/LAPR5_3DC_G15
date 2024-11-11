@@ -1,22 +1,15 @@
 import { TestBed } from '@angular/core/testing';
-import { HttpInterceptorFn } from '@angular/common/http';
+import { HttpHandler, HttpRequest } from '@angular/common/http';
+
+import { AuthInterceptor } from './auth.interceptor';
 
 describe('authInterceptor', () => {
-  const interceptor: HttpInterceptorFn = (req, next) =>
-    TestBed.runInInjectionContext(() => interceptor(req, next));
+  let interceptor: (req: HttpRequest<any>, next: HttpHandler) => any;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    const mockLocalStorage = {
-      getItem: jasmine.createSpy('getItem'),
-      setItem: jasmine.createSpy('setItem'),
-      removeItem: jasmine.createSpy('removeItem'),
-      clear: jasmine.createSpy('clear')
-    };
-    spyOn(localStorage, 'getItem').and.callFake(mockLocalStorage.getItem);
-    spyOn(localStorage, 'setItem').and.callFake(mockLocalStorage.setItem);
-    spyOn(localStorage, 'removeItem').and.callFake(mockLocalStorage.removeItem);
-    spyOn(localStorage, 'clear').and.callFake(mockLocalStorage.clear);
+    const authInterceptor = new AuthInterceptor();
+    interceptor = (req, next) => TestBed.runInInjectionContext(() => authInterceptor.intercept(req, next));
   });
 
   it('should be created', () => {
