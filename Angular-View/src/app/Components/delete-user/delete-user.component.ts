@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { DeleteUserService } from '../../Services/delete-user.service';
 import { Router } from '@angular/router';
-import { Console } from 'console';
 
 @Component({
   selector: 'app-delete-user',
