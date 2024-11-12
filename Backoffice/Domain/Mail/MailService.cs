@@ -137,7 +137,7 @@ public class MailService : IMailService
         {
             From = new MailAddress(_configuration["SmtpSettings:SenderEmail"], _configuration["SmtpSettings:SenderName"]),
             Subject = "Delete your account",
-            Body = $"Hi {name}, please reset your password by clicking this link: {deleteLink}",
+            Body = $"Hi {name}, if you want to delete the account please click this link: {deleteLink}",
             IsBodyHtml = true,
         };
 

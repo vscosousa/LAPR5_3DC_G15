@@ -44,7 +44,8 @@ namespace DDDSample1.Domain.Users
 
         public async Task<UserDTO> CreateUser(CreatingUserDTO dto)
         {
-            try{
+            try
+            {
                 var existingUserByEmail = await _userRepository.GetUserByEmailAsync(dto.Email);
                 if (existingUserByEmail != null)
                 {
@@ -220,9 +221,31 @@ namespace DDDSample1.Domain.Users
 
         private static string GenerateLink(string token, string typeOfLink)
         {
-            return $"https://localhost:5001/api/user/{typeOfLink}?token={token}";
+            string kebabCaseLink = ConvertToKebabCase(typeOfLink);
+            return $"http://localhost:4200/{kebabCaseLink}?token={token}";
         }
 
+        private static string ConvertToKebabCase(string input)
+        {
+            if (string.IsNullOrEmpty(input))
+                return input;
+
+            var sb = new StringBuilder();
+            for (int i = 0; i < input.Length; i++)
+            {
+                if (char.IsUpper(input[i]))
+                {
+                    if (i > 0)
+                        sb.Append('-');
+                    sb.Append(char.ToLower(input[i]));
+                }
+                else
+                {
+                    sb.Append(input[i]);
+                }
+            }
+            return sb.ToString();
+        }
 
         public async Task<string> Login(LoginUserDTO dto)
         {
@@ -230,28 +253,28 @@ namespace DDDSample1.Domain.Users
 
             if (!user.IsActive)
             {
-            throw new Exception("User is not active. Check your Email to activate the account.");
+                throw new Exception("User is not active. Check your Email to activate the account.");
             }
 
             if (user.IsAccountLocked())
             {
-            throw new Exception($"Your account is locked until {user.LockedUntil.Value.ToLocalTime()}. Please try again later.");
+                throw new Exception($"Your account is locked until {user.LockedUntil.Value.ToLocalTime()}. Please try again later.");
             }
 
             if (!BCrypt.Net.BCrypt.Verify(dto.Password, user.PasswordHash))
             {
-            user.RegisterFailedLoginAttempt();
+                user.RegisterFailedLoginAttempt();
 
-            await _userRepository.UpdateAsync(user);
-            await _unitOfWork.CommitAsync();
+                await _userRepository.UpdateAsync(user);
+                await _unitOfWork.CommitAsync();
 
-            if (user.IsAccountLocked())
-            {
-                await NotifyAdmin(user);
-                throw new Exception("Your account has been locked due to multiple failed login attempts. Please try again in 30 minutes. An admin has been notified.");
-            }
+                if (user.IsAccountLocked())
+                {
+                    await NotifyAdmin(user);
+                    throw new Exception("Your account has been locked due to multiple failed login attempts. Please try again in 30 minutes. An admin has been notified.");
+                }
 
-            throw new Exception($"Wrong password. You have {5 - user.FailedLoginAttempts} attempts left before your account is locked.");
+                throw new Exception($"Wrong password. You have {5 - user.FailedLoginAttempts} attempts left before your account is locked.");
             }
 
             // Reset failed attempts after successful login
@@ -322,9 +345,10 @@ namespace DDDSample1.Domain.Users
                 throw new Exception(ex.Message);
             }
         }
-        
+
         public async Task RequestPasswordReset(string email)
-        {   try
+        {
+            try
             {
                 var user = await _userRepository.GetUserByEmailAsync(email) ?? throw new BusinessRuleValidationException("Email not registered");
                 if (user.IsActive == false)
@@ -375,16 +399,18 @@ namespace DDDSample1.Domain.Users
             return jwt;
         }
         public async Task ResetPassword(string token, ResetPasswordDTO dto)
-        {   
-            try{
+        {
+            try
+            {
                 // Verify the token validade
                 var userID = VerifyToken(token);
 
                 var user = await _userRepository.GetByIdAsync(userID) ?? throw new BusinessRuleValidationException("User not found.");
-                if(dto.NewPassword != dto.NewPasswordConfirm){
+                if (dto.NewPassword != dto.NewPasswordConfirm)
+                {
                     throw new BusinessRuleValidationException("Passwords do not match.");
                 }
-                
+
                 user.SetPassword(dto.NewPassword);
 
                 await _userRepository.UpdateAsync(user);
@@ -400,8 +426,9 @@ namespace DDDSample1.Domain.Users
                 throw;
             }
         }
-        
-        public async Task<List<UserDTO>> getAllUsers(){
+
+        public async Task<List<UserDTO>> getAllUsers()
+        {
             var users = await _userRepository.GetAllAsync();
             var usersDTO = new List<UserDTO>();
             foreach (var user in users)
@@ -436,14 +463,14 @@ namespace DDDSample1.Domain.Users
 
             var updatedFields = new List<string>();
 
-           
+
             var updateActions = new Dictionary<string, Action>
             {
                 { "Email", () => {
                     if (!string.IsNullOrEmpty(dto.Email) && user.Email != dto.Email)
                     {
                         user.ChangeEmail(dto.Email);
-                        patient.ChangeEmail(dto.Email); 
+                        patient.ChangeEmail(dto.Email);
                         updatedFields.Add("Email");
                     }
                 }},
@@ -464,13 +491,13 @@ namespace DDDSample1.Domain.Users
                 }}
             };
 
-            
+
             foreach (var action in updateActions.Values)
             {
                 action();
             }
 
-            
+
             await _userRepository.UpdateAsync(user);
             await _patientRepository.UpdateAsync(patient);
             await _unitOfWork.CommitAsync();

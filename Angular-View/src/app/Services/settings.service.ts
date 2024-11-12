@@ -17,10 +17,10 @@ export class SettingsService {
     this.settingsIdSource.next(settingsId);
   }
 
-  deleteAccount(token: string): Observable<HttpResponse<string>> {
-    return this.http.delete<string>(`${this.apiUrl}/RequestDelete/${token}`, {
-      observe: 'response',
-      responseType: 'text' as 'json'
+  deleteAccount(token: string): Observable<HttpResponse<any>> {
+    return this.http.post<any>(`${this.apiUrl}/RequestDelete`, JSON.stringify(token), {
+      headers: { 'Content-Type': 'application/json' },
+      observe: 'response'
     });
   }
 }

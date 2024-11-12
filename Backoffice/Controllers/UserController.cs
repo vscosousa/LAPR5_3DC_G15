@@ -177,13 +177,13 @@ namespace DDDSample1.Controllers
             }
         }
 
-        [HttpDelete("DeleteUser/{token}"), Authorize(Roles = "Patient")]
+        [HttpDelete("DeleteUser/{token}"), AllowAnonymous]
         public async Task<ActionResult> DeleteUser(string token)
         {
             try
             {
                 await _userService.DeleteUser(token);
-                return Ok("User deleted successfully");
+                return Ok();
             }
             catch (Exception ex)
             {

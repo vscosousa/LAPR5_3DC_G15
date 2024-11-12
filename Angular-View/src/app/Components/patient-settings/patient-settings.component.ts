@@ -29,6 +29,7 @@ export class PatientSettingsComponent {
       this.settingsService.deleteAccount(token).subscribe(
       response => {
         console.log('Request Finished With Success', response);
+        localStorage.removeItem('token');
         this.router.navigate(['/login']);
         alert('To complete the account deletion process, please check your email for further instructions.');
       },

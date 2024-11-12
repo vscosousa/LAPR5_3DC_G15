@@ -1,10 +1,13 @@
 import { AuthInterceptor } from './Interceptors/auth.interceptor';
-import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
+import { ApplicationConfig, importProvidersFrom, Provider, provideZoneChangeDetection } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { provideClientHydration } from '@angular/platform-browser';
-import { HTTP_INTERCEPTORS, provideHttpClient, withFetch } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule, provideHttpClient, withFetch } from '@angular/common/http';
 
 import { routes } from './app.routes';
+
+export const authInterceptorProvider: Provider =
+  { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true };
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -12,10 +15,7 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes),
     provideClientHydration(),
     provideHttpClient(withFetch()),
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: AuthInterceptor,
-      multi: true
-    }
+    importProvidersFrom(HttpClientModule),
+    authInterceptorProvider
   ]
 };

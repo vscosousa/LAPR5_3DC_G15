@@ -9,20 +9,25 @@ import { Observable } from 'rxjs';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
-  constructor() {}
+  constructor() {
+    console.log('AuthInterceptor instantiated');
+  }
 
   intercept(
     req: HttpRequest<any>,
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
     const authToken = localStorage.getItem('token');
+    console.log('Auth Token:', authToken);
 
     const nonAuthUrls = [
       '/login',
-      '/register'
+      '/register',
+      '/delete-user'
     ];
 
     const isNonAuthUrl = nonAuthUrls.some(url => req.url.includes(url));
+    console.log('Is Non-Auth URL:', isNonAuthUrl);
 
     if (authToken && !isNonAuthUrl) {
       const authReq = req.clone({
@@ -30,6 +35,7 @@ export class AuthInterceptor implements HttpInterceptor {
           Authorization: `Bearer ${authToken}`
         }
       });
+      console.log('Auth Request Headers:', authReq.headers);
 
       return next.handle(authReq);
     }
