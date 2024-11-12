@@ -7,7 +7,7 @@ import { SidebarComponent } from '../sidebar/sidebar.component';
 @Component({
   selector: 'app-create-staff',
   standalone: true,
-  imports: [FormsModule, CommonModule, SidebarComponent, ReactiveFormsModule,],
+  imports: [FormsModule, CommonModule, SidebarComponent, ReactiveFormsModule],
   templateUrl: './create-staff.component.html',
   styleUrls: ['./create-staff.component.scss']
 })
@@ -37,7 +37,7 @@ export class CreateStaffComponent implements OnInit{
   loadSpecializations(): void {
     this.service.getSpecialization().subscribe({
       next: (data) => {
-        console.log(data)
+        console.log("Data specilazation:\n",data)
         this.specializations = data;
       },
       error: (error) => {
@@ -73,7 +73,7 @@ export class CreateStaffComponent implements OnInit{
         error: (error) => {
           console.error('Error creating staff', error);
           if (error.status === 400) {
-            const errorMessage = JSON.parse(error.error).message;
+            const errorMessage = error.error.message;
             this.errorMessage =  errorMessage;
           } else {
             alert('Create Staff failed - ' + error.error);

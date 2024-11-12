@@ -1,0 +1,177 @@
+.create-staff-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100vw;
+    min-height: 100vh;
+
+    .create-staff-middle {
+        background-color: white;
+        padding: 2rem;
+        border-radius: 6px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        width: 45%;
+        max-width: 70vw;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .top {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-bottom: 2rem;
+
+        img {
+            height: 85px;
+        }
+
+        h2 {
+            font-size: 40px;
+            color: #333;
+        }
+    }
+
+    form {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+
+        label {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        input,
+        select {
+            padding: 0.5rem;
+            margin-top: 0.5rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }  
+            .ng-touched.ng-invalid {
+                border: 2px solid red;
+            }
+            .ng-touched.ng-valid {
+                border: 1px solid green;
+            }
+
+        button {
+            padding: 0.6rem;
+            margin-top: 1.5rem;
+            border-radius: 50px;
+            background-color: #153e4c;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s;
+
+            &:hover {
+                color: #153e4c;
+                background-color: white;
+                border: 2px solid #153e4c;
+            }
+
+            &:focus {
+                outline: none;
+            }
+        }
+
+        .form-row {
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            margin-right: 10px;
+        }
+        
+        .form-group:last-child {
+            margin-right: 0;
+        }
+
+        .identifier-group {
+            flex: 0 0 100px;
+            margin-right: 10px;
+        }
+        
+        .phone-group {
+            flex: 1;
+        }
+
+        .error-message {
+            color: red;
+            margin-top: 10px;
+            text-align: center;
+            font-size: medium;
+        }
+    }
+
+    .results {
+        margin-top: 20px;
+        width: 100%;
+
+        .profiles-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+        
+        .profile-card {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 16px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            width: calc(50% - 16px); /* Adjust the width as needed */
+            box-sizing: border-box;
+        }
+        
+        .profile-card h3 {
+            margin-top: 0;
+        }
+        
+        .profile-card p {
+            margin: 8px 0;
+        }
+        
+        .profile-card .actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 16px;
+        }
+        
+        .profile-card .actions .edit-button {
+            background-color: green;
+            border: none;
+            color: #fff;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .profile-card .actions .edit-button:hover {
+            background-color: #275601;
+        }
+        
+        .profile-card .actions .delete-button {
+            background-color: red;
+            border: none;
+            color: #fff;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .profile-card .actions .delete-button:hover {
+            background-color: darkred;
+        }
+    }
+}

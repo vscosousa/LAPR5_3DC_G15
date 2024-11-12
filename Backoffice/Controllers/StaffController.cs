@@ -125,7 +125,7 @@ namespace DDDSample1.Controllers
         }
 
         [HttpGet("search")]
-        [Authorize(Roles = "Admin")]
+        [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<StaffDTO>>> SearchStaffProfiles(string firstName, string lastName, string email, string fullName, string specializationName)
         {
             var dto = new SearchStaffDTO
@@ -138,12 +138,16 @@ namespace DDDSample1.Controllers
             };
 
             try
-            {
+            {   
+                if (string.IsNullOrWhiteSpace(firstName) && string.IsNullOrWhiteSpace(lastName) && string.IsNullOrWhiteSpace(email) && string.IsNullOrWhiteSpace(fullName) && string.IsNullOrWhiteSpace(specializationName))
+                {
+                    return BadRequest(new { message = "At least one search parameter is required." });
+                }
                 var staffProfiles = await _staffService.SearchStaffProfiles(dto);
 
                 if (staffProfiles == null || staffProfiles.Count == 0)
                 {
-                    return Ok("No staff profiles found with the given criteria.");
+                    return Ok(new { message = "No staff profiles found with the given criteria." });
                 }
 
                 return Ok(staffProfiles);
