@@ -14,6 +14,7 @@ import { UpdateOperationTypeComponent } from './Components/operation-types/updat
 import { Hospital3dComponent } from './Components/hospital3d/hospital3d.component';
 import { DeleteUserComponent } from './Components/delete-user/delete-user.component';
 import { SearchStaffsComponent } from './Components/search-staffs/search-staffs.component';
+import { PatientGuard } from './Guards/patient.guard';
 
 
 export const routes: Routes = [
@@ -42,10 +43,10 @@ export const routes: Routes = [
         path: "create-operation-type", component: CreateOperationTypeComponent , canActivate: [AuthGuard]
     },
     {
-        path: "patient-dashboard", component: PatientDashboardComponent
+        path: "patient-dashboard", component: PatientDashboardComponent, canActivate: [PatientGuard]
     },
     {
-        path: "patient-settings", component: PatientSettingsComponent
+        path: "patient-settings", component: PatientSettingsComponent, canActivate: [PatientGuard]
     },
     {
         path: "hospital3d", component: Hospital3dComponent

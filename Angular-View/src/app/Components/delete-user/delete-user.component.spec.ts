@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { DeleteUserComponent } from './delete-user.component';
+import { DeleteUserService } from '../../Services/delete-user.service';
 
 describe('DeleteUserComponent', () => {
   let component: DeleteUserComponent;
@@ -8,7 +9,8 @@ describe('DeleteUserComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [DeleteUserComponent]
+      imports: [HttpClientTestingModule, DeleteUserComponent],
+      providers: [DeleteUserService]
     })
     .compileComponents();
 
