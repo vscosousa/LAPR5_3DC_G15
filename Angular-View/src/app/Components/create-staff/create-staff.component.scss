@@ -10,7 +10,7 @@
         padding: 2rem;
         border-radius: 6px;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        width: 50%;
+        width: 45%;
         max-width: 70vw;
         height: 100vh;
         display: flex;
@@ -25,12 +25,11 @@
         margin-bottom: 2rem;
 
         img {
-            height: 100px;
-            margin-bottom: 1rem;
+            height: 85px;
         }
 
         h2 {
-            font-size: 2rem;
+            font-size: 40px;
             color: #333;
         }
     }
@@ -41,7 +40,7 @@
         flex-direction: column;
 
         label {
-            margin-top: 1rem;
+            margin-top: 10px;
             font-weight: bold;
         }
 
@@ -51,12 +50,13 @@
             margin-top: 0.5rem;
             border: 1px solid #ccc;
             border-radius: 4px;
-            
-            & .is-invalid {
-                border-color: red;
-              }
-            
-        }
+        }  
+            .ng-touched.ng-invalid {
+                border: 2px solid red;
+            }
+            .ng-touched.ng-valid {
+                border: 1px solid green;
+            }
 
         button {
             padding: 0.6rem;
@@ -80,5 +80,37 @@
                 outline: none;
             }
         }
+
+        .form-row {
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            margin-right: 10px;
+        }
+        
+        .form-group:last-child {
+            margin-right: 0;
+        }
+
+        .identifier-group {
+            flex: 0 0 100px;
+            margin-right: 10px;
+        }
+        
+        .phone-group {
+            flex: 1;
+        }
+
+        .error-message {
+            color: red;
+            margin-top: 10px;
+            text-align: center;
+            font-size: medium;
+          }
     }
 }

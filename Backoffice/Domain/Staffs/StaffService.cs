@@ -49,6 +49,14 @@ namespace DDDSample1.Domain.Staffs
                     }
                     dto.SetSpecializationId(specialization.Id.AsGuid());
                 }
+                Console.WriteLine($"Creating staff firstName... {dto.FirstName}");
+                Console.WriteLine($"Creating staff lastName... {dto.LastName}");
+                Console.WriteLine($"Creating staff fullname... {dto.FullName}");
+                Console.WriteLine($"Creating staff Email... {dto.Email}");
+                Console.WriteLine($"Creating staff PhoneNumber... {dto.PhoneNumber}");
+                Console.WriteLine($"Creating staff Type... {dto.StaffType}");
+                Console.WriteLine($"Creating staff SpecID... {dto.SpecializationId}");
+                
                 var staff = _mapper.ToDomain(dto);
                 // Verificar unicidade do email e telefone
                 if (await _repository.GetByEmailAsync(staff.Email) != null)
@@ -56,7 +64,7 @@ namespace DDDSample1.Domain.Staffs
 
                 if (await _repository.GetByPhoneNumberAsync(staff.PhoneNumber) != null)
                     throw new BusinessRuleValidationException("Phone number is already in use.");
-
+                Console.WriteLine("Email and Phone Number are unique");
                 var list = await _repository.GetAllAsync();
                 staff.SetLicenseNumber(LicenseNumberGenerator.GenerateLicenseNumber(list.Count));
                 
