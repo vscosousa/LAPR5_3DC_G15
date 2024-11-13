@@ -1,8 +1,8 @@
 <div class="operationType-container">
   <app-sidebar></app-sidebar>
-  
-  <h2 class="operation-title" style="text-align: center;">Operation Types</h2>
-  
+
+  <h2 class="operation-title">Operation Types</h2>
+
   <div>
     <a [routerLink]="['/create-operation-type']" class="btn btn-create">Create Operation Type</a>
     
@@ -11,41 +11,43 @@
         <tr>
           <th>Operation Type</th>
           <th>Estimated Time</th>
-          <th>Specializations</th>
+          <th>Specialization</th>
+          <th>Staff Members</th>
           <th>Actions</th>
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let operationType of operationTypes" [ngClass]="{'deactivated': operationType.isDeactivated}">
-          <td>{{operationType.name}}</td>
-          <td>{{operationType.estimatedDuration}}</td>
-          <td>
-            <ul>
-              <li *ngFor="let specialization of operationType.specializations">
-                <a href="javascript:void(0)" 
-                   (click)="toggleStaffVisibility(specialization)"
-                   class="specialization-link">
-                  {{specialization.specOption}}
-                </a>
-
-                <!-- Display staff list if it's visible -->
-                <ul *ngIf="isStaffVisible(specialization)">
-                  <li *ngFor="let staff of staffs[specialization.specOption]">
-                    {{ staff.fullName }}
-                  </li>
-                </ul>
-              </li>
-            </ul>
-          </td>
-          <td>
-            <!-- Update operation link should include the operation type ID -->
-            <a [routerLink]="['/update-operation-type', operationType.name]" class="btn btn-update">Edit</a>
-            
-            <!-- Deactivate or Activate operation -->
-            <a *ngIf="!operationType.isDeactivated" href="javascript:void(0)" (click)="deactivateOperationType(operationType.name)" class="btn btn-delete">Deactivate</a>
-            <a *ngIf="operationType.isDeactivated" href="javascript:void(0)" (click)="activateOperationType(operationType.name)" class="btn btn-activate">Activate</a>
-          </td>
-        </tr>
+        <ng-container *ngFor="let operationType of operationTypes">
+          <ng-container *ngFor="let specialization of operationType.specializations; let i = index">
+            <tr [ngClass]="{'deactivated': operationType.isDeactivated}">
+              <!-- Operation Type Name and Estimated Duration row spans for the first specialization row -->
+              <td *ngIf="i === 0" [attr.rowspan]="operationType.specializations.length">
+                {{operationType.name}}
+              </td>
+              <td *ngIf="i === 0" [attr.rowspan]="operationType.specializations.length">
+                {{operationType.estimatedDuration}}
+              </td>
+              <td>{{specialization.specOption}}</td>
+              <td>
+                <button class="btn btn-info" (click)="loadStaffForSpecialization(operationType.name, specialization.specOption)">
+                  Show Staff
+                </button>
+                <div *ngIf="isStaffVisible(operationType.name, specialization.specOption)" class="staff-members">
+                  <div *ngFor="let staff of staffs[specialization.specOption]">
+                    👤 {{staff.fullName}}
+                  </div>
+                </div>
+              </td>
+              <td *ngIf="i === 0" [attr.rowspan]="operationType.specializations.length">
+                <a [routerLink]="['/update-operation-type', operationType.name]" class="btn btn-update">Edit</a>
+                <a *ngIf="!operationType.isDeactivated" href="javascript:void(0)" 
+                   (click)="deactivateOperationType(operationType.name)" class="btn btn-delete">Deactivate</a>
+                <a *ngIf="operationType.isDeactivated" href="javascript:void(0)" 
+                   (click)="activateOperationType(operationType.name)" class="btn btn-activate">Activate</a>
+              </td>
+            </tr>
+          </ng-container>
+        </ng-container>
       </tbody>
     </table>
     
