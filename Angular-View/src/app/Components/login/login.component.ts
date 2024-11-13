@@ -42,9 +42,9 @@ export class LoginComponent {
           const role = tokenPayload['http://schemas.microsoft.com/ws/2008/06/identity/claims/role'];
 
           if (role === 'Admin') {
-            this.router.navigate(['/navbar-admin']);
+            this.router.navigate(['/panel-admin']);
           } else if (role === 'Patient') {
-            this.router.navigate(['/patient-dashboard']);
+            this.router.navigate(['/patient-panel']);
           } else {
             console.error('Unknown role:', role);
             this.router.navigate(['/""']);

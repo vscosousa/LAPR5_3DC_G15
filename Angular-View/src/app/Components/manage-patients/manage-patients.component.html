@@ -1,0 +1,184 @@
+<div class="manage-container">
+  <app-sidebar></app-sidebar>
+  <div class="screens-container">
+    <div class="screen">
+      <button routerLink="/create-patient" class="btn btn-create">
+        Create Patient
+      </button>
+      <h2 class="manage-title" style="text-align: center">Patients Manager</h2>
+      <div class="content-container">
+        <form class="filter-form" (submit)="applyFilters($event)">
+          <input
+            type="text"
+            placeholder="First Name"
+            [(ngModel)]="filters.firstName"
+            name="firstName"
+          />
+          <input
+            type="text"
+            placeholder="Last Name"
+            [(ngModel)]="filters.lastName"
+            name="lastName"
+          />
+          <input
+            type="text"
+            placeholder="Full Name"
+            [(ngModel)]="filters.fullName"
+            name="fullName"
+          />
+          <input
+            type="date"
+            placeholder="Date of Birth"
+            [(ngModel)]="filters.dateOfBirth"
+            name="dateOfBirth"
+            pattern="\d{4}-\d{2}-\d{2}"
+          />
+          <input
+            type="text"
+            placeholder="Medical Record Number"
+            [(ngModel)]="filters.medicalRecordNumber"
+            name="medicalRecordNumber"
+          />
+          <select [(ngModel)]="filters.gender" name="gender">
+            <option value="">Select Gender</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+          </select>
+          <input
+            type="email"
+            placeholder="Email"
+            [(ngModel)]="filters.email"
+            name="email"
+          />
+          <input
+            type="text"
+            placeholder="Phone Number"
+            [(ngModel)]="filters.phoneNumber"
+            name="phoneNumber"
+          />
+
+          <!-- Buttons -->
+          <button type="submit" class="btn btn-filter">Apply Filters</button>
+          <button type="button" class="btn btn-clear" (click)="clearFilters()">
+            Clear Filters
+          </button>
+        </form>
+
+        <div class="table-container">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Medical Record Number</th>
+                <th>Name</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let patient of patients">
+                <td>{{ patient.medicalRecordNumber }}</td>
+                <td>{{ patient.fullName }}</td>
+                <td>
+                  <a
+                    routerLink="['/update-patient', patient.medicalRecordNumber]"
+                    class="btn btn-update"
+                    >Edit</a
+                  >
+                  <a
+                    href="javascript:void(0)"
+                    (click)="
+                      deletePatient(
+                        patient.medicalRecordNumber,
+                        patient.fullName
+                      )
+                    "
+                    class="btn btn-delete"
+                    >Delete</a
+                  >
+                  <a
+                    href="javascript:void(0)"
+                    (click)="viewPatientDetails(patient.medicalRecordNumber)"
+                    class="btn btn-view"
+                    >View</a
+                  >
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="selectedPatient" class="details-screen">
+      <div class="patient-details">
+        <h3>Patient Details</h3>
+        <button (click)="selectedPatient = undefined">
+          <img src="fechar.png" alt="Close" />
+        </button>
+        <table class="table table-bordered">
+          <tbody>
+            <tr>
+              <th>Medical Record Number</th>
+              <td>{{ selectedPatient.medicalRecordNumber }}</td>
+            </tr>
+            <tr>
+              <th>First Name</th>
+              <td>{{ selectedPatient.firstName }}</td>
+            </tr>
+            <tr>
+              <th>Last Name</th>
+              <td>{{ selectedPatient.lastName }}</td>
+            </tr>
+            <tr>
+              <th>Full Name</th>
+              <td>{{ selectedPatient.fullName }}</td>
+            </tr>
+            <tr>
+              <th>Date of Birth</th>
+              <td>{{ selectedPatient.dateOfBirth }}</td>
+            </tr>
+            <tr>
+              <th>Gender</th>
+              <td>{{ selectedPatient.gender === 1 ? "Male" : "Female" }}</td>
+            </tr>
+            <tr>
+              <th>Email</th>
+              <td>{{ selectedPatient.email }}</td>
+            </tr>
+            <tr>
+              <th>Phone Number</th>
+              <td>{{ selectedPatient.phoneNumber }}</td>
+            </tr>
+            <tr>
+              <th>Emergency Contact</th>
+              <td>{{ selectedPatient.emergencyContact }}</td>
+            </tr>
+            <tr>
+              <th>Medical Conditions</th>
+              <td>
+                {{
+                  selectedPatient.medicalConditions === ""
+                    ? "No Medical Conditions"
+                    : selectedPatient.medicalConditions
+                }}
+              </td>
+            </tr>
+            <tr>
+              <th>Appointment History</th>
+              <td>
+                {{
+                  selectedPatient.appointmentHistory &&
+                  selectedPatient.appointmentHistory.length > 0
+                    ? selectedPatient.appointmentHistory
+                    : "No appointments scheduled"
+                }}
+              </td>
+            </tr>
+            <tr>
+              <th>Is Active</th>
+              <td>{{ selectedPatient.isActive ? "Yes" : "No" }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

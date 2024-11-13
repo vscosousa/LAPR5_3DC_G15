@@ -1,0 +1,78 @@
+<div class="create-container">
+  <app-sidebar></app-sidebar>
+  <div class="screens-container">
+    <div class="screen">
+      <h2 class="create-title" style="text-align: center">Create Patient</h2>
+
+      <div class="content-container">
+        <form class="create-form" (submit)="createPatient($event)">
+          <input
+            type="text"
+            placeholder="First Name"
+            [(ngModel)]="newPatient.firstName"
+            name="firstName"
+            required
+          />
+          <input
+            type="text"
+            placeholder="Last Name"
+            [(ngModel)]="newPatient.lastName"
+            name="lastName"
+            required
+          />
+          <input
+            type="text"
+            placeholder="Full Name"
+            [(ngModel)]="newPatient.fullName"
+            name="fullName"
+            required
+          />
+          <input
+            type="date"
+            placeholder="Date of Birth"
+            [(ngModel)]="newPatient.dateOfBirth"
+            name="dateOfBirth"
+            pattern="\d{4}-\d{2}-\d{2}"
+            required
+          />
+          <select [(ngModel)]="newPatient.genderOptions" name="genderOptions" required>
+            <option value="">Select Gender</option>
+            <option value="1">Male</option>
+            <option value="0">Female</option>
+          </select>
+          <input
+            type="email"
+            placeholder="Email"
+            [(ngModel)]="newPatient.email"
+            name="email"
+            required
+          />
+          <input
+            type="text"
+            placeholder="Phone Number"
+            [(ngModel)]="newPatient.phoneNumber"
+            name="phoneNumber"
+            required
+          />
+          <input
+            type="text"
+            placeholder="Emergency Contact"
+            [(ngModel)]="newPatient.emergencyContact"
+            name="emergencyContact"
+          />
+          <textarea
+            placeholder="Medical Conditions"
+            [(ngModel)]="newPatient.medicalConditions"
+            name="medicalConditions"
+          ></textarea>
+
+          <!-- Buttons -->
+          <button type="submit" class="btn btn-create">Create Patient</button>
+          <button type="button" class="btn btn-clear" (click)="clearForm()">
+            Clear Form
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

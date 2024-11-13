@@ -3,15 +3,15 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ActivatedRoute } from '@angular/router';
 import { of } from 'rxjs';
 
-import { NavbarAdminComponent } from './navbar-admin.component';
+import { PanelAdminComponent } from './panel-admin.component';
 
-describe('NavbarAdminComponent', () => {
-  let component: NavbarAdminComponent;
-  let fixture: ComponentFixture<NavbarAdminComponent>;
+describe('PanelAdminComponent', () => {
+  let component: PanelAdminComponent;
+  let fixture: ComponentFixture<PanelAdminComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule, NavbarAdminComponent],
+      imports: [HttpClientTestingModule, PanelAdminComponent],
       providers: [
         {
           provide: ActivatedRoute,
@@ -23,7 +23,7 @@ describe('NavbarAdminComponent', () => {
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(NavbarAdminComponent);
+    fixture = TestBed.createComponent(PanelAdminComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

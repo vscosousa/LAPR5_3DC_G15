@@ -516,7 +516,7 @@ namespace DDDSample1.Tests.Patients.UnitTests
             var patient = CreateSamplePatient();
             var log = new Log(TypeOfAction.Delete, patient.Id.ToString(), "Patient deleted.");
 
-            _patientRepositoryMock.Setup(r => r.GetByIdAsync(patient.Id)).ReturnsAsync(patient);
+            _patientRepositoryMock.Setup(r => r.GetByMedicalRecordNumberAsync(patient.MedicalRecordNumber)).ReturnsAsync(patient);
             _patientRepositoryMock.Setup(r => r.Remove(patient));
             _logRepositoryMock.Setup(l => l.AddAsync(It.IsAny<Log>())).ReturnsAsync(log);
             _patientMapperMock.Setup(m => m.ToDto(patient)).Returns(new PatientDTO
@@ -534,7 +534,7 @@ namespace DDDSample1.Tests.Patients.UnitTests
             });
 
             // Act
-            var deletedPatient = await _service.DeletePatient(patient.Id);
+            var deletedPatient = await _service.DeletePatient(patient.MedicalRecordNumber);
 
             // Assert
             Assert.NotNull(deletedPatient);
@@ -557,12 +557,12 @@ namespace DDDSample1.Tests.Patients.UnitTests
         public async Task DeletePatientFailsWhenPatientDoesNotExistTest()
         {
             // Arrange
-            var nonExistentPatientId = new PatientId(Guid.NewGuid());
+            var nonExistentPatientMedicalRecordNumber = "123456789";
 
-            _patientRepositoryMock.Setup(r => r.GetByIdAsync(nonExistentPatientId)).ReturnsAsync((Patient)null);
+            _patientRepositoryMock.Setup(r => r.GetByMedicalRecordNumberAsync(nonExistentPatientMedicalRecordNumber)).ReturnsAsync((Patient)null);
 
             // Act
-            var result = await _service.DeletePatient(nonExistentPatientId);
+            var result = await _service.DeletePatient(nonExistentPatientMedicalRecordNumber);
 
             // Assert
             Assert.Null(result);

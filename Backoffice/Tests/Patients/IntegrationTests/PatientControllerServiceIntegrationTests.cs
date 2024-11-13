@@ -132,9 +132,10 @@ namespace DDDSample1.Tests.Patients.IntegrationTests
 
             var createdPatient = await createResponse.Content.ReadFromJsonAsync<PatientDTO>();
 
-            // Act
-            var response = await _client.DeleteAsync($"/api/Patient/{createdPatient.Id}");
+            string medicalRecordNumber = createdPatient.MedicalRecordNumber;
 
+            // Act
+            var response = await _client.DeleteAsync($"/api/Patient/{medicalRecordNumber}");
             // Assert
             response.EnsureSuccessStatusCode();
         }
@@ -157,7 +158,7 @@ namespace DDDSample1.Tests.Patients.IntegrationTests
         {
             var token = GenerateAdminJwtToken();
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-        
+
             // Arrange
             var patientDTO = new CreatingPatientDTO
             {
@@ -171,12 +172,12 @@ namespace DDDSample1.Tests.Patients.IntegrationTests
                 EmergencyContact = "+351912345678",
                 MedicalConditions = "Nenhuma"
             };
-        
+
             var createResponse = await _client.PostAsJsonAsync("/api/Patient", patientDTO);
             createResponse.EnsureSuccessStatusCode();
             var createdPatient = await createResponse.Content.ReadFromJsonAsync<PatientDTO>();
             var id = createdPatient.Id;
-        
+
             var updatePatientDTO = new UpdatePatientDTO
             {
                 FirstName = "Miguel",
@@ -187,10 +188,10 @@ namespace DDDSample1.Tests.Patients.IntegrationTests
                 EmergencyContact = "+351912345680",
                 MedicalConditions = "Updated Condition"
             };
-        
+
             // Act
             var response = await _client.PutAsJsonAsync($"/api/Patient/{id}", updatePatientDTO);
-        
+
             // Assert
             response.EnsureSuccessStatusCode();
         }

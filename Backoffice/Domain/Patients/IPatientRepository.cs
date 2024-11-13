@@ -9,6 +9,7 @@ namespace DDDSample1.Domain.Patients
     public interface IPatientRepository : IRepository<Patient, PatientId>
     {
         Task<Patient> GetByEmailAsync(string email);
+        Task<Patient> GetByMedicalRecordNumberAsync(string medicalRecordNumber);
         Task<Patient> GetByPhoneNumberAsync(string phoneNumber);
         Task<List<Patient>> SearchPatientsAsync(SearchPatientDTO dto);
     }

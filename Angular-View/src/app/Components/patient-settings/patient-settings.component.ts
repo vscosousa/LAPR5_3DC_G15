@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { SidebarComponent } from '../sidebar/sidebar.component';
 import { Router } from '@angular/router';
-import { DashboardService } from '../../Services/dashboard.service';
+import { PanelService } from '../../Services/panel.service';
 import { SettingsService } from '../../Services/settings.service';
 
 @Component({
@@ -14,12 +14,12 @@ import { SettingsService } from '../../Services/settings.service';
 export class PatientSettingsComponent {
   constructor(
     private router: Router,
-    private dashboardService: DashboardService,
+    private panelService: PanelService,
     private settingsService: SettingsService
   ) {}
 
   ngOnInit(): void {
-    this.dashboardService.setDashboardId('patient-dashboard');
+    this.panelService.setPanelId('patient-panel');
     this.settingsService.setSettingsId('patient-settings');
   }
 

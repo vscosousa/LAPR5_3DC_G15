@@ -19,6 +19,11 @@ namespace DDDSample1.Infrastructure.Patients
             return await _objs.Where(x => email.Equals(x.Email)).FirstOrDefaultAsync();
         }
 
+        public Task<Patient> GetByMedicalRecordNumberAsync(string medicalRecordNumber)
+        {
+            return _objs.Where(x => medicalRecordNumber.Equals(x.MedicalRecordNumber)).FirstOrDefaultAsync();
+        }
+
         public async Task<Patient> GetByPhoneNumberAsync(string phoneNumber)
         {
             return await _objs.Where(x => phoneNumber.Equals(x.PhoneNumber)).FirstOrDefaultAsync();

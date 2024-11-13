@@ -9,8 +9,8 @@
       <div class="menu-separator"></div>
     </h4>
     <li>
-      <a [routerLink]="['/', dashboardId]"
-        ><img src="dashboard.png" alt="icon" />Dashboard</a
+      <a [routerLink]="['/', panelId]"
+        ><img src="dashboard.png" alt="icon" />User Panel</a
       >
     </li>
     <h4>
@@ -42,8 +42,8 @@
     <div class="user-profile">
       <img src="user.png" alt="Profile Image" />
       <div class="user-detail">
-        <h3>Eva Murphy</h3>
-        <span>Web Developer</span>
+        <h3>{{ name }}</h3>
+        <span>{{ role }}</span>
       </div>
     </div>
   </div>

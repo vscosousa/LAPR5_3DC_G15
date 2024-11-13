@@ -8,7 +8,7 @@ import { OperationTypeService } from '../../../Services/operation-type.service';
 @Component({
   selector: 'app-create-operation-type',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, SidebarComponent],
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './create-operation-type.component.html',
   styleUrls: ['./create-operation-type.component.scss']
 })
@@ -21,7 +21,7 @@ export class CreateOperationTypeComponent {
 
   availableSpecializations: any[] = [];
 
-  constructor(private operationTypeService: OperationTypeService) { 
+  constructor(private operationTypeService: OperationTypeService) {
     operationTypeService.getSpecializations().subscribe(
       (data: any[]) => {
         this.availableSpecializations = data;

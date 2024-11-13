@@ -1,0 +1,205 @@
+.manage-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  font-family: Poppins, sans-serif;
+
+  .screens-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .screen {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: center;
+    width: 1000px;
+    height: 90vh;
+    background-color: #f9f9f9;
+    max-width: 1000px;
+    margin: 0 auto;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    position: relative;
+
+    .btn-create {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background-color: #28a745;
+      color: #fff;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .manage-title {
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    .content-container {
+      display: flex;
+      gap: 20px;
+      width: 100%;
+    }
+
+    .filter-form {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      width: 200px;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      background-color: #fff;
+    }
+
+    input,
+    select {
+      width: 100%;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      padding: 5px;
+    }
+
+    .btn {
+      margin-right: 5px;
+      transition: background-color 0.3s;
+
+      &.btn-update {
+        background-color: #007bff;
+        color: #fff;
+
+        &:hover {
+          background-color: #0056b3;
+        }
+      }
+
+      &.btn-delete {
+        background-color: #dc3545;
+        color: #fff;
+
+        &:hover {
+          background-color: #c82333;
+        }
+      }
+
+      &.btn-view {
+        background-color: #6c757d;
+        color: #fff;
+
+        &:hover {
+          background-color: #5a6268;
+        }
+      }
+
+      &.btn-filter {
+        background-color: #17a2b8;
+        color: #fff;
+
+        &:hover {
+          background-color: #138496;
+        }
+      }
+
+      &.btn-clear {
+        background-color: #4e4d49;
+        color: #fff;
+
+        &:hover {
+          background-color: #1d1c1b;
+        }
+      }
+    }
+
+    .table-container {
+      width: 100%;
+      max-height: 90%;
+      overflow-y: auto;
+      margin-bottom: 20px;
+
+      &::-webkit-scrollbar {
+        width: 12px;
+      }
+
+      &::-webkit-scrollbar-track {
+        background: #f1f1f1;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        background: #888;
+        border-radius: 10px;
+      }
+
+      &::-webkit-scrollbar-thumb:hover {
+        background: #555;
+      }
+
+      .table {
+        width: 100%;
+        border-collapse: collapse;
+
+        th,
+        td {
+          border: 1px solid #ddd;
+          padding: 8px;
+          text-align: left;
+        }
+
+        th {
+          background-color: #f2f2f2;
+        }
+      }
+    }
+  }
+
+  .details-screen {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: center;
+    width: 500px;
+    height: 90vh;
+    background-color: #fff;
+    max-width: 500px;
+    margin: 0 auto;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow-y: auto;
+
+    .patient-details {
+      width: 100%;
+      max-width: 500px;
+
+      h3 {
+        text-align: center;
+      }
+
+      button {
+        position: absolute;
+        top: 15px;
+        right: 10px;
+        background: none;
+        border: none;
+        cursor: pointer;
+
+        img {
+          width: 30px;
+          height: 30px;
+        }
+      }
+    }
+  }
+}

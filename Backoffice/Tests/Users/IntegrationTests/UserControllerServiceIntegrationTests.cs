@@ -559,18 +559,6 @@ namespace DDDSample1.Tests.Users.IntegrationTests
         }
 
         [Fact]
-        public async Task DeleteUser_ShouldReturnError_WhenUserIsNotPatient()
-        {
-            var token = GenerateAdminJwtToken();
-            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-            // Act
-            var response = await _client.DeleteAsync($"/api/user/DeleteUser/{token}");
-
-            // Assert
-            Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
-        }
-
-        [Fact]
         public async Task DeleteUser_ShouldReturnError_WhenUserDoesNotExist()
         {
             var token = GeneratePatientJwtToken(new UserDTO

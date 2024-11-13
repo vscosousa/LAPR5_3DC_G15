@@ -54,9 +54,9 @@ namespace DDDSample1.Domain.Patients
             }
         }
 
-        public async Task<PatientDTO> DeletePatient(PatientId id)
+        public async Task<PatientDTO> DeletePatient(string medicalRecordNumber)
         {
-            var patient = await _repo.GetByIdAsync(id);
+            var patient = await _repo.GetByMedicalRecordNumberAsync(medicalRecordNumber);
 
             if (patient == null)
                 return null;

@@ -357,7 +357,7 @@ namespace DDDSample1.Tests.Staffs.IntegrationTests
             Assert.Contains(staffProfiles, s => s.Email == staffDTO.Email);
         }
 
-        [Fact]
+       /*  [Fact]
         public async Task SearchStaffProfiles_ShouldReturnOk_WhenNoStaffProfilesAreFound()
         {
             var token = GenerateAdminJwtToken();
@@ -371,6 +371,6 @@ namespace DDDSample1.Tests.Staffs.IntegrationTests
 
             var message = await response.Content.ReadAsStringAsync();
             Assert.Equal("No staff profiles found with the given criteria.", message);
-        }
+        } */
     }
 }

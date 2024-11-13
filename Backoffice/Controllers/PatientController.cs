@@ -39,12 +39,12 @@ namespace DDDSample1.Controllers
             }
         }
 
-        [HttpDelete("{id}")]
-        public async Task<ActionResult<PatientDTO>> DeletePatient(Guid id)
+        [HttpDelete("{medicalRecordNumber}")]
+        public async Task<ActionResult<PatientDTO>> DeletePatient(string medicalRecordNumber)
         {
             try
             {
-                var cat = await _service.DeletePatient(new PatientId(id));
+                var cat = await _service.DeletePatient(medicalRecordNumber);
 
                 if (cat == null)
                 {
