@@ -4,6 +4,11 @@ import { PanelService } from '../../Services/panel.service';
 import { SettingsService } from '../../Services/settings.service';
 import { jwtDecode } from 'jwt-decode';
 
+/**
+ * @class SidebarComponent
+ * @description TS file for the sidebar component.
+ * @vscosousa - 12/11/2024
+ */
 @Component({
   selector: 'app-sidebar',
   standalone: true,
@@ -17,8 +22,20 @@ export class SidebarComponent implements OnInit {
   name: string = '';
   role: string = '';
 
+  /**
+   * Service to handle panel-related operations.
+   * @constructor
+   * @param {PanelService} panelService
+   * @param {SettingsService} settingsService
+   * @vscosousa - 12/11/2024
+   */
   constructor(private panelService: PanelService, private settingsService: SettingsService) { }
 
+  /**
+   * Lifecycle hook that is called after data-bound properties of a directive are initialized.
+   * @method ngOnInit
+   * @vscosousa - 12/11/2024
+   */
   ngOnInit(): void {
     this.panelService.panelId$.subscribe(panelId => {
       this.panelId = panelId;
@@ -40,8 +57,12 @@ export class SidebarComponent implements OnInit {
     }
   }
 
+  /**
+   * Handles the logout process by removing the token from local storage.
+   * @method logout
+   * @joaohcpereiraa - 08/11/2024
+   */
   logout() {
     localStorage.removeItem('token');
   }
 }
-

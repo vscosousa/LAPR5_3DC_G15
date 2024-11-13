@@ -2,12 +2,29 @@ import { Injectable } from '@angular/core';
 import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
+/**
+ * @class AuthInterceptor
+ * @description Interceptor to add authentication token to HTTP requests.
+ * @vscosousa - 12/11/2024
+ */
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
+  /**
+   * @constructor
+   * @vscosousa - 12/11/2024
+   */
   constructor() {
     console.log('AuthInterceptor instantiated');
   }
 
+  /**
+   * Intercepts HTTP requests to add authentication token.
+   * @method intercept
+   * @param {HttpRequest<any>} req - The outgoing HTTP request.
+   * @param {HttpHandler} next - The next interceptor in the chain.
+   * @returns {Observable<HttpEvent<any>>} - The HTTP event observable.
+   * @vscosousa - 12/11/2024
+   */
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     const nonAuthUrls = [
       '/login',

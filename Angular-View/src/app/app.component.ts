@@ -3,6 +3,11 @@ import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/rou
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
+/**
+ * @class AppComponent
+ * @description TS file for the main application component.
+ * @vscosousa - 05/11/2024
+ */
 @Component({
   selector: 'app-root',
   standalone: true,
@@ -12,5 +17,11 @@ import { FormsModule } from '@angular/forms';
 })
 export class AppComponent {
   title = 'Angular-View';
+
+  /**
+   * @constructor
+   * @param {Router} router - The router to navigate to different routes.
+   * @vscosousa - 05/11/2024
+   */
   constructor(public router: Router) {}
 }

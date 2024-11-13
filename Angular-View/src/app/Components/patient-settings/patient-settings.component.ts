@@ -4,6 +4,11 @@ import { Router } from '@angular/router';
 import { PanelService } from '../../Services/panel.service';
 import { SettingsService } from '../../Services/settings.service';
 
+/**
+ * @class PatientSettingsComponent
+ * @description TS file for the patient-settings component.
+ * @vscosousa - 09/11/2024
+ */
 @Component({
   selector: 'app-patient-settings',
   standalone: true,
@@ -12,31 +17,49 @@ import { SettingsService } from '../../Services/settings.service';
   styleUrl: './patient-settings.component.scss'
 })
 export class PatientSettingsComponent {
+  /**
+   * Service to handle panel-related operations.
+   * @constructor
+   * @param {Router} router
+   * @param {PanelService} panelService
+   * @param {SettingsService} settingsService
+   * @vscosousa - 09/11/2024
+   */
   constructor(
     private router: Router,
     private panelService: PanelService,
     private settingsService: SettingsService
   ) {}
 
+  /**
+   * Lifecycle hook that is called after data-bound properties of a directive are initialized.
+   * @method ngOnInit
+   * @vscosousa - 09/11/2024
+   */
   ngOnInit(): void {
     this.panelService.setPanelId('patient-panel');
     this.settingsService.setSettingsId('patient-settings');
   }
 
+  /**
+   * Handles the account deletion process.
+   * @method onSubmit
+   * @vscosousa - 09/11/2024
+   */
   onSubmit() {
     const token: string = localStorage.getItem('token') as string;
     if (token) {
       this.settingsService.deleteAccount(token).subscribe(
-      response => {
-        console.log('Request Finished With Success', response);
-        localStorage.removeItem('token');
-        this.router.navigate(['/login']);
-        alert('To complete the account deletion process, please check your email for further instructions.');
-      },
-      error => {
-        console.error('Account deletion failed', error);
-        alert('Account deletion failed - ' + error.error);
-      }
+        response => {
+          console.log('Request Finished With Success', response);
+          localStorage.removeItem('token');
+          this.router.navigate(['/login']);
+          alert('To complete the account deletion process, please check your email for further instructions.');
+        },
+        error => {
+          console.error('Account deletion failed', error);
+          alert('Account deletion failed - ' + error.error);
+        }
       );
     } else {
       this.router.navigate(['/login']);

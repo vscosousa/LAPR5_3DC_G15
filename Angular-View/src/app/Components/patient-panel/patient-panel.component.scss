@@ -1,4 +1,10 @@
-.dashboard-container {
+/*
+  Author: Vasco Sousa (1221700)
+  Last update: 09/11/2024
+  Description: This file contains the styling for the patient-panel component
+*/
+
+.panel-container {
     display: flex;
     margin-left: 85px;
     height: 100vh;
@@ -6,7 +12,7 @@
     font-family: "Poppins", sans-serif;
 }
 
-.dashboard-content {
+.panel-content {
     flex: 1;
     padding: 20px;
     display: flex;
@@ -25,7 +31,7 @@
 
 .stats {
     display: grid;
-    grid-template-areas: 
+    grid-template-areas:
         "box1 box2"
         "box3 box4";
     gap: 10px;

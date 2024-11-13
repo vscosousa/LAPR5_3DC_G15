@@ -4,6 +4,11 @@ import { Router } from '@angular/router';
 import { FormsModule, ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 
+/**
+ * @class RegisterComponent
+ * @description TS file for the register component.
+ * @vscosousa - 08/11/2024
+ */
 @Component({
   selector: 'app-register',
   standalone: true,
@@ -22,8 +27,21 @@ export class RegisterComponent {
     confirmPassword: new FormControl('', Validators.required)
   });
 
+  /**
+   * Service to handle registration-related operations.
+   * @constructor
+   * @param {RegisterService} registerService
+   * @param {Router} router
+   * @vscosousa - 08/11/2024
+   */
   constructor(private registerService: RegisterService, private router: Router) { }
 
+  /**
+   * Toggles the visibility of the password fields.
+   * @method togglePasswordVisibility
+   * @param {string} fieldId - The ID of the password field to toggle.
+   * @vscosousa - 08/11/2024
+   */
   togglePasswordVisibility(fieldId: string): void {
     if (fieldId === 'password') {
       this.passwordFieldType = this.passwordFieldType === 'password' ? 'text' : 'password';
@@ -32,6 +50,11 @@ export class RegisterComponent {
     }
   }
 
+  /**
+   * Handles the form submission for user registration.
+   * @method onSubmit
+   * @vscosousa - 08/11/2024
+   */
   onSubmit() {
     if (this.registerForm.invalid) {
       this.registerForm.markAllAsTouched();

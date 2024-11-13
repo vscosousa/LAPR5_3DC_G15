@@ -3,6 +3,10 @@ import { CanActivateFn } from '@angular/router';
 
 import { PatientGuard } from './patient.guard';
 
+// Test suite for PatientGuard
+// Author: Vasco Sousa (1221700)
+// Last Updated: 12/11/2024
+
 describe('authGuard', () => {
   const executeGuard: CanActivateFn = (...guardParameters) =>
       TestBed.runInInjectionContext(() => {
@@ -14,6 +18,7 @@ describe('authGuard', () => {
     TestBed.configureTestingModule({});
   });
 
+  // Test to check if the guard is created successfully
   it('should be created', () => {
     expect(executeGuard).toBeTruthy();
   });
