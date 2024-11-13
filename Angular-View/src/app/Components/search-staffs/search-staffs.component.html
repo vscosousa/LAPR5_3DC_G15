@@ -1,53 +1,130 @@
-<app-sidebar></app-sidebar>
-<div class="create-staff-container">
-    <div class="create-staff-middle">
-        <div class="top">
-            <h2>Search Staff Profiles</h2>
-        </div>
-        <form [formGroup]="searchForm" (ngSubmit)="onSearch()">
-            <label for="firstName">First Name</label>
-            <input type="text" id="firstName" formControlName="firstName" placeholder="First Name">
+<div class="manage-container">
+    <app-sidebar></app-sidebar>
 
-            <label for="lastName">Last Name</label>
-            <input type="text" id="lastName" formControlName="lastName" placeholder="Last Name" >
+    <div class="screens-container">
 
-            <label for="email">Email</label>
-            <input type="email" id="email" formControlName="email" placeholder="example@email.com" >
+      <div class="screen">
 
-            <label for="fullName">Full Name</label>
-            <input type="text" id="fullName" formControlName="fullName" placeholder="Full Name" >
+        <button routerLink="/create-staff" class="btn btn-create">  Create Staff </button>
 
-            <label for="specializationName">Specialization Name</label>
-            <select id="specializationName" formControlName="specializationName" >
-                <option value="" hidden>Select Specialization</option>
-                <option *ngFor="let specialization of specializations" [value]="specialization.specOption">
-                    {{ specialization.specOption }}
-                </option>
+        <h2 class="manage-title">Search Staff Profiles</h2>
+
+        <div class="content-container">
+
+          <form class="filter-form" [formGroup]="searchForm" (ngSubmit)="onSearch()">
+
+            <input  type="text" placeholder="First Name" formControlName="firstName"/>
+
+            <input type="text" placeholder="Last Name" formControlName="lastName"/>
+
+            <input type="text" placeholder="Full Name" formControlName="fullName"/>
+
+            <input  type="email"  placeholder="Email"  formControlName="email"/>
+
+            <select formControlName="specializationName" title="Specialization">
+              <option value="" hidden>Select Specialization</option>
+              <option *ngFor="let specialization of specializations" [value]="specialization.specOption">
+                {{ specialization.specOption }}
+              </option>
             </select>
 
             <div *ngIf="errorMessage" class="error-message">
                 {{ errorMessage }}
             </div>
 
-            <button type="submit">Search</button>
-        </form>
+            <div *ngIf="infoMessage" class="info-message">
+              {{ infoMessage }}
+          </div>
 
-        <div class="results">
-            <h2>Results</h2>
-            <div *ngIf="staffProfiles.length > 0" class="profiles-container">
-                <div *ngFor="let profile of staffProfiles" class="profile-card">
-                    <h3>{{ profile.fullName }}</h3>
-                    <p><strong>First Name:</strong> {{ profile.firstName }}</p>
-                    <p><strong>Last Name:</strong> {{ profile.lastName }}</p>
-                    <p><strong>Email:</strong> {{ profile.email }}</p>
-                    <p><strong>Specialization:</strong> {{ profile.specializationName }}</p>
-                    <div class="actions">
-                        <button class="edit-button">Edit</button>
-                        <button class="delete-button">Deactivate</button>
-                    </div>
-                </div>
-            </div>
-            <p *ngIf="staffProfiles.length === 0">No staff profiles found with the given criteria.</p>
+            <button type="submit" class="btn btn-filter" >Search</button>
+            <button type="button" class="btn btn-clear" (click)="clearFilters()"> Clear Filters </button>
+
+          </form>
+  
+          <div class="table-container">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Full Name</th>
+                  <th>Email</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let profile of staffProfiles">
+                  <td>{{ profile.fullName }}</td>
+                  <td>{{ profile.email }}</td>
+                  <td>
+
+                    <button (click)="viewStaffDetails(profile)" class="btn btn-view">View</button>
+                    <button routerLink="/update-staff/{{profile.id}}" class="btn btn-update">Update</button>
+                    <button (click)="deactivateStaff(profile.id)" class="btn btn-delete">Deactivate</button>
+
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
+      </div>
+  
+      <div *ngIf="selectedStaff" class="details-screen">
+        <div class="staff-details">
+          <h3>Staff Details</h3>
+          <button (click)="clearSelectedStaff()">
+            <img src="fechar.png" alt="Close" />
+          </button>
+          <table class="table table-bordered">
+            <tbody>
+              <tr>
+                <th>First Name</th>
+                <td>{{ selectedStaff.firstName }}</td>
+              </tr>
+              <tr>
+                <th>Last Name</th>
+                <td>{{ selectedStaff.lastName }}</td>
+              </tr>
+              <tr>
+                <th>Full Name</th>
+                <td>{{ selectedStaff.fullName }}</td>
+              </tr>
+              <tr>
+                <th>Email</th>
+                <td>{{ selectedStaff.email }}</td>
+              </tr>
+              <tr>
+                <th>Specialization</th>
+                <td>{{ selectedStaff.specializationName }}</td>
+              </tr>
+              <tr>
+                <th>Phone Number</th>
+                <td>{{ selectedStaff.phoneNumber }}</td>
+              </tr>
+              <tr>
+                <th>License Number</th>
+                <td>{{ selectedStaff.licenseNumber }}</td>
+              </tr>
+              <tr>
+                <th>Staff Type</th>
+                <td>{{ selectedStaff.staffType }}</td>
+              </tr>
+              <tr>
+                <th>Is Active</th>
+                <td>{{ selectedStaff.isActive ? "Yes" : "No" }}</td>
+              </tr>
+              <tr>
+                <th>Availability Slots</th>
+                <td>
+                  <ul>
+                    <li *ngFor="let slot of selectedStaff.availabilitySlots">{{ slot }}</li>
+                  </ul>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      
     </div>
-</div>
+
+  </div>

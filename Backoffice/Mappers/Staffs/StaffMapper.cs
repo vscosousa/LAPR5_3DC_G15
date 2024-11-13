@@ -28,7 +28,7 @@ namespace Projetos.LAPR5_3DC_G15.Mappers.Staffs
         }
 
         public Staff ToDomain(CreatingStaffDTO dto)
-        {
+        {   
             return new Staff(
                 dto.FirstName,
                 dto.LastName,

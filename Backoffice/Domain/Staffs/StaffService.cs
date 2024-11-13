@@ -49,6 +49,12 @@ namespace DDDSample1.Domain.Staffs
                     }
                     dto.SetSpecializationId(specialization.Id.AsGuid());
                 }
+
+                if (!Enum.TryParse(typeof(StaffType), dto.StaffType, out var staffType))
+                {
+                    throw new BusinessRuleValidationException($"Invalid staff type: {dto.StaffType}");
+                }
+
                 Console.WriteLine($"Creating staff firstName... {dto.FirstName}");
                 Console.WriteLine($"Creating staff lastName... {dto.LastName}");
                 Console.WriteLine($"Creating staff fullname... {dto.FullName}");
@@ -56,15 +62,17 @@ namespace DDDSample1.Domain.Staffs
                 Console.WriteLine($"Creating staff PhoneNumber... {dto.PhoneNumber}");
                 Console.WriteLine($"Creating staff Type... {dto.StaffType}");
                 Console.WriteLine($"Creating staff SpecID... {dto.SpecializationId}");
+                Console.WriteLine($"Creating staff SpecName... {dto.SpecializationName}");
                 
                 var staff = _mapper.ToDomain(dto);
+
                 // Verificar unicidade do email e telefone
                 if (await _repository.GetByEmailAsync(staff.Email) != null)
                     throw new BusinessRuleValidationException("Email is already in use.");
 
                 if (await _repository.GetByPhoneNumberAsync(staff.PhoneNumber) != null)
                     throw new BusinessRuleValidationException("Phone number is already in use.");
-                Console.WriteLine("Email and Phone Number are unique");
+                
                 var list = await _repository.GetAllAsync();
                 staff.SetLicenseNumber(LicenseNumberGenerator.GenerateLicenseNumber(list.Count));
                 
@@ -342,7 +350,7 @@ namespace DDDSample1.Domain.Staffs
         public async Task<List<StaffDTO>> SearchStaffProfiles(SearchStaffDTO dto)
         {   
             try
-            {
+            {   
                 if (!string.IsNullOrEmpty(dto.SpecializationName)){
                     var specialization = _specializationRepository.GetSpecIdByOptionAsync(dto.SpecializationName).Result;
                     if (specialization == null)
@@ -369,7 +377,12 @@ namespace DDDSample1.Domain.Staffs
                     Console.WriteLine($"Inner exception: {ex.InnerException.Message}");
                 }
                 throw;
-            }
+            }  
+        }
+
+        public IEnumerable<string> GetStaffTypes()
+        {
+            return Enum.GetNames(typeof(StaffType));
         }
     }
 }

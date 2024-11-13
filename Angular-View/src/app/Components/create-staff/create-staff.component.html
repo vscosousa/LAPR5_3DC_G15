@@ -2,7 +2,11 @@
 <div class="create-staff-container">
     <div class="create-staff-middle">
         <div class="top">
-            <img src="logo.png" alt="logo" />
+
+            <button class="back-button" routerLink="/search-staffs">
+                <img src="" alt="Back" />
+            </button>
+
             <h2>Create Staff</h2>
         </div>
         <form [formGroup]="createStaffForm" (ngSubmit)="onSubmit()">
@@ -29,15 +33,15 @@
             </div>
           
             <div class="form-row">
+
                 <div class="form-group">
                     <label for="staffType">Staff Type</label>
                     <select id="staffType" formControlName="staffType" required>
-                        <option value="" hidden>Choose Staff Type</option>
-                        <option value="Admin">Admin</option>
-                        <option value="Doctor">Doctor</option>
-                        <option value="Nurse">Nurse</option>
+                        <option value="" hidden>Select Staff Type</option>
+                        <option *ngFor="let type of staffTypes" [value]="type">{{ type }}</option>
                     </select>
                 </div>
+
                 <div class="form-group">
                     <label for="specializationName">Specialization Name</label>
                     <select id="specializationName" formControlName="specializationName" required>
@@ -47,6 +51,7 @@
                         </option>
                     </select>
                 </div>
+
             </div>
             
             <div *ngIf="errorMessage" class="error-message">

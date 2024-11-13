@@ -14,6 +14,7 @@ import { DeleteUserComponent } from './Components/delete-user/delete-user.compon
 import { SearchStaffsComponent } from './Components/search-staffs/search-staffs.component';
 import { PatientGuard } from './Guards/patient.guard';
 import { PanelAdminComponent } from './Components/panel-admin/panel-admin.component';
+import { UpdateStaffComponent } from './Components/update-staff/update-staff.component';
 import { PatientPanelComponent } from './Components/patient-panel/patient-panel.component';
 import { ManagePatientsComponent } from './Components/manage-patients/manage-patients.component';
 import { CreatePatientComponent } from './Components/create-patient/create-patient.component';
@@ -30,10 +31,13 @@ export const routes: Routes = [
         path: "panel-admin", component: PanelAdminComponent, canActivate: [AuthGuard]
     },
     {
-        path: "createStaff", component: CreateStaffComponent, canActivate: [AuthGuard]
+        path: "create-staff", component: CreateStaffComponent, canActivate: [AuthGuard]
     },
     {
-        path: "searchStaffs", component: SearchStaffsComponent, canActivate: [AuthGuard]
+        path: "search-staffs", component: SearchStaffsComponent, canActivate: [AuthGuard]
+    },
+    { 
+        path: 'update-staff/:id', component: UpdateStaffComponent, canActivate: [AuthGuard]
     },
     {
         path: "operation-types", component: OperationTypesComponent, canActivate: [AuthGuard]

@@ -1,0 +1,138 @@
+.update-staff-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100vw;
+  height: 100vh;
+
+  .update-staff-middle {
+    position: relative;
+    background-color: white;
+    padding: 2rem;
+    border-radius: 6px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 900px;
+    max-width: 900px;
+    height: 90vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-family: Poppins, sans-serif;
+  }
+
+  .top {
+    display: flex;
+    margin-bottom: 1.5rem;
+
+    .back-button {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      margin-right: 0;
+
+      img {
+        width: 24px;
+        height: 24px;
+      }
+    }
+
+    h2 {
+      text-align: center;
+      font-size: 40px;
+      color: #333;
+      margin: 0;
+    }
+  }
+
+  form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+
+    label {
+      margin-top: 10px;
+      font-weight: bold;
+    }
+
+    input,
+    select {
+      padding: 0.5rem;
+      margin-top: 0.5rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    .ng-touched.ng-invalid {
+      border: 2px solid red;
+    }
+
+    .ng-touched.ng-valid {
+      border: 1px solid green;
+    }
+
+    button {
+      padding: 0.6rem;
+      margin-top: 1.5rem;
+      border-radius: 50px;
+      background-color: #153e4c;
+      color: white;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background-color 0.3s;
+
+      &:hover {
+        color: #153e4c;
+        background-color: white;
+        border: 2px solid #153e4c;
+      }
+
+      &:focus {
+        outline: none;
+      }
+    }
+
+    .form-row {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      margin-right: 10px;
+    }
+
+    .form-group:last-child {
+      margin-right: 0;
+    }
+
+    .identifier-group {
+      flex: 0 0 100px;
+      margin-right: 10px;
+    }
+
+    .phone-group {
+      flex: 1;
+    }
+
+    .error-message {
+      color: red;
+      margin-top: 10px;
+      text-align: center;
+      font-size: medium;
+    }
+
+    .info-message {
+      color: green;
+      margin-top: 10px;
+      text-align: center;
+      font-size: medium;
+    }
+  }
+}

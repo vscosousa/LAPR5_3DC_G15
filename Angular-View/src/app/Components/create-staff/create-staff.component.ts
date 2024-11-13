@@ -3,11 +3,12 @@ import { FormsModule, ReactiveFormsModule, FormGroup, FormControl, Validators } 
 import { CommonModule } from '@angular/common';
 import { StaffService } from '../../Services/staff-sevice.service'; 
 import { SidebarComponent } from '../sidebar/sidebar.component';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-create-staff',
   standalone: true,
-  imports: [FormsModule, CommonModule, SidebarComponent, ReactiveFormsModule],
+  imports: [FormsModule, CommonModule, SidebarComponent, ReactiveFormsModule, RouterModule],
   templateUrl: './create-staff.component.html',
   styleUrls: ['./create-staff.component.scss']
 })
@@ -24,6 +25,7 @@ export class CreateStaffComponent implements OnInit{
       specializationName: new FormControl('', [Validators.required])
     });
   
+  staffTypes: string[] = [];
   specializations:  any[] = [];
   errorMessage: string = '';
   NumberPhone: string = '';
@@ -32,6 +34,7 @@ export class CreateStaffComponent implements OnInit{
 
   ngOnInit(): void {
     this.loadSpecializations();
+    this.loadStaffTypes();
   }
 
   loadSpecializations(): void {
@@ -46,6 +49,18 @@ export class CreateStaffComponent implements OnInit{
     });
   }
 
+  loadStaffTypes(): void {
+    this.service.getStaffTypes().subscribe({
+      next: (data) => {
+        console.log("Data staff types:\n", data);
+        this.staffTypes = data;
+      },
+      error: (error) => {
+        console.error('Error loading staff types', error);
+      }
+    });
+  }
+
   onSubmit() {
     if (this.createStaffForm.invalid) {
       console.error('Form is invalid');
@@ -56,25 +71,36 @@ export class CreateStaffComponent implements OnInit{
 
     if (this.createStaffForm.valid) {
       this.service.createStaff(
-        this.createStaffForm.value.firstName!,
-        this.createStaffForm.value.lastName!,
+        this.createStaffForm.value.firstName!.trim(),
+        this.createStaffForm.value.lastName!.trim(),
         this.createStaffForm.value.fullName!,
-        this.createStaffForm.value.email!,
-        this.createStaffForm.value.identifier!,
-        this.createStaffForm.value.phoneNumber!,
+        this.createStaffForm.value.email!.trim(),
+        this.createStaffForm.value.identifier!.trim(),
+        this.createStaffForm.value.phoneNumber!.trim(),
         this.createStaffForm.value.staffType!,
         this.createStaffForm.value.specializationName!
       ).subscribe({
         next: (response) => {
           this.errorMessage = '';
-          this.createStaffForm.reset();
+          this.createStaffForm.reset(
+            {
+              firstName: '',
+              lastName: '',
+              fullName: '',
+              email: '',
+              identifier: '',
+              phoneNumber: '',
+              staffType: '',
+              specializationName: ''
+            }
+          );
           console.log('Staff created successfully', response);
         },
         error: (error) => {
           console.error('Error creating staff', error);
           if (error.status === 400) {
-            const errorMessage = error.error.message;
-            this.errorMessage =  errorMessage;
+            const errorResponse = JSON.parse(error.error);
+            this.errorMessage =  errorResponse.message;
           } else {
             alert('Create Staff failed - ' + error.error);
           }

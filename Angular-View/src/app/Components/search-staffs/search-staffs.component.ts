@@ -3,11 +3,12 @@ import { FormsModule, ReactiveFormsModule, FormGroup, FormBuilder, FormControl, 
 import { CommonModule } from '@angular/common';
 import { StaffService } from '../../Services/staff-sevice.service'; 
 import { SidebarComponent } from '../sidebar/sidebar.component';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-search-staffs',
   standalone: true,
-  imports: [FormsModule, CommonModule, SidebarComponent, ReactiveFormsModule],
+  imports: [FormsModule, CommonModule, SidebarComponent, ReactiveFormsModule, RouterModule],
   templateUrl: './search-staffs.component.html',
   styleUrls: ['./search-staffs.component.scss']
 })
@@ -17,6 +18,8 @@ export class SearchStaffsComponent implements OnInit {
   staffProfiles: any[] = [];
   errorMessage: string = '';
   specializations: any[] = [];
+  selectedStaff: any = null;
+  infoMessage: string = '';
 
   constructor(private fb: FormBuilder, private staffService: StaffService) {
 
@@ -33,7 +36,6 @@ export class SearchStaffsComponent implements OnInit {
     });
   }
 
-
   loadSpecializations(): void {
     this.staffService.getSpecialization().subscribe({
       next: (data) => {
@@ -46,42 +48,91 @@ export class SearchStaffsComponent implements OnInit {
     });
   }
 
+  clearFilters() {
+    this.searchForm.reset({
+      firstName: '',
+      lastName: '',
+      fullName: '',
+      email: '',
+      specializationName: ''
+    });
+    this.staffProfiles = [];
+    this.errorMessage = '';
+    this.infoMessage = '';
+  }
+
   onSearch(): void {
-    const searchCriteria = this.searchForm.value;
+
+    const searchCriteria = {
+      firstName: this.searchForm.value.firstName!.trim(),
+      lastName: this.searchForm.value.lastName!.trim(),
+      fullName: this.searchForm.value.fullName!,
+      email: this.searchForm.value.email!.trim(),
+      specializationName: this.searchForm.value.specializationName!
+    };
+
     if (Object.values(searchCriteria).every(value => !value)) {
-      this.searchForm.markAllAsTouched();
       this.errorMessage = "At least one search parameter is required.";
-      console.log(this.searchForm.controls);
       return;
     }
+
     this.staffService.searchStaffProfiles(searchCriteria)
       .subscribe({
         next: (response) => {
           this.errorMessage = '';
-          
-          console.log('Search staff', response);
           if (Array.isArray(response)) {
+            this.infoMessage='';
             this.staffProfiles = response;
           } else {
+            this.infoMessage = 'No staff profiles found with the given search.';
             this.staffProfiles = [];
           }
-
-          this.searchForm.reset();
         },
         error: (error) => {
-          console.log('Error Search staff', error.status);
+          console.error('Error search staff', error);
+          this.infoMessage='';
           this.staffProfiles = [];
-          console.error('Error Search staff', error);
           if (error.status === 400) {
-            
             const errorMessage = error.error.message;
             this.errorMessage = errorMessage;
-            console.error('Search Staff failed - ' + errorMessage);
-            
           } else {
             alert('Search Staff failed - ' + error.error);
           }
         }
       });
+  }
+
+  getSpecializationName(specializationId: string): string {
+    const specialization = this.specializations.find(spec => spec.id.value === specializationId);
+    return specialization ? specialization.specOption : 'Unknown';
+  }
+
+  viewStaffDetails(staff: any): void {
+    staff.specializationName = this.getSpecializationName(staff.specializationId);
+    this.selectedStaff = staff;
+  }
+
+  clearSelectedStaff(): void {
+    this.selectedStaff = null;
+  }
+
+  deactivateStaff(id: string): void {
+    this.staffService.deactivateStaff(id).subscribe({
+      next: () => {
+        this.errorMessage = '';
+        this.infoMessage = 'Staff deactivated successfully';
+        this.onSearch();
+      },
+      error: (error) => {
+        console.error('Error deactivating staff', error);
+        this.infoMessage='';
+        if (error.status === 400) {
+          const errorMessage = error.error.message;
+          this.errorMessage = errorMessage;
+        } else {
+          alert('Search Staff failed - ' + error.error);
+        }
+      }
+    });
   }
 }

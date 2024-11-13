@@ -36,9 +36,21 @@ export class StaffService {
     return this.http.get<any[]>(`${this.apiURLSpecializaction}`);
   }
 
+  getStaffTypes(): Observable<string[]> {
+    return this.http.get<string[]>(`${this.apiUrl}/staff-types`);
+  }
+
   searchStaffProfiles(criteria: any): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/search`, { 
       params: criteria 
     });
+  }
+
+  deactivateStaff(id: string): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/deactivate/${id}`, {});
+  }
+
+  updateStaff(id: string, updateData: any): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/${id}`, updateData);
   }
 }

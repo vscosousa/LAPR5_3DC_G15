@@ -162,6 +162,11 @@ namespace DDDSample1.Controllers
             }
         }
 
-
+        [HttpGet("staff-types")]
+        public IActionResult GetStaffTypes()
+        {
+            var staffTypes = _staffService.GetStaffTypes();
+            return Ok(staffTypes);
+        }
     }
 }

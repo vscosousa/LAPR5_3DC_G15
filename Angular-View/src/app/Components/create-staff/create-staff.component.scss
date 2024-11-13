@@ -4,33 +4,47 @@
     align-items: center;
     width: 100vw;
     height: 100vh;
+    
 
     .create-staff-middle {
+        position: relative;
         background-color: white;
         padding: 2rem;
         border-radius: 6px;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        width: 45%;
-        max-width: 70vw;
-        height: 100vh;
+        width: 900px;
+        max-width: 900px;
+        height: 90vh;;
         display: flex;
         flex-direction: column;
         align-items: center;
+        font-family: Poppins, sans-serif;
     }
 
     .top {
         display: flex;
-        flex-direction: column;
-        align-items: center;
-        margin-bottom: 2rem;
+        margin-bottom: 1.5rem;
 
-        img {
-            height: 85px;
+        .back-button {
+            position: absolute; 
+            top: 10px; 
+            left: 10px; 
+            background: none;
+            border: none;
+            cursor: pointer;
+            margin-right: 0;
+      
+            img {
+              width: 24px;
+              height: 24px;
+            }
         }
 
         h2 {
+            text-align: center;
             font-size: 40px;
             color: #333;
+            margin: 0;
         }
     }
 
