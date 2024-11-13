@@ -6,9 +6,9 @@
 
  `Description:` As a Patient, I want to delete my account and all associated data, so that I can exercise my right to be forgotten as per GDPR.
 
- `Sprint:` This US makes part of the first stage of development of the integrative project of this semester, Sprint B.
+ `Sprint:` This US makes part of the second stage of development of the integrative project of this semester, Sprint B.
 
-`Objectives:` This user story aims to develop the account deletion process for the healthcare application, so that the Patient can delete his account and all associated data.
+`Objectives:` This user story aims to develop the UI for the account deletion process for the healthcare application, so that the Patient can delete his account and all associated data.
 
 ## Level 1
 

@@ -6,9 +6,9 @@
 
  `Description:` As a Patient, I want to register for the healthcare application, so that I can create a user profile and book appointments online.
 
- `Sprint:` This US makes part of the first stage of development of the integrative project of this semester, Sprint B.
+ `Sprint:` This US makes part of the second stage of development of the integrative project of this semester, Sprint B.
 
-`Objectives:` This user story aims to develop the registration process for the healthcare application, so that the Patient can create a user profile.
+`Objectives:` This user story aims to develop the UI for the registration process for the healthcare application, so that the Patient can create a user profile.
 
 ## Level 1
 

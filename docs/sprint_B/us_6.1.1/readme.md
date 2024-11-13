@@ -6,7 +6,7 @@
 
  `Description:` As user, I want to have an integrated UI for all modules of the system so that I don’t need to switch between application urls.
 
- `Sprint:` This US makes part of the first stage of development of the integrative project of this semester, Sprint B.
+ `Sprint:` This US makes part of the second stage of development of the integrative project of this semester, Sprint B.
 
 `Objectives:` In this stage, the main objective is to integrate the UI of all modules of the system.
 

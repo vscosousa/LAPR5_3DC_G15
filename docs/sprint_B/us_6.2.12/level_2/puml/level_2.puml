@@ -1,0 +1,22 @@
+@startuml level_2
+'https://plantuml.com/sequence-diagram
+skinparam handwritten false
+skinparam monochrome false
+skinparam packageStyle rect
+skinparam defaultFontName FG Virgil
+skinparam shadowing true
+
+actor Admin as AD
+activate AD
+AD -> UI: ask to create a user (username, email, role)
+activate UI
+UI -> Controller: createUser(CreatingUserDTO)
+activate Controller
+Controller --> Controller: Validate user's data
+Controller --> UI: 200 (Success) OR 400 (Bad Request)
+deactivate Controller
+UI -> AD: 200 (Success) OR 400 (Bad Request)
+deactivate UI
+
+@enduml
+

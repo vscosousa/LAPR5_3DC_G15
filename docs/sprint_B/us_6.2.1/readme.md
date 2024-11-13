@@ -1,14 +1,14 @@
 <img width=100% src="https://capsule-render.vercel.app/api?type=waving&height=120&color=4E1764"/>
 
-# 6.2.2 - As a Patient, I want to update my user profile
+# 6.2.1 - As a Patient, I want to register for the healthcare application
 
 ## 1. Context
 
- `Description:` As a Patient, I want to update my user profile, so that I can change my personal details and preferences.
+ `Description:` As a Patient, I want to register for the healthcare application, so that I can create a user profile and book appointments online.
 
- `Sprint:` This US makes part of the first stage of development of the integrative project of this semester, Sprint B.
+ `Sprint:` This US makes part of the second stage of development of the integrative project of this semester, Sprint B.
 
-`Objectives:` This user story aims to develop the user profile update process for the healthcare application, so that the Patient can change personal details and preferences.
+`Objectives:` This user story aims to develop the UI for the registration process for the healthcare application, so that the Patient can create a user profile.
 
 ## Level 1
 

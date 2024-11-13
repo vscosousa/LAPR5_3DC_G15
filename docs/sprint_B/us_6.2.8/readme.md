@@ -1,14 +1,14 @@
 <img width=100% src="https://capsule-render.vercel.app/api?type=waving&height=120&color=4E1764"/>
 
-# 6.2.4 - As a (non-authenticated) Backoffice User, I want to log in to the system
+# 6.2.8 - As an Admin, I want to delete a patient profile
 
 ## 1. Context
 
- `Description:` As a (non-authenticated) Backoffice User, I want to log in to the system using my credentials, so that I can access the backoffice features according to my assigned role.
+ `Description:` As an Admin, I want to delete a patient profile, so that I can remove patients who are no longer under care.
 
  `Sprint:` This US makes part of the first stage of development of the integrative project of this semester, Sprint B.
 
-`Objectives:` This user story aims to develop the login feature for the backoffice users, so that they can access the backoffice features according to their assigned roles.
+`Objectives:` This user story aims to develop the UI for the patient profile deletion process for the healthcare application, so that the Admin can delete a patient profile.   
 
 ## Level 1
 

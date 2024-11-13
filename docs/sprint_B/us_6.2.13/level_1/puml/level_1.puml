@@ -1,0 +1,20 @@
+@startuml level_1
+
+skinparam handwritten false
+skinparam monochrome false
+skinparam packageStyle rect
+skinparam defaultFontName FG Virgil
+skinparam shadowing true
+
+actor Admin as AD
+
+activate AD
+AD -> System: Ask to register a user
+activate System
+System -> AD: Ask for user's data
+AD -> System: Send user's data (username,email,role)
+System -> System: Validate user's data
+System -> AD: Send confirmation message
+deactivate System
+
+@enduml
