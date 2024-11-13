@@ -1,3 +1,25 @@
+/**
+ * US 6.2.4 - As an BackOffice User, I want to log in to the system
+ * US Developed By: João Pereira - 1211503
+ * 
+ * Finished at 09/11/2024
+ *
+ * Component for handling user login.
+ * 
+ * @component
+ * @selector app-login
+ * @standalone true
+ * @imports [FormsModule, ReactiveFormsModule, RouterModule]
+ * 
+ * @class LoginComponent
+ * 
+ * @property {string} passwordFieldType - The type of the password field (password/text).
+ * @property {FormGroup} loginForm - The form group for the login form.
+ * 
+ * @method togglePasswordVisibility Toggles the visibility of the password field.
+ * @method onSubmit Handles the form submission for logging in.
+ */
+
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { LoginService } from '../../Services/login.service';
@@ -47,7 +69,7 @@ export class LoginComponent {
             this.router.navigate(['/patient-panel']);
           } else {
             console.error('Unknown role:', role);
-            this.router.navigate(['/""']);
+            this.router.navigate(['/']);
           }
         } else {
           console.error('Token is missing or invalid');

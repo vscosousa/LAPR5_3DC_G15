@@ -1,3 +1,14 @@
+/**
+ * Guard for protecting routes that require authentication.
+ * 
+ * @service
+ * @providedIn root
+ * 
+ * @class AuthGuard
+ * 
+ * @method canActivate Determines if the route can be activated based on the user's authentication status and role.
+ */
+
 import { Injectable } from '@angular/core';
 import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, Router } from '@angular/router';
 import { LoginService } from '../Services/login.service';

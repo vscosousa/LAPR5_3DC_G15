@@ -115,15 +115,3 @@ a:hover {
     margin-top: 10px;
 }
 
-/* Style for deactivated operation types */
-.deactivated {
-    background-color: #e20000; /* Light gray background for deactivated rows */
-    color: #999; /* Lighter text color */
-    text-decoration: line-through; /* Strike-through text to show deactivation */
-}
-
-/* Optionally style the deactivated button */
-.deactivated .btn-delete {
-    pointer-events: none; /* Disable clicking on deactivated operation types */
-    opacity: 0.5; /* Make the button look inactive */
-}

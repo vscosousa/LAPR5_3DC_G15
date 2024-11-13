@@ -1,3 +1,27 @@
+/**
+ * US 6.2.18 - As an admin, I want to create a new operation type
+ * US Developed By: João Pereira - 1211503
+ * 
+ * Finished at 11/11/2024
+ * Component for creating a new operation type and managing its specializations.
+ * 
+ * @component
+ * @selector app-create-operation-type
+ * @standalone true
+ * @imports [CommonModule, FormsModule, RouterModule, SidebarComponent]
+ * 
+ * @class CreateOperationTypeComponent
+ * 
+ * @property {object} operationType - The operation type data.
+ * @property {string} operationType.name - The name of the operation type.
+ * @property {string} operationType.estimatedDuration - The estimated duration of the operation type.
+ * @property {string[]} operationType.specializations - The specializations associated with the operation type.
+ * @property {any[]} availableSpecializations - The list of available specializations.
+ * 
+ * @method onSpecializationChange Handles the selection of specializations.
+ * @method onSubmit Handles the form submission to create a new operation type.
+ */
+
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
@@ -8,7 +32,7 @@ import { OperationTypeService } from '../../../Services/operation-type.service';
 @Component({
   selector: 'app-create-operation-type',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [CommonModule, FormsModule, RouterModule, SidebarComponent],
   templateUrl: './create-operation-type.component.html',
   styleUrls: ['./create-operation-type.component.scss']
 })
@@ -21,7 +45,7 @@ export class CreateOperationTypeComponent {
 
   availableSpecializations: any[] = [];
 
-  constructor(private operationTypeService: OperationTypeService) {
+  constructor(private router: Router, private operationTypeService: OperationTypeService) {
     operationTypeService.getSpecializations().subscribe(
       (data: any[]) => {
         this.availableSpecializations = data;
@@ -56,6 +80,7 @@ export class CreateOperationTypeComponent {
           estimatedDuration: '',
           specializations: [] as string[]  // Reset form
         };
+        this.router.navigate(['/operation-types']);
       },
       error => {
         console.error('Error creating operation type', error);

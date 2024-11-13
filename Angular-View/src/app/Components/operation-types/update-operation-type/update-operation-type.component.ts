@@ -1,3 +1,24 @@
+/**
+ * US 6.2.19 - As an admin, I want to update an operation type
+ * US Developed By: João Pereira - 1211503
+ * Finished at 11/11/2024
+ * Component for updating an operation type and managing its specializations.
+ * 
+ * @component
+ * @selector app-update-operation-type
+ * @standalone true
+ * @imports [FormsModule, ReactiveFormsModule, RouterModule, SidebarComponent, CommonModule]
+ * 
+ * @class UpdateOperationTypeComponent
+ * @implements OnInit
+ * 
+ * @method ngOnInit Initializes the component and fetches the operation type data.
+ * @method loadOperationType Loads the operation type data from the backend.
+ * @method updateOperationType Updates the operation type with the form data.
+ * @method specializations Getter for the specializations FormArray.
+ * @method addSpecialization Adds a new specialization to the FormArray.
+ * @method removeSpecialization Removes a specialization from the FormArray.
+ */
 
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
@@ -44,9 +65,10 @@ export class UpdateOperationTypeComponent implements OnInit {
           estimatedDuration: data.estimatedDuration
         });
 
-        // Populate the specializations FormArray
+        // Populate the specializations FormArray with only the specOption values
         const specializationsArray = this.updateForm.get('specializations') as FormArray;
-        data.specializations.forEach((specOption: string) => {
+        const specOptions = data.specializations.map((spec: any) => spec.specOption); // Map to extract specOption
+        specOptions.forEach((specOption: string) => {
           specializationsArray.push(this.fb.control(specOption, Validators.required));
         });
       },
