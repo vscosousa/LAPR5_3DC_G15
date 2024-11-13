@@ -85,10 +85,9 @@ Description: This component allows users to manage patients, including creating,
                 <td>{{ patient.fullName }}</td>
                 <td>
                   <a
-                    routerLink="['/update-patient', patient.medicalRecordNumber]"
+                    [routerLink]="['/update-patient', patient.medicalRecordNumber]"
                     class="btn btn-update"
-                    >Edit</a
-                  >
+                    >Edit</a>
                   <a
                     href="javascript:void(0)"
                     (click)="

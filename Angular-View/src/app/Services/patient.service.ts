@@ -91,4 +91,19 @@ export class PatientService {
       })
     );
   }
+  /**
+   * Updates an existing patient.
+   * @method updatePatient
+   * @param {Object} existingPatient - The details of the existing patient.
+   * @returns {Observable<any>} - The observable containing the response.
+   * @vscosousa - 12/11/2024
+   */
+  updatePatient(medicalRecordNumber: string, patient: { firstName: string; lastName: string; fullName: string; email: string; phoneNumber: string; emergencyContact: string; medicalConditions: string; }) {
+    return this.http.put<any>(`${this.apiUrl}/Patient/${medicalRecordNumber}`, patient, { responseType: 'json' }).pipe(
+      catchError((error: any) => {
+        console.error('Error updating patient:', error);
+        return throwError(error);
+      })
+    );
+  }
 }

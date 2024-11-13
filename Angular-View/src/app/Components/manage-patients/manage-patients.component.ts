@@ -37,7 +37,7 @@ export class ManagePatientsComponent {
    * @vscosousa - 12/11/2024
    */
   ngOnInit(): void {
-    this.fetchOperationTypes();
+    this.clearFilters();
   }
 
   /**

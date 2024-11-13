@@ -8,8 +8,10 @@ Description: This component allows users to create a new patient by filling out 
   <app-sidebar></app-sidebar>
   <div class="screens-container">
     <div class="screen">
+      <button routerLink="/manage-patients" routerLinkActive="router-link-active"  type="button" class="btn btn-back">
+        Go Back
+      </button>
       <h2 class="create-title" style="text-align: center">Create Patient</h2>
-
       <div class="content-container">
         <form class="create-form" (submit)="createPatient($event)">
           <input
@@ -65,6 +67,7 @@ Description: This component allows users to create a new patient by filling out 
             placeholder="Emergency Contact"
             [(ngModel)]="newPatient.emergencyContact"
             name="emergencyContact"
+            required
           />
           <textarea
             placeholder="Medical Conditions"

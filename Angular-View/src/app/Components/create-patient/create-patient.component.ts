@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { SidebarComponent } from '../sidebar/sidebar.component';
 import { PatientService } from '../../Services/patient.service';
+import { Router } from '@angular/router';
+import { RouterModule } from '@angular/router';
 
 /**
  * @class CreatePatientComponent
@@ -12,7 +14,7 @@ import { PatientService } from '../../Services/patient.service';
 @Component({
   selector: 'app-create-patient',
   standalone: true,
-  imports: [FormsModule, SidebarComponent],
+  imports: [FormsModule, SidebarComponent, RouterModule],
   templateUrl: './create-patient.component.html',
   styleUrl: './create-patient.component.scss'
 })
@@ -40,7 +42,7 @@ export class CreatePatientComponent {
    * @param {PatientService} patientService
    * @vscosousa - 12/11/2024
    */
-  constructor(private patientService: PatientService) {}
+  constructor(private patientService: PatientService, private router: Router) {}
 
   /**
    * Handles the form submission to create a new patient.
@@ -55,6 +57,7 @@ export class CreatePatientComponent {
         console.log('Patient created:', response);
         this.clearForm();
         alert('Patient created successfully');
+        this.router.navigate(['/manage-patients']);
       },
       error => {
         console.error('Error creating patient', error);

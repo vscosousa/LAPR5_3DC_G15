@@ -59,12 +59,12 @@ namespace DDDSample1.Controllers
             }
         }
 
-        [HttpPut("{id}")]
-        public async Task<ActionResult<PatientDTO>> UpdatePatient(Guid id, UpdatePatientDTO dto)
+        [HttpPut("{medicalRecordNumber}")]
+        public async Task<ActionResult<PatientDTO>> UpdatePatient(string medicalRecordNumber, UpdatePatientDTO dto)
         {
             try
             {
-                var patient = await _service.UpdatePatient(id, dto);
+                var patient = await _service.UpdatePatient(medicalRecordNumber, dto);
 
                 if (patient == null)
                 {

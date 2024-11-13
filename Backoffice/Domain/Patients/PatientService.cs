@@ -74,9 +74,9 @@ namespace DDDSample1.Domain.Patients
             return _mapper.ToDto(patient);
         }
 
-        public async Task<PatientDTO> UpdatePatient(Guid id, UpdatePatientDTO dto)
+        public async Task<PatientDTO> UpdatePatient(string medicalRecordNumber, UpdatePatientDTO dto)
         {
-            var patient = await _repo.GetByIdAsync(new PatientId(id));
+            var patient = await _repo.GetByMedicalRecordNumberAsync(medicalRecordNumber);
 
             if (patient == null)
                 return null;

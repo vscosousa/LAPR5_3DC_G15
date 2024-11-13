@@ -1,10 +1,10 @@
 /*
   Author: Vasco Sousa (1221700)
-  Last update: 12/11/2024
-  Description: This file contains the styling for the create-patient component
+  Last update: 13/11/2024
+  Description: This file contains the styling for the update-patient component
 */
 
-.create-container {
+.update-container {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -35,7 +35,7 @@
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     position: relative;
 
-    .create-title {
+    .update-title {
       margin-bottom: 20px;
       color: #333;
     }
@@ -46,7 +46,7 @@
       width: 100%;
     }
 
-    .create-form {
+    .update-form {
       display: flex;
       flex-direction: column;
       gap: 10px;
@@ -76,12 +76,12 @@
       margin-right: 5px;
       transition: background-color 0.3s;
 
-      &.btn-create {
-        background-color: #28a745;
+      &.btn-update {
+        background-color: #ffc107;
         color: #fff;
 
         &:hover {
-          background-color: #218838;
+          background-color: #e0a800;
         }
       }
 

@@ -249,10 +249,14 @@ namespace DDDSample1.Tests.Patients.UnitTests
                 existingPatient.MedicalConditions
             );
 
+            int sequentialNumber = 1;
+            string formattedNumber = sequentialNumber.ToString("D6");
+            string medicalRecordNumber = DateTime.Now.Year + DateTime.Now.Month + formattedNumber;
+
             string message = "Patient updated. The following fields were updated: First Name, Last Name, Full Name.";
             var log = new Log(TypeOfAction.Update, existingPatient.Id.ToString(), message);
 
-            _patientRepositoryMock.Setup(r => r.GetByIdAsync(existingPatient.Id)).ReturnsAsync(existingPatient);
+            _patientRepositoryMock.Setup(r => r.GetByMedicalRecordNumberAsync(medicalRecordNumber)).ReturnsAsync(existingPatient);
             _logRepositoryMock.Setup(r => r.AddAsync(It.IsAny<Log>())).ReturnsAsync(log);
             _patientMapperMock.Setup(m => m.ToDto(It.IsAny<Patient>())).Returns(new PatientDTO
             {
@@ -272,7 +276,8 @@ namespace DDDSample1.Tests.Patients.UnitTests
             });
 
             // Act
-            var updatedPatientDTO = await _service.UpdatePatient(existingPatient.Id.AsGuid(), dto);
+            var updatedPatientDTO = await _service.UpdatePatient(medicalRecordNumber, dto);
+
 
             // Assert
             Assert.NotNull(updatedPatientDTO);
@@ -280,7 +285,7 @@ namespace DDDSample1.Tests.Patients.UnitTests
             Assert.Equal(expectedUpdatedPatient.LastName, updatedPatientDTO.LastName);
             Assert.Equal(expectedUpdatedPatient.FullName, updatedPatientDTO.FullName);
             _patientMapperMock.Verify(m => m.ToDto(It.IsAny<Patient>()), Times.Once);
-            _patientRepositoryMock.Verify(r => r.GetByIdAsync(existingPatient.Id), Times.Once);
+            _patientRepositoryMock.Verify(r => r.GetByMedicalRecordNumberAsync(medicalRecordNumber), Times.Once);
             _unitOfWorkMock.Verify(u => u.CommitAsync(), Times.Once);
             _logRepositoryMock.Verify(l => l.AddAsync(It.IsAny<Log>()), Times.Once);
         }
@@ -313,10 +318,14 @@ namespace DDDSample1.Tests.Patients.UnitTests
                 existingPatient.MedicalConditions
             );
 
+            int sequentialNumber = 1;
+            string formattedNumber = sequentialNumber.ToString("D6");
+            string medicalRecordNumber = DateTime.Now.Year + DateTime.Now.Month + formattedNumber;
+
             string message = "Patient updated. The following fields were updated: Email, Phone Number, Emergency Contact.";
             var expectedLog = new Log(TypeOfAction.Update, existingPatient.Id.ToString(), message);
 
-            _patientRepositoryMock.Setup(r => r.GetByIdAsync(existingPatient.Id)).ReturnsAsync(existingPatient);
+            _patientRepositoryMock.Setup(r => r.GetByMedicalRecordNumberAsync(medicalRecordNumber)).ReturnsAsync(existingPatient);
             _logRepositoryMock.Setup(r => r.AddAsync(It.IsAny<Log>())).ReturnsAsync(expectedLog);
             _patientMapperMock.Setup(m => m.ToDto(It.IsAny<Patient>())).Returns(new PatientDTO
             {
@@ -336,7 +345,7 @@ namespace DDDSample1.Tests.Patients.UnitTests
             });
 
             // Act
-            var updatedPatientDTO = await _service.UpdatePatient(existingPatient.Id.AsGuid(), dto);
+            var updatedPatientDTO = await _service.UpdatePatient(medicalRecordNumber, dto);
 
             // Assert
             Assert.NotNull(updatedPatientDTO);
@@ -344,7 +353,7 @@ namespace DDDSample1.Tests.Patients.UnitTests
             Assert.Equal(expectedUpdatedPatient.PhoneNumber, updatedPatientDTO.PhoneNumber);
             Assert.Equal(expectedUpdatedPatient.EmergencyContact, updatedPatientDTO.EmergencyContact);
             _patientMapperMock.Verify(m => m.ToDto(It.IsAny<Patient>()), Times.Once);
-            _patientRepositoryMock.Verify(r => r.GetByIdAsync(existingPatient.Id), Times.Once);
+            _patientRepositoryMock.Verify(r => r.GetByMedicalRecordNumberAsync(medicalRecordNumber), Times.Once);
             _unitOfWorkMock.Verify(u => u.CommitAsync(), Times.Once);
             _logRepositoryMock.Verify(l => l.AddAsync(It.IsAny<Log>()), Times.Once);
         }
@@ -377,10 +386,14 @@ namespace DDDSample1.Tests.Patients.UnitTests
                 dto.MedicalConditions
             );
 
+            int sequentialNumber = 1;
+            string formattedNumber = sequentialNumber.ToString("D6");
+            string medicalRecordNumber = DateTime.Now.Year + DateTime.Now.Month + formattedNumber;
+
             string message = "Patient updated. The following fields were updated: Medical Conditions.";
             var log = new Log(TypeOfAction.Update, existingPatient.Id.ToString(), message);
 
-            _patientRepositoryMock.Setup(r => r.GetByIdAsync(existingPatient.Id)).ReturnsAsync(existingPatient);
+            _patientRepositoryMock.Setup(r => r.GetByMedicalRecordNumberAsync(medicalRecordNumber)).ReturnsAsync(existingPatient);
             _logRepositoryMock.Setup(r => r.AddAsync(It.IsAny<Log>())).ReturnsAsync(log);
             _patientMapperMock.Setup(m => m.ToDto(It.IsAny<Patient>())).Returns(new PatientDTO
             {
@@ -400,13 +413,13 @@ namespace DDDSample1.Tests.Patients.UnitTests
             });
 
             // Act
-            var updatedPatientDTO = await _service.UpdatePatient(existingPatient.Id.AsGuid(), dto);
+            var updatedPatientDTO = await _service.UpdatePatient(medicalRecordNumber, dto);
 
             // Assert
             Assert.NotNull(updatedPatientDTO);
             Assert.Equal(expectedUpdatedPatient.MedicalConditions, updatedPatientDTO.MedicalConditions);
             _patientMapperMock.Verify(m => m.ToDto(It.IsAny<Patient>()), Times.Once);
-            _patientRepositoryMock.Verify(r => r.GetByIdAsync(existingPatient.Id), Times.Once);
+            _patientRepositoryMock.Verify(r => r.GetByMedicalRecordNumberAsync(medicalRecordNumber), Times.Once);
             _unitOfWorkMock.Verify(u => u.CommitAsync(), Times.Once);
             _logRepositoryMock.Verify(l => l.AddAsync(It.IsAny<Log>()), Times.Once);
         }
@@ -439,11 +452,16 @@ namespace DDDSample1.Tests.Patients.UnitTests
                 dto.EmergencyContact,
                 dto.MedicalConditions
             );
+
+            int sequentialNumber = 1;
+            string formattedNumber = sequentialNumber.ToString("D6");
+            string medicalRecordNumber = DateTime.Now.Year + DateTime.Now.Month + formattedNumber;
+
         
             string message = "Patient updated. The following fields were updated: Medical Conditions.";
             var log = new Log(TypeOfAction.Update, existingPatient.Id.ToString(), message);
         
-            _patientRepositoryMock.Setup(r => r.GetByIdAsync(existingPatient.Id)).ReturnsAsync(existingPatient);
+            _patientRepositoryMock.Setup(r => r.GetByMedicalRecordNumberAsync(medicalRecordNumber)).ReturnsAsync(existingPatient);
             _logRepositoryMock.Setup(r => r.AddAsync(It.IsAny<Log>())).ReturnsAsync(log);
             _patientMapperMock.Setup(m => m.ToDto(It.IsAny<Patient>())).Returns(new PatientDTO
             {
@@ -463,7 +481,7 @@ namespace DDDSample1.Tests.Patients.UnitTests
             });
         
             // Act
-            var updatedPatientDTO = await _service.UpdatePatient(existingPatient.Id.AsGuid(), dto);
+            var updatedPatientDTO = await _service.UpdatePatient(medicalRecordNumber, dto);
         
             // Assert
             Assert.NotNull(updatedPatientDTO);
@@ -475,7 +493,7 @@ namespace DDDSample1.Tests.Patients.UnitTests
             Assert.Equal(expectedUpdatedPatient.EmergencyContact, updatedPatientDTO.EmergencyContact);
             Assert.Equal(expectedUpdatedPatient.MedicalConditions, updatedPatientDTO.MedicalConditions);
             _patientMapperMock.Verify(m => m.ToDto(It.IsAny<Patient>()), Times.Once);
-            _patientRepositoryMock.Verify(r => r.GetByIdAsync(existingPatient.Id), Times.Once);
+            _patientRepositoryMock.Verify(r => r.GetByMedicalRecordNumberAsync(medicalRecordNumber), Times.Once);
             _unitOfWorkMock.Verify(u => u.CommitAsync(), Times.Once);
             _logRepositoryMock.Verify(l => l.AddAsync(It.IsAny<Log>()), Times.Once);
         }
@@ -496,14 +514,19 @@ namespace DDDSample1.Tests.Patients.UnitTests
                 MedicalConditions = "NovaCondição"
             };
 
-            _patientRepositoryMock.Setup(r => r.GetByIdAsync(It.IsAny<PatientId>())).ReturnsAsync((Patient)null);
+            int sequentialNumber = 1;
+            string formattedNumber = sequentialNumber.ToString("D6");
+            string medicalRecordNumber = DateTime.Now.Year + DateTime.Now.Month + formattedNumber;
+
+
+            _patientRepositoryMock.Setup(r => r.GetByMedicalRecordNumberAsync(medicalRecordNumber)).ReturnsAsync((Patient)null);
 
             // Act
-            var result = await _service.UpdatePatient(nonExistentPatientId, dto);
+            var result = await _service.UpdatePatient(medicalRecordNumber, dto);
 
             // Assert
             Assert.Null(result);
-            _patientRepositoryMock.Verify(r => r.GetByIdAsync(It.IsAny<PatientId>()), Times.Once);
+            _patientRepositoryMock.Verify(r => r.GetByMedicalRecordNumberAsync(medicalRecordNumber), Times.Once);
             _unitOfWorkMock.Verify(u => u.CommitAsync(), Times.Never);
             _logRepositoryMock.Verify(l => l.AddAsync(It.IsAny<Log>()), Times.Never);
             _patientMapperMock.Verify(m => m.ToDto(It.IsAny<Patient>()), Times.Never);

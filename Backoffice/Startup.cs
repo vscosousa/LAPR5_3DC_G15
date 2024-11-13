@@ -36,6 +36,9 @@ using DDDSample1.Infrastructure.SurgeryRooms;
 using Projetos.LAPR5_3DC_G15.Mappers.SurgeryRooms;
 using DDDSample1.Domain.Appointments;
 using DDDSample1.Infrastructure.Appointments;
+using System.Threading.Tasks;
+using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 
 namespace DDDSample1
 {
@@ -82,11 +85,10 @@ namespace DDDSample1
 
             var keyBytes = Encoding.UTF8.GetBytes(key);
 
-            services.AddAuthentication(x =>
+                        services.AddAuthentication(x =>
             {
                 x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                //add session expiration time if inactivity
                 x.DefaultSignInScheme = JwtBearerDefaults.AuthenticationScheme;
             })
             .AddJwtBearer(x =>
@@ -98,7 +100,31 @@ namespace DDDSample1
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = new SymmetricSecurityKey(keyBytes),
                     ValidateIssuer = false,
-                    ValidateAudience = false
+                    ValidateAudience = false,
+                    ClockSkew = TimeSpan.Zero,
+                    ValidateLifetime = true,
+                    LifetimeValidator = (notBefore, expires, token, parameters) => expires != null && expires > DateTime.UtcNow
+                };
+                x.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = context =>
+                    {
+                        var token = context.Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
+                        if (token != null)
+                        {
+                            context.Token = token;
+                        }
+                        return Task.CompletedTask;
+                    },
+                    OnTokenValidated = context =>
+                    {
+                        var token = context.SecurityToken as JwtSecurityToken;
+                        if (token != null && token.ValidTo < DateTime.UtcNow.AddHours(24))
+                        {
+                            context.Fail("Token has expired.");
+                        }
+                        return Task.CompletedTask;
+                    }
                 };
             });
 

@@ -190,7 +190,7 @@ namespace DDDSample1.Tests.Patients.IntegrationTests
             };
 
             // Act
-            var response = await _client.PutAsJsonAsync($"/api/Patient/{id}", updatePatientDTO);
+            var response = await _client.PutAsJsonAsync($"/api/Patient/{createdPatient.MedicalRecordNumber}", updatePatientDTO);
 
             // Assert
             response.EnsureSuccessStatusCode();
