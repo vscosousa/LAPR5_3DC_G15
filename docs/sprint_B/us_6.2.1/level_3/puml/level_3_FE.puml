@@ -1,0 +1,61 @@
+@startuml level_3_FE
+
+title Level 3 P Diagram
+
+hide empty members
+'skinparam Linetype ortho
+
+skinparam class {
+    BackgroundColor<<valueObject>> #D6EAF8
+    BackgroundColor<<root>> #FDEBD0
+    BackgroundColor<<service>> #D1F2EB
+    BackgroundColor #FEF9E7
+    ArrowColor Black
+}
+
+skinparam package {
+    BackgroundColor #EBF5FB
+}
+
+actor Patient as P
+participant "View" as V
+participant "HomeComponent" as HC
+participant "RegisterComponent" as RC
+participant "RegisterService" as S
+participant "MDR" as MDR
+
+P -> V: Asks to Register as User
+activate V
+V -> HC: routerLink="/register"
+activate HC
+HC -> RC: Routes to RegisterComponent
+activate RC
+deactivate HC
+RC -> RC: Intializes RegisterComponent
+RC --> V: Returns RegisterComponent
+deactivate RC
+V --> P: Asks for data to register as User
+deactivate V
+P -> V: Sends data(email, phone number, password, password confirmation)
+activate V
+V -> RC: onSubmit()
+activate RC
+alt if all field are filled && (password === passwordConfirmation)
+    RC -> S: register(email, phone number, password)
+    activate S
+    S -> MDR: Makes HTTP Request to Register User with data (email, phone number, password)
+    activate MDR
+    MDR -> MDR: Validates data and tries to create the User
+    MDR --> S: Returns Operation Status Code
+    deactivate MDR
+    S --> RC: Returns Operation Response
+    deactivate S
+    RC --> V: Returns Register In/Sucess message
+else
+    RC --> V: Returns Passwords do not match message
+    deactivate RC
+end
+V --> P: Returns Operation In/Sucess message
+deactivate V
+
+@enduml

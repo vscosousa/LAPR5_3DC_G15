@@ -1,20 +1,33 @@
 @startuml level_1
 
-skinparam handwritten false
-skinparam monochrome false
-skinparam packageStyle rect
-skinparam defaultFontName FG Virgil
-skinparam shadowing true
+title Level 1 Diagram
 
-actor Admin as AD
+hide empty members
+'skinparam Linetype ortho
 
-activate AD
-AD -> System: Ask to register a user
+skinparam class {
+    BackgroundColor<<valueObject>> #D6EAF8
+    BackgroundColor<<root>> #FDEBD0
+    BackgroundColor<<service>> #D1F2EB
+    BackgroundColor #FEF9E7
+    ArrowColor Black
+}
+
+skinparam package {
+    BackgroundColor #EBF5FB
+}
+
+actor Patient as P
+
+activate P
+P -> System: Asks to Register as User
 activate System
-System -> AD: Ask for user's data
-AD -> System: Send user's data (username,email,role)
-System -> System: Validate user's data
-System -> AD: Send confirmation message
+System --> P: Asks for data to register as User
+deactivate System
+P -> System: Sends data(email, phone number, password)
+activate System
+System -> System: Validates data and tries to create the User
+System --> P: Returns Operation In/Sucess message
 deactivate System
 
 @enduml
