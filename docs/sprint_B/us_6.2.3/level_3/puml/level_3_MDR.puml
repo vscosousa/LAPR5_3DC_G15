@@ -1,0 +1,91 @@
+@startuml level_3_MDR
+
+title Level 3 MDR Diagram
+
+hide empty members
+'skinparam Linetype ortho
+
+skinparam class {
+    BackgroundColor<<valueObject>> #D6EAF8
+    BackgroundColor<<root>> #FDEBD0
+    BackgroundColor<<service>> #D1F2EB
+    BackgroundColor #FEF9E7
+    ArrowColor Black
+}
+
+skinparam package {
+    BackgroundColor #EBF5FB
+}
+
+actor FE as FE
+participant "UserController" as C
+participant "UserService" as S
+participant "EmailService" as ES
+participant "UserRepository" as R
+participant "LogRepository" as LR
+participant "Log" as L
+participant "Database" as DB
+
+FE -> C: Sends HTTP Request with token to request delete user account
+activate C
+C -> S: RequestDelete(token)
+activate S
+note right of S: This method verifies the provided token and returns the respective user id
+S -> S: VerifyToken(token)
+S -> R: GetByIdAsync(userId)
+activate R
+R -> DB: _objs.Where(x => id.Equals(x.Id)).FirstOrDefaultAsync();
+activate DB
+DB --> R: Returns User
+deactivate DB
+R --> S: Returns User
+deactivate R
+S -> ES: SendEmail(user.Email, "Delete User Request", GenerateLink(token, "DeleteUser")
+activate ES
+ES --> ES: sendEmail()
+deactivate ES
+S --> C: return
+deactivate S
+C --> FE: Returns Operation Status Response Code
+deactivate C
+FE -> C: Sends HTTP Request with token to delete user
+activate C
+C -> S: DeleteUser(token)
+activate S
+S -> S: VerifyToken(token)
+alt token is valid
+    S -> R: GetByIdAsync(userId)
+    activate R
+    R -> DB: _objs.Where(x => id.Equals(x.Id)).FirstOrDefaultAsync();
+    activate DB
+    DB --> R: Returns User
+    deactivate DB
+    R --> S: Returns User
+    deactivate R
+    S -> R: Remove(user)
+    activate R
+    R -> DB: _objs.Remove(user)
+    activate DB
+    deactivate DB
+    deactivate R
+    S -> L: new Log(TypeOfAction.Delete, userId, "User of Type Patient was deleted."
+    activate L
+    L -> L: Log()
+    deactivate L
+    S -> LR: AddAsync(log)
+    activate LR
+    LR -> DB: _objs.AddAsync(log)
+    activate DB
+    DB --> LR: Returns Log
+    deactivate DB
+    LR --> S: Returns Log
+    deactivate LR
+    S --> C: return
+else token is invalid
+    S -> C: return exception message
+end
+deactivate S
+C --> FE: Returns Operation Status Response Code
+deactivate C
+
+@enduml

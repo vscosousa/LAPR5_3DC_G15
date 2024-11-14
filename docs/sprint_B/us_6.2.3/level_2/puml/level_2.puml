@@ -16,3 +16,29 @@ skinparam class {
 skinparam package {
     BackgroundColor #EBF5FB
 }
+
+actor Patient as P
+participant "FE" as FE
+participant "MDR" as MDR
+
+activate P
+P -> FE: Makes a request to delete user profile
+activate FE
+FE -> MDR: Sends HTTP Request with token to request delete user account
+activate MDR
+MDR -> MDR: Validates token and tries to process the request
+MDR --> FE: Returns Operation Status Code
+deactivate MDR
+FE --> P: Returns Operation In/Sucess message
+deactivate FE
+P -> FE: Confirms the account Deletion
+activate FE
+FE -> MDR: Sends HTTP Request with token to delete user
+activate MDR
+MDR -> MDR: Validates token and tries to delete the user
+MDR --> FE: Returns Operation Status Code
+deactivate MDR
+FE --> P: Returns Operation In/Sucess message
+deactivate FE
+
+@enduml

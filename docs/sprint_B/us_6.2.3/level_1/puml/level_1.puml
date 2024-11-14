@@ -16,3 +16,20 @@ skinparam class {
 skinparam package {
     BackgroundColor #EBF5FB
 }
+
+actor Patient as P
+
+activate P
+P -> System: Makes a request to delete user profile
+activate System
+System -> System: Validates token and tries to process the request
+System --> P: Returns Operation In/Sucess message
+deactivate System
+P -> System: Confirms the account Deletion
+activate System
+System -> System: Validates token and tries to delete the user
+System --> P: Returns Operation In/Sucess message
+deactivate System
+
+
+@enduml
