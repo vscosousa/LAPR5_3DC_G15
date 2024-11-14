@@ -17,4 +17,31 @@ skinparam package {
     BackgroundColor #EBF5FB
 }
 
+actor Admin as A
+participant "FE" as FE
+participant "MDR" as MDR
+
+activate A
+A -> FE: Asks to list patients
+activate FE
+FE -> MDR: Sends HTTP request to list the default patient's list
+activate MDR
+MDR -> MDR: Validates the data and tries to list the patients
+MDR --> FE: Returns Operation Status Code
+deactivate MDR
+FE --> A: Displays initial list and asks for the data to filter the patients
+deactivate FE
+A -> FE: Sends the data to filter the patients
+note right of FE: The data can be First Name and/or Last Name and/or Full Name\nand/or Date of Birth and/or Gender and/or Medical Record Number\nand/or Email and/or Phone Number
+activate FE
+FE -> MDR: Sends HTTP request to list the patients with filters
+activate MDR
+MDR -> MDR: Validates the data and tries to list the patients
+MDR --> FE: Returns Operation Status Code
+deactivate MDR
+FE --> A: Returns Operation In/Sucess message
+deactivate FE
+
+@enduml
+
 @enduml
