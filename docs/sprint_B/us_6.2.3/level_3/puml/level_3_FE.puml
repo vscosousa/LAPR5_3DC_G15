@@ -1,6 +1,6 @@
-@startuml level_3
+@startuml level_3_FE
 
-title Level 3 Diagram
+title Level 3 FE Diagram
 
 hide empty members
 'skinparam Linetype ortho

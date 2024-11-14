@@ -1,0 +1,116 @@
+@startuml level_3_MDR
+
+title Level 3 MDR Diagram
+
+hide empty members
+'skinparam Linetype ortho
+
+skinparam class {
+    BackgroundColor<<valueObject>> #D6EAF8
+    BackgroundColor<<root>> #FDEBD0
+    BackgroundColor<<service>> #D1F2EB
+    BackgroundColor #FEF9E7
+    ArrowColor Black
+}
+
+skinparam package {
+    BackgroundColor #EBF5FB
+}
+
+actor FE as FE
+participant "PatientController" AS C
+participant "PatientService" AS S
+participant "PatientRepository" AS R
+participant "LogRepository" AS LR
+participant "Patient" AS P
+participant "Log" AS L
+participant "PatientMapper" AS M
+participant "PatientDTO" AS D
+participant "Database" AS DB
+
+activate FE
+FE -> C: Sends HTTP Request to update Patient's data with the new data
+activate C
+C -> S: updatePatient(string medicalRecordNumber, UpdatingPatientDTO dto)
+activate S
+S -> R: getByMedicalRecordNumberAsync(medicalRecordNumber)
+activate R
+R -> DB: _objs.Where(x => medicalRecordNumber.Equals(x.MedicalRecordNumber)).FirstOrDefaultAsync();
+activate DB
+DB --> R: return var
+deactivate DB
+R --> S: return var
+deactivate R
+alt var is not null
+    opt First Name is provided and different from the current data
+        S -> P: ChangeFirstName(dto.FirstName)
+        activate P
+        P -> P: ChangeFirstName(string firstName)
+        deactivate P
+    end
+    opt Last Name is provided and different from the current data
+        S -> P: ChangeLastName(dto.LastName)
+        activate P
+        P -> P: ChangeLastName(string firstName)
+        deactivate P
+    end
+    opt Full Name is provided and different from the current data
+        S -> P: ChangeFullName(dto.FullName)
+        activate P
+        P -> P: ChangeFullName(string firstName)
+        deactivate P
+    end
+    opt Email is provided and different from the current data
+        S -> P: ChangeEmail(dto.Email)
+        activate P
+        P -> P: ChangeEmail(string firstName)
+        deactivate P
+    end
+    opt Phone Number is provided and different from the current data
+        S -> P: ChangePhoneNumber(dto.PhoneNumber)
+        activate P
+        P -> P: ChangePhoneNumber(string firstName)
+        deactivate P
+    end
+    opt Emergency Contact is provided and different from the current data
+        S -> P: ChangeEmergencyContact(dto.EmergencyContact)
+        activate P
+        P -> P: ChangeEmergencyContact(string firstName)
+        deactivate P
+    end
+    opt Medical Conditions are provided and different from the current data
+        S -> P: ChangeMedicalConditions(dto.MedicalConditions)
+        activate P
+        P -> P: ChangeMedicalConditions(string firstName)
+        deactivate P
+    end
+    opt At least one field was updated
+        S -> L: new Log(TypeOfAction.Update, patientId, Patient updated. The following fields were updated:" + updatedFields)
+        activate L
+        L -> L: Log()
+        deactivate L
+        S -> LR: addAsync(log)
+        activate LR
+        LR -> DB: _objs.AddAsync(log)
+        activate DB
+        DB --> LR: return log
+        deactivate DB
+        LR --> S: return log
+        deactivate LR
+    end
+    S -> M: toDto(patient)
+    activate M
+    M -> D: new PatientDTO(patient fields)
+    activate D
+    D -> D: PatientDTO()
+    deactivate D
+    M --> S: return dto
+    deactivate M
+    S --> C: return dto
+else var is null
+    S --> C: return Patient not found
+end
+C --> FE: Returns Operation Status Response Code
+deactivate C
+
+@enduml

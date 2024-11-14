@@ -20,40 +20,42 @@ skinparam package {
 actor Admin as A
 participant "View" as V
 participant "ManagePatientsComponent" as MP
-participant "CreatePatientComponent" as CP
+participant "UpdatePatientComponent" as CP
 participant "PatientService" as PS
 participant "AuthInterceptor" as AI
 participant "MDR" as MDR
 
 activate A
-A -> V: Asks to create a Patient
+A -> V: Asks to update a Patient
 activate V
-V -> MP: routerLink='/create-patient'
+V -> MP: routerLink='/update-patient'
 activate MP
-MP -> CP: routes to CreatePatientComponent
+MP -> CP: routes to UpdatePatientComponent
 deactivate MP
 activate CP
-CP -> CP: initializes CreatePatientComponent
-CP --> V: returns CreatePatientComponent
+CP -> CP: initializes UpdatePatientComponent
+CP --> V: returns UpdatePatientComponent
 deactivate CP
 V --> A: Asks for Patient's data
 deactivate V
-A -> V: Sends Patient's data (First name, Last name, Fullname, Date of birth,
+A -> V: Sends Patient's data
+note right of V: The data can be First Name and/or Last Name and/or Full Name\nand/or Email and/or Phone Number and/or Emergency Contact\nand/or Medical Conditions
 activate V
-V -> CP: createPatient($event)
+V -> CP: updatePatient($event)
 activate CP
-CP -> PS: createPatient(this.patient)
+CP -> CP: extractMedicalRecordNumberFromUrl()
+CP -> PS: updatePatient(medicalRecordNumber, dto)
 activate PS
-PS -> AI: Sends HTTP Request to create a Patient with Patient's data
+PS -> AI: Sends HTTP Request to update Patient's data with the new data
 activate AI
 AI -> AI: Intercepts the request and adds the token to the header
 note right of AI
     The token is added to the header so that the MDR
     can authenticate and authorize the request.
 end note
-AI -> MDR: Sends HTTP Request with token to create a Patient
+AI -> MDR: updatePatient(medicalRecordNumber, dto)
 activate MDR
-MDR -> MDR: Validates Patient's data and tries to create the Patient
+MDR -> MDR: Validates Patient's data and tries to update Patient's data
 MDR --> AI: Returns Operation Status Code
 deactivate MDR
 AI --> PS: Returns Operation Status Code
@@ -64,6 +66,5 @@ CP --> V: Returns Operation In/Sucess message
 deactivate CP
 V --> A: Returns Operation In/Sucess message
 deactivate V
-
 
 @enduml

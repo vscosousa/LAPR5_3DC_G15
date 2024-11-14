@@ -17,4 +17,24 @@ skinparam package {
     BackgroundColor #EBF5FB
 }
 
+actor Admin as A
+participant "FE" as FE
+participant "MDR" as MDR
+
+activate A
+A -> FE: Asks to edit a Patient's Profile
+activate FE
+FE --> A: Asks for Patient's Id and the data to edit
+deactivate FE
+A -> FE: Sends Patient's data
+note right of FE: The data can be First Name and/or Last Name and/or Full Name\nand/or Email and/or Phone Number and/or Emergency Contact\nand/or Medical Conditions
+activate FE
+FE -> MDR: Sends HTTP Request to update Patient's data with the new data
+activate MDR
+MDR -> MDR: Validates Patient's data and tries to update Patient's data
+MDR --> FE : Returns Operation Status Code
+deactivate MDR
+FE --> A: Returns Operation In/Sucess message
+deactivate FE
+
 @enduml

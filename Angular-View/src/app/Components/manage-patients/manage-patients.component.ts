@@ -45,7 +45,7 @@ export class ManagePatientsComponent {
    * @method fetchOperationTypes
    * @vscosousa - 12/11/2024
    */
-  fetchOperationTypes(): void {
+  fetchPatients(): void {
     this.patientService.getPatientsWithAdvancedFilter().subscribe(
       (data: any[]) => {
         this.patients = data;
@@ -129,7 +129,7 @@ export class ManagePatientsComponent {
       phoneNumber: ''
     };
 
-    this.fetchOperationTypes();
+    this.fetchPatients();
   }
 
   /**
