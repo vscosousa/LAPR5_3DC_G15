@@ -26,7 +26,7 @@ participant "DeleteUserService" as DUS
 participant "AuthInterceptor" as AI
 participant "MDR" as MDR
 
-
+activate P
 P -> V: Makes a request to delete user profile
 activate V
 V -> PSC: onSubmit()

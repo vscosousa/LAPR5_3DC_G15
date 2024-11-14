@@ -17,4 +17,25 @@ skinparam package {
     BackgroundColor #EBF5FB
 }
 
+actor Admin as A
+participant "FE" as FE
+participant "MDR" as MDR
+
+
+activate A
+A -> FE: Asks to create a Patient
+activate FE
+FE --> A: Asks for Patient's data
+deactivate FE
+A -> FE: Sends Patient's data (First name, Last name, Fullname, Date of birth, \nGender, Email, Phone number, Emergency Contact, Medical Conditions)
+activate FE
+FE -> MDR: Sends HTTP Request to create a Patient with Patient's data
+activate MDR
+MDR -> MDR: Validates Patient's data and tries to create the Patient
+MDR --> FE: Returns Operation Status Code
+deactivate MDR
+FE --> A: Returns Operation In/Sucess message
+deactivate FE
+
+
 @enduml

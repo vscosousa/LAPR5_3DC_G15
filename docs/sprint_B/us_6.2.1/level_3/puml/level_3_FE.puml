@@ -24,6 +24,7 @@ participant "RegisterComponent" as RC
 participant "RegisterService" as S
 participant "MDR" as MDR
 
+activate P
 P -> V: Asks to Register as User
 activate V
 V -> HC: routerLink="/register"

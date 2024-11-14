@@ -28,6 +28,7 @@ participant "User" as U
 participant "UserDTO" as DTO
 participant "Database" as DB
 
+activate FE
 FE -> C: Makes HTTP Request to Register User with data (email, phone number, password)
 activate C
 C -> S: createPatientUser(CreatingPatientUserDTO dto)

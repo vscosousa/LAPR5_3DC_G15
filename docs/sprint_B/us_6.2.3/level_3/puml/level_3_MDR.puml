@@ -26,6 +26,7 @@ participant "LogRepository" as LR
 participant "Log" as L
 participant "Database" as DB
 
+activate FE
 FE -> C: Sends HTTP Request with token to request delete user account
 activate C
 C -> S: RequestDelete(token)
