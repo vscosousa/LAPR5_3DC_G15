@@ -17,4 +17,19 @@ skinparam package {
     BackgroundColor #EBF5FB
 }
 
+actor Admin as A
+
+activate A
+A -> System: Asks to delete Patient
+activate System
+System --> A: Asks for Patient's Medical Record Number
+deactivate System
+A -> System: Sends Patient's Medical Record Number
+activate System
+System -> System: Validates Patient's Medical Record Number and tries to delete the Patient
+System --> A: Returns Operation In/Sucess message
+deactivate System
+
+@enduml
+
 @enduml

@@ -17,4 +17,25 @@ skinparam package {
     BackgroundColor #EBF5FB
 }
 
+actor Admin as A
+actor "FE" as FE
+participant "MDR" as MDR
+
+
+activate A
+A -> FE: Asks to delete a Patient
+activate FE
+FE --> A: Asks for Patient's Medical Record Number
+deactivate FE
+A -> FE: Sends Patient's Medical Record Number
+activate FE
+FE -> MDR: Sends HTTP request to delete the Patient
+activate MDR
+MDR -> MDR: Validates Patient's Medical Record Number and tries to delete the Patient
+MDR --> FE: Returns Operation Status Code
+deactivate MDR
+FE --> A: Returns Operation In/Sucess message
+deactivate FE
+
+
 @enduml

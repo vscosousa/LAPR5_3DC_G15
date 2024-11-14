@@ -1,0 +1,77 @@
+@startuml level_3_MDR
+
+title Level 3 MDR Diagram
+
+hide empty members
+'skinparam Linetype ortho
+
+skinparam class {
+    BackgroundColor<<valueObject>> #D6EAF8
+    BackgroundColor<<root>> #FDEBD0
+    BackgroundColor<<service>> #D1F2EB
+    BackgroundColor #FEF9E7
+    ArrowColor Black
+}
+
+skinparam package {
+    BackgroundColor #EBF5FB
+}
+
+actor FE as FE
+participant "PatientController" as C
+participant "PatientService" as S
+participant "PatientRepository" as R
+participant "LogRepository" as LR
+participant "PatientMapper" as M
+participant "PatientDTO" as DTO
+participant "Log" as L
+participant "Database" as DB
+
+activate FE
+FE -> C: Sends HTTP request to delete the Patient
+activate C
+C --> S: deletePatient(string medicalRecordNumber)
+activate S
+S -> R: getByMedicalRecordNumber(medicalRecordNumber)
+activate R
+R -> DB: _objs.Where(x => x.MedicalRecordNumber == medicalRecordNumber).FirstOrDefault()
+activate DB
+DB --> R: return var
+deactivate DB
+R --> S: return var
+deactivate R
+alt var is null
+    S --> C: return null
+else var is not null
+    S -> R: Remove(patient)
+    activate R
+    R -> DB: _objs.Remove(patient)
+    activate DB
+    deactivate DB
+    deactivate R
+    S --> L: new Log(TypeOfAction.Delete, patientId, "Patient Deleted")
+    activate L
+    L --> L: Log()
+    deactivate L
+    S --> LR: AddAsync(log)
+    activate LR
+    LR -> DB: _objs.AddAsync(log)
+    activate DB
+    deactivate DB
+    deactivate LR
+    S --> M: ToDto(patient)
+    activate M
+    M -> DTO: new PatientDTO(patient fields)
+    activate DTO
+    DTO -> DTO: PatientDTO()
+    deactivate DTO
+    M --> S: return dto
+    deactivate M
+    S --> C: return dto
+    deactivate S
+end
+C --> FE: Returns Operation Status Response Code
+deactivate C
+
+
+@enduml
