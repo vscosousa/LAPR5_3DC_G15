@@ -51,17 +51,46 @@ export class UpdateStaffComponent implements OnInit {
     }
   
     loadStaffDetails(): void {
-      // Carregar detalhes do staff se necessário
+      console.log("Staff ID:\n", this.staffId);
+      this.staffService.getStaffById(this.staffId).subscribe({
+        next: (data) => {
+          this.initFromUpdate(data);
+          console.log("Staff details:\n", data);
+        },
+        error: (error) => {
+          console.error('Error Get Staff to Update', error);
+          alert('Error Get Staff to Update' + error.error );
+        }
+      });
     }
+
+    initFromUpdate(data: any): void {
+      const phoneNumber = data.phoneNumber;
+      const identifier = phoneNumber.substring(0, 4); 
+      const localPhoneNumber = phoneNumber.substring(4);
   
+      this.updateStaffForm.patchValue({
+        identifier: identifier,
+        phoneNumber: localPhoneNumber,
+        email: data.email,
+        addAvailabilitySlots: data.addAvailabilitySlots,
+        removeAvailabilitySlots: data.removeAvailabilitySlots,
+        specializationName: this.getSpecializationName(data.specializationId)
+      });
+    }
+
+    getSpecializationName(specializationId: string): string {
+      const specialization = this.specializations.find(spec => spec.id.value === specializationId);
+      return specialization ? specialization.specOption : 'Unknown';
+    }
+
     onSubmit(): void {
       const updateData = {
-        identifier: this.updateStaffForm.value.identifier!.trim(),
-        phoneNumber: this.updateStaffForm.value.phoneNumber!.trim(),
-        email: this.updateStaffForm.value.email!.trim(),
-        addAvailabilitySlots: this.updateStaffForm.value.addAvailabilitySlots!.trim(),
-        removeAvailabilitySlots: this.updateStaffForm.value.removeAvailabilitySlots!.trim(),
-        specializationName: this.updateStaffForm.value.specializationName!
+        phoneNumber: (this.updateStaffForm.value.identifier?.trim() || '') + (this.updateStaffForm.value.phoneNumber?.trim() || ''),
+        email: this.updateStaffForm.value.email?.trim() || '',
+        addAvailabilitySlots: this.updateStaffForm.value.addAvailabilitySlots?.trim() || '',
+        removeAvailabilitySlots: this.updateStaffForm.value.removeAvailabilitySlots?.trim() || '',
+        specializationName: this.updateStaffForm.value.specializationName || ''
       };
       
       if (Object.values(updateData).every(value => !value)) {
@@ -97,6 +126,8 @@ export class UpdateStaffComponent implements OnInit {
           }
       });
     }
+
+    
 }
 
 
