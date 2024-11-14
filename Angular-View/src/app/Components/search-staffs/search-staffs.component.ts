@@ -22,18 +22,18 @@ export class SearchStaffsComponent implements OnInit {
   infoMessage: string = '';
 
   constructor(private fb: FormBuilder, private staffService: StaffService) {
-
+    this.searchForm = this.fb.group({
+          firstName: new FormControl('', [Validators.required]),
+          lastName: new FormControl('', [Validators.required]),
+          fullName: new FormControl('', [Validators.required]),
+          email: new FormControl('', [Validators.required, Validators.email]),
+          specializationName: new FormControl('', [Validators.required])
+        });
   }
 
   ngOnInit(): void {
+    this.loadStaffProfiles();
     this.loadSpecializations();
-    this.searchForm = this.fb.group({
-      firstName: new FormControl('', [Validators.required]),
-      lastName: new FormControl('', [Validators.required]),
-      fullName: new FormControl('', [Validators.required]),
-      email: new FormControl('', [Validators.required, Validators.email]),
-      specializationName: new FormControl('', [Validators.required])
-    });
   }
 
   loadSpecializations(): void {
@@ -48,6 +48,20 @@ export class SearchStaffsComponent implements OnInit {
     });
   }
 
+  loadStaffProfiles(): void {
+    this.staffService.getAllStaffs().subscribe({
+      next: (data) => {
+        this.staffProfiles = data;
+      },
+      error: (error) => {
+        console.error('Error loading staff profiles', error);
+        this.infoMessage = '';
+        this.staffProfiles = [];
+        alert('Error loading staff profiles' + error.error);
+      }
+    });
+  }
+
   clearFilters() {
     this.searchForm.reset({
       firstName: '',
@@ -56,7 +70,7 @@ export class SearchStaffsComponent implements OnInit {
       email: '',
       specializationName: ''
     });
-    this.staffProfiles = [];
+    this.loadStaffProfiles();
     this.errorMessage = '';
     this.infoMessage = '';
   }
@@ -76,21 +90,21 @@ export class SearchStaffsComponent implements OnInit {
       return;
     }
 
+    this.infoMessage='';
+
     this.staffService.searchStaffProfiles(searchCriteria)
       .subscribe({
         next: (response) => {
           this.errorMessage = '';
           if (Array.isArray(response)) {
-            this.infoMessage='';
+            
             this.staffProfiles = response;
           } else {
-            this.infoMessage = 'No staff profiles found with the given search.';
             this.staffProfiles = [];
           }
         },
         error: (error) => {
           console.error('Error search staff', error);
-          this.infoMessage='';
           this.staffProfiles = [];
           if (error.status === 400) {
             const errorMessage = error.error.message;
@@ -135,4 +149,5 @@ export class SearchStaffsComponent implements OnInit {
       }
     });
   }
+
 }

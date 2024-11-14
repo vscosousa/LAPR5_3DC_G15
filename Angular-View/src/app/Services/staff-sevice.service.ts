@@ -53,4 +53,12 @@ export class StaffService {
   updateStaff(id: string, updateData: any): Observable<any> {
     return this.http.put<any>(`${this.apiUrl}/${id}`, updateData);
   }
+
+  getStaffById(id: string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/${id}`);
+  }
+
+  getAllStaffs(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}`);
+  }
 }

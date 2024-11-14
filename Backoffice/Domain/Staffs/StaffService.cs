@@ -103,10 +103,16 @@ namespace DDDSample1.Domain.Staffs
                 if (staff == null)
                     return null;
 
+                Console.WriteLine("Updating staff PhoneNumber... " + dto.PhoneNumber);
+                Console.WriteLine("Updating staff Email... " + dto.Email);
+                Console.WriteLine("Updating staff AddAvailabilitySlots... " + dto.AddAvailabilitySlots);
+                Console.WriteLine("Updating staff RemoveAvailabilitySlots... " + dto.RemoveAvailabilitySlots);
+                Console.WriteLine("Updating staff SpecializationName... " + dto.SpecializationName);
+
                 var updatedFields = new List<string>();
                 var newUpdatedContacts = new UpdateStaffDTO();
                 var sendEmail = false;
-
+               
                 // Update Phone Number
                 if (!string.IsNullOrEmpty(dto.PhoneNumber) && staff.PhoneNumber != dto.PhoneNumber)
                 {
@@ -116,7 +122,7 @@ namespace DDDSample1.Domain.Staffs
                     newUpdatedContacts.SetPhoneNumber(dto.PhoneNumber);
                     updatedFields.Add("Sent confirmation email to Staff to update phone number");
                 }
-
+                
                 // Update Email
                 if (!string.IsNullOrEmpty(dto.Email) && staff.Email != dto.Email)
                 {
@@ -127,7 +133,7 @@ namespace DDDSample1.Domain.Staffs
                     newUpdatedContacts.SetEmail(dto.Email);
                     updatedFields.Add("Sent confirmation email to Staff to update email");
                 }
-
+                
                 // Send Email
                 if(sendEmail){
                     var token = CreateTokenStaff(staff);
@@ -135,7 +141,7 @@ namespace DDDSample1.Domain.Staffs
                     var link = GenerateLinkToStaff(token, newUpdatedContacts);
                     await _mailService.SendEmailToStaff(staff.Email, staff.FullName, newUpdatedContacts, link);
                 }
-
+                
                 // Add Availability Slots
                 if (!string.IsNullOrEmpty(dto.AddAvailabilitySlots))
                 {
@@ -148,7 +154,7 @@ namespace DDDSample1.Domain.Staffs
                     }
                     updatedFields.Add("Added Availability Slots");
                 }
-
+                
                 // Remove Availability Slots
                 if (!string.IsNullOrEmpty(dto.RemoveAvailabilitySlots))
                 {
@@ -161,7 +167,7 @@ namespace DDDSample1.Domain.Staffs
                     }
                     updatedFields.Add("Removed Availability Slots");
                 }
-
+                
                 // Update Specialization
                 if (!string.IsNullOrEmpty(dto.SpecializationName))
                 {   
@@ -176,7 +182,7 @@ namespace DDDSample1.Domain.Staffs
                         updatedFields.Add("Specialization");
                     }
                 }
-
+                
                 if (updatedFields.Count > 0)
                 {
                     var logMessage = $"Staff updated. The following fields were updated: "+ string.Join(", ", updatedFields) +".";
@@ -384,5 +390,47 @@ namespace DDDSample1.Domain.Staffs
         {
             return Enum.GetNames(typeof(StaffType));
         }
+
+        public async Task<StaffDTO> GetStaffByIdAsync(Guid id)
+        {
+            try{
+                var staff = await _repository.GetByIdAsync(new StaffId(id));
+                if (staff == null)
+                {
+                    throw new KeyNotFoundException("Staff not found.");
+                }
+                return _mapper.ToDto(staff);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred: {ex.Message}");
+                if (ex.InnerException != null)
+                {
+                    Console.WriteLine($"Inner exception: {ex.InnerException.Message}");
+                }
+                throw;
+            }
+        }
+
+        public async Task<List<StaffDTO>> GetAllStaffsAsync()
+        {
+            try
+            {
+                var staffs = await _repository.GetAllAsync();
+                return staffs.ConvertAll(_mapper.ToDto);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred: {ex.Message}");
+                if (ex.InnerException != null)
+                {
+                    Console.WriteLine($"Inner exception: {ex.InnerException.Message}");
+                }
+                throw;
+            }
+        }
+
+
+
     }
 }

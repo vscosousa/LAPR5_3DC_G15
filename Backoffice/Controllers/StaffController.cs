@@ -44,7 +44,7 @@ namespace DDDSample1.Controllers
         }   
 
         [HttpPut("{id}")]
-        [Authorize(Roles = "Admin")]
+        [AllowAnonymous]
         public async Task<ActionResult<StaffDTO>> UpdateStaff(Guid id, UpdateStaffDTO dto)
         {
             try
@@ -168,5 +168,38 @@ namespace DDDSample1.Controllers
             var staffTypes = _staffService.GetStaffTypes();
             return Ok(staffTypes);
         }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetStaffById(Guid id)
+        {
+            try
+            {
+                var staff = await _staffService.GetStaffByIdAsync(id);
+                return Ok(staff);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAllStaffs()
+        {
+            try
+            {
+                var staffs = await _staffService.GetAllStaffsAsync();
+                return Ok(staffs);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = ex.Message });
+            }
+        }
+
     }
 }
