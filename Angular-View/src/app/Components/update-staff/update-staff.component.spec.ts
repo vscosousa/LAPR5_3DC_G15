@@ -18,7 +18,8 @@ describe('UpdateStaffComponent', () => {
   beforeEach(async () => {
     mockStaffService = {
       getSpecialization: jasmine.createSpy('getSpecialization').and.returnValue(of([])),
-      updateStaff: jasmine.createSpy('updateStaff').and.returnValue(of({}))
+      updateStaff: jasmine.createSpy('updateStaff').and.returnValue(of({})),
+      getStaffById: jasmine.createSpy('getStaffById').and.returnValue(of({}))
     };
 
     mockActivatedRoute = {
