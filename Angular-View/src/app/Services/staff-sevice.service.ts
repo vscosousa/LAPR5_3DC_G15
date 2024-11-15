@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpResponse } from '@angular/common/http';
+import { HttpClient, HttpResponse, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -60,5 +60,14 @@ export class StaffService {
 
   getAllStaffs(): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}`);
+  }
+
+  confirmUpdates(updateData: any): Observable<any> {
+    let params = new HttpParams();
+    if (updateData.phoneNumber) params = params.append('phoneNumber', updateData.phoneNumber);
+    if (updateData.email) params = params.append('email', updateData.email);
+    params = params.append('token', updateData.token);
+
+    return this.http.put<any>(`${this.apiUrl}/ConfirmUpdates`, {}, { params });
   }
 }

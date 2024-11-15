@@ -1,12 +1,16 @@
 <app-sidebar></app-sidebar>
 <div class="update-staff-container">
   <div class="update-staff-middle">
+
     <div class="top">
-      <button class="back-button" routerLink="/search-staffs">
-        <img src="" alt="Back" />
-      </button>
-      <h2>Update Staff</h2>
+
+      <button type="button" class="back-button" routerLink="/search-staffs"> Go Back</button>
+
+      <h2>Edit Staff </h2>
+      <h3>{{ staffName }}</h3>
+  
     </div>
+
     <form [formGroup]="updateStaffForm" (ngSubmit)="onSubmit()">
 
       <label for="phoneNumber">Phone Number</label>
@@ -23,10 +27,10 @@
       <input type="email" id="email" formControlName="email" placeholder="example@email.com">
 
       <label for="addAvailabilitySlots">Add Availability Slots</label>
-      <input type="text" id="addAvailabilitySlots" formControlName="addAvailabilitySlots" placeholder="Add Availability Slots">
+      <input type="datetime-local" id="addAvailabilitySlots" formControlName="addAvailabilitySlots" placeholder="Add Availability Slots">
 
       <label for="removeAvailabilitySlots">Remove Availability Slots</label>
-      <input type="text" id="removeAvailabilitySlots" formControlName="removeAvailabilitySlots" placeholder="Remove Availability Slots">
+      <input type="datetime-local" id="removeAvailabilitySlots" formControlName="removeAvailabilitySlots" placeholder="Remove Availability Slots">
 
       <label for="specializationName">Specialization</label>
       <select id="specializationName" formControlName="specializationName" title="Specialization">
@@ -39,11 +43,8 @@
       <div *ngIf="errorMessage" class="error-message">
         {{ errorMessage }}
       </div>
-      <div *ngIf="infoMessage" class="info-message">
-        {{ infoMessage }}
-      </div>
 
-      <button type="submit">Update Staff</button>
+      <button type="submit" >Update</button>
     </form>
   </div>
 </div>

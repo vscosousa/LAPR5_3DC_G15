@@ -1,0 +1,26 @@
+<div class="confirm-updates-container">
+  <div class="confirm-updates-middle">
+    <div class="top">
+      <h2>Confirm Contact Information</h2>
+    </div>
+    <div class="info-container" *ngIf="!updateSuccessful">
+      <div *ngIf="phoneNumber">
+        <p><strong>New Phone Number:</strong> {{ phoneNumber }}</p>
+      </div>
+      <div *ngIf="email">
+        <p><strong>New Email:</strong> {{ email }}</p>
+      </div>
+    </div>
+    <div *ngIf="errorMessage" class="error-message">
+      {{ errorMessage }}
+    </div>
+
+    <button *ngIf="!updateSuccessful" type="button" class="btn btn-filter" (click)="updateContactInfo()">Confirm</button>
+    
+    <div *ngIf="updateSuccessful" class="success-message">
+      <img src="assets/success.jpg" alt="Success" />
+      <p>Updates confirmed successfully!</p>
+      <button type="button" class="btn btn-home" (click)="goToHome()">Go to Home</button>
+    </div>
+  </div>
+</div>

@@ -6,6 +6,7 @@ using DDDSample1.Domain.Staffs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities;
 
 
 namespace DDDSample1.Controllers
@@ -74,16 +75,16 @@ namespace DDDSample1.Controllers
         {   
             if (string.IsNullOrWhiteSpace(token))
             {
-                return Unauthorized("Token are required.");
+                return Unauthorized(new{ message="Token are required." });
             }
             if (string.IsNullOrWhiteSpace(phoneNumber) && string.IsNullOrWhiteSpace(email))
             {
-                return BadRequest("Phone number or email are required.");
+                return BadRequest(new{ message="Phone number or email are required." });
             }
             try
             {
                 await _staffService.UpdateContactInformationAsync(token, phoneNumber, email);
-                return Ok("Updated Profile Staff successfully.");
+                return Ok(new{ message="Updated Profile Staff successfully." });
             }
             catch (SecurityTokenException ex)
             {
