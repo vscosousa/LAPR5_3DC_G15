@@ -198,7 +198,6 @@ export default class ThumbRaiser {
 
         // Create the mini-map camera
         this.miniMapCamera = new Camera(this.miniMapCameraParameters, window.innerWidth, window.innerHeight);
-        this.miniMapCamera.viewport = { x: 0, y: 0, width: 0.2, height: 0.2 }; // Initialize viewport
 
         // Create the statistics and make its node invisible
         this.statistics = new Stats();
@@ -670,149 +669,210 @@ export default class ThumbRaiser {
     }
 
     update() {
-        if (!this.player || !this.maze) {
-            console.warn("Player or maze not loaded");
-            return;
-        }
-    
         if (!this.gameRunning) {
-            if (this.maze.loaded && this.player.loaded) {
+            if (this.maze.loaded && this.player.loaded) { // If all resources have been loaded
+                // Add the maze, the player and the lights to the scene
                 this.scene3D.add(this.maze.object);
+                /* To-do #11 - Add the player to the scene
+                    - player: this.player.object
+                ...; */
                 this.scene3D.add(this.player.object);
                 this.scene3D.add(this.lights.object);
-    
+
+                // Create the clock
                 this.clock = new THREE.Clock();
+
+                // Create model animations (states, emotes and expressions)
                 this.animations = new Animations(this.player.object, this.player.animations);
-    
+
+                // Set the player's position and direction
                 this.player.position = this.maze.initialPosition.clone();
                 this.player.direction = this.maze.initialDirection;
-    
-                this.userInterface = new UserInterface(
-                    this.scene3D, this.renderer, this.lights, this.fog, this.player.object, this.animations
-                );
-    
+
+                /* To-do #40 - Create the user interface
+                    - parameters: this.scene3D, this.renderer, this.lights, this.fog, this.player.object, this.animations*/
+                this.userInterface = new UserInterface(this.scene3D, this.renderer, this.lights, this.fog, this.player.object, this.animations);
+
+                // Start the game
                 this.gameRunning = true;
             }
-        } else {
+        }
+        else {
+            // Update the model animations
             const deltaT = this.clock.getDelta();
             this.animations.update(deltaT);
-    
+
+            // Update the player
             if (!this.animations.actionInProgress) {
                 let coveredDistance = this.player.walkingSpeed * deltaT;
+                /* To-do #13 - Compute the player's direction increment
+                    - assume that the player is turning left or right while walking:
+                        direction increment = turning speed * elapsed time
+                    - turning speed: this.player.turningSpeed
+                    - elapsed time: deltaT*/
                 let directionIncrement = this.player.turningSpeed * deltaT;
-    
                 if (this.player.keyStates.run) {
+                    /* To-do #14 - Adjust the distance covered by the player
+                        - now assume that the player is running:
+                        - multiply the covered distance by this.player.runningFactor
+                    */
                     coveredDistance *= this.player.runningFactor;
+
+                    /* To-do #15 - Adjust the player's direction increment
+                        - now assume that the player is running:
+                        - multiply the direction increment by this.player.runningFactor
+                    */
                     directionIncrement *= this.player.runningFactor;
                 }
-    
-                if (this.player.keyStates.left) {
+                /* To-do #16 - Check if the player is turning left or right and update the player direction accordingly by adding or subtracting the direction increment
+                    - left key state: this.player.keyStates.left
+                    - right key state: this.player.keyStates.right
+                    - current direction: this.player.direction
+                    - direction increment: directionIncrement
+                */
+                if (this.player.keyStates.left) { // The player is turning left
                     this.player.direction += directionIncrement;
-                } else if (this.player.keyStates.right) {
+                }
+                else if (this.player.keyStates.right) { // The player is turning right
                     this.player.direction -= directionIncrement;
                 }
-    
                 const direction = THREE.MathUtils.degToRad(this.player.direction);
-                if (this.player.keyStates.backward) {
-                    const newPosition = new THREE.Vector3(
-                        -coveredDistance * Math.sin(direction) + this.player.position.x,
-                        this.player.position.y,
-                        -coveredDistance * Math.cos(direction) + this.player.position.z
-                    );
-    
+                /* To-do #17 - Check if the player is moving backward or forward and update the player position accordingly
+                    - backward key state: this.player.keyStates.backward
+                    - forward key state: this.player.keyStates.forward
+                    - current position: this.player.position
+                    - covered distance: coveredDistance
+                    - current direction: direction (expressed in radians)
+
+                    - use the parametric form of the circle equation to compute the player's new position:
+                        x = r * sin(t) + x0
+                        y = y0;
+                        z = r * cos(t) + z0
+
+                        where:
+                        - (x, y, z) are the player's new coordinates
+                        - (x0, y0, z0) are the player's current coordinates
+                        - r is the distance covered by the player
+                        - t is the player direction (expressed in radians)*/
+
+                if (this.player.keyStates.backward) { // The player is moving backward
+                    const newPosition = new THREE.Vector3(-coveredDistance * Math.sin(direction) + this.player.position.x, this.player.position.y, -coveredDistance * Math.cos(direction) + this.player.position.z);
+                    /* To-do #18 - If the player collided with a wall, then trigger the death action; else, trigger either the walking or the running action
+                        - death action: "Death"
+                        - walking action: "Walking"
+                        - running action: "Running"
+                        - duration: 0.2 seconds*/
                     if (this.collision(newPosition)) {
                         this.animations.fadeToAction("Death", 0.2);
-                    } else {
-                        this.animations.fadeToAction(this.player.keyStates.run ? "Running" : "Walking", 0.2);
-                        this.player.position = newPosition;
                     }
-                } else if (this.player.keyStates.forward) {
-                    const newPosition = new THREE.Vector3(
-                        coveredDistance * Math.sin(direction) + this.player.position.x,
-                        this.player.position.y,
-                        coveredDistance * Math.cos(direction) + this.player.position.z
-                    );
-    
-                    if (this.collision(newPosition)) {
-                        this.animations.fadeToAction("Death", 0.2);
-                    } else {
+                    else {
                         this.animations.fadeToAction(this.player.keyStates.run ? "Running" : "Walking", 0.2);
                         this.player.position = newPosition;
                     }
                 }
-    
-                this.handleEmotes();
-    
+                else if (this.player.keyStates.forward) { // The player is moving forward
+                    const newPosition = new THREE.Vector3(coveredDistance * Math.sin(direction) + this.player.position.x, this.player.position.y, coveredDistance * Math.cos(direction) + this.player.position.z);
+                    /* To-do #19 - If the player collided with a wall, then trigger the death action; else, trigger either the walking or the running action
+                        - death action: "Death"
+                        - walking action: "Walking"
+                        - running action: "Running"
+                        - duration: 0.2 seconds*/
+                    if (this.collision(newPosition)) {
+                        this.animations.fadeToAction("Death", 0.2);
+                    }
+                    else {
+                        this.animations.fadeToAction(this.player.keyStates.run ? "Running" : "Walking", 0.2);
+                        this.player.position = newPosition;
+                    }
+                }
+                else
+                    /* To-do #20 - Check the player emotes
+                        - jump key state: this.player.keyStates.jump
+                        - jump emote: "Jump"
+                        - yes key state: this.player.keyStates.yes
+                        - yes emote: "Yes"
+                        - no key state: this.player.keyStates.no
+                        - no emote: "No"
+                        - wave key state: this.player.keyStates.wave
+                        - wave emote: "Wave"
+                        - punch key state: this.player.keyStates.punch
+                        - punch emote: "Punch"
+                        - thumbs up key state: this.player.keyStates.thumbsUp
+                        - thumbs up emote: "ThumbsUp"
+                        - duration: 0.2 seconds*/
+                    if (this.player.keyStates.jump) {
+                        this.animations.fadeToAction("Jump", 0.2);
+                    }
+                    else if (this.player.keyStates.yes) {
+                        this.animations.fadeToAction("Yes", 0.2);
+                    }
+                    else if (this.player.keyStates.no) {
+                        this.animations.fadeToAction("No", 0.2);
+                    }
+                    else if (this.player.keyStates.wave) {
+                        this.animations.fadeToAction("Wave", 0.2);
+                    }
+                    else if (this.player.keyStates.punch) {
+                        this.animations.fadeToAction("Punch", 0.2);
+                    }
+                    else if (this.player.keyStates.thumbsUp) {
+                        this.animations.fadeToAction("ThumbsUp", 0.2);
+                    }
+                    /* To-do #21 - If the player is not moving nor emoting, then trigger the idle action
+                        - idle ation: "Idle"
+                        - duration: 0.6 or 0.2 seconds, depending whether the player is recovering from a death action (long recovery) or from some other action (short recovery)*/
+                    else {
+                        this.animations.fadeToAction("Idle", this.animations.previousAction == "Death" ? 0.6 : 0.2);
+                    }
+                /* To-do #22 - Set the player's new position and orientation
+                    - new position: this.player.position
+                    - new orientation:  direction - this.player.initialDirection*/
                 this.player.object.position.copy(this.player.position);
                 this.player.object.rotation.y = direction - this.player.initialDirection;
             }
         }
-    
-        this.updateCameraTargets();
-        this.updateStatisticsAndRender();
-    }
-    
-    handleEmotes() {
-        if (this.player.keyStates.jump) {
-            this.animations.fadeToAction("Jump", 0.2);
-        } else if (this.player.keyStates.yes) {
-            this.animations.fadeToAction("Yes", 0.2);
-        } else if (this.player.keyStates.no) {
-            this.animations.fadeToAction("No", 0.2);
-        } else if (this.player.keyStates.wave) {
-            this.animations.fadeToAction("Wave", 0.2);
-        } else if (this.player.keyStates.punch) {
-            this.animations.fadeToAction("Punch", 0.2);
-        } else if (this.player.keyStates.thumbsUp) {
-            this.animations.fadeToAction("ThumbsUp", 0.2);
-        } else {
-            this.animations.fadeToAction("Idle", this.animations.previousAction === "Death" ? 0.6 : 0.2);
-        }
-    }
-    
-    updateCameraTargets() {
-        const target = new THREE.Vector3();
-        const directionRad = THREE.MathUtils.degToRad(this.player.direction);
-    
-        if (this.player.size && this.player.face) {
-            target.add(new THREE.Vector3(
-                this.player.radius * Math.sin(directionRad),
-                this.player.size.y - this.player.face.worldPosition.y,
-                this.player.radius * Math.cos(directionRad)
-            ));
-        }
-    
+
+        // Update first-person, third-person and top view cameras parameters (player direction and target)
         this.firstPersonViewCamera.playerDirection = this.player.direction;
         this.thirdPersonViewCamera.playerDirection = this.player.direction;
         this.topViewCamera.playerDirection = this.player.direction;
+        const target = new THREE.Vector3(this.player.position.x, this.player.position.y + this.player.eyeHeight, this.player.position.z);
         this.firstPersonViewCamera.setTarget(target);
         this.thirdPersonViewCamera.setTarget(target);
         this.topViewCamera.setTarget(target);
-    }
-    
-    updateStatisticsAndRender() {
+
+        // Update statistics
         this.statistics.update();
+
+        // Render primary viewport(s)
         this.renderer.clear();
-    
+
+        /* To-do #39 - If the fog is enabled, then assign it to the scene; else, assign null
+            - fog enabled: this.fog.enabled
+            - fog: this.fog.object*/
         if (this.fog.enabled) {
             this.scene3D.fog = this.fog.object;
-        } else {
+        }
+        else {
             this.scene3D.fog = null;
         }
-    
-        const cameras = this.multipleViewsCheckBox.checked
-            ? [this.fixedViewCamera, this.firstPersonViewCamera, this.thirdPersonViewCamera, this.topViewCamera]
-            : [this.activeViewCamera];
-    
+        let cameras;
+        if (this.multipleViewsCheckBox.checked) {
+            cameras = [this.fixedViewCamera, this.firstPersonViewCamera, this.thirdPersonViewCamera, this.topViewCamera];
+        }
+        else {
+            cameras = [this.activeViewCamera];
+        }
         for (const camera of cameras) {
-            this.player.object.visible = (camera !== this.firstPersonViewCamera);
+            this.player.object.visible = (camera != this.firstPersonViewCamera);
             const viewport = camera.getViewport();
             this.renderer.setViewport(viewport.x, viewport.y, viewport.width, viewport.height);
             this.renderer.render(this.scene3D, camera.object);
             this.renderer.render(this.scene2D, this.camera2D);
             this.renderer.clearDepth();
         }
-    
+
+        // Render secondary viewport (mini-map)
         if (this.miniMapCheckBox.checked) {
             this.scene3D.fog = null;
             this.player.object.visible = true;
@@ -821,5 +881,5 @@ export default class ThumbRaiser {
             this.renderer.render(this.scene3D, this.miniMapCamera.object);
             this.renderer.render(this.scene2D, this.camera2D);
         }
-    }    
+    }
 }

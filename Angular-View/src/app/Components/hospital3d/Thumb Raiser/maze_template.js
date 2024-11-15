@@ -69,12 +69,6 @@ export default class Maze {
                         this.object.add(wallObject);
                     }
 
-                    /* Create the doors
-                        - cell coordinates: i (column), j (row)
-                        - door map: description.doorMap[][]
-                        - maze width: description.size.width
-                        - maze height: description.size.height */
-
                     if (description.doorMap[j][i] == 1) {
                         doorObject = this.door.object.clone();
                         doorObject.position.set(i - description.size.width / 2 + 0.5, 0.5, j - description.size.height / 2);

@@ -13,7 +13,7 @@ export default class Door {
         }
 
         // Create a texture
-        /* To-do #8 - Load the wall texture image
+        /* To-do #8 - Load the door texture image
             - image location: this.textureUrl*/
         const texture = new THREE.TextureLoader().load(this.textureUrl);
         texture.colorSpace = THREE.SRGBColorSpace;
@@ -23,7 +23,7 @@ export default class Door {
         texture.magFilter = THREE.LinearFilter;
         texture.minFilter = THREE.LinearMipmapLinearFilter;
 
-        // Create a wall (seven faces) that casts and receives shadows
+        // Create a door (seven faces) that casts and receives shadows
 
         // Create a group of objects
         this.object = new THREE.Group();
@@ -33,8 +33,8 @@ export default class Door {
         /* To-do #10 - Assign the texture to the material's color map:
             - map: texture */
         let material = new THREE.MeshPhongMaterial(
-            { 
-                color: 0xffffff, 
+            {
+                color: 0xffffff,
                 map: texture
             }
         );
