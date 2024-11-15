@@ -18,6 +18,7 @@ import { UpdateStaffComponent } from './Components/update-staff/update-staff.com
 import { PatientPanelComponent } from './Components/patient-panel/patient-panel.component';
 import { ManagePatientsComponent } from './Components/manage-patients/manage-patients.component';
 import { CreatePatientComponent } from './Components/create-patient/create-patient.component';
+import { ActivatePatientUserComponent } from './Components/activate-patient-user/activate-patient-user.component';
 
 
 export const routes: Routes = [
@@ -36,7 +37,7 @@ export const routes: Routes = [
     {
         path: "search-staffs", component: SearchStaffsComponent, canActivate: [AuthGuard]
     },
-    { 
+    {
         path: 'update-staff/:id', component: UpdateStaffComponent, canActivate: [AuthGuard]
     },
     {
@@ -65,6 +66,9 @@ export const routes: Routes = [
     },
     {
         path: "create-patient", component: CreatePatientComponent, canActivate: [AuthGuard]
+    },
+    {
+        path: "activate-patient-user", component: ActivatePatientUserComponent
     },
     {
         path: "", component: HomeComponent

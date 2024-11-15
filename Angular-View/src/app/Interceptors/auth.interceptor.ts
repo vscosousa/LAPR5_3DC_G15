@@ -29,7 +29,8 @@ export class AuthInterceptor implements HttpInterceptor {
     const nonAuthUrls = [
       '/login',
       '/register',
-      '/delete-user'
+      '/delete-user',
+      '/activate-patient-user'
     ];
 
     const isNonAuthUrl = nonAuthUrls.some(url => req.url.includes(url));

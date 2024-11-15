@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
 
 /**
  * @class RegisterService
@@ -40,6 +41,13 @@ export class RegisterService {
     return this.http.post<string>(`${this.apiUrl}/RegisterUserAsPatient`, registerData, {
       observe: 'response',
       responseType: 'text' as 'json'
-    });
+    }).pipe(
+      tap((response: HttpResponse<string>) => {
+      const token = response.body;
+      if (token) {
+        localStorage.setItem('authToken', token);
+      }
+      })
+    );
   }
 }

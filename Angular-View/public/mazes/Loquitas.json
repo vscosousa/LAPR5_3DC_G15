@@ -1,7 +1,7 @@
 {
-    "modelUrl": "./assets/models/gltf/RobotExpressive/door.glb",
-    "groundTextureUrl": "./assets/textures/ground.jpg",
-    "wallTextureUrl": "./assets/textures/wall.jpg",
+    "modelUrl": "/models/gltf/RobotExpressive/door.glb",
+    "groundTextureUrl": "/textures/ground.jpg",
+    "wallTextureUrl": "/textures/wall.jpg",
     "size": { "width": 10, "height": 10 },
     "map": [
         [3, 2, 2, 2, 3, 2, 3, 2, 2, 2, 1],
@@ -29,7 +29,7 @@
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
     ],
-    
+
 
     "initialPosition": [4.5, 4.5],
     "initialDirection": 0.0

@@ -6,16 +6,16 @@ Description: This component allows backoffice users to log in to the system
 
 <div class="login-container">
   <a routerLink="/" class="btn btn-home">
-    <img src="assets/home.png" alt="Home">
+    <img src="home.png" alt="Home">
   </a>
   <div class="login-left">
     <div class="top">
-      <img src="assets/logo.png" alt="logo" />
+      <img src="logo.png" alt="logo" />
       <h2>Hospital Management App</h2>
     </div>
     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
       <a routerLink="/" class="btn btn-google">
-        <img src="assets/google.png" alt="Google logo"> Sign in with Google
+        <img src="google.png" alt="Google logo"> Sign in with Google
       </a>
       <option>⎯⎯⎯ Or Login with your email ⎯⎯⎯</option>
       <label for="email">Email</label>
@@ -27,7 +27,7 @@ Description: This component allows backoffice users to log in to the system
       <label for="password">Password</label>
       <div class="input-container">
         <input [type]="passwordFieldType" id="password" formControlName="password" placeholder="******" required>
-        <img [src]="passwordFieldType === 'password' ? 'assets/eye.png' : 'assets/eye-slash.png'" alt="Show/Hide Password"
+        <img [src]="passwordFieldType === 'password' ? 'eye.png' : 'eye-slash.png'" alt="Show/Hide Password"
           (click)="togglePasswordVisibility()" class="eye-icon">
       </div>
       <div *ngIf="loginForm.get('password')?.invalid && (loginForm.get('password')?.dirty || loginForm.get('password')?.touched)" class="error-message">
@@ -45,7 +45,7 @@ Description: This component allows backoffice users to log in to the system
       <h3>Why should I login?</h3>
       <p>By logging in, you can access your personal dashboard, where you can manage your account, view your profile,
         and much more.</p>
-      <img src="assets/healthcare-dashboard.png" alt="Dashboard example">
+      <img src="healthcare-dashboard.png" alt="Dashboard example">
     </div>
   </div>
 </div>

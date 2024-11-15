@@ -128,7 +128,7 @@ namespace DDDSample1.Controllers
                 {
                     return NotFound("User not found");
                 }
-                return Ok(user);
+                return Ok();
             }
             catch (Exception ex)
             {
