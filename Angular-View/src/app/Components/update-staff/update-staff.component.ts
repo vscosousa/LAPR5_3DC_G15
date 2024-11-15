@@ -18,8 +18,8 @@ export class UpdateStaffComponent implements OnInit {
     updateStaffForm: FormGroup;
     staffId: string;
     errorMessage: string = '';
-    infoMessage: string = '';
     specializations: any[] = [];
+    staffName: string = '';
 
     constructor( private staffService: StaffService, private fb: FormBuilder, private router: Router, private route: ActivatedRoute) {
       this.updateStaffForm = this.fb.group({
@@ -51,10 +51,10 @@ export class UpdateStaffComponent implements OnInit {
     }
   
     loadStaffDetails(): void {
-      console.log("Staff ID:\n", this.staffId);
       this.staffService.getStaffById(this.staffId).subscribe({
         next: (data) => {
           this.initFromUpdate(data);
+          this.staffName = data.fullName;
           console.log("Staff details:\n", data);
         },
         error: (error) => {
@@ -73,8 +73,8 @@ export class UpdateStaffComponent implements OnInit {
         identifier: identifier,
         phoneNumber: localPhoneNumber,
         email: data.email,
-        addAvailabilitySlots: data.addAvailabilitySlots,
-        removeAvailabilitySlots: data.removeAvailabilitySlots,
+        addAvailabilitySlots: '',
+        removeAvailabilitySlots: '',
         specializationName: this.getSpecializationName(data.specializationId)
       });
     }
@@ -100,22 +100,11 @@ export class UpdateStaffComponent implements OnInit {
       console.log("Update data:\n", updateData);
       this.staffService.updateStaff(this.staffId, updateData).subscribe({
         next: () => {
+            console.log('Staff Updated Successfully');
             this.errorMessage = '';
-            this.infoMessage = 'Staff updated successfully';
-            // this.router.navigate(['/search-staffs']);
-            this.updateStaffForm.reset(
-              {
-                identifier: '',
-                phoneNumber: '',
-                email: '',
-                addAvailabilitySlots: '',
-                removeAvailabilitySlots: '',
-                specializationName: '',
-              }
-            );
+            this.router.navigate(['/search-staffs'])
           },
           error: (error) => {
-            this.infoMessage = '';
             console.error('Error Updating staff', error);
             if (error.status === 400) {
               const errorResponse = error.error;

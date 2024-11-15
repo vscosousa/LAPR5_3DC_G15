@@ -4,15 +4,13 @@ using System.Collections.Generic;
 using DDDSample1.Domain.Shared;
 using DDDSample1.Domain.Specializations;
 using DDDSample1.Domain.Logs;
-using DDDSample1.Infrastructure.Specializations;
 using System.Linq;
-using System.Diagnostics;
 using System.Security.Claims;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
-using Microsoft.AspNetCore.Http.HttpResults;
+using System.Web;
 
 namespace DDDSample1.Domain.Staffs
 {
@@ -115,9 +113,13 @@ namespace DDDSample1.Domain.Staffs
                
                 // Update Phone Number
                 if (!string.IsNullOrEmpty(dto.PhoneNumber) && staff.PhoneNumber != dto.PhoneNumber)
-                {
+                {   
+                    if (!dto.PhoneNumber.StartsWith("+") || !dto.PhoneNumber.Substring(1).All(char.IsDigit))
+                        throw new BusinessRuleValidationException("Phone number must start with an identifier and contain only digits.");
+
                     if (await _repository.GetByPhoneNumberAsync(dto.PhoneNumber) != null)
                         throw new BusinessRuleValidationException("Phone number is already in use.");
+                        
                     sendEmail = true;
                     newUpdatedContacts.SetPhoneNumber(dto.PhoneNumber);
                     updatedFields.Add("Sent confirmation email to Staff to update phone number");
@@ -137,7 +139,6 @@ namespace DDDSample1.Domain.Staffs
                 // Send Email
                 if(sendEmail){
                     var token = CreateTokenStaff(staff);
-                    Console.WriteLine("---------------- Token: " + token);
                     var link = GenerateLinkToStaff(token, newUpdatedContacts);
                     await _mailService.SendEmailToStaff(staff.Email, staff.FullName, newUpdatedContacts, link);
                 }
@@ -279,7 +280,13 @@ namespace DDDSample1.Domain.Staffs
 
         private static string GenerateLinkToStaff(string token, UpdateStaffDTO dto)
         {
-            return $"https://localhost:5001/api/Staff/ConfirmUpdates?phoneNumber={dto.PhoneNumber}?email={dto.Email}?token={token}";
+            var encodedPhoneNumber = HttpUtility.UrlEncode(dto.PhoneNumber);
+            var encodedEmail = HttpUtility.UrlEncode(dto.Email);
+            var encodedToken = HttpUtility.UrlEncode(token);
+
+            var link = $"http://localhost:4200/update-staff/ConfirmUpdates?phoneNumber={encodedPhoneNumber}&email={encodedEmail}&token={encodedToken}";
+            Console.WriteLine("Link to Confirm Update Contact: " + link);
+            return link;
         }
 
         private StaffId VerifyTokenStaff(string token)

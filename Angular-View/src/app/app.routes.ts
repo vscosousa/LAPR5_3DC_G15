@@ -18,6 +18,7 @@ import { UpdateStaffComponent } from './Components/update-staff/update-staff.com
 import { PatientPanelComponent } from './Components/patient-panel/patient-panel.component';
 import { ManagePatientsComponent } from './Components/manage-patients/manage-patients.component';
 import { CreatePatientComponent } from './Components/create-patient/create-patient.component';
+import { ConfirmUpdatesStaffComponent } from './Components/confirm-updates-staff/confirm-updates-staff.component';
 
 
 export const routes: Routes = [
@@ -26,6 +27,9 @@ export const routes: Routes = [
     },
     {
         path: 'login', component: LoginComponent
+    },
+    {
+        path: 'update-staff/ConfirmUpdates', component: ConfirmUpdatesStaffComponent
     },
     {
         path: "panel-admin", component: PanelAdminComponent, canActivate: [AuthGuard]

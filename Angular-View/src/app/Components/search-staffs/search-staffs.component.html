@@ -5,7 +5,7 @@
 
       <div class="screen">
 
-        <button routerLink="/create-staff" class="btn btn-create">  Create Staff </button>
+        <button type="button" routerLink="/create-staff" class="btn btn-create">  Create Staff </button>
 
         <h2 class="manage-title">Search Staff Profiles</h2>
 
@@ -37,7 +37,7 @@
           </div>
 
             <button type="submit" class="btn btn-filter" >Search</button>
-            <button type="button" class="btn btn-clear" (click)="clearFilters()"> Clear Filters </button>
+            <button type="reset" class="btn btn-clear" (click)="clearFilters()"> Clear Filters </button>
 
           </form>
   
@@ -56,9 +56,9 @@
                   <td>{{ profile.email }}</td>
                   <td>
 
-                    <button (click)="viewStaffDetails(profile)" class="btn btn-view">View</button>
-                    <button routerLink="/update-staff/{{profile.id}}" class="btn btn-update">Update</button>
-                    <button (click)="deactivateStaff(profile.id)" class="btn btn-delete">Deactivate</button>
+                    <button type="button" routerLink="/update-staff/{{profile.id}}" class="btn btn-update">Edit</button>
+                    <button type="button" (click)="deactivateStaff(profile.id)" class="btn btn-delete">Deactive</button>
+                    <button type="button" (click)="viewStaffDetails(profile)" class="btn btn-view">View</button>
 
                   </td>
                 </tr>
@@ -71,8 +71,8 @@
       <div *ngIf="selectedStaff" class="details-screen">
         <div class="staff-details">
           <h3>Staff Details</h3>
-          <button (click)="clearSelectedStaff()">
-            <img src="fechar.png" alt="Close" />
+          <button type="button" (click)="clearSelectedStaff()">
+            <img src="assets/fechar.png" alt="Close" />
           </button>
           <table class="table table-bordered">
             <tbody>
@@ -116,7 +116,9 @@
                 <th>Availability Slots</th>
                 <td>
                   <ul>
-                    <li *ngFor="let slot of selectedStaff.availabilitySlots">{{ slot }}</li>
+                    
+                    <li *ngFor="let slot of selectedStaff.availabilitySlots">{{  parseDate(slot) | date: 'dd-MM-yyyy HH:mm' }}</li>
+                    
                   </ul>
                 </td>
               </tr>

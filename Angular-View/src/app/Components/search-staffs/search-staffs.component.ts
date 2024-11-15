@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { StaffService } from '../../Services/staff-sevice.service'; 
 import { SidebarComponent } from '../sidebar/sidebar.component';
 import { RouterModule } from '@angular/router';
+import { parse } from 'date-fns';
 
 @Component({
   selector: 'app-search-staffs',
@@ -78,10 +79,10 @@ export class SearchStaffsComponent implements OnInit {
   onSearch(): void {
 
     const searchCriteria = {
-      firstName: this.searchForm.value.firstName!.trim(),
-      lastName: this.searchForm.value.lastName!.trim(),
+      firstName: this.searchForm.value.firstName?.trim() || '',
+      lastName: this.searchForm.value.lastName?.trim() || '',
       fullName: this.searchForm.value.fullName!,
-      email: this.searchForm.value.email!.trim(),
+      email: this.searchForm.value.email?.trim() || '',
       specializationName: this.searchForm.value.specializationName!
     };
 
@@ -150,4 +151,10 @@ export class SearchStaffsComponent implements OnInit {
     });
   }
 
+  parseDate(dateString: string): Date | null {
+    const date = parse(dateString, 'dd/MM/yyyy HH:mm:ss', new Date());
+    const now = new Date();
+    return (isNaN(date.getTime()) || date < now) ? null : date;
+  }
+  
 }
