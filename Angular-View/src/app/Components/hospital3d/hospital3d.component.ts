@@ -52,13 +52,11 @@ export class Hospital3dComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     if (isPlatformBrowser(this.platformId)) {
       this.initialize();
+      this.animate();
     }
   }
 
   ngAfterViewInit(): void {
-    if (isPlatformBrowser(this.platformId)) {
-      this.animate();
-    }
   }
 
   ngOnDestroy(): void {

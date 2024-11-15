@@ -6,16 +6,16 @@ Description: This component displays the registration form for new users.
 
 <div class="register-container">
     <a href="/" class="btn btn-home">
-        <img src="home.png" alt="Home">
+        <img src="assets/home.png" alt="Home">
     </a>
     <div class="register-left">
         <div class="top">
-            <img src="logo.png" alt="logo" />
+            <img src="assets/logo.png" alt="logo" />
             <h2>Hospital Management App</h2>
         </div>
         <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
             <a href="" class="btn btn-google">
-                <img src="google.png" alt="Google logo"> Register with Google
+                <img src="assets/google.png" alt="Google logo"> Register with Google
             </a>
             <option>⎯⎯ Or Register with your email ⎯⎯</option>
             <label for="email">Email</label>
@@ -30,14 +30,14 @@ Description: This component displays the registration form for new users.
                 <label for="password">Password</label>
                 <input [type]="passwordFieldType" id="password" formControlName="password" placeholder="******"
                     required>
-                <img [src]="passwordFieldType === 'password' ? 'eye.png' : 'eye-slash.png'"
+                <img [src]="passwordFieldType === 'password' ? 'assets/eye.png' : 'assets/eye-slash.png'"
                     alt="Show/Hide Password" (click)="togglePasswordVisibility('password')" class="eye-icon">
             </div>
             <div class="input-container">
                 <label for="confirm-password">Confirm Password</label>
                 <input [type]="confirmPasswordFieldType" id="confirm-password" formControlName="confirmPassword"
                     placeholder="******" required>
-                <img [src]="confirmPasswordFieldType === 'password' ? 'eye.png' : 'eye-slash.png'"
+                <img [src]="confirmPasswordFieldType === 'password' ? 'assets/eye.png' : 'assets/eye-slash.png'"
                     alt="Show/Hide Password" (click)="togglePasswordVisibility('confirm-password')" class="eye-icon">
             </div>
             <button type="submit" class="btn btn-register">Register</button>
@@ -49,7 +49,7 @@ Description: This component displays the registration form for new users.
             <h3>Why should I register?</h3>
             <p>By registering, you can access your personal dashboard, where you can manage your account, view your
                 profile, and much more.</p>
-            <img src="healthcare-dashboard.png" alt="Dashboard example">
+            <img src="assets/healthcare-dashboard.png" alt="Dashboard example">
         </div>
     </div>
 </div>

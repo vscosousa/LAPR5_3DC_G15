@@ -23,13 +23,14 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { LoginService } from '../../Services/login.service';
-import { FormsModule, ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule, FormGroup, FormControl, Validators} from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [FormsModule, ReactiveFormsModule, RouterModule],
+  imports: [FormsModule, ReactiveFormsModule, RouterModule, CommonModule],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
 })
@@ -39,6 +40,7 @@ export class LoginComponent {
     email: new FormControl('', [Validators.required, Validators.email]),
     password: new FormControl('', Validators.required)
   });
+  loginError: string | null = null;
 
   constructor(private loginService: LoginService, private router: Router) { }
 
@@ -77,7 +79,7 @@ export class LoginComponent {
       },
       (error: any) => {
         console.error('Login failed', error);
-        alert('Login failed - ' + error.error);
+        this.loginError = 'Invalid email or password';
       }
     );
   }
