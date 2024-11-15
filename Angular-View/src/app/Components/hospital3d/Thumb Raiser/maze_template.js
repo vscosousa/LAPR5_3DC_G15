@@ -32,11 +32,10 @@ export default class Maze {
 
             // Create a wall
             this.wall = new Wall({ textureUrl: description.wallTextureUrl });
-            this.door = new Door({ textureUrl: description.doorTextureUrl });
+            this.door = new Door({ modelUrl: description.modelUrl });
 
             // Build the maze
             let wallObject;
-            let doorObject;
             for (let i = 0; i <= description.size.width; i++) { // In order to represent the eastmost walls, the map width is one column greater than the actual maze width
                 for (let j = 0; j <= description.size.height; j++) { // In order to represent the southmost walls, the map height is one row greater than the actual maze height
                     /*
@@ -76,10 +75,9 @@ export default class Maze {
                         - maze height: description.size.height */
 
                     if (description.doorMap[j][i] == 1) {
-                        wallObject = this.wall.object.clone();
-                        wallObject.position.set(i - description.size.width / 2 + 0.5, 0.5, j - description.size.height / 2);
-                        this.object.add(wallObject);
-                        
+                        const doorObject = this.door.object.clone();
+                        doorObject.position.set(i - description.size.width / 2 + 0.5, 0.5, j - description.size.height / 2);
+                        this.object.add(doorObject);
                     }
                 }
             }

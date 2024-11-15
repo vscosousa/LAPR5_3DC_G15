@@ -17,4 +17,17 @@ skinparam package {
     BackgroundColor #EBF5FB
 }
 
+actor Admin as A
+
+activate A
+A -> System: Asks to create a operation type
+activate System
+System --> A: Asks for operation type's data
+deactivate System
+A -> System: Sends operation type's data (name, estimatedDuration, specializations)
+activate System
+System -> System: Validates operation type's data and tries to create the operation type
+System --> A: Returns Operation In/Sucess message
+deactivate System
+
 @enduml

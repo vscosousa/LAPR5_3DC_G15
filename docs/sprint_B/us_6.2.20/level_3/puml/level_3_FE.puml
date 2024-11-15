@@ -1,0 +1,56 @@
+@startuml level_3_FE
+
+title Level 3 FE Diagram
+
+hide empty members
+'skinparam Linetype ortho
+
+skinparam class {
+    BackgroundColor<<valueObject>> #D6EAF8
+    BackgroundColor<<root>> #FDEBD0
+    BackgroundColor<<service>> #D1F2EB
+    BackgroundColor #FEF9E7
+    ArrowColor Black
+}
+
+skinparam package {
+    BackgroundColor #EBF5FB
+}
+
+actor Admin as A
+participant "View" as V
+participant "OperationTypesComponent" as MP
+participant "OperationTypeService" as PS
+participant "AuthInterceptor" as AI
+participant "MDR" as MDR
+
+activate A
+A -> V: Asks to deactivate a operation type
+activate V
+V -> MP: deactivateOperationType(name)
+activate MP
+MP -> PS: deactivateOperationType(name)
+activate PS
+PS -> AI: Sends HTTP Request to deactivate the operation type
+activate AI
+AI -> AI: Intercepts the request and adds the token to the header
+note right of AI
+    The token is added to the header so that the MDR
+    can authenticate and authorize the request.
+end note
+AI -> MDR: deactivateOperationType(name)
+activate MDR
+MDR -> MDR: Validates operation type's name and tries to deactivate the operation type
+MDR --> AI: Returns Operation Status Code
+deactivate MDR
+AI --> PS: Returns Operation Status Code
+deactivate AI
+PS --> MP: Returns Operation Response
+deactivate PS
+MP --> V: Returns Operation In/Sucess message
+deactivate MP
+V --> A: Returns Operation In/Sucess message
+deactivate V
+
+
+@enduml

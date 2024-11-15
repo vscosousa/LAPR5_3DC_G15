@@ -17,4 +17,24 @@ skinparam package {
     BackgroundColor #EBF5FB
 }
 
+actor Admin as A
+participant "FE" as FE
+participant "MDR" as MDR
+
+activate A
+A -> FE: Asks to edit a operation type's Profile
+activate FE
+FE --> A: Asks for operation type's name to edit
+deactivate FE
+A -> FE: Sends operation type's data
+note right of FE: The data can be name, estimatedDuration, specializations
+activate FE
+FE -> MDR: Sends HTTP Request to update operation type's data with the new data
+activate MDR
+MDR -> MDR: Validates operation type's data and tries to update operation type's data
+MDR --> FE : Returns Operation Status Code
+deactivate MDR
+FE --> A: Returns Operation In/Sucess message
+deactivate FE
+
 @enduml

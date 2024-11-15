@@ -1,0 +1,62 @@
+@startuml level_3_FE
+
+title Level 3 P Diagram
+
+hide empty members
+'skinparam Linetype ortho
+
+skinparam class {
+    BackgroundColor<<valueObject>> #D6EAF8
+    BackgroundColor<<root>> #FDEBD0
+    BackgroundColor<<service>> #D1F2EB
+    BackgroundColor #FEF9E7
+    ArrowColor Black
+}
+
+skinparam package {
+    BackgroundColor #EBF5FB
+}
+
+actor BackOffice_User as BO
+participant "View" as V
+participant "HomeComponent" as HC
+participant "LoginComponent" as LC
+participant "LoginService" as S
+participant "MDR" as MDR
+
+activate BO
+BO -> V: Asks to Login as backoffice user
+activate V
+V -> HC: routerLink="/login"
+activate HC
+HC -> LC: Routes to LoginComponent
+activate LC
+deactivate HC
+LC -> LC: Intializes LoginComponent
+LC --> V: Returns LoginComponent
+deactivate LC
+V --> BO: Asks for data to login as backoffice user
+deactivate V
+BO -> V: Sends data(email, password)
+activate V
+V -> LC: onSubmit()
+activate LC
+alt if all field are filled
+    LC -> S: login(email,  password)
+    activate S
+    S -> MDR: Makes HTTP Request to login backoffice user with data (email, password)
+    activate MDR
+    MDR -> MDR: Validates data and tries to login the User
+    MDR --> S: Returns Operation Status Code
+    deactivate MDR
+    S --> LC: Returns Operation Response
+    deactivate S
+    LC --> V: Returns Login In/Sucess message
+else
+    LC --> V: Returns Email or Password is incorrect message
+    deactivate LC
+end
+V --> BO: Returns Operation In/Sucess message
+deactivate V
+
+@enduml

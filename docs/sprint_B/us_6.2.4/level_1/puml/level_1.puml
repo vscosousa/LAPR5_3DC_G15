@@ -17,4 +17,17 @@ skinparam package {
     BackgroundColor #EBF5FB
 }
 
+actor Backoffice_User as BO
+
+activate BO
+BO -> System: Asks to Login into the system
+activate System
+System --> BO: Asks for data to login as backoffice user
+deactivate System
+BO -> System: Sends data(email,password)
+activate System
+System -> System: Validates data and tries to login the backoffice user
+System --> BO: Returns Operation In/Sucess message
+deactivate System
+
 @enduml

@@ -17,4 +17,18 @@ skinparam package {
     BackgroundColor #EBF5FB
 }
 
+actor Admin as A
+participant "FE" as FE
+participant "MDR" as MDR
+
+activate A
+A -> FE: Asks to list operation types
+activate FE
+FE -> MDR: Sends HTTP request to list the default operation types's list
+activate MDR
+MDR -> MDR: Validates the data and tries to list the operation types
+MDR --> FE: Returns Operation Status Code
+FE --> A: Returns Operation In/Sucess message
+deactivate FE
+
 @enduml

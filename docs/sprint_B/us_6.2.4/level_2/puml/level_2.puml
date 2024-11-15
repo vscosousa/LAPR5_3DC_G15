@@ -17,4 +17,23 @@ skinparam package {
     BackgroundColor #EBF5FB
 }
 
+actor Backoffice_User as BO
+participant "FE" as FE
+participant "MDR" as MDR
+
+activate BO
+BO -> FE: Asks to login into the system
+activate FE
+FE --> BO: Asks for data to login the backoffice user
+deactivate FE
+BO -> FE: Sends data(email, password)
+activate FE
+FE -> MDR: Makes HTTP Request to Login data (email, password)
+activate MDR
+MDR --> MDR: Validates data and tries to login the User
+MDR --> FE: Returns Operation Status Code
+deactivate MDR
+FE --> BO: Returns Operation In/Sucess message
+deactivate FE
+
 @enduml
