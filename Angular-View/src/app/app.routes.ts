@@ -20,6 +20,7 @@ import { ManagePatientsComponent } from './Components/manage-patients/manage-pat
 import { CreatePatientComponent } from './Components/create-patient/create-patient.component';
 import { ActivatePatientUserComponent } from './Components/activate-patient-user/activate-patient-user.component';
 import { ConfirmUpdatesStaffComponent } from './Components/confirm-updates-staff/confirm-updates-staff.component';
+import { UpdatePatientComponent } from './Components/update-patient/update-patient.component';
 
 
 export const routes: Routes = [
@@ -73,6 +74,9 @@ export const routes: Routes = [
     },
     {
         path: "activate-patient-user", component: ActivatePatientUserComponent
+    },
+    {
+       path: "update-patient/:medicalRecordNumber", component: UpdatePatientComponent, canActivate: [AuthGuard]
     },
     {
         path: "", component: HomeComponent
