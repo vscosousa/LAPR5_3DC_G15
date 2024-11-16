@@ -27,6 +27,7 @@
     "@angular/router": "^18.0.0",
     "@angular/ssr": "^18.0.5",
     "@types/three": "^0.169.0",
+    "angular-calendar": "^0.31.1",
     "angular-view": "file:",
     "bootstrap": "^5.3.3",
     "bootstrap-icons": "^1.11.3",
