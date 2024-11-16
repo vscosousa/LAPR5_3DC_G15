@@ -59,7 +59,6 @@
                     <button type="button" routerLink="/update-staff/{{profile.id}}" class="btn btn-update">Edit</button>
                     <button type="button" (click)="deactivateStaff(profile.id)" class="btn btn-delete">Deactive</button>
                     <button type="button" (click)="viewStaffDetails(profile)" class="btn btn-view">View</button>
-
                   </td>
                 </tr>
               </tbody>
@@ -72,10 +71,14 @@
         <div class="staff-details">
           <h3>Staff Details</h3>
           <button type="button" (click)="clearSelectedStaff()">
-            <img src="assets/fechar.png" alt="Close" />
+            <img src="fechar.png" alt="Close" />
           </button>
           <table class="table table-bordered">
             <tbody>
+              <tr>
+                <th>License Number</th>
+                <td>{{ selectedStaff.licenseNumber }}</td>
+              </tr>
               <tr>
                 <th>First Name</th>
                 <td>{{ selectedStaff.firstName }}</td>
@@ -97,14 +100,6 @@
                 <td>{{ selectedStaff.specializationName }}</td>
               </tr>
               <tr>
-                <th>Phone Number</th>
-                <td>{{ selectedStaff.phoneNumber }}</td>
-              </tr>
-              <tr>
-                <th>License Number</th>
-                <td>{{ selectedStaff.licenseNumber }}</td>
-              </tr>
-              <tr>
                 <th>Staff Type</th>
                 <td>{{ selectedStaff.staffType }}</td>
               </tr>
@@ -112,21 +107,11 @@
                 <th>Is Active</th>
                 <td>{{ selectedStaff.isActive ? "Yes" : "No" }}</td>
               </tr>
-              <tr>
-                <th>Availability Slots</th>
-                <td>
-                  <ul>
-                    
-                    <li *ngFor="let slot of selectedStaff.availabilitySlots">{{  parseDate(slot) | date: 'dd-MM-yyyy HH:mm' }}</li>
-                    
-                  </ul>
-                </td>
-              </tr>
             </tbody>
           </table>
+          <button type="button" routerLink="/view-availability/{{selectedStaff.id}}" class="btn btn-view">View Availability</button>
         </div>
       </div>
       
     </div>
-
   </div>

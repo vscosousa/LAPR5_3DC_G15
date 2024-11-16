@@ -1,36 +1,25 @@
 <app-sidebar></app-sidebar>
 <div class="update-staff-container">
   <div class="update-staff-middle">
-
     <div class="top">
-
       <button type="button" class="back-button" routerLink="/search-staffs"> Go Back</button>
-
       <h2>Edit Staff </h2>
       <h3>{{ staffName }}</h3>
-  
     </div>
 
     <form [formGroup]="updateStaffForm" (ngSubmit)="onSubmit()">
-
       <label for="phoneNumber">Phone Number</label>
       <div class="form-row">
         <div class="form-group identifier-group">
-            <input type="text" id="identifier" formControlName="identifier" placeholder="+351" class="identifier" value="+351">
+          <input type="text" id="identifier" formControlName="identifier" placeholder="+351" class="identifier" value="+351">
         </div>
         <div class="form-group phone-group">
-            <input type="tel" id="phoneNumber" formControlName="phoneNumber" placeholder="Phone Number" required>
+          <input type="tel" id="phoneNumber" formControlName="phoneNumber" placeholder="Phone Number" required>
         </div>
       </div>
 
       <label for="email">Email</label>
       <input type="email" id="email" formControlName="email" placeholder="example@email.com">
-
-      <label for="addAvailabilitySlots">Add Availability Slots</label>
-      <input type="datetime-local" id="addAvailabilitySlots" formControlName="addAvailabilitySlots" placeholder="Add Availability Slots">
-
-      <label for="removeAvailabilitySlots">Remove Availability Slots</label>
-      <input type="datetime-local" id="removeAvailabilitySlots" formControlName="removeAvailabilitySlots" placeholder="Remove Availability Slots">
 
       <label for="specializationName">Specialization</label>
       <select id="specializationName" formControlName="specializationName" title="Specialization">
@@ -39,12 +28,12 @@
           {{ specialization.specOption }}
         </option>
       </select>
-
+   
       <div *ngIf="errorMessage" class="error-message">
         {{ errorMessage }}
       </div>
 
-      <button type="submit" >Update</button>
+      <button type="submit">Update</button>
     </form>
   </div>
 </div>

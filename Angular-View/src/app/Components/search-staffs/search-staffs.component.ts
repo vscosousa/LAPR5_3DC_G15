@@ -9,7 +9,7 @@ import { parse } from 'date-fns';
 @Component({
   selector: 'app-search-staffs',
   standalone: true,
-  imports: [FormsModule, CommonModule, SidebarComponent, ReactiveFormsModule, RouterModule],
+  imports: [FormsModule,CommonModule, SidebarComponent, ReactiveFormsModule, RouterModule],
   templateUrl: './search-staffs.component.html',
   styleUrls: ['./search-staffs.component.scss']
 })
@@ -21,6 +21,9 @@ export class SearchStaffsComponent implements OnInit {
   specializations: any[] = [];
   selectedStaff: any = null;
   infoMessage: string = '';
+  showAvailabilityModal: boolean = false;
+  availabilitySlots: string[] = [];
+
 
   constructor(private fb: FormBuilder, private staffService: StaffService) {
     this.searchForm = this.fb.group({
@@ -52,6 +55,7 @@ export class SearchStaffsComponent implements OnInit {
   loadStaffProfiles(): void {
     this.staffService.getAllStaffs().subscribe({
       next: (data) => {
+        console.log("Data staff profiles:\n", data);
         this.staffProfiles = data;
       },
       error: (error) => {
@@ -81,15 +85,16 @@ export class SearchStaffsComponent implements OnInit {
     const searchCriteria = {
       firstName: this.searchForm.value.firstName?.trim() || '',
       lastName: this.searchForm.value.lastName?.trim() || '',
-      fullName: this.searchForm.value.fullName!,
+      fullName: this.searchForm.value.fullName?.trim() || '',
       email: this.searchForm.value.email?.trim() || '',
-      specializationName: this.searchForm.value.specializationName!
+      specializationName: this.searchForm.value.specializationName?.trim() || '',
     };
 
     if (Object.values(searchCriteria).every(value => !value)) {
       this.errorMessage = "At least one search parameter is required.";
       return;
     }
+    console.log("Search criteria", searchCriteria);
 
     this.infoMessage='';
 
@@ -98,7 +103,6 @@ export class SearchStaffsComponent implements OnInit {
         next: (response) => {
           this.errorMessage = '';
           if (Array.isArray(response)) {
-            
             this.staffProfiles = response;
           } else {
             this.staffProfiles = [];
@@ -156,5 +160,4 @@ export class SearchStaffsComponent implements OnInit {
     const now = new Date();
     return (isNaN(date.getTime()) || date < now) ? null : date;
   }
-  
 }
