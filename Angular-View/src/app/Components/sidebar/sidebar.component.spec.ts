@@ -2,32 +2,71 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { SidebarComponent } from './sidebar.component';
+import { PanelService } from '../../Services/panel.service';
 import { SettingsService } from '../../Services/settings.service';
+import { of } from 'rxjs';
+import { jwtDecode } from 'jwt-decode';
 
-// Test suite for SidebarComponent
-// Author: Vasco Sousa (1221700)
-// Last Updated: 11/11/2024
+jest.mock('jwt-decode', () => ({
+  jwtDecode: jest.fn()
+}));
 
 describe('SidebarComponent', () => {
   let component: SidebarComponent;
   let fixture: ComponentFixture<SidebarComponent>;
+  let panelServiceMock: jest.Mocked<PanelService>;
+  let settingsServiceMock: jest.Mocked<SettingsService>;
 
   beforeEach(async () => {
-    // Set up the testing module for SidebarComponent
+    panelServiceMock = {
+      panelId$: of('test-panel-id')
+    } as any;
+
+    settingsServiceMock = {
+      settingsId$: of('test-settings-id')
+    } as any;
+
     await TestBed.configureTestingModule({
       imports: [HttpClientTestingModule, RouterTestingModule, SidebarComponent],
-      providers: [SettingsService]
+      providers: [
+        { provide: PanelService, useValue: panelServiceMock },
+        { provide: SettingsService, useValue: settingsServiceMock }
+      ]
     })
     .compileComponents();
 
-    // Create the component and trigger change detection
     fixture = TestBed.createComponent(SidebarComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
 
-  // Test to check if the component is created successfully
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should initialize panelId and settingsId', () => {
+    expect(component.panelId).toBe('test-panel-id');
+    expect(component.settingsId).toBe('test-settings-id');
+  });
+
+  it('should decode token and set name and role', () => {
+    const mockToken = 'mock-token';
+    const mockDecodedToken = {
+      'http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name': 'Test User',
+      'http://schemas.microsoft.com/ws/2008/06/identity/claims/role': 'Admin'
+    };
+    localStorage.setItem('token', mockToken);
+    (jwtDecode as jest.Mock).mockReturnValue(mockDecodedToken);
+
+    component.ngOnInit();
+
+    expect(component.name).toBe('Test User');
+    expect(component.role).toBe('Admin');
+  });
+
+  it('should handle logout', () => {
+    localStorage.setItem('token', 'mock-token');
+    component.logout();
+    expect(localStorage.getItem('token')).toBeNull();
   });
 });

@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 import { RouterTestingModule } from '@angular/router/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 
 import { UpdatePatientComponent } from './update-patient.component';
 import { SidebarComponent } from '../sidebar/sidebar.component';
@@ -16,12 +16,12 @@ describe('UpdatePatientComponent', () => {
   beforeEach(async () => {
     mockPatientService = {
       getPatientsWithAdvancedFilter: jasmine.createSpy('getPatientsWithAdvancedFilter').and.returnValue(of([{
-        firstName: 'John',
-        lastName: 'Doe',
-        fullName: 'John Doe',
-        email: 'john.doe@example.com',
-        phoneNumber: '1234567890',
-        emergencyContact: 'Jane Doe',
+        firstName: 'Test',
+        lastName: 'Patient',
+        fullName: 'Test Patient',
+        email: 'test@example.com',
+        phoneNumber: '+1234567890',
+        emergencyContact: '+1234567890',
         medicalConditions: 'None'
       }])),
       updatePatient: jasmine.createSpy('updatePatient').and.returnValue(of({}))
@@ -30,7 +30,7 @@ describe('UpdatePatientComponent', () => {
     await TestBed.configureTestingModule({
       imports: [FormsModule, RouterTestingModule, HttpClientTestingModule, UpdatePatientComponent, SidebarComponent],
       providers: [
-        { provide: PatientService, useValue: mockPatientService }
+        { provide: PatientService, useValue: mockPatientService },
       ]
     })
     .compileComponents();
@@ -43,6 +43,10 @@ describe('UpdatePatientComponent', () => {
       writable: true
     });
 
+    window.alert = jest.fn();
+    console.error = jest.fn();
+    console.log = jest.fn();
+
     fixture = TestBed.createComponent(UpdatePatientComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
@@ -50,5 +54,35 @@ describe('UpdatePatientComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should fetch patient details on init', () => {
+    component.ngOnInit();
+    expect(mockPatientService.getPatientsWithAdvancedFilter).toHaveBeenCalled();
+    expect(component.existingPatient.firstName).toBe('Test');
+  });
+
+  it('should update patient details', () => {
+    component.existingPatient.firstName = 'Updated';
+    component.updatePatientDetails(new Event('submit'));
+    expect(mockPatientService.updatePatient).toHaveBeenCalledWith('202411000001', component.existingPatient);
+  });
+
+  it('should handle error when updating patient details', () => {
+    mockPatientService.updatePatient.and.returnValue(throwError({ error: 'Update failed' }));
+    spyOn(window, 'alert');
+    component.updatePatientDetails(new Event('submit'));
+    expect(window.alert).toHaveBeenCalledWith('Error updating patient[object Object]');
+  });
+
+  it('should clear the form', () => {
+    component.clearForm();
+    expect(component.existingPatient.firstName).toBe('');
+    expect(component.existingPatient.lastName).toBe('');
+    expect(component.existingPatient.fullName).toBe('');
+    expect(component.existingPatient.email).toBe('');
+    expect(component.existingPatient.phoneNumber).toBe('');
+    expect(component.existingPatient.emergencyContact).toBe('');
+    expect(component.existingPatient.medicalConditions).toBe('');
   });
 });

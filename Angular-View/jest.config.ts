@@ -174,7 +174,7 @@ const config: Config = {
   // testResultsProcessor: undefined,
 
   // This option allows use of a custom test runner
-  testRunner: "jest-jasmine2",
+  testRunner: "jasmine2",
 
   // A map from regular expressions to paths to transformers
   // transform: undefined,

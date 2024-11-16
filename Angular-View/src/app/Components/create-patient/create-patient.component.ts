@@ -1,3 +1,4 @@
+import { PanelService } from './../../Services/panel.service';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { SidebarComponent } from '../sidebar/sidebar.component';
@@ -42,7 +43,11 @@ export class CreatePatientComponent {
    * @param {PatientService} patientService
    * @vscosousa - 12/11/2024
    */
-  constructor(private patientService: PatientService, private router: Router) {}
+  constructor(private patientService: PatientService, private router: Router, private panelService: PanelService) { }
+
+  ngOnInit() {
+    this.panelService.setPanelId('panel-admin');
+  }
 
   /**
    * Handles the form submission to create a new patient.

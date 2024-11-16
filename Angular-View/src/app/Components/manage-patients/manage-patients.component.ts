@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { PatientService } from '../../Services/patient.service';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import { PanelService } from '../../Services/panel.service';
 
 /**
  * @class ManagePatientsComponent
@@ -29,7 +30,7 @@ export class ManagePatientsComponent {
    * @param {PatientService} patientService
    * @vscosousa - 12/11/2024
    */
-  constructor(private patientService: PatientService) { }
+  constructor(private patientService: PatientService, private panelService: PanelService) { }
 
   /**
    * Lifecycle hook that is called after data-bound properties of a directive are initialized.
@@ -37,6 +38,7 @@ export class ManagePatientsComponent {
    * @vscosousa - 12/11/2024
    */
   ngOnInit(): void {
+    this.panelService.setPanelId('panel-admin');
     this.clearFilters();
   }
 
