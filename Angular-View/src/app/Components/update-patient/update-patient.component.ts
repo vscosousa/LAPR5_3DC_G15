@@ -3,6 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { SidebarComponent } from "../sidebar/sidebar.component";
 import { PatientService } from '../../Services/patient.service';
 import { Router, RouterModule } from '@angular/router';
+import { PanelService } from '../../Services/panel.service';
 
 @Component({
   selector: 'app-update-patient',
@@ -22,9 +23,10 @@ export class UpdatePatientComponent {
     medicalConditions: ''
   };
 
-  constructor(private patientService: PatientService, private router: Router) { }
+  constructor(private patientService: PatientService, private router: Router, private panelService: PanelService) { }
 
   ngOnInit() {
+    this.panelService.setPanelId('panel-admin');
     this.getPatient();
   }
 

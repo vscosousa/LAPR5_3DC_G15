@@ -22,8 +22,20 @@ describe('NotFoundComponent', () => {
     fixture.detectChanges();
   });
 
-  // Test to check if the component is created successfully
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should have a 404 image', () => {
+    const compiled = fixture.nativeElement as HTMLElement;
+    const image = compiled.querySelector('img[alt="Page not found image"]');
+    expect(image).toBeTruthy();
+  });
+
+  it('should have a link to the home page', () => {
+    const compiled = fixture.nativeElement as HTMLElement;
+    const homeLink = compiled.querySelector('a[href="/"]');
+    expect(homeLink).toBeTruthy();
+    expect(homeLink?.textContent).toContain('Go to Home Page');
   });
 });
