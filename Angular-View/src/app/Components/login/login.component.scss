@@ -100,15 +100,11 @@
   justify-content: center;
 }
 
-.login-left .btn-google {
+.login-left #google-signin-button {
+  margin-top: 1rem;
   background-color: #ffffff;
   color: #4a90e2;
   margin-bottom: 0.5rem; // Reduced margin
-}
-
-.login-left .btn-google img {
-  width: 25px; // Reduced width
-  margin-right: 0.3rem; // Reduced margin
 }
 
 .login-left .btn-signin {

@@ -1,8 +1,9 @@
 import { Component } from '@angular/core';
 import { RegisterService } from '../../Services/register.service';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule, ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import { jwtDecode } from 'jwt-decode';
 
 /**
  * @class RegisterComponent
@@ -34,7 +35,22 @@ export class RegisterComponent {
    * @param {Router} router
    * @vscosousa - 08/11/2024
    */
-  constructor(private registerService: RegisterService, private router: Router) { }
+  constructor(private registerService: RegisterService, private router: Router,     private route: ActivatedRoute
+  ) { }
+
+  ngOnInit(): void {
+    this.route.queryParams.subscribe(params => {
+      if (Object.keys(params).length > 0) {
+        console.log('Query parameters:', params);
+        if (params['token']) {
+          const decodedToken: any = jwtDecode(params['token']);
+          if (decodedToken && decodedToken.email) {
+            this.registerForm.get('email')?.setValue(decodedToken.email);
+          }
+        }
+      }
+    });
+  }
 
   /**
    * Toggles the visibility of the password fields.
@@ -83,3 +99,4 @@ export class RegisterComponent {
     );
   }
 }
+

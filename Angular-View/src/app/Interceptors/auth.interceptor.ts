@@ -30,12 +30,14 @@ export class AuthInterceptor implements HttpInterceptor {
       '/login',
       '/register',
       '/delete-user',
-      '/activate-patient-user'
+      '/activate-patient-user',
     ];
 
     const isNonAuthUrl = nonAuthUrls.some(url => req.url.includes(url));
+    const skipInterceptor = req.headers.has('X-Skip-Interceptor');
     console.log('Request URL:', req.url);
     console.log('Is Non-Auth URL:', isNonAuthUrl);
+    console.log('Skip Interceptor:', skipInterceptor);
 
     let authToken = '';
     if (typeof window !== 'undefined' && localStorage) {
@@ -43,7 +45,7 @@ export class AuthInterceptor implements HttpInterceptor {
       console.log('Auth Token:', authToken);
     }
 
-    if (authToken && !isNonAuthUrl) {
+    if (authToken && !isNonAuthUrl && !skipInterceptor) {
       const authReq = req.clone({
         setHeaders: {
           Authorization: `Bearer ${authToken}`

@@ -56,7 +56,7 @@ namespace DDDSample1.Controllers
         {
             if (string.IsNullOrWhiteSpace(dto.Email))
             {
-                return NotFound( "Email is required." );
+                return NotFound("Email is required.");
             }
 
             try
@@ -76,7 +76,7 @@ namespace DDDSample1.Controllers
 
         // POST: api/PasswordReset/Reset
         [HttpPost("ResetPassword"), AllowAnonymous]
-        public async Task<IActionResult> ResetPassword([FromQuery]string token, ResetPasswordDTO dto)
+        public async Task<IActionResult> ResetPassword([FromQuery] string token, ResetPasswordDTO dto)
         {
             if (string.IsNullOrWhiteSpace(token))
             {
@@ -227,7 +227,7 @@ namespace DDDSample1.Controllers
         }
 
         //update user patient profile
-        [HttpPost("UpdateUserPatient"), Authorize (Roles = "Patient")]
+        [HttpPost("UpdateUserPatient"), Authorize(Roles = "Patient")]
         public async Task<IActionResult> UpdateUserPatient(string token, UpdatePatientUserDTO userDTO)
         {
             try
@@ -240,5 +240,45 @@ namespace DDDSample1.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
+
+        [HttpPost("Google")]
+        [AllowAnonymous]
+        public async Task<IActionResult> Google([FromBody] GoogleTokenDTO googleTokenDTO)
+        {
+            try
+            {
+                if (googleTokenDTO == null || string.IsNullOrEmpty(googleTokenDTO.Token))
+                {
+                    return BadRequest("Token is null or empty.");
+                }
+
+                var payload = await _userService.ValidateGoogleToken(googleTokenDTO.Token);
+                if (payload == null)
+                {
+                    return Unauthorized("Invalid Google token.");
+                }
+
+                var user = new { Name = payload.Name, Email = payload.Email };
+
+                var token = _userService.CheckGoogleToken(user.Email);
+
+                if (token == null)
+                {
+                    return Unauthorized("User with email " + user.Email + "and name " + user.Name + "not found.");
+                }
+
+                return Ok(token);
+            }
+            catch (Exception ex)
+            {
+                // Log the exception details
+                return BadRequest($"Error: {ex.Message}");
+            }
+        }
     }
+}
+
+public class GoogleTokenDTO
+{
+    public string Token { get; set; }
 }

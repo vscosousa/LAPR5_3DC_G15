@@ -14,10 +14,6 @@ Description: This component displays the registration form for new users.
             <h2>Hospital Management App</h2>
         </div>
         <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
-            <a href="" class="btn btn-google">
-                <img src="google.png" alt="Google logo"> Register with Google
-            </a>
-            <option>⎯⎯ Or Register with your email ⎯⎯</option>
             <label for="email">Email</label>
             <input type="email" id="email" formControlName="email" placeholder="example@email.com" required>
             <label for="identifier">Phone Number</label>

@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Xunit.Sdk;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.Payloads;
+using Google.Apis.Auth;
 
 
 namespace DDDSample1.Domain.Users
@@ -148,6 +149,16 @@ namespace DDDSample1.Domain.Users
             var userDto = _userMapper.ToDto(user);
 
             return userDto;
+        }
+
+        public string CheckGoogleToken(string email)
+        {
+            var user = _userRepository.GetUserByEmailAsync(email).Result;
+            if (user == null)
+            {
+                return null;
+            }
+            return CreateToken(user);
         }
 
         public string CreateToken(User user)
@@ -501,6 +512,24 @@ namespace DDDSample1.Domain.Users
             await _userRepository.UpdateAsync(user);
             await _patientRepository.UpdateAsync(patient);
             await _unitOfWork.CommitAsync();
+        }
+
+        public async Task<GoogleJsonWebSignature.Payload> ValidateGoogleToken(string token)
+        {
+            var validationSettings = new GoogleJsonWebSignature.ValidationSettings
+            {
+                Audience = new[] { _configuration["GoogleSettings:GoogleClientId"] }
+            };
+
+            try
+            {
+                var payload = await GoogleJsonWebSignature.ValidateAsync(token, validationSettings);
+                return payload;
+            }
+            catch (InvalidJwtException)
+            {
+                return null;
+            }
         }
     }
 }
