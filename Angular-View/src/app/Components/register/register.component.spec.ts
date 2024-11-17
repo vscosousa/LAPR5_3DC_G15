@@ -10,17 +10,22 @@ describe('RegisterComponent', () => {
   let component: RegisterComponent;
   let fixture: ComponentFixture<RegisterComponent>;
   let registerServiceMock: jest.Mocked<RegisterService>;
+  let activatedRouteMock: any;
 
   beforeEach(async () => {
     const mockRegisterService = {
       register: jest.fn().mockReturnValue(of({}))
     };
 
+    activatedRouteMock = {
+      queryParams: of({ token: 'mockToken' })
+    };
+
     await TestBed.configureTestingModule({
       imports: [HttpClientTestingModule, ReactiveFormsModule, RegisterComponent],
       providers: [
         { provide: RegisterService, useValue: mockRegisterService },
-        { provide: ActivatedRoute, useValue: { params: of({}) } }
+        { provide: ActivatedRoute, useValue: activatedRouteMock }
       ]
     })
     .compileComponents();
