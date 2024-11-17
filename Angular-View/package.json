@@ -28,6 +28,7 @@
     "@angular/ssr": "^18.0.5",
     "@react-oauth/google": "^0.12.1",
     "@types/three": "^0.169.0",
+    "angular-calendar": "^0.31.1",
     "angular-view": "file:",
     "bootstrap": "^5.3.3",
     "bootstrap-icons": "^1.11.3",

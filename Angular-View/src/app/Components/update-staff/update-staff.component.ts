@@ -2,13 +2,14 @@ import { Component, OnInit} from '@angular/core';
 import { FormsModule, ReactiveFormsModule, FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { StaffService } from '../../Services/staff-sevice.service'; 
-import { SidebarComponent } from '../sidebar/sidebar.component';
 import { RouterModule, Router, ActivatedRoute } from '@angular/router';
+import { SidebarComponent } from "../sidebar/sidebar.component";
+import { AvailabilityModalComponent } from '../view-availability/availability-modal/availability-modal.component';
 
 @Component({
   selector: 'app-update-staff',
   standalone: true,
-  imports: [FormsModule, CommonModule, SidebarComponent, ReactiveFormsModule, RouterModule],
+  imports: [FormsModule, CommonModule, AvailabilityModalComponent, SidebarComponent, ReactiveFormsModule, RouterModule],
   templateUrl: './update-staff.component.html',
   styleUrl: './update-staff.component.scss'
 })
@@ -88,9 +89,9 @@ export class UpdateStaffComponent implements OnInit {
       const updateData = {
         phoneNumber: (this.updateStaffForm.value.identifier?.trim() || '') + (this.updateStaffForm.value.phoneNumber?.trim() || ''),
         email: this.updateStaffForm.value.email?.trim() || '',
-        addAvailabilitySlots: this.updateStaffForm.value.addAvailabilitySlots?.trim() || '',
-        removeAvailabilitySlots: this.updateStaffForm.value.removeAvailabilitySlots?.trim() || '',
-        specializationName: this.updateStaffForm.value.specializationName || ''
+        addAvailabilitySlots:'',
+        removeAvailabilitySlots:'',
+        specializationName: this.updateStaffForm.value.specializationName?.trim() || '',
       };
       
       if (Object.values(updateData).every(value => !value)) {
@@ -116,7 +117,6 @@ export class UpdateStaffComponent implements OnInit {
       });
     }
 
-    
 }
 
 

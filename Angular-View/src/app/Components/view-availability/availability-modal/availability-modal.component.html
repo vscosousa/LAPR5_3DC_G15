@@ -1,0 +1,23 @@
+<div class="modal" (click)="onModalClick($event)">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <h2>Select Availability</h2>
+    <form [formGroup]="availabilityForm" (ngSubmit)="onSubmit()">
+      <label for="date">Date</label>
+      <input type="date" id="date" formControlName="date" required>
+
+
+      <label for="hours">Select Hours</label>
+      <div formArrayName="selectedHours">
+        <div *ngFor="let hour of hours; let i = index">
+          <input type="checkbox" [formControlName]="i" title="Select hour"> {{ hour }}
+        </div>
+      </div>
+
+      <div *ngIf="errorMessage" class="error-message">
+        {{ errorMessage }}
+      </div>
+    
+      <button type="submit" [disabled]="availabilityForm.invalid">Confirm</button>
+    </form>
+  </div>
+</div>
