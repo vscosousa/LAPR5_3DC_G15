@@ -40,13 +40,27 @@ export default class UserInteraction {
 
         // Create the ambient light folder
         const ambientLightFolder = lightsFolder.addFolder("Ambient light");
+        ambientLightFolder.add(lights.object.ambientLight, "visible").listen();
         const ambientLight = lights.object.ambientLight;
         const ambientColor = { color: "#" + new THREE.Color(ambientLight.color).getHexString() };
         ambientLightFolder.addColor(ambientColor, "color").onChange(color => colorCallback(ambientLight, color));
         ambientLightFolder.add(lights.object.ambientLight, "intensity", 0.0, 1.0, 0.01);
 
+        // Create the directional light folder
+        const directionalLightFolder = lightsFolder.addFolder("Directional light");
+        directionalLightFolder.add(lights.object.directionalLight, "visible").listen();
+        const directionalLight = lights.object.directionalLight;
+        const directionalColor = { color: "#" + new THREE.Color(directionalLight.color).getHexString() };
+        directionalLightFolder.addColor(directionalColor, "color").onChange(color => colorCallback(directionalLight, color));
+        directionalLightFolder.add(lights.object.directionalLight, "intensity", 0.0, 1.0, 0.01);
+        directionalLightFolder.add(lights.object.directionalLight.position, "x", -100, 100, 0.01);
+        directionalLightFolder.add(lights.object.directionalLight.position, "y", -100, 100, 0.01);
+        directionalLightFolder.add(lights.object.directionalLight.position, "z", -100, 100, 0.01);
+
         // Create point light #1 folder
         const pointLight1Folder = lightsFolder.addFolder("Point light #1");
+        pointLight1Folder.close();
+        pointLight1Folder.add(lights.object.pointLight1, "visible").listen();
         const pointLight1 = lights.object.pointLight1;
         const pointColor1 = { color: "#" + new THREE.Color(pointLight1.color).getHexString() };
         pointLight1Folder.addColor(pointColor1, "color").onChange(color => colorCallback(pointLight1, color));
@@ -58,6 +72,8 @@ export default class UserInteraction {
 
         // Create point light #2 folder
         const pointLight2Folder = lightsFolder.addFolder("Point light #2");
+        pointLight2Folder.close();
+        pointLight2Folder.add(lights.object.pointLight2, "visible").listen();
         const pointLight2 = lights.object.pointLight2;
         const pointColor2 = { color: "#" + new THREE.Color(pointLight2.color).getHexString() };
         pointLight2Folder.addColor(pointColor2, "color").onChange(color => colorCallback(pointLight2, color));
@@ -70,14 +86,6 @@ export default class UserInteraction {
         // Create the shadows folder
         const shadowsFolder = this.gui.addFolder("Shadows");
         shadowsFolder.add(renderer.shadowMap, "enabled").onChange(enabled => shadowsCallback(enabled));
-
-        // Create the fog folder
-        const fogFolder = this.gui.addFolder("Fog");
-        const fogColor = { color: "#" + new THREE.Color(fog.color).getHexString() };
-        fogFolder.add(fog, "enabled").listen();
-        fogFolder.addColor(fogColor, "color").onChange(color => colorCallback(fog.object, color));
-        fogFolder.add(fog.object, "near", 0.01, 1.0, 0.01);
-        fogFolder.add(fog.object, "far", 1.01, 20.0, 0.01);
 
         // Create the character folder
         const characterFolder = this.gui.addFolder("Character");

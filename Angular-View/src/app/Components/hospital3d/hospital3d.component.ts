@@ -4,6 +4,7 @@ import { isPlatformBrowser } from '@angular/common';
 import * as THREE from "three";
 import Orientation from "./Thumb Raiser/orientation";
 import ThumbRaiser from "./Thumb Raiser/thumb_raiser_template";
+import { dir } from 'console';
 
 @Component({
   selector: 'app-hospital3d',
@@ -24,9 +25,10 @@ export class Hospital3dComponent implements OnInit, AfterViewInit {
       { scale: new THREE.Vector3(1.0, 0.5, 1.0) }, // Maze parameters
       {}, // Player parameters
       {
-        ambientLight: { intensity: 0.1 },
+        ambientLight: { intensity: 0.5 },
         pointLight1: { intensity: 50.0, distance: 20.0, position: new THREE.Vector3(-3.5, 10.0, 2.5) },
-        pointLight2: { intensity: 50.0, distance: 20.0, position: new THREE.Vector3(3.5, 10.0, -2.5) }
+        pointLight2: { intensity: 50.0, distance: 20.0, position: new THREE.Vector3(3.5, 10.0, -2.5) },
+        directionalLight: { intensity: 0.5, position: new THREE.Vector3(0.0, 10.0, 0.0) }
       }, // Lights parameters
       {}, // Fog parameters
       { view: "fixed", multipleViewsViewport: new THREE.Vector4(0.0, 1.0, 0.45, 0.5) },
