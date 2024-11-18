@@ -2,6 +2,8 @@ import * as THREE from "three";
 import Ground from "./ground_template.js";
 import Wall from "./wall_template.js";
 import Door from "./door_template.js";
+import Table from "./table.js";
+import Human from "./human.js";
 
 /*
  * parameters = {
@@ -12,12 +14,15 @@ import Door from "./door_template.js";
  */
 
 export default class Maze {
-    constructor(parameters) {
+    constructor(parameters, doorParameters, tableParameters, humanParameters) {
         this.onLoad = function (description) {
             // Store the maze's map and size
             this.map = description.map;
             this.doorMap = description.doorMap;
             this.size = description.size;
+            this.doorParameters = doorParameters;
+            this.tableParameters = tableParameters;
+            this.humanParameters = humanParameters;
 
             // Store the player's initial position and direction
             this.initialPosition = this.cellToCartesian(description.initialPosition);
@@ -32,11 +37,12 @@ export default class Maze {
 
             // Create a wall
             this.wall = new Wall({ textureUrl: description.wallTextureUrl });
-            this.door = new Door({ textureUrl: description.doorTextureUrl });
 
             // Build the maze
             let wallObject;
             let doorObject;
+            let tableObject;
+            let humanObject;
             for (let i = 0; i <= description.size.width; i++) { // In order to represent the eastmost walls, the map width is one column greater than the actual maze width
                 for (let j = 0; j <= description.size.height; j++) { // In order to represent the southmost walls, the map height is one row greater than the actual maze height
                     /*
@@ -69,15 +75,44 @@ export default class Maze {
                         this.object.add(wallObject);
                     }
 
-                    if (description.doorMap[j][i] == 1) {
-                        doorObject = this.door.object.clone();
-                        doorObject.position.set(i - description.size.width / 2 + 0.5, 0.5, j - description.size.height / 2);
-                        this.object.add(doorObject);
+                    if (description.doorMap[j][i] == 1 || description.doorMap[j][i] == 2) {
+                        doorObject = this.door = new Door(this.doorParameters);
+                        doorObject.object.position.set(i - description.size.width / 2 + 0.5, 0.5, j - description.size.height / 2);
+                        doorObject.object.scale.set(0.0035,0.00635,0);
+                        doorObject.object.translateY(-0.6);
+                        //se a porta estiver na parede norte
+                        if(description.map[j][i] == 1){
+                        doorObject.object.translateZ(0.3);
+                        }
+                        //se a porta estiver na parede sul
+                        if(description.map[j][i] == 2){
+                        doorObject.object.translateZ(-0.029);
+                        }
+                        this.object.add(doorObject.object);
                     }
+                    if(description.tableMap[j][i] == 1) {
+                        tableObject = this.table = new Table(this.tableParameters);
+                        tableObject.object.position.set(i - description.size.width / 2 + 0.5, 0.5, j - description.size.height / 2);
+                        tableObject.object.scale.set(1, 0.68, 1);
+                        tableObject.object.translateX(-0.6);
+                        tableObject.object.translateY(-0.2);
+                        this.object.add(tableObject.object);
+
+                        humanObject = this.human = new Human(this.humanParameters);
+                        humanObject.object.position.set(i - description.size.width / 2 + 0.5, 0.5, j - description.size.height / 2);
+                        humanObject.object.scale.set(1.2, 1, 1);
+                        humanObject.object.rotateX(Math.PI / 2.0);
+                        humanObject.object.rotateY((Math.PI / 2.0)*2);
+                        humanObject.object.rotateZ((Math.PI/2.0));
+                        humanObject.object.translateY(-1.5);
+                        humanObject.object.translateZ(0.47);
+                        this.object.add(humanObject.object);
+                    }  
                 }
             }
 
             this.object.scale.set(this.scale.x, this.scale.y, this.scale.z);
+            
             this.loaded = true;
         }
 
@@ -153,6 +188,9 @@ export default class Maze {
         if (this.map[indices[0]][indices[1]] == 2 || this.map[indices[0]][indices[1]] == 3) {
             return position.z - this.cellToCartesian(indices).z + this.scale.z / 2.0;
         }
+        if(this.doorMap[indices[0]][indices[1]] == 1 || this.doorMap[indices[0]][indices[1]] == 2) {
+            return position.z - this.cellToCartesian(indices).z + this.scale.z / 2.0;
+        }
         return Infinity;
     }
 
@@ -162,6 +200,13 @@ export default class Maze {
         if (this.map[indices[0]][indices[1]] == 2 || this.map[indices[0]][indices[1]] == 3) {
             return this.cellToCartesian(indices).z - this.scale.z / 2.0 - position.z;
         }
+        if(this.doorMap[indices[0]][indices[1]] == 1 || this.doorMap[indices[0]][indices[1]] == 2) {
+            return this.cellToCartesian(indices).z - this.scale.z / 2.0 - position.z;
+        }
         return Infinity;
+    }
+
+    getDoor() {
+        return this.door;
     }
 }

@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import Orientation from "./orientation.js";
 
+
 export const generalData = {
     setDevicePixelRatio: false
 }
@@ -56,6 +57,16 @@ export const cameraData = {
 }
 
 export const doorData = {
-    url: "/models/gltf/RobotExpressive/door.glb",
-    scale : new THREE.Vector3(0.1, 0.1, 0.1),
+    url: "/models/gltf/RobotExpressive/double_doors.glb",
+    scale: new THREE.Vector3(0.95,0.95, 0.05) // Adjusted scale to match wall dimensions
+}
+
+export const tableData = {
+    url: "/models/gltf/RobotExpressive/hospital_bed.glb",
+    scale: new THREE.Vector3(1,1,1)
+}
+
+export const humanData = {
+    url: "/models/gltf/RobotExpressive/human.glb",
+    scale: new THREE.Vector3(1,1,1)
 }
