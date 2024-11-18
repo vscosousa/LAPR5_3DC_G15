@@ -148,8 +148,10 @@ export class SearchStaffsComponent implements OnInit {
         if (error.status === 400) {
           const errorMessage = error.error.message;
           this.errorMessage = errorMessage;
+        } else if (error.status === 401){
+          alert('Unauthorized page access');
         } else {
-          alert('Search Staff failed - ' + error.error);
+          alert('Updating failed - ' + error.error);
         }
       }
     });

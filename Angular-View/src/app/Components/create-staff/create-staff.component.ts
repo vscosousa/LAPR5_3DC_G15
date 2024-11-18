@@ -101,8 +101,10 @@ export class CreateStaffComponent implements OnInit{
           if (error.status === 400) {
             const errorResponse = JSON.parse(error.error);
             this.errorMessage =  errorResponse.message;
+          } else if (error.status === 401){
+            alert('Unauthorized page access');
           } else {
-            alert('Create Staff failed - ' + error.error);
+            alert('Updating failed - ' + error.error);
           }
         }
       });

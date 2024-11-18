@@ -4,12 +4,11 @@ import { CommonModule } from '@angular/common';
 import { StaffService } from '../../Services/staff-sevice.service'; 
 import { RouterModule, Router, ActivatedRoute } from '@angular/router';
 import { SidebarComponent } from "../sidebar/sidebar.component";
-import { AvailabilityModalComponent } from '../view-availability/availability-modal/availability-modal.component';
 
 @Component({
   selector: 'app-update-staff',
   standalone: true,
-  imports: [FormsModule, CommonModule, AvailabilityModalComponent, SidebarComponent, ReactiveFormsModule, RouterModule],
+  imports: [FormsModule, CommonModule, SidebarComponent, ReactiveFormsModule, RouterModule],
   templateUrl: './update-staff.component.html',
   styleUrl: './update-staff.component.scss'
 })
@@ -110,8 +109,10 @@ export class UpdateStaffComponent implements OnInit {
             if (error.status === 400) {
               const errorResponse = error.error;
               this.errorMessage =  errorResponse.message;
+            } else if (error.status === 401){
+              alert('Unauthorized page access');
             } else {
-              alert('Create Updating failed - ' + error.error);
+              alert('Updating failed - ' + error.error);
             }
           }
       });

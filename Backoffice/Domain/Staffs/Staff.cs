@@ -102,12 +102,10 @@ namespace DDDSample1.Domain.Staffs
             if (!DateTime.TryParseExact(remSlot.ToString("yyyy/MM/dd HH:mm"), "yyyy/MM/dd HH:mm", null, System.Globalization.DateTimeStyles.None, out _))
                 throw new BusinessRuleValidationException("Availability slot must be in the format YYYY/MM/DD HH:mm:ss.");
 
-            if (!_availabilitySlots.Contains(remSlot))
+            if (_availabilitySlots.Contains(remSlot))
             {
-                throw new BusinessRuleValidationException("The specified old availability slot does not exist.");
+                _availabilitySlots = _availabilitySlots.Where(slot => slot != remSlot).ToArray();
             }
-
-            _availabilitySlots = _availabilitySlots.Where(slot => slot != remSlot).ToArray();
         }
 
 

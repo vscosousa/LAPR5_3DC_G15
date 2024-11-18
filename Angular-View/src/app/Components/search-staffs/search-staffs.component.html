@@ -4,43 +4,48 @@
     <div class="screens-container">
 
       <div class="screen">
+  
+        <button type="button" routerLink="/panel-admin" class="btn-back">  Back to DashBoard </button>
 
-        <button type="button" routerLink="/create-staff" class="btn btn-create">  Create Staff </button>
-
+        
         <h2 class="manage-title">Search Staff Profiles</h2>
-
+        
         <div class="content-container">
-
+          
           <form class="filter-form" [formGroup]="searchForm" (ngSubmit)="onSearch()">
-
+            
             <input  type="text" placeholder="First Name" formControlName="firstName"/>
-
+            
             <input type="text" placeholder="Last Name" formControlName="lastName"/>
-
+            
             <input type="text" placeholder="Full Name" formControlName="fullName"/>
-
+            
             <input  type="email"  placeholder="Email"  formControlName="email"/>
-
+            
             <select formControlName="specializationName" title="Specialization">
               <option value="" hidden>Select Specialization</option>
               <option *ngFor="let specialization of specializations" [value]="specialization.specOption">
                 {{ specialization.specOption }}
               </option>
             </select>
-
+            
             <div *ngIf="errorMessage" class="error-message">
-                {{ errorMessage }}
+              {{ errorMessage }}
             </div>
 
             <div *ngIf="infoMessage" class="info-message">
               {{ infoMessage }}
-          </div>
-
+            </div>
+            
             <button type="submit" class="btn btn-filter" >Search</button>
             <button type="reset" class="btn btn-clear" (click)="clearFilters()"> Clear Filters </button>
-
+            
+            <div class="operation">
+              <p> Others operation</p>
+              <button type="button" routerLink="/create-staff" class="btn-create">  Create Staff </button>
+            </div>
+    
           </form>
-  
           <div class="table-container">
             <table class="table">
               <thead>

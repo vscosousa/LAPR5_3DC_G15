@@ -1,38 +1,61 @@
-<app-sidebar></app-sidebar>
 <div class="view-availability-staff-container">
-  <div class="view-availability-staff-middle">
-    <div class="top">
-      <button type="button" class="back-button" routerLink="/search-staffs"> Go Back</button>
-      <h2>Availability for Staff</h2>
-      <h3>{{ staffName }}</h3>
+  <app-sidebar></app-sidebar>
+  <div class="screens-container">
+    <div class="view-availability-staff-screen">
+      <div class="top">
+        <button type="button" class="btn-availability" (click)="toggleEditAvailability()">Edit Availability Slots</button>
+        <button type="button" class="btn-back" routerLink="/search-staffs"> Go Back</button>
+        <h2>Availability for Staff</h2>
+        <h3>{{ staffName }}</h3>
+      </div>
+
+      <div class="page-body">
+        <div class="calendar-body">
+          
+          <div class="calendar-navigation">
+            <button type="button" (click)="previousWeek()">Previous Week</button>
+            <input type="date" [value]="viewDate | date:'yyyy-MM-dd'" (change)="onDateChange($event)" title="Select date" placeholder="Select date">
+            <button type="button" (click)="nextWeek()">Next Week</button>
+          </div>
+
+          <div class="calendar-container">
+            <mwl-calendar-week-view
+              [viewDate]="viewDate"
+              [events]="events"
+              [hourSegments]="1"
+              [dayStartHour]="0"
+              [dayEndHour]="24">
+            </mwl-calendar-week-view>
+          </div>
+          
+        </div>
+      </div>
     </div>
 
-    <div class="page-body">
-      <div class="calendar-navigation">
-        <button type="button" (click)="previousWeek()">Previous Week</button>
-        <button type="button" (click)="nextWeek()">Next Week</button>
-      </div>
+    <div *ngIf="showEditAvailability" class="edit-screen">
+      <div class="staff-edit">
+        <h3>Edit Availability Slots</h3>
+        <button type="button" (click)="toggleEditAvailability()">
+          <img src="fechar.png" alt="Close" />
+        </button>
+        <form [formGroup]="availabilityForm" (ngSubmit)="onSubmit()">
+          <label for="date">Date</label>
+          <input type="date" id="date" [value]="today" formControlName="date" required (change)="onUpdateDateChange($event)">
 
-      <div class="calendar-container">
-        <mwl-calendar-week-view
-          [viewDate]="viewDate"
-          [events]="events"
-          [hourSegments]="1"
-          [dayStartHour]="0"
-          [dayEndHour]="24">
-        </mwl-calendar-week-view>
-      </div>
+          <label for="hours">Select Hours</label>
+          <div formArrayName="selectedHours">
+            <div *ngFor="let hour of hours; let i = index">
+              <input type="checkbox" [formControlName]="i" title="Select hour"> {{ hour }}
+            </div>
+          </div>
 
-      <div *ngIf="errorMessage" class="error-message">
-        {{ errorMessage }}
+          <div *ngIf="errorMessage" class="error-message">
+            {{ errorMessage }}
+          </div>
+        
+          <button type="submit">Confirm</button>
+        </form>
       </div>
-
-      <div class="calendar-navigation">
-        <button type="button" (click)="openAvailabilityModal('add')">Add Availability Slots</button>
-        <button type="button" (click)="openAvailabilityModal('remove')">Remove Availability Slots</button>
-      </div>
-
     </div>
-    <app-availability-modal *ngIf="showAvailabilityModal" (availabilitySelected)="onAvailabilitySelected($event)" (closeModal)="closeAvailabilityModal()"></app-availability-modal>
   </div>
 </div>
