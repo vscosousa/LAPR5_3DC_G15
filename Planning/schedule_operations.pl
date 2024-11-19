@@ -1,46 +1,98 @@
-
 :- dynamic availability/3.
 :- dynamic agenda_staff/3.
 :- dynamic agenda_staff1/3.
 :-dynamic agenda_operation_room/3.
 :-dynamic agenda_operation_room1/3.
+:-dynamic better_sol/5.
 
-
+%agenda_staff(StaffId,Data,[(Tin,Tfin,PlanningType]).
+%Doctors
 agenda_staff(d001,20241028,[(720,790,m01),(1080,1140,c01)]).
 agenda_staff(d002,20241028,[(850,900,m02),(901,960,m02),(1380,1440,c02)]).
 agenda_staff(d003,20241028,[(720,790,m01),(910,980,m02)]).
+agenda_staff(d004,20241028,[(850,900,m02),(940,980,c04)]).
 
+%Anaesthetist
+%agenda_staff(a001,20241028,...).
+%agenda_staff(a002,20241028,...).
+
+%Instrumenting Nurse
+%agenda_staff(in001,20241028,...).
+%agenda_staff(in002,20241028,...).
+
+%Circulating Nurse
+%agenda_staff(cn001,20241028,...).
+%agenda_staff(cn002,20241028,...).
+
+%Nurse Anaesthetist
+%agenda_staff(na001,20241028,...).
+%agenda_staff(na002,20241028,...).
+
+%Medical Action Assistant
+%agenda_staff(maa001,20241028,...).
+%agenda_staff(maa002,20241028,...).
+
+%timetable(DoctorId,Data,WorkingHours).
 timetable(d001,20241028,(480,1200)).
-timetable(d002,20241028,(500,1440)).
-timetable(d003,20241028,(520,1320)).
+timetable(d002,20241028,(500,1440)). %15,67 h == 15h 40 min
+timetable(d003,20241028,(520,1320)). %13,34 h == 13h 20 min
+timetable(d004,20241028,(620,1020)).
 
-% first example
+%Anaesthetist
+%timetable(a001,20241028,...).
+%timetable(a002,20241028,...).
+
+%Instrumenting Nurse
+%timetable(in001,20241028,...).
+%timetable(in002,20241028,...).
+
+%Circulating Nurse
+%timetable(cn001,20241028,...).
+%timetable(cn002,20241028,...).
+
+%Nurse Anaesthetist
+%timetable(na001,20241028,...).
+%timetable(na002,20241028,...).
+
+%Medical Action Assistant
+%timetable(maa001,20241028,...).
+%timetable(maa002,20241028,...).
+
+%first example
 %agenda_staff(d001,20241028,[(720,840,m01),(1080,1200,c01)]).
-%agenda_staff(d002,20241028,[(780,900,m02),(901,960,m02),(1080,1440,c02)]).
-%agenda_staff(d003,20241028,[(720,840,m01),(900,960,m02)]).
+%agenda_staff(d002,20241028,[(850,900,m02),(901,960,m02),(1380,1440,c02)]).
+%agenda_staff(d003,20241028,[(720,790,m01),(910,980,m02)]).
 
 %timetable(d001,20241028,(480,1200)).
-%timetable(d002,20241028,(720,1440)).
-%timetable(d003,20241028,(600,1320)).
-
+%timetable(d002,20241028,(500,1440)).
+%timetable(d003,20241028,(520,1320)).
 
 staff(d001,doctor,orthopaedist,[so2,so3,so4]).
 staff(d002,doctor,orthopaedist,[so2,so3,so4]).
 staff(d003,doctor,orthopaedist,[so2,so3,so4]).
 
-%surgery(SurgeryType,TAnesthesia,TSurgery,TCleaning).
-
+%surgery(SurgeryType,PreparionTime,SurgeryTime,CleaningTime).
 surgery(so2,45,60,45).
 surgery(so3,45,90,45).
 surgery(so4,45,75,45).
 
+%surgery_id(SurgeryCode,SurgeryType)
 surgery_id(so100001,so2).
 surgery_id(so100002,so3).
 surgery_id(so100003,so4).
 surgery_id(so100004,so2).
 surgery_id(so100005,so4).
+surgery_id(so100006,so2).
+surgery_id(so100007,so3).
+surgery_id(so100008,so2).
+surgery_id(so100009,so2).
+surgery_id(so100010,so2).
+surgery_id(so100011,so4).
+%surgery_id(so100012,so2).
+%surgery_id(so100013,so2).
 
 
+%assignment_surgery(SurgeryCode,Doctor)
 assignment_surgery(so100001,d001).
 assignment_surgery(so100002,d002).
 assignment_surgery(so100003,d003).
@@ -48,13 +100,21 @@ assignment_surgery(so100004,d001).
 assignment_surgery(so100004,d002).
 assignment_surgery(so100005,d002).
 assignment_surgery(so100005,d003).
-
-
-
-
+assignment_surgery(so100006,d001).
+assignment_surgery(so100007,d003).
+assignment_surgery(so100008,d004).
+assignment_surgery(so100008,d003).
+assignment_surgery(so100009,d002).
+assignment_surgery(so100009,d004).
+assignment_surgery(so100010,d003).
+assignment_surgery(so100011,d001).
+%assignment_surgery(so100012,d001).
+%assignment_surgery(so100013,d004).
 
 agenda_operation_room(or1,20241028,[(520,579,so100000),(1000,1059,so099999)]).
 
+%Para se obter os resultados totais dos predicados
+%set_prolog_flag(answer_write_options,[max_depth(0)]).
 
 free_agenda0([],[(0,1440)]).
 free_agenda0([(0,Tfin,_)|LT],LT1):-!,free_agenda1([(0,Tfin,_)|LT],LT1).
@@ -81,6 +141,10 @@ treatfin(FinTime,[(In,_)|_],[]):-FinTime=<In,!.
 treatfin(FinTime,[(In,_)|_],[(In,FinTime)]).
 treatfin(_,[],[]).
 
+find_free_agendas(Date):-
+    retractall(availability(_,_,_)),
+    findall(_,(agenda_staff(D,Date,L),free_agenda0(L,LFA), adapt_timetable(D,Date,LFA,LFA2),
+    assertz(availability(D,Date,LFA2))),_).
 
 intersect_all_agendas([Name],Date,LA):-!,availability(Name,Date,LA).
 intersect_all_agendas([Name|LNames],Date,LI):-
@@ -117,9 +181,14 @@ intersect_availability((Ini,Fim),[(Ini1,Fim1)|LD],[(Imax,Fmin)|LI],LA):-
 min_max(I,I1,I,I1):- I<I1,!.
 min_max(I,I1,I1,I).
 
-
-
-
+%schedule_all_surgeries - explicação:
+%Os 3 retractall servem para eliminar as marcações prévias das agendas
+% e também a disponibilidade. Nas próximas 2 linhas programamos as
+% operações uma a uma nas agendas (agenda_staff/3 e agenda_operation
+% room1/3) sem perder as agendas iniciais. O próximo findall é para
+% gerir as agendas do staff e determinar a disponibilidade que têm. O
+% findall do OpCode consiste em criar uma lista com os OpCodes a agendar
+% e depois verificamos se existe uma solução para o agendamento de todas as cirurgias através de availability_all_surgeries/3
 schedule_all_surgeries(Room,Day):-
     retractall(agenda_staff1(_,_,_)),
     retractall(agenda_operation_room1(_,_,_)),
@@ -130,6 +199,16 @@ schedule_all_surgeries(Room,Day):-
     findall(OpCode,surgery_id(OpCode,_),LOpCode),
     availability_all_surgeries(LOpCode,Room,Day),!.
 
+%availability_all_surgeries - explicação:
+%Este predicado irá criar uma lista de possibilidades na sala de
+% operações. Estas possibilidades são intervalos de tempo que são iguais
+% ou superiores ao tempo de cirurgia Tsurgery.
+% O código de operação da cirurgia será então programado no primeiro
+% intervalo de tempo da lista de possibilidades
+%Depois disso, a agenda da sala de operações e as agendas do pessoal têm
+% de ser atualizadas antes de programar as outras operações (em LOpCode)
+% com uma chamada recursiva do predicado
+% disponibilidade_todas_as_cirurgias/3
 availability_all_surgeries([],_,_).
 availability_all_surgeries([OpCode|LOpCode],Room,Day):-
     surgery_id(OpCode,OpType),surgery(OpType,_,TSurgery,_),
@@ -141,8 +220,13 @@ availability_all_surgeries([OpCode|LOpCode],Room,Day):-
     insert_agenda_doctors((TinS,TfinS,OpCode),Day,LDoctors),
     availability_all_surgeries(LOpCode,Room,Day).
 
-
-
+%availability_operation - explicação:
+%Neste predicado iremos intersectar todas as agendas com os intervalos
+% de tempo livre dos médicos e gerar a agenda de tempo livre da sala e
+% intersectá-la com as interseções das agendas de tempo livre dos médicos
+% envolvidos na cirurgia específica (OpCode).
+%Finalmente, removemos os intervalos de tempo inviáveis da agenda
+% resultante (aqueles que são inferiores ao tempo de cirurgia TSurgery).
 availability_operation(OpCode,Room,Day,LPossibilities,LDoctors):-surgery_id(OpCode,OpType),surgery(OpType,_,TSurgery,_),
     findall(Doctor,assignment_surgery(OpCode,Doctor),LDoctors),
     intersect_all_agendas(LDoctors,Day,LA),
@@ -151,12 +235,10 @@ availability_operation(OpCode,Room,Day,LPossibilities,LDoctors):-surgery_id(OpCo
     intersect_2_agendas(LA,LFAgRoom,LIntAgDoctorsRoom),
     remove_unf_intervals(TSurgery,LIntAgDoctorsRoom,LPossibilities).
 
-
 remove_unf_intervals(_,[],[]).
 remove_unf_intervals(TSurgery,[(Tin,Tfin)|LA],[(Tin,Tfin)|LA1]):-DT is Tfin-Tin+1,TSurgery=<DT,!,
     remove_unf_intervals(TSurgery,LA,LA1).
 remove_unf_intervals(TSurgery,[_|LA],LA1):- remove_unf_intervals(TSurgery,LA,LA1).
-
 
 schedule_first_interval(TSurgery,[(Tin,_)|_],(Tin,TfinS)):-
     TfinS is Tin + TSurgery - 1.
@@ -172,9 +254,53 @@ insert_agenda_doctors((TinS,TfinS,OpCode),Day,[Doctor|LDoctors]):-
     assert(agenda_staff1(Doctor,Day,Agenda1)),
     insert_agenda_doctors((TinS,TfinS,OpCode),Day,LDoctors).
 
+obtain_better_sol(Room,Day,AgOpRoomBetter,LAgDoctorsBetter,TFinOp):-
+    get_time(Ti),
+    (obtain_better_sol1(Room,Day);true),
+    retract(better_sol(Day,Room,AgOpRoomBetter,LAgDoctorsBetter,TFinOp)),
+    write('Final Result: AgOpRoomBetter='),write(AgOpRoomBetter),nl,
+    write('LAgDoctorsBetter='),write(LAgDoctorsBetter),nl,
+    write('TFinOp='),write(TFinOp),nl,
+    get_time(Tf),
+    T is Tf-Ti,
+    write('Tempo de geracao da solucao:'),write(T),nl.
 
+obtain_better_sol1(Room,Day):-
+    asserta(better_sol(Day,Room,_,_,1441)),
+    findall(OpCode,surgery_id(OpCode,_),LOC),!,
+    permutation(LOC,LOpCode),
+    retractall(agenda_staff1(_,_,_)),
+    retractall(agenda_operation_room1(_,_,_)),
+    retractall(availability(_,_,_)),
+    findall(_,(agenda_staff(D,Day,Agenda),assertz(agenda_staff1(D,Day,Agenda))),_),
+    agenda_operation_room(Room,Day,Agenda),assert(agenda_operation_room1(Room,Day,Agenda)),
+    findall(_,(agenda_staff1(D,Day,L),free_agenda0(L,LFA),adapt_timetable(D,Day,LFA,LFA2),assertz(availability(D,Day,LFA2))),_),
+    availability_all_surgeries(LOpCode,Room,Day),
+    agenda_operation_room1(Room,Day,AgendaR),
+    update_better_sol(Day,Room,AgendaR,LOpCode),
+    fail.
 
+update_better_sol(Day,Room,Agenda,LOpCode):-
+    better_sol(Day,Room,_,_,FinTime),
+    reverse(Agenda,AgendaR),
+    evaluate_final_time(AgendaR,LOpCode,FinTime1),
+    write('Analysing for LOpCode='),write(LOpCode),nl,
+    write('now: FinTime1='),write(FinTime1),write(' Agenda='),write(Agenda),nl,
+    FinTime1<FinTime,
+    write('best solution updated'),nl,
+    retract(better_sol(_,_,_,_,_)),
+    findall(Doctor,assignment_surgery(_,Doctor),LDoctors1),
+    remove_equals(LDoctors1,LDoctors),
+    list_doctors_agenda(Day,LDoctors,LDAgendas),
+    asserta(better_sol(Day,Room,Agenda,LDAgendas,FinTime1)).
 
+evaluate_final_time([],_,1441).
+evaluate_final_time([(_,Tfin,OpCode)|_],LOpCode,Tfin):-member(OpCode,LOpCode),!.
+evaluate_final_time([_|AgR],LOpCode,Tfin):-evaluate_final_time(AgR,LOpCode,Tfin).
 
+list_doctors_agenda(_,[],[]).
+list_doctors_agenda(Day,[D|LD],[(D,AgD)|LAgD]):-agenda_staff1(D,Day,AgD),list_doctors_agenda(Day,LD,LAgD).
 
-
+remove_equals([],[]).
+remove_equals([X|L],L1):-member(X,L),!,remove_equals(L,L1).
+remove_equals([X|L],[X|L1]):-remove_equals(L,L1).
