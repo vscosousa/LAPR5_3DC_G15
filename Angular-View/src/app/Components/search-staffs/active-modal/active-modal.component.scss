@@ -45,14 +45,14 @@
 
     label {
       display: block;
-      margin-bottom: 5px;
       font-weight: bold;
     }
 
     input[type="text"] {
       width: 100%;
-      padding: 8px;
-      border: 1px solid #ccc;
+      padding: 0.5rem;
+      margin-top: 0.5rem;
+      
       border-radius: 4px;
     }
   }
@@ -68,6 +68,7 @@
     width: 100%;
 
     .btn-submit {
+      width: 100%;
       padding: 10px 20px;
       border-radius: 50px;
       background-color: #153e4c;

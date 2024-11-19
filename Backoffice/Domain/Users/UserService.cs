@@ -15,6 +15,7 @@ using Xunit.Sdk;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel.Client.Payloads;
 using Google.Apis.Auth;
+using System.Web;
 
 
 namespace DDDSample1.Domain.Users
@@ -50,20 +51,20 @@ namespace DDDSample1.Domain.Users
                 var existingUserByEmail = await _userRepository.GetUserByEmailAsync(dto.Email);
                 if (existingUserByEmail != null)
                 {
-                    throw new Exception("Email is already in use.");
+                    throw new BusinessRuleValidationException("Email is already in use.");
                 }
 
-                var staff = await _staffRepository.GetByEmailAsync(dto.Email) ?? throw new Exception("Staff not found.");
+                var staff = await _staffRepository.GetByEmailAsync(dto.Email) ?? throw new BusinessRuleValidationException("Staff not found.");
 
                 var existingUserByUsername = await _userRepository.GetUserByUsernameAsync(dto.Username);
                 if (existingUserByUsername != null)
                 {
-                    throw new Exception("Username is already in use.");
+                    throw new BusinessRuleValidationException("Username is already in use.");
                 }
+
                 staff.Activate();
                 var user = _userMapper.ToDomain(dto);
                 string token = CreateToken(user);
-                Console.WriteLine("-- Token: " + token);
                 await _mailService.SendEmail(dto.Email, "Activate your account", GenerateLink(token, "Activate"));
                 await _userRepository.AddAsync(user);
                 await _unitOfWork.CommitAsync();
@@ -73,7 +74,12 @@ namespace DDDSample1.Domain.Users
             }
             catch (Exception ex)
             {
-                throw new Exception(ex.Message);
+                Console.WriteLine($"An error occurred: {ex.Message}");
+                if (ex.InnerException != null)
+                {
+                    Console.WriteLine($"Inner exception: {ex.InnerException.Message}");
+                }
+                throw;
             }
         }
 
@@ -111,17 +117,27 @@ namespace DDDSample1.Domain.Users
         // Activate a user and set the password
         public async Task<UserDTO> ActivateUser(string token, string newPassword)
         {
+            try{
+                var userId = VerifyToken(token);
+                var user = await _userRepository.GetByIdAsync(userId) ?? throw new BusinessRuleValidationException("User not found.");
+                user.SetPassword(newPassword);
+                user.Activate();
 
-            var userId = VerifyToken(token) ?? throw new Exception("Invalid or expired token.");
-            var user = await _userRepository.GetByIdAsync(userId) ?? throw new Exception("User not found.");
-            user.SetPassword(newPassword);
-            user.Activate();
+                await _userRepository.UpdateAsync(user);
+                await _unitOfWork.CommitAsync();
 
-            await _userRepository.UpdateAsync(user);
-            await _unitOfWork.CommitAsync();
-
-            var userDTO = _userMapper.ToDto(user);
-            return userDTO;
+                var userDTO = _userMapper.ToDto(user);
+                return userDTO;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred: {ex.Message}");
+                if (ex.InnerException != null)
+                {
+                    Console.WriteLine($"Inner exception: {ex.InnerException.Message}");
+                }
+                throw;
+            }
         }
 
         public async Task<UserDTO> ActivateUserAsPatient(string token)
@@ -232,9 +248,12 @@ namespace DDDSample1.Domain.Users
         }
 
         private static string GenerateLink(string token, string typeOfLink)
-        {
+        {   
+            var encodedToken = HttpUtility.UrlEncode(token);
             string kebabCaseLink = ConvertToKebabCase(typeOfLink);
-            return $"http://localhost:4200/{kebabCaseLink}?token={token}";
+            var link = $"http://localhost:4200/{kebabCaseLink}?token={encodedToken}";
+            Console.WriteLine("--------Link " + link);
+            return link;
         }
 
         private static string ConvertToKebabCase(string input)

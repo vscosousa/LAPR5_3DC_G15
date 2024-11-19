@@ -4,6 +4,8 @@ using DDDSample1.Domain.Shared;
 using DDDSample1.Domain.Users;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities;
 
 namespace DDDSample1.Controllers
 {
@@ -25,6 +27,10 @@ namespace DDDSample1.Controllers
             {
                 var result = await _userService.CreateUser(userDTO);
                 return Ok(result);
+            }
+            catch (BusinessRuleValidationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
             }
             catch (Exception ex)
             {
@@ -78,22 +84,22 @@ namespace DDDSample1.Controllers
         [HttpPost("ResetPassword"), AllowAnonymous]
         public async Task<IActionResult> ResetPassword([FromQuery] string token, ResetPasswordDTO dto)
         {
-            if (string.IsNullOrWhiteSpace(token))
-            {
-                return Unauthorized("Token required.");
-            }
-            if (string.IsNullOrWhiteSpace(dto.NewPassword) && string.IsNullOrWhiteSpace(dto.NewPasswordConfirm))
-            {
-                return BadRequest("Token and new password are required.");
-            }
             try
             {
+                if (string.IsNullOrWhiteSpace(token))
+                {
+                    return Unauthorized(new{ message = "Token required."});
+                }
+                if (string.IsNullOrWhiteSpace(dto.NewPassword) && string.IsNullOrWhiteSpace(dto.NewPasswordConfirm))
+                {
+                    return BadRequest(new{ message = "Token and new password are required."});
+                }
                 await _userService.ResetPassword(token, dto);
-                return Ok("Your password has been reset successfully.");
+                return Ok(new{ message = "Your password has been reset successfully."});
             }
             catch (BusinessRuleValidationException ex)
             {
-                return BadRequest(ex.Message);
+                return BadRequest(new { message = ex.Message });
             }
             catch (Exception ex)
             {
@@ -107,9 +113,27 @@ namespace DDDSample1.Controllers
         public async Task<ActionResult<User>> ActivateUser(string token, string newPassword)
         {
             try
-            {
+            {   
+                Console.WriteLine("Token Active"+ token);
+                Console.WriteLine("New Password Active"+ newPassword);  
+                if (string.IsNullOrWhiteSpace(token))
+                {
+                    return Unauthorized(new{ message = "Token required."});
+                }
+                if (string.IsNullOrWhiteSpace(newPassword))
+                {
+                    return BadRequest(new{ message = "New password is required."});
+                }
                 var user = await _userService.ActivateUser(token, newPassword);
                 return Ok(user);
+            }
+            catch (SecurityTokenException ex)
+            {
+                return Unauthorized(new { message = "Invalid token.", details = ex.Message });
+            }
+            catch (BusinessRuleValidationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
             }
             catch (Exception ex)
             {

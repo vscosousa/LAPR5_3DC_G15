@@ -1,0 +1,27 @@
+<div class="activate-user-container">
+  <div class="activate-user-middle">
+    <div class="top">
+      <h2>Activate User</h2>
+    </div>
+    <div class="info-container" *ngIf="!activationSuccessful">
+      <div class="form-group">
+        <label for="newPassword">New Password</label>
+        <input type="password" id="newPassword" [(ngModel)]="newPassword" [ngClass]="{'error': newPasswordError}" placeholder="Enter new password" required>
+
+        <label for="confirmPassword">Confirm Password</label>
+        <input type="password" id="confirmPassword" [(ngModel)]="confirmPassword" [ngClass]="{'error': confirmPasswordError}" placeholder="Confirm password" required>
+      </div>
+    </div>
+    <div *ngIf="errorMessage" class="error-message">
+      {{ errorMessage }}
+    </div>
+
+    <button *ngIf="!activationSuccessful" type="button" class="btn btn-filter" (click)="activateUser()">Activate</button>
+    
+    <div *ngIf="activationSuccessful" class="success-message">
+      <img src="success.jpg" alt="Success" />
+      <p>User activated successfully!</p>
+      <button type="button" class="btn btn-home" (click)="goToHome()">Go to Home</button>
+    </div>
+  </div>
+</div>

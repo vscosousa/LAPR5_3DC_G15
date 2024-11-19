@@ -83,4 +83,10 @@ export class StaffService {
 
     return this.http.post<HttpResponse<any>>(url, body);
   }
+
+  activateUser(token: string, newPassword: string): Observable<any> {
+    console.log('Activating user with token service------------' + token);
+    const params = { token, newPassword };
+    return this.http.post<any>(`${this.apiURLUser}/Activate`, null, { params });
+  }
 }

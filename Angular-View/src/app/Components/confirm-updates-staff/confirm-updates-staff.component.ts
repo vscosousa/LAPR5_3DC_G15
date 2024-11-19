@@ -26,7 +26,6 @@ export class ConfirmUpdatesStaffComponent implements OnInit {
       this.email = params['email'] || '';
       this.token = params['token'] || '';
     });
-
   }
 
   updateContactInfo(): void {

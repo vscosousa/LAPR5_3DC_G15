@@ -219,15 +219,21 @@ namespace DDDSample1.Domain.Staffs
                 if (staff == null)
                     throw new BusinessRuleValidationException("Staff not found.");
 
+                var user = await _userRepository.GetUserByEmailAsync(staff.Email);
+                
                 var updatedFields = new List<string>();
 
-                if (!string.IsNullOrEmpty(phoneNumber)) {
+                if (!string.IsNullOrEmpty(phoneNumber) && staff.PhoneNumber != phoneNumber) {
                     staff.ChangePhoneNumber(phoneNumber);
+                    if (user != null) 
+                        user.ChangePhoneNumber(phoneNumber);   
                     updatedFields.Add("Phone Number Updated");
                 }
                 
-                if (!string.IsNullOrEmpty(email)) {
+                if (!string.IsNullOrEmpty(email) && staff.Email != email) {
                     staff.ChangeEmail(email);
+                    if (user != null)
+                        user.ChangeEmail(email);     
                     updatedFields.Add("Email Updated");
                 }
 

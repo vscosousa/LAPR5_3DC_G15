@@ -3,6 +3,7 @@ using System.Text.Json.Serialization;
 using DDDSample1.Domain.Patients;
 using DDDSample1.Domain.Staffs;
 using DDDSample1.Domain.Shared;
+using System.Linq;
 
 namespace DDDSample1.Domain.Users
 {
@@ -149,14 +150,14 @@ namespace DDDSample1.Domain.Users
         internal void ChangeEmail(string email)
         {
             if (!System.Text.RegularExpressions.Regex.IsMatch(email, @"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"))
-                throw new ArgumentException("Email must be in a valid format.");
+                throw new BusinessRuleValidationException("Email must be in a valid format.");
             _email = email;
         }
 
         internal void ChangePhoneNumber(string phoneNumber)
         {
-            if (!System.Text.RegularExpressions.Regex.IsMatch(phoneNumber, @"^(\+[0-9]{1,3})?[0-9]{9,10}$"))
-                throw new ArgumentException("Phone number must be in a valid format.");
+            if (!phoneNumber.StartsWith("+") || !phoneNumber.Substring(1).All(char.IsDigit))
+                throw new BusinessRuleValidationException("Phone number must be in a valid format.");
             _phoneNumber = phoneNumber;
         }
     }

@@ -22,6 +22,7 @@ import { ActivatePatientUserComponent } from './Components/activate-patient-user
 import { ConfirmUpdatesStaffComponent } from './Components/confirm-updates-staff/confirm-updates-staff.component';
 import { UpdatePatientComponent } from './Components/update-patient/update-patient.component';
 import { ViewAvailabilityComponent } from './Components/view-availability/view-availability.component';
+import { ActiveStaffComponent } from './Components/active-staff/active-staff.component';
 
 
 export const routes: Routes = [
@@ -33,6 +34,9 @@ export const routes: Routes = [
     },
     {
         path: 'update-staff/ConfirmUpdates', component: ConfirmUpdatesStaffComponent
+    },
+    {
+        path: 'activate', component: ActiveStaffComponent
     },
     {
         path: "panel-admin", component: PanelAdminComponent, canActivate: [AuthGuard]
