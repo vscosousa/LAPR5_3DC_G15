@@ -11,41 +11,47 @@
         <h2 class="manage-title">Search Staff Profiles</h2>
         
         <div class="content-container">
-          
-          <form class="filter-form" [formGroup]="searchForm" (ngSubmit)="onSearch()">
-            
-            <input  type="text" placeholder="First Name" formControlName="firstName"/>
-            
-            <input type="text" placeholder="Last Name" formControlName="lastName"/>
-            
-            <input type="text" placeholder="Full Name" formControlName="fullName"/>
-            
-            <input  type="email"  placeholder="Email"  formControlName="email"/>
-            
-            <select formControlName="specializationName" title="Specialization">
-              <option value="" hidden>Select Specialization</option>
-              <option *ngFor="let specialization of specializations" [value]="specialization.specOption">
-                {{ specialization.specOption }}
-              </option>
-            </select>
-            
-            <div *ngIf="errorMessage" class="error-message">
-              {{ errorMessage }}
-            </div>
 
-            <div *ngIf="infoMessage" class="info-message">
-              {{ infoMessage }}
-            </div>
-            
-            <button type="submit" class="btn btn-filter" >Search</button>
-            <button type="reset" class="btn btn-clear" (click)="clearFilters()"> Clear Filters </button>
+          <div class="filter-container">
+
+            <form class="filter-form" [formGroup]="searchForm" (ngSubmit)="onSearch()">
+              
+              <p> Filter Fields</p>
+
+              <input type="text" name="firstName" placeholder="First Name" formControlName="firstName"/>
+              
+              <input type="text" name="lastName" placeholder="Last Name" formControlName="lastName"/>
+              
+              <input type="text" name="fullName" placeholder="Full Name" formControlName="fullName"/>
+              
+              <input type="email" name="email" placeholder="Email"  formControlName="email"/>
+              
+              <select name="specialization" formControlName="specializationName" title="Specialization">
+                <option value="" hidden>Select Specialization</option>
+                <option *ngFor="let specialization of specializations" [value]="specialization.specOption">
+                  {{ specialization.specOption }}
+                </option>
+              </select>
+              
+              <div *ngIf="errorMessage" class="error-message">
+                {{ errorMessage }}
+              </div>
+
+              <div *ngIf="infoMessage" class="info-message">
+                {{ infoMessage }}
+              </div>
+
+              <button type="submit" class="btn btn-filter" >Search</button>
+              <button type="reset" class="btn btn-clear" (click)="clearFilters()"> Clear Filters </button>
+      
+            </form>
             
             <div class="operation">
-              <p> Others operation</p>
-              <button type="button" routerLink="/create-staff" class="btn-create">  Create Staff </button>
+              <p> Others operations</p>
+              <button type="button" routerLink="/create-staff" class="btn btn-create">  Create Staff </button>
             </div>
-    
-          </form>
+          </div>
+
           <div class="table-container">
             <table class="table">
               <thead>
@@ -62,8 +68,12 @@
                   <td>
 
                     <button type="button" routerLink="/update-staff/{{profile.id}}" class="btn btn-update">Edit</button>
-                    <button type="button" (click)="deactivateStaff(profile.id)" class="btn btn-delete">Deactive</button>
+
+                    <button *ngIf="!profile.isActive" type="button" (click)="openModal(profile)"class="btn btn-activate">Activate</button>
+                    <button *ngIf="profile.isActive" type="button" (click)="deactivateStaff(profile.id)" class="btn btn-delete">Deactive</button>
+                    
                     <button type="button" (click)="viewStaffDetails(profile)" class="btn btn-view">View</button>
+                  
                   </td>
                 </tr>
               </tbody>
@@ -97,6 +107,10 @@
                 <td>{{ selectedStaff.fullName }}</td>
               </tr>
               <tr>
+                <th>Phone Number</th>
+                <td>{{ selectedStaff.phoneNumber}}</td>
+              </tr>
+              <tr>
                 <th>Email</th>
                 <td>{{ selectedStaff.email }}</td>
               </tr>
@@ -119,4 +133,5 @@
       </div>
       
     </div>
+    <app-active-modal *ngIf="isModalOpen" [profile]="modalProfile" (close)="closeModal()"></app-active-modal>
   </div>

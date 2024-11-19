@@ -24,14 +24,13 @@ namespace DDDSample1.Controllers
         }
 
         [HttpPost]
-        [AllowAnonymous]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<StaffDTO>> CreateStaff(CreatingStaffDTO dto)
         {
             try
             {
                 var createdStaff = await _staffService.CreateStaffAsync(dto);
 
-                // Retorna o staff criado com o status 201 Created
                 return Ok(createdStaff);
             }
             catch (BusinessRuleValidationException ex)
@@ -45,7 +44,7 @@ namespace DDDSample1.Controllers
         }   
 
         [HttpPut("{id}")]
-        [AllowAnonymous]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<StaffDTO>> UpdateStaff(Guid id, UpdateStaffDTO dto)
         {
             try
@@ -126,7 +125,7 @@ namespace DDDSample1.Controllers
         }
 
         [HttpGet("search")]
-        [AllowAnonymous]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<IEnumerable<StaffDTO>>> SearchStaffProfiles(string firstName, string lastName, string email, string fullName, string specializationName)
         {
             var dto = new SearchStaffDTO
@@ -164,6 +163,7 @@ namespace DDDSample1.Controllers
         }
 
         [HttpGet("staff-types")]
+        [Authorize(Roles = "Admin")]
         public IActionResult GetStaffTypes()
         {
             var staffTypes = _staffService.GetStaffTypes();
@@ -171,6 +171,7 @@ namespace DDDSample1.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetStaffById(Guid id)
         {
             try
@@ -189,6 +190,7 @@ namespace DDDSample1.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetAllStaffs()
         {
             try

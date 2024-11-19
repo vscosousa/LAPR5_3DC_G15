@@ -1,21 +1,22 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormsModule, ReactiveFormsModule, FormGroup, FormBuilder, FormControl, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { StaffService } from '../../Services/staff-sevice.service'; 
 import { SidebarComponent } from '../sidebar/sidebar.component';
 import { RouterModule } from '@angular/router';
-import { parse } from 'date-fns';
+import { ActiveModalComponent } from './active-modal/active-modal.component';
 
 @Component({
   selector: 'app-search-staffs',
   standalone: true,
-  imports: [FormsModule,CommonModule, SidebarComponent, ReactiveFormsModule, RouterModule],
+  imports: [FormsModule,CommonModule, SidebarComponent, ActiveModalComponent, ReactiveFormsModule, RouterModule],
   templateUrl: './search-staffs.component.html',
   styleUrls: ['./search-staffs.component.scss']
 })
 
 export class SearchStaffsComponent implements OnInit {
   searchForm!: FormGroup;
+  isModalOpen = false;
   staffProfiles: any[] = [];
   errorMessage: string = '';
   specializations: any[] = [];
@@ -23,6 +24,9 @@ export class SearchStaffsComponent implements OnInit {
   infoMessage: string = '';
   showAvailabilityModal: boolean = false;
   availabilitySlots: string[] = [];
+  username: string = '';
+  @Input() profile: any;
+  modalProfile: any = null;
 
 
   constructor(private fb: FormBuilder, private staffService: StaffService) {
@@ -48,6 +52,11 @@ export class SearchStaffsComponent implements OnInit {
       },
       error: (error) => {
         console.error('Error loading specializations', error);
+        if (error.status === 401){
+          alert('Unauthorized page access');
+        } else {
+          alert('Error loading specializations');
+        }
       }
     });
   }
@@ -62,7 +71,11 @@ export class SearchStaffsComponent implements OnInit {
         console.error('Error loading staff profiles', error);
         this.infoMessage = '';
         this.staffProfiles = [];
-        alert('Error loading staff profiles' + error.error);
+        if (error.status === 401){
+          alert('Unauthorized page access');
+        } else {
+          alert('Error loading staff profiles');
+        }
       }
     });
   }
@@ -114,8 +127,10 @@ export class SearchStaffsComponent implements OnInit {
           if (error.status === 400) {
             const errorMessage = error.error.message;
             this.errorMessage = errorMessage;
+          } else if (error.status === 401){
+            alert('Unauthorized page access');
           } else {
-            alert('Search Staff failed - ' + error.error);
+            alert('Search Staff - ' + error.error);
           }
         }
       });
@@ -140,7 +155,7 @@ export class SearchStaffsComponent implements OnInit {
       next: () => {
         this.errorMessage = '';
         this.infoMessage = 'Staff deactivated successfully';
-        this.onSearch();
+        this.loadStaffProfiles();
       },
       error: (error) => {
         console.error('Error deactivating staff', error);
@@ -151,15 +166,20 @@ export class SearchStaffsComponent implements OnInit {
         } else if (error.status === 401){
           alert('Unauthorized page access');
         } else {
-          alert('Updating failed - ' + error.error);
+          alert('Deactive staff failed - ' + error.error);
         }
       }
     });
   }
 
-  parseDate(dateString: string): Date | null {
-    const date = parse(dateString, 'dd/MM/yyyy HH:mm:ss', new Date());
-    const now = new Date();
-    return (isNaN(date.getTime()) || date < now) ? null : date;
+  openModal(profile : any): void {
+    this.modalProfile = profile;
+    this.isModalOpen = true;
+  }
+
+  closeModal(): void {
+    this.loadStaffProfiles();
+    this.modalProfile = null;
+    this.isModalOpen = false;
   }
 }

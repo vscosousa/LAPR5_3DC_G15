@@ -9,6 +9,7 @@ using DDDSample1.Domain.Logs;
 using System.Linq;
 using System.Collections.Generic;
 using Microsoft.Extensions.Configuration;
+using DDDSample1.Domain.Users;
 
 namespace DDDSample1.Tests.Staffs.UnitTests
 {
@@ -20,6 +21,7 @@ namespace DDDSample1.Tests.Staffs.UnitTests
         private readonly Mock<IStaffRepository> _staffRepositoryMock;
         private readonly Mock<IStaffMapper> _staffMapperMock;
         private readonly Mock<ISpecializationRepository> _specializationRepositoryMock;
+        private readonly Mock<IUserRepository> _userRepositoryMock;
         private readonly Mock<ILogRepository> _logRepositoryMock;
         private readonly Mock<IMailService> _mailServiceMock;
         private readonly Mock<IConfiguration> _configurationMock;
@@ -31,6 +33,7 @@ namespace DDDSample1.Tests.Staffs.UnitTests
             _staffRepositoryMock = new Mock<IStaffRepository>();
             _staffMapperMock = new Mock<IStaffMapper>();
             _specializationRepositoryMock = new Mock<ISpecializationRepository>();
+            _userRepositoryMock = new Mock<IUserRepository>();
             _logRepositoryMock = new Mock<ILogRepository>();
             _mailServiceMock = new Mock<IMailService>();
             _configurationMock = new Mock<IConfiguration>();
@@ -43,6 +46,7 @@ namespace DDDSample1.Tests.Staffs.UnitTests
                 _staffRepositoryMock.Object,
                 _staffMapperMock.Object,
                 _specializationRepositoryMock.Object,
+                _userRepositoryMock.Object,
                 _logRepositoryMock.Object,
                 _mailServiceMock.Object,
                 _configurationMock.Object

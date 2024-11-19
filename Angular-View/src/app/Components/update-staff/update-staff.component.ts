@@ -46,6 +46,11 @@ export class UpdateStaffComponent implements OnInit {
         },
         error: (error) => {
           console.error('Error loading specializations', error);
+          if (error.status === 401){
+            alert('Unauthorized page access');
+          } else {
+            alert('Error loading specializations');
+          }
         }
       });
     }
@@ -59,7 +64,11 @@ export class UpdateStaffComponent implements OnInit {
         },
         error: (error) => {
           console.error('Error Get Staff to Update', error);
-          alert('Error Get Staff to Update' + error.error );
+          if (error.status === 401){
+            alert('Unauthorized page access');
+          } else {
+            alert('Error loading staff details');
+          }
         }
       });
     }

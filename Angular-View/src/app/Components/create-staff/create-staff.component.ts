@@ -1,4 +1,5 @@
 import { Component, OnInit} from '@angular/core';
+import { Router } from '@angular/router';
 import { FormsModule, ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { StaffService } from '../../Services/staff-sevice.service'; 
@@ -29,8 +30,8 @@ export class CreateStaffComponent implements OnInit{
   specializations:  any[] = [];
   errorMessage: string = '';
   NumberPhone: string = '';
-
-  constructor(public service: StaffService) {}
+  
+  constructor(public service: StaffService, private router: Router) {}
 
   ngOnInit(): void {
     this.loadSpecializations();
@@ -45,6 +46,11 @@ export class CreateStaffComponent implements OnInit{
       },
       error: (error) => {
         console.error('Error loading specializations', error);
+        if (error.status === 401){
+          alert('Unauthorized page access');
+        } else {
+          alert('Error loading specializations');
+        }
       }
     });
   }
@@ -57,44 +63,36 @@ export class CreateStaffComponent implements OnInit{
       },
       error: (error) => {
         console.error('Error loading staff types', error);
+        if (error.status === 401){
+          alert('Unauthorized page access');
+        } else {
+          alert('Error loading staff types ');
+        }
       }
     });
   }
 
   onSubmit() {
     if (this.createStaffForm.invalid) {
-      console.error('Form is invalid');
       this.createStaffForm.markAllAsTouched();
       return;
     }
-    console.log('Form is valid', this.createStaffForm.value);
 
     if (this.createStaffForm.valid) {
       this.service.createStaff(
         this.createStaffForm.value.firstName!.trim(),
         this.createStaffForm.value.lastName!.trim(),
-        this.createStaffForm.value.fullName!,
+        this.createStaffForm.value.fullName!.trim(),
         this.createStaffForm.value.email!.trim(),
         this.createStaffForm.value.identifier!.trim(),
         this.createStaffForm.value.phoneNumber!.trim(),
-        this.createStaffForm.value.staffType!,
-        this.createStaffForm.value.specializationName!
+        this.createStaffForm.value.staffType!.trim(),
+        this.createStaffForm.value.specializationName!.trim()
       ).subscribe({
         next: (response) => {
-          this.errorMessage = '';
-          this.createStaffForm.reset(
-            {
-              firstName: '',
-              lastName: '',
-              fullName: '',
-              email: '',
-              identifier: '',
-              phoneNumber: '',
-              staffType: '',
-              specializationName: ''
-            }
-          );
           console.log('Staff created successfully', response);
+          this.errorMessage = '';
+          this.router.navigate(['/search-staffs']);
         },
         error: (error) => {
           console.error('Error creating staff', error);
@@ -104,7 +102,7 @@ export class CreateStaffComponent implements OnInit{
           } else if (error.status === 401){
             alert('Unauthorized page access');
           } else {
-            alert('Updating failed - ' + error.error);
+            alert('Creating failed - ' + error.error);
           }
         }
       });

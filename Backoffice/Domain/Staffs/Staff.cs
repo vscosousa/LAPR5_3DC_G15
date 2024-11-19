@@ -46,7 +46,7 @@ namespace DDDSample1.Domain.Staffs
             _staffType = staffType;
             _availabilitySlots = Array.Empty<DateTime>();
             _specializationId = specializationId;
-            _isActive = true;
+            _isActive = false;
         }
 
         // Public getters
@@ -116,11 +116,18 @@ namespace DDDSample1.Domain.Staffs
             _specializationId = specializationId;
         }
 
-        public void Deactivate() {
+        internal void Deactivate() {
             
             if (_isActive == false)
                     throw new BusinessRuleValidationException("Staff is already deactivated.");
             _isActive = false;
+        }
+
+        internal void Activate() {
+            
+            if (_isActive == true)
+                    throw new BusinessRuleValidationException("Staff is already Activated.");
+            _isActive = true;
         }
 
         private bool NameStartsWithCapital(string fullName)

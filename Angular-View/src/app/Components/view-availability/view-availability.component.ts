@@ -60,13 +60,15 @@ export class ViewAvailabilityComponent implements OnInit {
       next: (data) => {
         this.staffName = data.fullName;
         this.availabilitySlots = data.availabilitySlots;
-        console.log('Staff details:', data);
-        console.log('Availability Slots:', this.availabilitySlots);
         this.populateEvents();
       },
       error: (error) => {
         console.error('Error Get Staff to Update', error);
-        alert('Error Get Staff to Update' + error.error );
+        if (error.status === 401){
+          alert('Unauthorized page access');
+        } else {
+          alert('Error loading staff details');
+        }
       }
     });
   }

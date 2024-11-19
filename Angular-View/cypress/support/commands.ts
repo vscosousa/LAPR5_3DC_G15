@@ -19,6 +19,17 @@ declare namespace Cypress {
     loginAsAdmin(email: string, password: string): Chainable<any>;
     loginAsPatient(email: string, password: string): Chainable<any>;
     activatePatientAccount(token: string): Chainable<any>;
+    createStaff(staff: {
+      firstName: string;
+      lastName: string;
+      fullName: string;
+      email: string;
+      identifier: string;
+      phoneNumber: string;
+      staffType: string;
+      specializationName: string;
+    }): Chainable<any>;
+
   }
 }
 //
@@ -91,4 +102,19 @@ Cypress.Commands.add('loginAsPatient', (email, password) => {
   cy.get('input[id="password"]').type(password);
   cy.get('form').submit();
   cy.url().should('include', '/patient-panel');
+});
+
+Cypress.Commands.add('createStaff', (staff) => {
+  cy.visit('/panel-admin');
+  cy.get('button[routerLink="/search-staffs"]').click();
+  cy.get('button[routerLink="/create-staff"]').click();
+  cy.get('input[id="firstName"]').type(staff.firstName);
+  cy.get('input[id="lastName"]').type(staff.lastName);
+  cy.get('input[id="fullName"]').type(staff.fullName);
+  cy.get('input[id="email"]').type(staff.email);
+  cy.get('input[id="identifier"]').type(staff.identifier);
+  cy.get('input[id="phoneNumber"]').type(staff.phoneNumber);
+  cy.get('select[id="staffType"]').select(staff.staffType);
+  cy.get('select[id="specializationName"]').select(staff.specializationName);
+  cy.get('form').submit();
 });

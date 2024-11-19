@@ -1,0 +1,19 @@
+<div class="modal" (click)="closeModal()">
+  <div class="modal-content" (click)="onModalClick($event)">
+    <div class="modal-header">
+      <h2>Activate User</h2>
+    </div>
+    <form (ngSubmit)="onSubmit()" class="modal-form">
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input type="text" id="username" [(ngModel)]="username" name="username" required>
+      </div>
+      <div *ngIf="errorMessage" class="error-message">
+        {{ errorMessage }}
+      </div>
+      <div class="modal-footer">
+        <button type="submit" class="btn-submit">Submit</button>
+      </div>
+    </form>
+  </div>
+</div>

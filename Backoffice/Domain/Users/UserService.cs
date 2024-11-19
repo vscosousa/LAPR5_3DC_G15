@@ -60,9 +60,10 @@ namespace DDDSample1.Domain.Users
                 {
                     throw new Exception("Username is already in use.");
                 }
-
+                staff.Activate();
                 var user = _userMapper.ToDomain(dto);
                 string token = CreateToken(user);
+                Console.WriteLine("-- Token: " + token);
                 await _mailService.SendEmail(dto.Email, "Activate your account", GenerateLink(token, "Activate"));
                 await _userRepository.AddAsync(user);
                 await _unitOfWork.CommitAsync();
@@ -99,7 +100,7 @@ namespace DDDSample1.Domain.Users
 
             var user = _userMapper.ToCreatingPatientUser(dto, patient.Id.AsGuid());
             string token = CreateToken(user);
-
+            
             await _mailService.SendEmail(dto.Email, "Activate your account", GenerateLink(token, "ActivatePatientUser"));
             await _userRepository.AddAsync(user);
             await _unitOfWork.CommitAsync();

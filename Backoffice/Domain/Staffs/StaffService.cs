@@ -11,6 +11,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using System.Web;
+using DDDSample1.Domain.Users;
 
 namespace DDDSample1.Domain.Staffs
 {
@@ -21,15 +22,17 @@ namespace DDDSample1.Domain.Staffs
         private readonly IStaffMapper _mapper;
         private readonly ISpecializationRepository _specializationRepository;
         private readonly ILogRepository _logRepository;
+        private readonly IUserRepository _userRepository;
         private readonly IMailService _mailService;
         private readonly IConfiguration _configuration;
 
-        public StaffService(IUnitOfWork unitOfWork, IStaffRepository repository, IStaffMapper mapper, ISpecializationRepository specializationRepository, ILogRepository logRepository, IMailService mailService, IConfiguration configuration)
+        public StaffService(IUnitOfWork unitOfWork, IStaffRepository repository, IStaffMapper mapper, ISpecializationRepository specializationRepository, IUserRepository userRepository, ILogRepository logRepository, IMailService mailService, IConfiguration configuration)
         {
             _unitOfWork = unitOfWork;
             _repository = repository;
             _mapper = mapper;
             _specializationRepository = specializationRepository;
+            _userRepository = userRepository;
             _logRepository = logRepository;
             _mailService = mailService;
             _configuration = configuration;
@@ -340,6 +343,13 @@ namespace DDDSample1.Domain.Staffs
                     return null;
 
                 staff.Deactivate();
+                
+                var user = await _userRepository.GetUserByEmailAsync(staff.Email);
+                
+                if (user != null)
+                {
+                    _userRepository.Remove(user);
+                }
 
                 var logMessage = $"Staff profile {staff.FullName} (ID: {staff.Id}) has been deactivated.";
                 var log = new Log(TypeOfAction.Deactivate, id.ToString(), logMessage);

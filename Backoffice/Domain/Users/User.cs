@@ -98,7 +98,6 @@ namespace DDDSample1.Domain.Users
             _isActive = true;
         }
 
-
         // Method to handle login failures and account lockout
         internal void RegisterFailedLoginAttempt()
         {

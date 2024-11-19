@@ -9,6 +9,7 @@ import { Observable } from 'rxjs';
 export class StaffService {
   private apiUrl = 'https://localhost:5001/api/staff'; 
   private apiURLSpecializaction = 'https://localhost:5001/api/specialization';
+  private apiURLUser='https://localhost:5001/api/user';
 
   constructor(private http: HttpClient) { }
 
@@ -69,5 +70,17 @@ export class StaffService {
     params = params.append('token', updateData.token);
 
     return this.http.put<any>(`${this.apiUrl}/ConfirmUpdates`, {}, { params });
+  }
+
+  activateStaff(userInfo: any): Observable<HttpResponse<any>> {
+    const url = `${this.apiURLUser}/RegisterUser`;
+    const body = {
+      email: userInfo.email,
+      username: userInfo.username,
+      role: userInfo.role,
+      staffId: userInfo.staffId
+    };
+
+    return this.http.post<HttpResponse<any>>(url, body);
   }
 }
