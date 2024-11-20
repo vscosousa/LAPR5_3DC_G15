@@ -1,4 +1,4 @@
-@startuml use-case-diagram
+@startuml use-case-diagram-sprintA
 
 left to right direction
 
@@ -7,7 +7,7 @@ actor "Patient" as PA #white;line:blue;line.bold;text:black
 actor "Staff" as ST #white;line:green;line.bold;text:black
 actor "Backoffice User" as BU #white;line:purple;line.bold;text:black
 
-rectangle System { 
+rectangle Sprint_A { 
     usecase "Register new backoffice users" as US5_1_1
     usecase "Reset password" as US5_1_2
     usecase "Register as Patient" as US5_1_3
@@ -56,5 +56,4 @@ AD --> US5_1_20 : "US 5.1.20"
 AD --> US5_1_21 : "US 5.1.21"
 AD --> US5_1_22 : "US 5.1.22"
 AD --> US5_1_23 : "US 5.1.23"
-
 @enduml

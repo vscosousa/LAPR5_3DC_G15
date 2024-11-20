@@ -1,0 +1,101 @@
+@startuml use-case-diagram-sprintB
+
+left to right direction
+
+actor "Admin" as AD #white;line:red;line.bold;text:black
+actor "Patient" as PA #white;line:blue;line.bold;text:black
+actor "Staff" as ST #white;line:green;line.bold;text:black
+actor "Backoffice User" as BU #white;line:purple;line.bold;text:black
+
+rectangle System {
+    usecase "Integrated UI for all modules" as US6_1_1
+    usecase "Role-based application menu" as US6_1_2
+    usecase "Sync 3D visualization with schedule" as US6_1_3
+    usecase "Sync planning module with backoffice" as US6_1_4
+    usecase "Sync staff availability with planning" as US6_1_5
+    usecase "Register for healthcare application" as US6_2_1
+    usecase "Update user profile" as US6_2_2
+    usecase "Delete account and data" as US6_2_3
+    usecase "Log in to backoffice" as US6_2_4
+    usecase "Log in to healthcare system" as US6_2_5
+    usecase "Create patient profile" as US6_2_6
+    usecase "Edit patient profile" as US6_2_7
+    usecase "Delete patient profile" as US6_2_8
+    usecase "List/Search patient profiles" as US6_2_9
+    usecase "Create staff profile" as US6_2_10
+    usecase "Edit staff profile" as US6_2_11
+    usecase "Deactivate staff profile" as US6_2_12
+    usecase "List/Search staff profiles" as US6_2_13
+    usecase "Request operation" as US6_2_14
+    usecase "Update operation requisition" as US6_2_15
+    usecase "Remove operation requisition" as US6_2_16
+    usecase "List/Search operation requisitions" as US6_2_17
+    usecase "Add new operation types" as US6_2_18
+    usecase "Edit operation types" as US6_2_19
+    usecase "Remove operation types" as US6_2_20
+    usecase "List/Search operation types" as US6_2_21
+    usecase "Better scheduling of operations" as US6_3_1
+    usecase "Complexity analysis for scheduling" as US6_3_2
+    usecase "Good schedule generation" as US6_3_3
+    usecase "Systematic deployment validation" as US6_4_1
+    usecase "Internal network access" as US6_4_2
+    usecase "Client definition via text file" as US6_4_3
+    usecase "Identify and quantify risks" as US6_4_4
+    usecase "Define MBCO" as US6_4_5
+    usecase "Backup strategy" as US6_4_6
+    usecase "Public folder for users" as US6_4_7
+    usecase "Identify incorrect access attempts" as US6_4_8
+    usecase "3D hospital floor visualization" as US6_5_1
+    usecase "Appropriate textures for 3D" as US6_5_2
+    usecase "3D floor illumination" as US6_5_3
+    usecase "Camera control with mouse" as US6_5_4
+    usecase "GDPR compliance knowledge" as US6_6_1
+    usecase "Data breach notification" as US6_6_2
+}
+
+
+BU --> US6_1_1 : "US 6.1.1"
+BU --> US6_1_2 : "US 6.1.2"
+ST --> US6_1_3 : "US 6.1.3"
+AD --> US6_1_4 : "US 6.1.4"
+AD --> US6_1_5 : "US 6.1.5"
+PA --> US6_2_1 : "US 6.2.1"
+PA --> US6_2_2 : "US 6.2.2"
+PA --> US6_2_3 : "US 6.2.3"
+BU --> US6_2_4 : "US 6.2.4"
+PA --> US6_2_5 : "US 6.2.5"
+AD --> US6_2_6 : "US 6.2.6"
+AD --> US6_2_7 : "US 6.2.7"
+AD --> US6_2_8 : "US 6.2.8"
+AD --> US6_2_9 : "US 6.2.9"
+AD --> US6_2_10 : "US 6.2.10"
+AD --> US6_2_11 : "US 6.2.11"
+AD --> US6_2_12 : "US 6.2.12"
+AD --> US6_2_13 : "US 6.2.13"
+ST --> US6_2_14 : "US 6.2.14"
+ST --> US6_2_15 : "US 6.2.15"
+ST --> US6_2_16 : "US 6.2.16"
+ST --> US6_2_17 : "US 6.2.17"
+AD --> US6_2_18 : "US 6.2.18"
+AD --> US6_2_19 : "US 6.2.19"
+AD --> US6_2_20 : "US 6.2.20"
+AD --> US6_2_21 : "US 6.2.21"
+AD --> US6_3_1 : "US 6.3.1"
+AD --> US6_3_2 : "US 6.3.2"
+AD --> US6_3_3 : "US 6.3.3"
+AD --> US6_4_1 : "US 6.4.1"
+AD --> US6_4_2 : "US 6.4.2"
+AD --> US6_4_3 : "US 6.4.3"
+AD --> US6_4_4 : "US 6.4.4"
+AD --> US6_4_5 : "US 6.4.5"
+AD --> US6_4_6 : "US 6.4.6"
+AD --> US6_4_7 : "US 6.4.7"
+AD --> US6_4_8 : "US 6.4.8"
+ST --> US6_5_1 : "US 6.5.1"
+ST --> US6_5_2 : "US 6.5.2"
+ST --> US6_5_3 : "US 6.5.3"
+ST --> US6_5_4 : "US 6.5.4"
+AD --> US6_6_1 : "US 6.6.1"
+AD --> US6_6_2 : "US 6.6.2"
+
+@enduml

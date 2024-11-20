@@ -10,7 +10,9 @@ This folder contains all the global artifacts for your project, split by each im
 
 [_`Glossary`_](./01.requirements-engineering/Glossary.md)
 
-[_`Use Case Diagram`_](./01.requirements-engineering/use-case-diagram.md)
+[_`Sprint A - Use Case Diagram`_](./01.requirements-engineering/use-case-diagram-sprintA.svg)
+
+[_`Sprint B - Use Case Diagram`_](./01.requirements-engineering/use-case-diagram-sprintB.svg)
 
 [_`Analysis`_](./02.analysis/readme.md)
 
