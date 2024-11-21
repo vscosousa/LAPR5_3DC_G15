@@ -1,20 +1,13 @@
-@startuml level_2
+@startuml
+actor Patient
+participant FE as "Frontend"
+participant MDR as "Microservice"
 
-title Level 2 Diagram
-
-hide empty members
-'skinparam Linetype ortho
-
-skinparam class {
-    BackgroundColor<<valueObject>> #D6EAF8
-    BackgroundColor<<root>> #FDEBD0
-    BackgroundColor<<service>> #D1F2EB
-    BackgroundColor #FEF9E7
-    ArrowColor Black
-}
-
-skinparam package {
-    BackgroundColor #EBF5FB
-}
-
+Patient -> FE : Asks to log in
+FE -> Patient : Asks for login credentials
+Patient -> FE : Sends login credentials (Email, Password)
+FE -> MDR : Sends HTTP Request to log in with credentials
+MDR -> MDR : Validates credentials
+MDR -> FE : Returns login success/failure status
+FE -> Patient : Returns login success/failure message
 @enduml

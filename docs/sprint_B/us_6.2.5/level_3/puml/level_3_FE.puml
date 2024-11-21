@@ -1,0 +1,18 @@
+@startuml
+actor Patient
+participant "LoginComponent" as LoginComponent
+participant "Frontend" as FE
+
+Patient -> LoginComponent : Asks to log in
+LoginComponent -> Patient : Asks for login credentials
+Patient -> LoginComponent : Sends login credentials (Email, Password)
+LoginComponent -> FE : Sends login request to backend
+FE -> LoginComponent : Displays loading state
+FE -> LoginComponent : Sends HTTP Request to log in with credentials
+FE -> LoginComponent : Returns login success/failure status
+alt If login successful
+    LoginComponent -> Patient : Displays success message and token
+else If login failed
+    LoginComponent -> Patient : Displays error message
+end
+@enduml
