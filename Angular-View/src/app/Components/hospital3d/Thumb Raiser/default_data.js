@@ -64,10 +64,10 @@ export const doorData = {
 
 export const tableData = {
     url: "/models/gltf/RobotExpressive/hospital_bed.glb",
-    scale: new THREE.Vector3(1,1,1)
+    scale: new THREE.Vector3(0.5, 1, 0.5)
 }
 
 export const humanData = {
-    url: "/models/gltf/RobotExpressive/human.glb",
-    scale: new THREE.Vector3(1,1,1)
+  url: "/models/gltf/RobotExpressive/patient.glb",
+  scale: new THREE.Vector3(0.0045, 0.010, 0.0045) // Adjusted scale to maintain proportions
 }

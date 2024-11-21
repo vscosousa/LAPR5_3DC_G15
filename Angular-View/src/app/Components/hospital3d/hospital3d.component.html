@@ -46,16 +46,18 @@
         </tr>
         <tr>
             <td colspan="4">
-            <label for="date-picker">Select a Date:</label>
-            <input
+            <div style="text-align: center;">
+              <label for="date-picker">Select a Date:</label>
+              <input
               type="datetime-local"
               id="date-picker"
               [(ngModel)]="selectedDate"
               (change)="onDateChange($event)"
-            />
-            <button (click)="checkOperations()">Check Operations</button>
+              />
+              <button (click)="checkOperations()">Check Operations</button>
+            </div>
           </td>
-        </tr>        
+        </tr>
       </tbody>
     </table>
   </div>

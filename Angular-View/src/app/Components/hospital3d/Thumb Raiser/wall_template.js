@@ -2,129 +2,135 @@ import * as THREE from "three";
 
 /*
  * parameters = {
- *  textureUrl: String
+ *  textureUrl: String,
+ *  width: Number,      // Width of the wall
+ *  height: Number,     // Height of the wall
+ *  thickness: Number,  // Thickness of the wall
+ *  bumpMapUrl: String, // Optional: URL for bump map texture
+ *  normalMapUrl: String, // Optional: URL for normal map texture
+ *  aoMapUrl: String,   // Optional: URL for ambient occlusion map texture
  * }
  */
 
 export default class Wall {
     constructor(parameters) {
-        for (const [key, value] of Object.entries(parameters)) {
-            this[key] = value;
-        }
+        // Default values
+        const {
+            textureUrl,
+            bumpMapUrl,
+            normalMapUrl,
+            aoMapUrl,
+            width = 1.0,
+            height = 3.0,
+            thickness = 0.05
+        } = parameters;
 
-        // Create a texture
-        /* To-do #8 - Load the wall texture image
-            - image location: this.textureUrl*/
-        const texture = new THREE.TextureLoader().load(this.textureUrl);
+        // Load textures
+        const texture = new THREE.TextureLoader().load(textureUrl);
         texture.colorSpace = THREE.SRGBColorSpace;
-        /* To-do #9 - Configure the magnification and minification filters:
-            - magnification filter: linear
-            - minification filter: mipmapping and trilinear*/
         texture.magFilter = THREE.LinearFilter;
         texture.minFilter = THREE.LinearMipmapLinearFilter;
 
-        // Create a wall (seven faces) that casts and receives shadows
+        const bumpMap = bumpMapUrl ? new THREE.TextureLoader().load(bumpMapUrl) : null;
+        const normalMap = normalMapUrl ? new THREE.TextureLoader().load(normalMapUrl) : null;
+        const aoMap = aoMapUrl ? new THREE.TextureLoader().load(aoMapUrl) : null;
 
-        // Create a group of objects
+        // Create shared material
+        const material = new THREE.MeshStandardMaterial({
+            color: 0xffffff,
+            map: texture,
+            bumpMap: bumpMap,
+            bumpScale: 0.1, // Adjust bump intensity
+            normalMap: normalMap,
+            aoMap: aoMap,
+            side: THREE.DoubleSide
+        });
+
+        // Create the wall group
         this.object = new THREE.Group();
 
-        // Create the front face (a rectangle)
-        let geometry = new THREE.PlaneGeometry(0.95, 3.0);
-        /* To-do #10 - Assign the texture to the material's color map:
-            - map: texture */
-        let material = new THREE.MeshPhongMaterial(
-            { 
-                color: 0xffffff, 
-                map: texture
-            }
-        );
-        let face = new THREE.Mesh(geometry, material);
-        face.position.set(0.0, 0.0, 0.025);
-        /* To-do #34 - Set the front face to cast and receive shadows*/
-        face.castShadow = true;
-        face.receiveShadow = true;
-        this.object.add(face);
+        // Add all components
+        this.addFrontBackFaces(width, height, thickness, material);
+        this.addSideFaces(width, height, thickness, material);
+        this.addTopFace(width, thickness, material);
+        this.addBottomFace(width, thickness, material);
+        this.addTopCover(width, thickness, material);
+    }
 
-        // Create the rear face (a rectangle)
-        face = new THREE.Mesh().copy(face, false);
-        face.rotation.y = Math.PI;
-        face.position.set(0.0, 0.0, -0.025);
-        this.object.add(face);
+    addFrontBackFaces(width, height, thickness, material) {
+        const geometry = new THREE.PlaneGeometry(width, height);
+        geometry.setAttribute('uv2', new THREE.BufferAttribute(geometry.attributes.uv.array, 2));
 
-        // Create the two left faces (a four-triangle mesh)
-        let points = new Float32Array([
-            -0.475, -1.5, 0.025,
-            -0.475, 1.5, 0.025,
-            -0.5, 1.5, 0.0,
-            -0.5, -1.5, 0.0,
+        // Front face
+        const frontFace = new THREE.Mesh(geometry, material);
+        frontFace.position.set(0, 0, thickness / 2);
+        frontFace.castShadow = true;
+        frontFace.receiveShadow = true;
+        this.object.add(frontFace);
 
-            -0.5, 1.5, 0.0,
-            -0.475, 1.5, -0.025,
-            -0.475, -1.5, -0.025,
-            -0.5, -1.5, 0.0
-        ]);
-        let normals = new Float32Array([
-            -0.707, 0.0, 0.707,
-            -0.707, 0.0, 0.707,
-            -0.707, 0.0, 0.707,
-            -0.707, 0.0, 0.707,
+        // Back face
+        const backFace = new THREE.Mesh(geometry, material);
+        backFace.position.set(0, 0, -thickness / 2);
+        backFace.rotation.y = Math.PI;
+        backFace.castShadow = true;
+        backFace.receiveShadow = true;
+        this.object.add(backFace);
+    }
 
-            -0.707, 0.0, -0.707,
-            -0.707, 0.0, -0.707,
-            -0.707, 0.0, -0.707,
-            -0.707, 0.0, -0.707
-        ]);
-        let indices = [
-            0, 1, 2,
-            2, 3, 0,
-            4, 5, 6,
-            6, 7, 4
-        ];
-        geometry = new THREE.BufferGeometry().setAttribute("position", new THREE.BufferAttribute(points, 3)); // itemSize = 3 because there are 3 values (X, Y and Z components) per vertex
-        geometry.setAttribute("normal", new THREE.BufferAttribute(normals, 3));
-        geometry.setIndex(indices);
-        material = new THREE.MeshPhongMaterial({ color: 0x6b554b });
-        face = new THREE.Mesh(geometry, material);
-        /* To-do #35 - Set the left faces to cast and receive shadows*/
-        face.castShadow = true;
-        face.receiveShadow = true;
-        this.object.add(face);
+    addSideFaces(width, height, thickness, material) {
+        const geometry = new THREE.PlaneGeometry(thickness, height);
+        geometry.setAttribute('uv2', new THREE.BufferAttribute(geometry.attributes.uv.array, 2));
 
-        // Create the two right faces (a four-triangle mesh)
-        face = new THREE.Mesh().copy(face, false);
-        face.rotation.y = Math.PI;
-        this.object.add(face);
+        // Left side face
+        const leftFace = new THREE.Mesh(geometry, material);
+        leftFace.position.set(-width / 2, 0, 0);
+        leftFace.rotation.y = Math.PI / 2;
+        leftFace.castShadow = true;
+        leftFace.receiveShadow = true;
+        this.object.add(leftFace);
 
-        /* To-do #7: Create the top face (a four-triangle mesh)*/
-        points = new Float32Array([
-            -0.475, 0.5, -0.025,    // 0
-            -0.5, 0.5, 0.0,         // 1
-            -0.475, 0.5, 0.025,     // 2
-            0.475, 0.5, 0.025,      // 3
-            0.5, 0.5, 0.0,          // 4
-            0.475, 0.5, -0.025,     // 5
-        ]);
-        normals = new Float32Array([
-            0.0, 1.0, 0.0,
-            0.0, 1.0, 0.0,
-            0.0, 1.0, 0.0,
-            0.0, 1.0, 0.0,
-            0.0, 1.0, 0.0,
-            0.0, 1.0, 0.0,
-        ]);
-        indices = [
-            0, 1, 2,
-            0, 2, 3,
-            3, 4, 5,
-            3, 5, 0
-        ];
-        geometry = new THREE.BufferGeometry().setAttribute("position", new THREE.BufferAttribute(points, 3)); // itemSize = 3 because there are 3 values (X, Y and Z components) per vertex
-        geometry.setAttribute("normal", new THREE.BufferAttribute(normals, 3));
-        geometry.setIndex(indices);
-        face = new THREE.Mesh(geometry, material);
-        /* To-do #36 - Set the top face to cast and receive shadows*/
-        face.castShadow = true;
-        face.receiveShadow = true;
-        this.object.add(face);
+        // Right side face
+        const rightFace = new THREE.Mesh(geometry, material);
+        rightFace.position.set(width / 2, 0, 0);
+        rightFace.rotation.y = -Math.PI / 2;
+        rightFace.castShadow = true;
+        rightFace.receiveShadow = true;
+        this.object.add(rightFace);
+    }
+
+    addTopFace(width, thickness, material) {
+        const geometry = new THREE.PlaneGeometry(width, thickness);
+        geometry.setAttribute('uv2', new THREE.BufferAttribute(geometry.attributes.uv.array, 2));
+
+        const topFace = new THREE.Mesh(geometry, material);
+        topFace.rotation.x = -Math.PI / 2;
+        topFace.position.set(0, thickness / 2, 0);
+        topFace.castShadow = true;
+        topFace.receiveShadow = true;
+        this.object.add(topFace);
+    }
+
+    addBottomFace(width, thickness, material) {
+        const geometry = new THREE.PlaneGeometry(width, thickness);
+        geometry.setAttribute('uv2', new THREE.BufferAttribute(geometry.attributes.uv.array, 2));
+
+        const bottomFace = new THREE.Mesh(geometry, material);
+        bottomFace.rotation.x = Math.PI / 2;
+        bottomFace.position.set(0, -thickness / 2, 0);
+        bottomFace.castShadow = true;
+        bottomFace.receiveShadow = true;
+        this.object.add(bottomFace);
+    }
+
+    addTopCover(width, thickness, material) {
+        const geometry = new THREE.PlaneGeometry(width, thickness);
+        geometry.setAttribute('uv2', new THREE.BufferAttribute(geometry.attributes.uv.array, 2));
+
+        const cover = new THREE.Mesh(geometry, material);
+        cover.rotation.x = Math.PI / 2;
+        cover.position.set(0, thickness / 2, 0);
+        cover.castShadow = true;
+        cover.receiveShadow = true;
+        this.object.add(cover);
     }
 }

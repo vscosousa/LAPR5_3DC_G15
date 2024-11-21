@@ -48,7 +48,7 @@ export default class Maze {
             ];
 
 
-            
+
             // Build the maze
             for (let j = 0; j <= description.size.height; j++) {
                 for (let i = 0; i <= description.size.width; i++) {
@@ -68,7 +68,7 @@ export default class Maze {
                     }
 
                     const currentRoom = rooms[roomIndex];
-            
+
                     // Create north walls
                     if (description.map[j][i] === 2 || description.map[j][i] === 3) {
                         const wallObject = this.wall.object.clone();
@@ -79,7 +79,7 @@ export default class Maze {
                         );
                         this.object.add(wallObject);
                     }
-            
+
                     // Create west walls
                     if (description.map[j][i] === 1 || description.map[j][i] === 3) {
                         const wallObject = this.wall.object.clone();
@@ -91,7 +91,7 @@ export default class Maze {
                         );
                         this.object.add(wallObject);
                     }
-            
+
                     // Add doors (only if the room is occupied)
                     if (description.map[j][i] === 4 && currentRoom.isOccupied) {
                         const doorObject = new Door(this.doorParameters);
@@ -102,17 +102,17 @@ export default class Maze {
                         );
                         doorObject.object.scale.set(0.0035, 0.00635, 0);
                         doorObject.object.translateY(-0.6);
-            
+
                         // Adjust door positioning based on the wall
                         if (description.map[j][i] === 1) {
                             doorObject.object.translateZ(0.3); // Door on the north wall
                         } else if (description.map[j][i] === 2) {
                             doorObject.object.translateZ(-0.029); // Door on the south wall
                         }
-            
+
                         this.object.add(doorObject.object);
                     }
-            
+
                     // Add tables and humans
                     if (this.map[j][i] === 5) {
                         console.log ("Table added: " + currentRoom.isOccupied);
@@ -126,7 +126,7 @@ export default class Maze {
                         tableObject.object.translateX(-0.6);
                         tableObject.object.translateY(-0.2);
                         this.object.add(tableObject.object);
-            
+
 
                         if (currentRoom.isOccupied) {
                             //add a console log
@@ -138,22 +138,20 @@ export default class Maze {
                                 j - description.size.height / 2
                             );
                             humanObject.object.scale.set(1.2, 1, 1);
-                            humanObject.object.rotateX(Math.PI / 2.0);
-                            humanObject.object.rotateY(Math.PI);
-                            humanObject.object.rotateZ(Math.PI / 2.0);
-                            humanObject.object.translateY(-1.5);
-                            humanObject.object.translateZ(0.47);
+                            humanObject.object.rotateY(Math.PI / 2);
+                            humanObject.object.translateY(0.29);
+                            humanObject.object.translateZ(-0.67);
                             this.object.add(humanObject.object);
                         }
                     }
                 }
             }
-            
+
             // Scale the entire maze
             this.object.scale.set(this.scale.x, this.scale.y, this.scale.z);
-            
+
             this.loaded = true;
-        };            
+        };
         this.onProgress = function (url, xhr) {
             console.log("Resource '" + url + "' " + (100.0 * xhr.loaded / xhr.total).toFixed(0) + "% loaded.");
         };

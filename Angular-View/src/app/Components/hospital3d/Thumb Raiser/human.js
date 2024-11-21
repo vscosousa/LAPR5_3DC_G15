@@ -2,7 +2,7 @@ import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 
 export const humanData = {
-    url: "/models/gltf/RobotExpressive/human.glb",
+    url: "/models/gltf/RobotExpressive/patient.glb",
     scale: new THREE.Vector3(1.0, 1.0, 1.0)
 };
 
