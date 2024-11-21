@@ -42,6 +42,21 @@ namespace Projetos.LAPR5_3DC_G15.Mappers.Patients
             );
         }
 
+        public Patient ToDomain(UpdatePatientDTO dto, Patient existingPatient)
+        {
+            return new Patient(
+                dto.FirstName,
+                dto.LastName,
+                dto.FullName,
+                existingPatient.DateOfBirth,
+                existingPatient.GenderOptions,
+                dto.Email,
+                dto.PhoneNumber,
+                dto.EmergencyContact,
+                dto.MedicalConditions
+            );
+        }
+
         public CreatingPatientDTO ToCreatingDto(Patient domain)
         {
             return new CreatingPatientDTO

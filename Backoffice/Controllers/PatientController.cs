@@ -102,5 +102,33 @@ namespace DDDSample1.Controllers
                 return StatusCode(500, $"An error occurred while searching for patients: {ex.Message}");
             }
         }
+
+        [HttpPut("updateProfile")]
+        [Authorize(Roles = "Patient")]
+        public async Task<ActionResult<PatientDTO>> UpdateProfile(UpdatePatientDTO dto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+                var patient = await _service.UpdatePatientProfile(dto);
+                if (patient == null)
+                {
+                    return NotFound();
+                }
+                return Ok(patient);
+            }
+            catch (BusinessRuleValidationException ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred while updating the profile: {ex.Message}");
+            }
+        }
     }
 }

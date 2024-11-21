@@ -3,6 +3,7 @@ using DDDSample1.Domain.Shared;
 using System;
 using System.Collections.Generic;
 using DDDSample1.Domain.Logs;
+using System.Text.RegularExpressions; // Ensure you have this using directive for Regex
 
 namespace DDDSample1.Domain.Patients
 {
@@ -120,6 +121,77 @@ namespace DDDSample1.Domain.Patients
 
             var list = patients.ConvertAll(_mapper.ToDto);
             return list;
+        }
+
+        public async Task<Patient> UpdatePatientProfile(UpdatePatientDTO dto)
+        {
+            ValidateUpdatePatientDTO(dto);
+            var patientToUpdate = await _repo.GetByEmailAsync(dto.Email);
+            if (patientToUpdate == null) throw new InvalidOperationException($"User with email {dto.Email} not found.");
+
+            await CheckForDuplicateEmail(dto.Email);
+            await CheckForDuplicatePhoneNumber(dto.PhoneNumber);
+
+            var originalValues = new Dictionary<string, string>
+            {
+                { "FirstName", patientToUpdate.FirstName },
+                { "LastName", patientToUpdate.LastName },
+                { "Email", patientToUpdate.Email },
+                { "PhoneNumber", patientToUpdate.PhoneNumber },
+                { "EmergencyContact", patientToUpdate.EmergencyContact },
+                { "MedicalConditions", patientToUpdate.MedicalConditions }
+            };
+
+            UpdatePatientFields(patientToUpdate, dto);
+            await _repo.UpdateAsync(patientToUpdate);
+            await _unitOfWork.CommitAsync();
+
+            var updatedFields = new List<string>();
+            foreach (var key in originalValues.Keys)
+            {
+                var originalValue = originalValues[key];
+                var newValue = patientToUpdate.GetType().GetProperty(key).GetValue(patientToUpdate)?.ToString();
+                if (originalValue != newValue) updatedFields.Add($"{key}: {originalValue} -> {newValue}");
+            }
+
+            if (updatedFields.Count > 0)
+            {
+                var logMessage = $"Patient updated. The following fields were changed: {string.Join(", ", updatedFields)}.";
+                var log = new Log(TypeOfAction.Update, patientToUpdate.Id.ToString(), logMessage);
+                await _logRepository.AddAsync(log);
+                await _unitOfWork.CommitAsync();
+            }
+
+            return patientToUpdate;
+        }
+
+        private void ValidateUpdatePatientDTO(UpdatePatientDTO dto)
+        {
+            if (string.IsNullOrWhiteSpace(dto.Email) || !IsValidEmail(dto.Email))
+                throw new BusinessRuleValidationException("Invalid email format.");
+        }
+
+        private async Task<bool> CheckForDuplicateEmail(string email)
+        {
+            var existingPatient = await _repo.GetByEmailAsync(email);
+            return existingPatient != null;
+        }
+
+        private async Task<bool> CheckForDuplicatePhoneNumber(string phoneNumber)
+        {
+            var existingPatient = await _repo.GetByPhoneNumberAsync(phoneNumber);
+            return existingPatient != null;
+        }
+
+        private void UpdatePatientFields(Patient patient, UpdatePatientDTO dto)
+        {
+            patient.ChangeEmail(dto.Email);
+            patient.ChangePhoneNumber(dto.PhoneNumber);
+        }
+
+        private bool IsValidEmail(string email)
+        {
+            return Regex.IsMatch(email, @"^[^@\s]+@[^@\s]+\.[^@\s]+$");
         }
     }
 }
