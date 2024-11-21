@@ -4,6 +4,7 @@ import Wall from "./wall_template.js";
 import Door from "./door_template.js";
 import Table from "./table.js";
 import Human from "./human.js";
+import { consumerPollProducersForChange } from "@angular/core/primitives/signals";
 
 /*
  * parameters = {
@@ -19,6 +20,7 @@ export default class Maze {
             // Store the maze's map and size
             this.map = description.map;
             this.doorMap = description.doorMap;
+            this.tableMap = description.tableMap;
             this.size = description.size;
             this.doorParameters = doorParameters;
             this.tableParameters = tableParameters;
@@ -38,137 +40,163 @@ export default class Maze {
             // Create a wall
             this.wall = new Wall({ textureUrl: description.wallTextureUrl });
 
+            const rooms = [
+                { isOccupied: true },
+                { isOccupied: false },
+                { isOccupied: true },
+                { isOccupied: false },
+            ];
+
+
+            
             // Build the maze
-            let wallObject;
-            let doorObject;
-            let tableObject;
-            let humanObject;
-            for (let i = 0; i <= description.size.width; i++) { // In order to represent the eastmost walls, the map width is one column greater than the actual maze width
-                for (let j = 0; j <= description.size.height; j++) { // In order to represent the southmost walls, the map height is one row greater than the actual maze height
-                    /*
-                     * description.map[][] | North wall | West wall
-                     * --------------------+------------+-----------
-                     *          0          |     No     |     No
-                     *          1          |     No     |    Yes
-                     *          2          |    Yes     |     No
-                     *          3          |    Yes     |    Yes
-                     */
-                    /* To-do #5 - Create the north walls
-                        - cell coordinates: i (column) and j (row)
-                        - map: description.map[][]
-                        - maze width: description.size.width
-                        - maze height: description.size.height*/
-                    if (description.map[j][i] == 2 || description.map[j][i] == 3) {
-                        wallObject = this.wall.object.clone();
-                        wallObject.position.set(i - description.size.width / 2 + 0.5, 0.5, j - description.size.height / 2);
-                        this.object.add(wallObject);
-                    }
-                    /* To-do #6 - Create the west walls
-                        - cell coordinates: i (column), j (row)
-                        - map: description.map[][]
-                        - maze width: description.size.width
-                        - maze height: description.size.height*/
-                    if (description.map[j][i] == 1 || description.map[j][i] == 3) {
-                        wallObject = this.wall.object.clone();
-                        wallObject.rotateY(Math.PI / 2.0);
-                        wallObject.position.set(i - description.size.width / 2, 0.5, j - description.size.height / 2 + 0.5);
-                        this.object.add(wallObject);
+            for (let j = 0; j <= description.size.height; j++) {
+                for (let i = 0; i <= description.size.width; i++) {
+                    // Determine the current room based on tile position
+                    let roomIndex;
+                    const midHeight = Math.floor(description.size.height / 2);
+                    const midWidth = Math.floor(description.size.width / 2);
+
+                    if (j < midHeight && i < midWidth) {
+                        roomIndex = 0; // Top-left quadrant
+                    } else if (j < midHeight && i >= midWidth) {
+                        roomIndex = 1; // Top-right quadrant
+                    } else if (j >= midHeight && i < midWidth) {
+                        roomIndex = 2; // Bottom-left quadrant
+                    } else {
+                        roomIndex = 3; // Bottom-right quadrant
                     }
 
-                    if (description.doorMap[j][i] == 1 || description.doorMap[j][i] == 2) {
-                        doorObject = this.door = new Door(this.doorParameters);
-                        doorObject.object.position.set(i - description.size.width / 2 + 0.5, 0.5, j - description.size.height / 2);
-                        doorObject.object.scale.set(0.0035,0.00635,0);
+                    const currentRoom = rooms[roomIndex];
+            
+                    // Create north walls
+                    if (description.map[j][i] === 2 || description.map[j][i] === 3) {
+                        const wallObject = this.wall.object.clone();
+                        wallObject.position.set(
+                            i - description.size.width / 2 + 0.5,
+                            0.5,
+                            j - description.size.height / 2
+                        );
+                        this.object.add(wallObject);
+                    }
+            
+                    // Create west walls
+                    if (description.map[j][i] === 1 || description.map[j][i] === 3) {
+                        const wallObject = this.wall.object.clone();
+                        wallObject.rotateY(Math.PI / 2.0);
+                        wallObject.position.set(
+                            i - description.size.width / 2,
+                            0.5,
+                            j - description.size.height / 2 + 0.5
+                        );
+                        this.object.add(wallObject);
+                    }
+            
+                    // Add doors (only if the room is occupied)
+                    if (description.map[j][i] === 4 && currentRoom.isOccupied) {
+                        const doorObject = new Door(this.doorParameters);
+                        doorObject.object.position.set(
+                            i - description.size.width / 2 + 0.5,
+                            0.5,
+                            j - description.size.height / 2
+                        );
+                        doorObject.object.scale.set(0.0035, 0.00635, 0);
                         doorObject.object.translateY(-0.6);
-                        //se a porta estiver na parede norte
-                        if(description.map[j][i] == 1){
-                        doorObject.object.translateZ(0.3);
+            
+                        // Adjust door positioning based on the wall
+                        if (description.map[j][i] === 1) {
+                            doorObject.object.translateZ(0.3); // Door on the north wall
+                        } else if (description.map[j][i] === 2) {
+                            doorObject.object.translateZ(-0.029); // Door on the south wall
                         }
-                        //se a porta estiver na parede sul
-                        if(description.map[j][i] == 2){
-                        doorObject.object.translateZ(-0.029);
-                        }
+            
                         this.object.add(doorObject.object);
                     }
-                    if(description.tableMap[j][i] == 1) {
-                        tableObject = this.table = new Table(this.tableParameters);
-                        tableObject.object.position.set(i - description.size.width / 2 + 0.5, 0.5, j - description.size.height / 2);
+            
+                    // Add tables and humans
+                    if (this.map[j][i] === 5) {
+                        console.log ("Table added: " + currentRoom.isOccupied);
+                        const tableObject = new Table(this.tableParameters);
+                        tableObject.object.position.set(
+                            i - description.size.width / 2 + 0.5,
+                            0.5,
+                            j - description.size.height / 2
+                        );
                         tableObject.object.scale.set(1, 0.68, 1);
                         tableObject.object.translateX(-0.6);
                         tableObject.object.translateY(-0.2);
                         this.object.add(tableObject.object);
+            
 
-                        humanObject = this.human = new Human(this.humanParameters);
-                        humanObject.object.position.set(i - description.size.width / 2 + 0.5, 0.5, j - description.size.height / 2);
-                        humanObject.object.scale.set(1.2, 1, 1);
-                        humanObject.object.rotateX(Math.PI / 2.0);
-                        humanObject.object.rotateY((Math.PI / 2.0)*2);
-                        humanObject.object.rotateZ((Math.PI/2.0));
-                        humanObject.object.translateY(-1.5);
-                        humanObject.object.translateZ(0.47);
-                        this.object.add(humanObject.object);
-                    }  
+                        if (currentRoom.isOccupied) {
+                            //add a console log
+                            console.log("Human added: " + currentRoom.isOccupied);
+                            const humanObject = new Human(this.humanParameters);
+                            humanObject.object.position.set(
+                                i - description.size.width / 2 + 0.5,
+                                0.5,
+                                j - description.size.height / 2
+                            );
+                            humanObject.object.scale.set(1.2, 1, 1);
+                            humanObject.object.rotateX(Math.PI / 2.0);
+                            humanObject.object.rotateY(Math.PI);
+                            humanObject.object.rotateZ(Math.PI / 2.0);
+                            humanObject.object.translateY(-1.5);
+                            humanObject.object.translateZ(0.47);
+                            this.object.add(humanObject.object);
+                        }
+                    }
                 }
             }
-
+            
+            // Scale the entire maze
             this.object.scale.set(this.scale.x, this.scale.y, this.scale.z);
             
             this.loaded = true;
-        }
-
+        };            
         this.onProgress = function (url, xhr) {
             console.log("Resource '" + url + "' " + (100.0 * xhr.loaded / xhr.total).toFixed(0) + "% loaded.");
-        }
+        };
 
         this.onError = function (url, error) {
             console.error("Error loading resource " + url + " (" + error + ").");
-        }
+        };
 
         for (const [key, value] of Object.entries(parameters)) {
             this[key] = value;
         }
         this.loaded = false;
 
-        // The cache must be enabled; additional information available at https://threejs.org/docs/api/en/loaders/FileLoader.html
         THREE.Cache.enabled = true;
 
-        // Create a resource file loader
         const loader = new THREE.FileLoader();
-
-        // Set the response type: the resource file will be parsed with JSON.parse()
         loader.setResponseType("json");
-
-        // Load a maze description resource file
         loader.load(
-            //Resource URL
             this.url,
-
-            // onLoad callback
-            description => this.onLoad(description),
-
-            // onProgress callback
-            xhr => this.onProgress(this.url, xhr),
-
-            // onError callback
-            error => this.onError(this.url, error)
+            (description) => this.onLoad(description),
+            (xhr) => this.onProgress(this.url, xhr),
+            (error) => this.onError(this.url, error)
         );
     }
 
-    // Convert cell [row, column] coordinates to cartesian (x, y, z) coordinates
     cellToCartesian(position) {
-        return new THREE.Vector3((position[1] - this.size.width / 2.0 + 0.5) * this.scale.x, 0.0, (position[0] - this.size.height / 2.0 + 0.5) * this.scale.z)
+        return new THREE.Vector3(
+            (position[1] - this.size.width / 2.0 + 0.5) * this.scale.x,
+            0.0,
+            (position[0] - this.size.height / 2.0 + 0.5) * this.scale.z
+        );
     }
 
-    // Convert cartesian (x, y, z) coordinates to cell [row, column] coordinates
     cartesianToCell(position) {
-        return [Math.floor(position.z / this.scale.z + this.size.height / 2.0), Math.floor(position.x / this.scale.x + this.size.width / 2.0)];
+        return [
+            Math.floor(position.z / this.scale.z + this.size.height / 2.0),
+            Math.floor(position.x / this.scale.x + this.size.width / 2.0)
+        ];
     }
 
-    /* To-do #23 - Measure the player’s distance to the walls
-        - player position: position*/
     distanceToWestWall(position) {
         const indices = this.cartesianToCell(position);
-        if (this.map[indices[0]][indices[1]] == 1 || this.map[indices[0]][indices[1]] == 3) {
+        if (this.map[indices[0]][indices[1]] === 1 || this.map[indices[0]][indices[1]] === 3) {
             return position.x - this.cellToCartesian(indices).x + this.scale.x / 2.0;
         }
         return Infinity;
@@ -177,7 +205,7 @@ export default class Maze {
     distanceToEastWall(position) {
         const indices = this.cartesianToCell(position);
         indices[1]++;
-        if (this.map[indices[0]][indices[1]] == 1 || this.map[indices[0]][indices[1]] == 3) {
+        if (this.map[indices[0]][indices[1]] === 1 || this.map[indices[0]][indices[1]] === 3) {
             return this.cellToCartesian(indices).x - this.scale.x / 2.0 - position.x;
         }
         return Infinity;
@@ -185,10 +213,10 @@ export default class Maze {
 
     distanceToNorthWall(position) {
         const indices = this.cartesianToCell(position);
-        if (this.map[indices[0]][indices[1]] == 2 || this.map[indices[0]][indices[1]] == 3) {
+        if (this.map[indices[0]][indices[1]] === 2 || this.map[indices[0]][indices[1]] === 3) {
             return position.z - this.cellToCartesian(indices).z + this.scale.z / 2.0;
         }
-        if(this.doorMap[indices[0]][indices[1]] == 1 || this.doorMap[indices[0]][indices[1]] == 2) {
+        if (this.doorMap[indices[0]][indices[1]] === 1 || this.doorMap[indices[0]][indices[1]] === 2) {
             return position.z - this.cellToCartesian(indices).z + this.scale.z / 2.0;
         }
         return Infinity;
@@ -197,10 +225,10 @@ export default class Maze {
     distanceToSouthWall(position) {
         const indices = this.cartesianToCell(position);
         indices[0]++;
-        if (this.map[indices[0]][indices[1]] == 2 || this.map[indices[0]][indices[1]] == 3) {
+        if (this.map[indices[0]][indices[1]] === 2 || this.map[indices[0]][indices[1]] === 3) {
             return this.cellToCartesian(indices).z - this.scale.z / 2.0 - position.z;
         }
-        if(this.doorMap[indices[0]][indices[1]] == 1 || this.doorMap[indices[0]][indices[1]] == 2) {
+        if (this.doorMap[indices[0]][indices[1]] === 1 || this.doorMap[indices[0]][indices[1]] === 2) {
             return this.cellToCartesian(indices).z - this.scale.z / 2.0 - position.z;
         }
         return Infinity;

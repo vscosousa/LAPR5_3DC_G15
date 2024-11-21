@@ -46,6 +46,8 @@ export default class ThumbRaiser {
         // Create a 2D scene (the viewports frames)
         this.scene2D = new THREE.Scene();
 
+        this.rooms = []; // Add this line to define the rooms property
+
         // Create a square
         let points = [new THREE.Vector3(0.0, 0.0, 0.0), new THREE.Vector3(1.0, 0.0, 0.0), new THREE.Vector3(1.0, 1.0, 0.0), new THREE.Vector3(0.0, 1.0, 0.0)];
         let geometry = new THREE.BufferGeometry().setFromPoints(points);
@@ -133,6 +135,7 @@ export default class ThumbRaiser {
         this.statisticsCheckBox = document.getElementById("statistics");
         this.statisticsCheckBox.checked = false;
 
+
         // Build the help panel
         this.buildHelpPanel();
 
@@ -177,6 +180,7 @@ export default class ThumbRaiser {
         this.userInterfaceCheckBox.addEventListener("change", event => this.elementChange(event));
         this.helpCheckBox.addEventListener("change", event => this.elementChange(event));
         this.statisticsCheckBox.addEventListener("change", event => this.elementChange(event));
+        
 
         // Register the event handler to be called on input button click
         this.reset.addEventListener("click", event => this.buttonClick(event));
@@ -658,9 +662,6 @@ export default class ThumbRaiser {
                         - duration: 0.2 seconds*/
                     if (this.collision(newPosition)) {
                         this.animations.fadeToAction("Death", 0.2);
-                    }
-                    if(this.openDoor()){
-                        this.animations.fadeToAction("Dance", 0.2);
                     }
                     else {
                         this.animations.fadeToAction(this.player.keyStates.run ? "Running" : "Walking", 0.2);

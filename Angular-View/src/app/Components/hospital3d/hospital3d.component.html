@@ -44,6 +44,18 @@
             <input type="button" id="reset-all" value="Reset all views">
           </td>
         </tr>
+        <tr>
+            <td colspan="4">
+            <label for="date-picker">Select a Date:</label>
+            <input
+              type="datetime-local"
+              id="date-picker"
+              [(ngModel)]="selectedDate"
+              (change)="onDateChange($event)"
+            />
+            <button (click)="checkOperations()">Check Operations</button>
+          </td>
+        </tr>        
       </tbody>
     </table>
   </div>

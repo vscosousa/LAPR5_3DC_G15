@@ -19,6 +19,7 @@ namespace DDDSample1.Infrastructure.SurgeryRooms
             builder.Property(e => e.Equipment).IsRequired();
             builder.Property(e => e.Status).IsRequired();
             builder.Property(e => e.RoomMaintenance).IsRequired();
+            builder.Property(e => e.AppointmentDates).IsRequired();
         }
     }
 }

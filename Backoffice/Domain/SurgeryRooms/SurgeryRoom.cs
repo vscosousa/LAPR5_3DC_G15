@@ -15,15 +15,18 @@ namespace DDDSample1.Domain.SurgeryRooms
 
        private DateTime[] _roomMaintenance;
 
+       private DateTime[] _appointmentDates;
+
          public SurgeryRoom(string roomNumber, string type, int capacity, List<string> equipment, SurgeryRoomStatus status, DateTime[] roomMaintenance)
          {
-            Id = new SurgeryRoomId(Guid.NewGuid());
-            _roomNumber = roomNumber;
-            _type = type;
-            _capacity = capacity;
-            _equipment = equipment;
-            _status = status;
-            _roomMaintenance = roomMaintenance;
+             Id = new SurgeryRoomId(Guid.NewGuid());
+             _roomNumber = roomNumber;
+             _type = type;
+             _capacity = capacity;
+             _equipment = equipment;
+             _status = status;
+             _roomMaintenance = roomMaintenance;
+             _appointmentDates = new DateTime[0];
          }
 
 
@@ -33,6 +36,15 @@ namespace DDDSample1.Domain.SurgeryRooms
         public List<string> Equipment => _equipment;
         public SurgeryRoomStatus Status => _status;
         public DateTime[] RoomMaintenance => _roomMaintenance;
+        public DateTime[] AppointmentDates => _appointmentDates;
 
+
+        
+
+        internal void setAppointmentDates(DateTime dateTime)
+        {
+            List<DateTime> dates = [.. _appointmentDates, dateTime];
+            _appointmentDates = dates.ToArray();
+        }
     }
 }

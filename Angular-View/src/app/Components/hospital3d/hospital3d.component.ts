@@ -1,14 +1,16 @@
 import { AfterViewInit, Component, Inject, PLATFORM_ID, OnInit } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
-
 import * as THREE from "three";
 import Orientation from "./Thumb Raiser/orientation";
 import ThumbRaiser from "./Thumb Raiser/thumb_raiser_template";
-import { dir } from 'console';
+import { FormsModule } from '@angular/forms';
+import { Hospital3dService } from '../../Services/hospital3d.service';
 
 @Component({
   selector: 'app-hospital3d',
   standalone: true,
+  imports: [FormsModule],
+  providers: [Hospital3dService],
   templateUrl: './hospital3d.component.html',
   styleUrls: ['./hospital3d.component.scss']
 })
@@ -16,8 +18,10 @@ export class Hospital3dComponent implements OnInit, AfterViewInit {
 
   thumbRaiser!: ThumbRaiser;
   private animationFrameId: number | null = null;
+  selectedDate: Date = new Date();
+  rooms: any[] = [];
 
-  constructor(@Inject(PLATFORM_ID) private platformId: Object) { }
+  constructor(@Inject(PLATFORM_ID) private platformId: Object, private hospital3dService: Hospital3dService) { }
 
   initialize() {
     this.thumbRaiser = new ThumbRaiser(
@@ -67,5 +71,27 @@ export class Hospital3dComponent implements OnInit, AfterViewInit {
     if (this.animationFrameId !== null) {
       cancelAnimationFrame(this.animationFrameId);
     }
+  }
+
+  checkOperations(): void {
+    if (this.selectedDate) {
+      this.hospital3dService.getRoomsAvailabilityByDate(this.selectedDate).subscribe(
+        (data: any[]) => {
+          this.rooms = data;
+          console.log('Rooms fetched:', data);
+        },
+        error => {
+          console.error('Error fetching rooms', error);
+        }
+      );
+    } else {
+      console.error('No date selected');
+    }
+  }
+
+  onDateChange(event: any): void {
+    const input = event.target as HTMLInputElement;
+    this.selectedDate = new Date(input.value);
+    console.log('Date changed:', this.selectedDate);
   }
 }

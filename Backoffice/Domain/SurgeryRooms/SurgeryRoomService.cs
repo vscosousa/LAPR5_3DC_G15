@@ -1,3 +1,7 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using DDDSample1.Domain.Shared;
 
 namespace DDDSample1.Domain.SurgeryRooms
@@ -13,6 +17,67 @@ namespace DDDSample1.Domain.SurgeryRooms
             _unitOfWork = unitOfWork;
             _repo = repo;
             _mapper = mapper;
+        }
+
+        public async Task<SurgeryRoomDTO> CreateSurgeryRoom(CreatingSurgeryRoomDTO dto)
+        {
+            try
+            {
+                // Check if RoomNumber is unique
+                var existingRoom = await _repo.GetByRoomNumberAsync(dto.RoomNumber);
+                if (existingRoom != null)
+                {
+                    throw new BusinessRuleValidationException($"Room number '{dto.RoomNumber}' already exists.");
+                }
+
+                // Map DTO to domain model
+                var surgeryRoom = _mapper.ToDomain(dto);
+
+                // Add and commit
+                await _repo.AddAsync(surgeryRoom);
+                await _unitOfWork.CommitAsync();
+
+                return _mapper.ToDto(surgeryRoom);
+            }
+            catch (BusinessRuleValidationException e)
+            {
+                throw new BusinessRuleValidationException(e.Message);
+            }
+            catch (SystemException ex)
+            {
+                Console.WriteLine(ex);
+                throw new SystemException("An error occurred while creating the surgery room.");
+            }
+
+        }
+
+               public async Task<List<SurgeryRoomDTO>> GetRoomsByDate(DateTime date)
+        {
+            try
+            {
+                var roomsWithAppointments = new List<SurgeryRoomDTO>();
+                var rooms = await _repo.GetByDateAsync(date) as IEnumerable<SurgeryRoom>;
+        
+                foreach (var room in rooms)
+                {
+            
+                    if (room.AppointmentDates.Any(appointment => appointment.Date.Date == date.Date))
+                    {
+                        roomsWithAppointments.Add(_mapper.ToDto(room));
+                    }
+                }
+        
+                return roomsWithAppointments;
+            }
+            catch (BusinessRuleValidationException e)
+            {
+                throw new BusinessRuleValidationException(e.Message);
+            }
+            catch (SystemException ex)
+            {
+                Console.WriteLine(ex);
+                throw new SystemException("An error occurred while getting the surgery rooms.");
+            }
         }
     }
 }
