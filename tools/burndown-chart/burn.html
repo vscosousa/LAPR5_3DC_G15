@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, height=device-height, initial-scale=1.0"
+    />
+    <title>Burndown Chart</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="styles.js"></script>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  </head>
+  <body>
+    <div id="container-select">
+      <label for="sprint-selector">Select Sprint:</label>
+      <select id="sprint-selector">
+        <option value="sprintA">Sprint A: 16/09/2024 - 28/10/2024</option>
+        <option value="sprintB" selected>
+          Sprint B: 28/10/2024 - 24/11/2024
+        </option>
+      </select>
+    </div>
+    <div id="container" style="margin: 20px"></div>
+    <button id="download-btn">Download PNG</button>
+    <script>
+      $(function () {
+        const sprints = {
+          sprintA: {
+            startDate: new Date("2024-09-16"),
+            endDate: new Date("2024-10-28"),
+            userStories: [
+              "2024-09-16",
+              "2024-09-16",
+              "2024-09-16",
+              "2024-09-16",
+              "2024-09-16",
+              "2024-09-16",
+              "2024-09-16",
+              "2024-09-16",
+              "2024-09-16",
+              "2024-09-16",
+              "2024-09-16",
+              "2024-09-16",
+              "2024-09-16",
+              "2024-09-16",
+              "2024-09-16",
+              "2024-09-16",
+              "2024-09-16",
+              "2024-09-16",
+              "2024-09-16",
+              "2024-09-16",
+            ],
+            closedStories: [
+              "2024-10-20",
+              "2024-10-20",
+              "2024-10-19",
+              "2024-10-19",
+              "2024-10-19",
+              "2024-10-18",
+              "2024-10-18",
+              "2024-10-18",
+              "2024-10-18",
+              "2024-10-18",
+            ],
+          },
+          sprintB: {
+            startDate: new Date("2024-10-28"),
+            endDate: new Date("2024-11-24"),
+            userStories: [
+              "2024-10-28",
+              "2024-10-28",
+              "2024-10-28",
+              "2024-10-28",
+              "2024-10-28",
+              "2024-10-28",
+              "2024-10-28",
+              "2024-10-28",
+              "2024-10-28",
+              "2024-10-28",
+              "2024-10-28",
+              "2024-10-28",
+              "2024-10-28",
+              "2024-10-28",
+              "2024-10-28",
+              "2024-10-28",
+              "2024-10-28",
+              "2024-10-28",
+              "2024-10-28",
+              "2024-10-28",
+              "2024-10-28",
+              "2024-10-28",
+              "2024-10-28",
+              "2024-10-28",
+              "2024-10-28",
+              "2024-10-28",
+              "2024-10-28",
+              "2024-10-28",
+              "2024-10-28",
+              "2024-10-28",
+              "2024-10-28",
+              "2024-10-28",
+              "2024-10-28",
+              "2024-10-28",
+              "2024-10-28",
+              "2024-10-28",
+              "2024-10-28",
+              "2024-10-28",
+              "2024-10-28",
+              "2024-10-28",
+              "2024-10-28",
+              "2024-10-28",
+              "2024-10-28",
+            ],
+            closedStories: [
+              "2024-11-18",
+              "2024-11-18",
+              "2024-11-17",
+              "2024-11-17",
+              "2024-11-17",
+              "2024-11-15",
+              "2024-11-15",
+              "2024-11-15",
+              "2024-11-15",
+              "2024-11-15",
+              "2024-11-14",
+              "2024-11-14",
+              "2024-11-14",
+              "2024-11-14",
+              "2024-11-14",
+              "2024-11-14",
+            ],
+          },
+        };
+
+        function getCurrentSprint() {
+          const today = new Date();
+          for (const sprint in sprints) {
+            const { startDate, endDate } = sprints[sprint];
+            if (today >= startDate && today <= endDate) {
+              return sprint;
+            }
+          }
+          return "sprintA";
+        }
+
+        function updateChart(sprint) {
+          const { startDate, endDate, userStories, closedStories } =
+            sprints[sprint];
+          const totalDays = (endDate - startDate) / (1000 * 60 * 60 * 24) + 1;
+
+          let totalUserStories = 0;
+          let remainingUserStories = 0;
+          let idealBurn = Array(totalDays).fill(0);
+          let actualBurn = Array(totalDays).fill(0);
+
+          const categories = [];
+          for (let i = 0; i < totalDays; i++) {
+            categories.push(i + 1);
+          }
+
+          function calculateIdealBurn(fromIndex = 0) {
+            const dailyBurnRate = totalUserStories / totalDays;
+            for (let i = fromIndex; i < totalDays; i++) {
+              idealBurn[i] = Math.max(
+                0,
+                Math.round(totalUserStories - i * dailyBurnRate)
+              );
+            }
+            idealBurn[totalDays - 1] = 0;
+          }
+
+          function addUserStory(addDate) {
+            const addIndex = Math.floor(
+              (new Date(addDate) - startDate) / (1000 * 60 * 60 * 24)
+            );
+
+            if (addIndex >= 0 && addIndex < totalDays) {
+              totalUserStories++;
+              remainingUserStories++;
+
+              for (let i = addIndex; i < totalDays; i++) {
+                actualBurn[i]++;
+              }
+
+              calculateIdealBurn(addIndex);
+
+              chart.series[0].setData(idealBurn);
+              chart.series[1].setData(actualBurn);
+
+              chart.setTitle({
+                text: `Burndown Chart (${totalUserStories} Stories)`,
+              });
+            }
+          }
+
+          function closeUserStory(closeDate) {
+            const closeIndex = Math.floor(
+              (new Date(closeDate) - startDate) / (1000 * 60 * 60 * 24)
+            );
+
+            if (
+              closeIndex >= 0 &&
+              closeIndex < totalDays &&
+              remainingUserStories > 0
+            ) {
+              remainingUserStories--;
+
+              for (let i = closeIndex; i < totalDays; i++) {
+                actualBurn[i] = Math.max(0, actualBurn[i] - 1);
+              }
+
+              calculateIdealBurn(closeIndex);
+
+              chart.series[0].setData(idealBurn);
+              chart.series[1].setData(actualBurn);
+            }
+          }
+
+          const chart = Highcharts.chart("container", {
+            title: { text: "Burndown Chart", x: -20 },
+            subtitle: {
+              text: `Sprint: ${startDate.toLocaleDateString()} - ${endDate.toLocaleDateString()}`,
+              x: -20,
+            },
+            xAxis: {
+              title: { text: "Days" },
+              categories: categories,
+            },
+            yAxis: {
+              title: { text: "Remaining Workload (User Stories)" },
+              min: 0,
+            },
+            tooltip: {
+              valueSuffix: "",
+              crosshairs: true,
+              shared: true,
+            },
+            legend: {
+              layout: "vertical",
+              align: "right",
+              verticalAlign: "middle",
+              borderWidth: 0,
+            },
+            series: [
+              {
+                name: "Ideal Burn (User Stories)",
+                color: "rgba(255,0,0,0.5)",
+                lineWidth: 2,
+                data: idealBurn,
+              },
+              {
+                name: "Actual Burn (User Stories)",
+                color: "rgba(0,120,200,0.75)",
+                marker: { radius: 6 },
+                data: actualBurn,
+              },
+            ],
+          });
+
+          calculateIdealBurn();
+
+          userStories.forEach((story) => addUserStory(story));
+          closedStories.forEach((story) => closeUserStory(story));
+        }
+
+        $("#sprint-selector").on("change", function () {
+          const selectedSprint = $(this).val();
+          updateChart(selectedSprint);
+        });
+
+        const currentSprint = getCurrentSprint();
+        $("#sprint-selector").val(currentSprint);
+        updateChart(currentSprint);
+
+        $("#download-btn").on("click", function () {
+          const selectedSprint = $("#sprint-selector").val();
+          html2canvas(document.querySelector("#container")).then((canvas) => {
+            const link = document.createElement("a");
+            link.download = `burndown_chart_${selectedSprint}.png`;
+            link.href = canvas.toDataURL("image/png");
+            link.click();
+          });
+        });
+      });
+    </script>
+  </body>
+</html>
