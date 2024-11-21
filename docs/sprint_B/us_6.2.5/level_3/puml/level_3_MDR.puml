@@ -1,0 +1,18 @@
+@startuml
+participant "PatientService" as PatientService
+participant "PatientRepository" as PatientRepository
+participant "TokenService" as TokenService
+participant "Patient" as Patient
+
+PatientService -> PatientRepository : Get patient by email
+PatientRepository -> PatientRepository : Validate email
+PatientRepository -> PatientService : Return Patient data
+PatientService -> PatientService : VerifyPassword(Password, PasswordHash)
+alt If valid credentials
+    PatientService -> TokenService : GenerateToken(Patient)
+    TokenService -> PatientService : Return Token
+    PatientService -> Frontend : Return login success with token
+else If invalid credentials
+    PatientService -> Frontend : Return login failure message
+end
+@enduml
