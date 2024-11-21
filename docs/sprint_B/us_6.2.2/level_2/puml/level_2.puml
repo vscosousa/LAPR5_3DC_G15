@@ -17,4 +17,19 @@ skinparam package {
     BackgroundColor #EBF5FB
 }
 
+actor Patient as P
+participant "FE" as FE
+participant "MDR" as MDR
+
+activate P
+P -> FE: Requests to update profile
+activate FE
+FE -> MDR: Sends HTTP Request with UpdatePatientDTO
+activate MDR
+MDR -> MDR: Validates data and processes the update
+MDR --> FE: Returns Operation Status Code
+deactivate MDR
+FE --> P: Returns Success/Error message
+deactivate FE
+
 @enduml

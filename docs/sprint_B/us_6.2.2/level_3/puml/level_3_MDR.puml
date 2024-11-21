@@ -1,0 +1,54 @@
+@startuml level_3_MDR
+
+title Level 3 MDR Diagram
+
+hide empty members
+'skinparam Linetype ortho
+
+skinparam class {
+    BackgroundColor<<valueObject>> #D6EAF8
+    BackgroundColor<<root>> #FDEBD0
+    BackgroundColor<<service>> #D1F2EB
+    BackgroundColor #FEF9E7
+    ArrowColor Black
+}
+
+skinparam package {
+    BackgroundColor #EBF5FB
+}
+
+actor FE as FE
+participant "UserController" as C
+participant "UserService" as S
+participant "UserMapper" as M
+participant "UserRepository" as R
+participant "Database" as DB
+participant "User" as U
+participant "UserDTO" as DTO
+
+activate FE
+FE -> C: Makes HTTP Request to Update User with data (name, email, phone number)
+activate C
+C -> S: updateUser(UserDTO dto)
+activate S
+S -> R: getUserByEmailAsync(dto.Email())
+activate R
+R --> S: Returns User
+deactivate R
+alt User exists
+    S -> M: MapToUser(dto)
+    activate M
+    M -> U: new User(dto fields)
+    activate U
+    U -> U: Update User()
+    deactivate U
+    M --> S: return User
+    deactivate M
+    S -> R: updateAsync(user)
+    activate R
+    R -> DB: _objs.Update(user)
+    activate DB
+    deactivate DB
+    R --> S: return updated User
+    deactivate R
+    S -->
