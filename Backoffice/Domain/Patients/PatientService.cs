@@ -4,6 +4,12 @@ using System;
 using System.Collections.Generic;
 using DDDSample1.Domain.Logs;
 using System.Text.RegularExpressions; // Ensure you have this using directive for Regex
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+using BCrypt.Net;
+using Microsoft.Extensions.Configuration;
 
 namespace DDDSample1.Domain.Patients
 {
@@ -13,13 +19,15 @@ namespace DDDSample1.Domain.Patients
         private readonly IPatientRepository _repo;
         private readonly IPatientMapper _mapper;
         private readonly ILogRepository _logRepository;
+        private readonly IConfiguration _configuration;
 
-        public PatientService(IUnitOfWork unitOfWork, IPatientRepository repo, IPatientMapper mapper, ILogRepository logRepository)
+        public PatientService(IUnitOfWork unitOfWork, IPatientRepository repo, IPatientMapper mapper, ILogRepository logRepository, IConfiguration configuration)
         {
             _unitOfWork = unitOfWork;
             _repo = repo;
             _mapper = mapper;
             _logRepository = logRepository;
+            _configuration = configuration;
         }
 
         public async Task<PatientDTO> CreatePatient(CreatingPatientDTO dto)
@@ -39,6 +47,9 @@ namespace DDDSample1.Domain.Patients
                 await _repo.AddAsync(patient);
                 await _unitOfWork.CommitAsync();
                 Console.WriteLine("Transaction committed successfully");
+
+                // Hash the password before saving
+                patient.SetPassword(dto.Password); 
 
                 var patientDTO = _mapper.ToDto(patient);
 
@@ -192,6 +203,59 @@ namespace DDDSample1.Domain.Patients
         private bool IsValidEmail(string email)
         {
             return Regex.IsMatch(email, @"^[^@\s]+@[^@\s]+\.[^@\s]+$");
+        }
+
+        public async Task<string> LoginPatient(LoginDTO dto)
+        {
+            var patient = await _repo.GetByEmailAsync(dto.Email);
+            
+            // Ensure patient is not null
+            if (patient == null)
+            {
+                throw new BusinessRuleValidationException("Invalid email or password.");
+            }
+
+            // Ensure password is not null or empty
+            if (string.IsNullOrEmpty(dto.Password))
+            {
+                throw new BusinessRuleValidationException("Password cannot be null or empty.");
+            }
+
+            // Validate password
+            if (!BCrypt.Net.BCrypt.Verify(dto.Password, patient.PasswordHash))
+            {
+                throw new BusinessRuleValidationException("Invalid email or password.");
+            }
+
+            // Generate token
+            return GenerateToken(patient);
+        }
+
+        // Method to verify the password
+        private bool VerifyPassword(string password, string storedHash)
+        {
+            // Implement your password hashing and verification logic here
+            return BCrypt.Net.BCrypt.Verify(password, storedHash);
+        }
+
+        // Method to generate a JWT token
+        private string GenerateToken(Patient patient)
+        {
+            // Ensure the key is at least 16 bytes (128 bits)
+            var key = Encoding.ASCII.GetBytes(_configuration["Jwt:Key"]);
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new[] 
+                {
+                    new Claim(ClaimTypes.NameIdentifier, patient.Id.ToString()),
+                    new Claim(ClaimTypes.Email, patient.Email)
+                }),
+                Expires = DateTime.UtcNow.AddHours(1),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            };
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            return tokenHandler.WriteToken(token);
         }
     }
 }

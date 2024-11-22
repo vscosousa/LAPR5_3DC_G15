@@ -5,10 +5,11 @@ using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using DDDSample1.Domain.Shared;
 using DDDSample1.Domain.Users;
+using BCrypt.Net;
 
 namespace DDDSample1.Domain.Patients
 {
-    public class Patient : Entity<PatientId>, IAggregateRoot
+    public class Patient : Entity<PatientId>
     {
         private string _firstName;
         private string _lastName;
@@ -22,9 +23,10 @@ namespace DDDSample1.Domain.Patients
         private string _medicalConditions;
         private DateTime[] _appointmentHistory;
         private bool _isActive;
-        
+        private string _passwordHash;
+
         // Parameterless constructor for EF Core
-        private Patient() { }
+        internal Patient() { }
 
         public Patient(string firstName, string lastName, string fullName, DateOnly dateOfBirth, GenderOptions gender, string email, string phoneNumber, string emergencyContact, string medicalConditions)
         {
@@ -64,6 +66,17 @@ namespace DDDSample1.Domain.Patients
             _isActive = true;
         }
 
+        public Patient(string email, string password)
+        {
+            if (!Regex.IsMatch(email, @"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"))
+                throw new BusinessRuleValidationException("Email must be in a valid format.");
+
+            _email = email;
+            _passwordHash = BCrypt.Net.BCrypt.HashPassword(password);
+            Id = new PatientId(Guid.NewGuid());
+            _isActive = true;
+        }
+
         public string FirstName => _firstName;
         public string LastName => _lastName;
         public string FullName => _fullName;
@@ -76,6 +89,7 @@ namespace DDDSample1.Domain.Patients
         public string MedicalConditions => _medicalConditions;
         public DateTime[] AppointmentHistory => _appointmentHistory;
         public bool IsActive => _isActive;
+        public string PasswordHash => _passwordHash;
 
         internal void ChangeFirstName(string firstName) => _firstName = firstName;
         internal void ChangeLastName(string lastName) => _lastName = lastName;
@@ -122,6 +136,11 @@ namespace DDDSample1.Domain.Patients
         internal void RemoveOperationRequest(DateTime operationRequestDate)
         {
             _appointmentHistory = _appointmentHistory.Where(date => date != operationRequestDate).ToArray();
+        }
+
+        public void SetPassword(string password)
+        {
+            _passwordHash = BCrypt.Net.BCrypt.HashPassword(password);
         }
     }
 }

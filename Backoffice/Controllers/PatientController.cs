@@ -130,5 +130,19 @@ namespace DDDSample1.Controllers
                 return StatusCode(500, $"An error occurred while updating the profile: {ex.Message}");
             }
         }
+
+        [HttpPost("login")]
+        public async Task<ActionResult<string>> Login(LoginDTO loginDto)
+        {
+            try
+            {
+                var token = await _service.LoginPatient(loginDto);
+                return Ok(token);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
     }
 }
