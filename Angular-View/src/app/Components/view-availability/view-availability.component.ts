@@ -49,6 +49,9 @@ export class ViewAvailabilityComponent implements OnInit {
     });
   
     this.staffId = this.route.snapshot.paramMap.get('id') || '';
+    if (!this.staffId) {
+      alert('Staff ID not found in the route');
+    }
   }
 
   ngOnInit(): void {

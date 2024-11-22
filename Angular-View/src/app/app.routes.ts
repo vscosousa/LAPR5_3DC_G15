@@ -23,6 +23,8 @@ import { ConfirmUpdatesStaffComponent } from './Components/confirm-updates-staff
 import { UpdatePatientComponent } from './Components/update-patient/update-patient.component';
 import { ViewAvailabilityComponent } from './Components/view-availability/view-availability.component';
 import { ActiveStaffComponent } from './Components/active-staff/active-staff.component';
+import { DoctorGuard } from './Guards/doctor.guard';
+import { DoctorPanelComponent } from './Components/doctor-panel/doctor-panel.component';
 
 
 export const routes: Routes = [
@@ -40,6 +42,9 @@ export const routes: Routes = [
     },
     {
         path: "panel-admin", component: PanelAdminComponent, canActivate: [AuthGuard]
+    },
+    {
+        path: "panel-doctor", component: DoctorPanelComponent, canActivate: [DoctorGuard]
     },
     {
         path: "create-staff", component: CreateStaffComponent, canActivate: [AuthGuard]

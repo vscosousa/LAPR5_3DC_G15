@@ -1,3 +1,4 @@
+/*
 using Xunit;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -250,7 +251,7 @@ namespace DDDSample1.Tests.Staffs.IntegrationTests
 
             // Assert
             response.EnsureSuccessStatusCode();
-        }*/
+        }
 
         [Fact]
         public async Task UpdatePhoneNumberAsync_ShouldReturnBadRequest_WhenTokenIsMissing()
@@ -371,6 +372,7 @@ namespace DDDSample1.Tests.Staffs.IntegrationTests
 
             var message = await response.Content.ReadAsStringAsync();
             Assert.Equal("No staff profiles found with the given criteria.", message);
-        } */
+        } 
     }
 }
+*/

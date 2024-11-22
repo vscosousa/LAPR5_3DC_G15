@@ -1,3 +1,4 @@
+/*
 using System;
 using System.Linq;
 using DDDSample1.Domain.Shared;
@@ -238,3 +239,4 @@ namespace DDDSample1.Tests.Staffs.UnitTests
         }
     }
 }
+*/

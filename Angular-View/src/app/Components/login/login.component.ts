@@ -87,6 +87,8 @@ export class LoginComponent {
             this.router.navigate(['/panel-admin']);
           } else if (role === 'Patient') {
             this.router.navigate(['/patient-panel']);
+          } else if (role === 'Doctor') {
+            this.router.navigate(['/panel-doctor']);
           } else {
             console.error('Unknown role:', role);
             this.router.navigate(['/']);
@@ -130,6 +132,8 @@ export class LoginComponent {
             this.router.navigate(['/panel-admin']);
           } else if (role === 'Patient') {
             this.router.navigate(['/patient-panel']);
+          } else if (role === 'Doctor') {
+            this.router.navigate(['/panel-doctor']);
           } else {
             console.error('Unknown role:', role);
             this.router.navigate(['/']);

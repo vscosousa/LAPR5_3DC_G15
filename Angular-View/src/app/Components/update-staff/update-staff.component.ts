@@ -23,14 +23,17 @@ export class UpdateStaffComponent implements OnInit {
 
     constructor( private staffService: StaffService, private fb: FormBuilder, private router: Router, private route: ActivatedRoute) {
       this.updateStaffForm = this.fb.group({
-        identifier: [''],
-        phoneNumber: [''],
-        email: new FormControl('', [Validators.email]),
+        identifier: new FormControl('', [Validators.required]),
+        phoneNumber: new FormControl('', [Validators.required]),
+        email: new FormControl('', [Validators.required, Validators.email]),
         addAvailabilitySlots: [''],
         removeAvailabilitySlots: [''],
-        specializationName: ['']
+        specializationName: new FormControl('', [Validators.required])
       });
       this.staffId = this.route.snapshot.paramMap.get('id') || '';
+      if (!this.staffId) {
+        alert('Staff ID not found in the route');
+      }
     }
   
     ngOnInit(): void {
@@ -99,13 +102,10 @@ export class UpdateStaffComponent implements OnInit {
     }
 
     onSubmit(): void {
-      const identifier = this.updateStaffForm.value.identifier.trim();
-      const phoneNumber = this.updateStaffForm.value.phoneNumber.trim();
   
-      if ((identifier === '' && phoneNumber !== '') || (identifier !== '' && phoneNumber === '')) {
-        this.errorMessage = 'Both Identifier and Phone Number must be filled out if one is provided.';
-        this.updateStaffForm.controls['identifier'].setErrors({ required: true });
-        this.updateStaffForm.controls['phoneNumber'].setErrors({ required: true });
+      if (this.updateStaffForm.invalid) {
+        this.errorMessage = '';
+        this.updateStaffForm.markAllAsTouched();
         return;
       }
 
@@ -116,12 +116,6 @@ export class UpdateStaffComponent implements OnInit {
         removeAvailabilitySlots:'',
         specializationName: this.updateStaffForm.value.specializationName?.trim() || '',
       };
-      
-      if (Object.values(updateData).every(value => !value)) {
-        this.updateStaffForm.markAllAsTouched();
-        this.errorMessage = "At least one search parameter is required.";
-        return;
-      }
 
       console.log("Update data:\n", updateData);
       this.staffService.updateStaff(this.staffId, updateData).subscribe({

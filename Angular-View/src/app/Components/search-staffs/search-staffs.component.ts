@@ -21,7 +21,6 @@ export class SearchStaffsComponent implements OnInit {
   errorMessage: string = '';
   specializations: any[] = [];
   selectedStaff: any = null;
-  infoMessage: string = '';
   showAvailabilityModal: boolean = false;
   availabilitySlots: string[] = [];
   username: string = '';
@@ -69,7 +68,6 @@ export class SearchStaffsComponent implements OnInit {
       },
       error: (error) => {
         console.error('Error loading staff profiles', error);
-        this.infoMessage = '';
         this.staffProfiles = [];
         if (error.status === 401){
           alert('Unauthorized page access');
@@ -90,7 +88,6 @@ export class SearchStaffsComponent implements OnInit {
     });
     this.loadStaffProfiles();
     this.errorMessage = '';
-    this.infoMessage = '';
   }
 
   onSearch(): void {
@@ -108,9 +105,6 @@ export class SearchStaffsComponent implements OnInit {
       return;
     }
     console.log("Search criteria", searchCriteria);
-
-    this.infoMessage='';
-
     this.staffService.searchStaffProfiles(searchCriteria)
       .subscribe({
         next: (response) => {
@@ -153,13 +147,12 @@ export class SearchStaffsComponent implements OnInit {
   deactivateStaff(id: string): void {
     this.staffService.deactivateStaff(id).subscribe({
       next: () => {
+        console.log('Staff Deactivated Successfully');
         this.errorMessage = '';
-        this.infoMessage = 'Staff deactivated successfully';
         this.loadStaffProfiles();
       },
       error: (error) => {
         console.error('Error deactivating staff', error);
-        this.infoMessage='';
         if (error.status === 400) {
           const errorMessage = error.error.message;
           this.errorMessage = errorMessage;
@@ -178,10 +171,8 @@ export class SearchStaffsComponent implements OnInit {
   }
 
   closeModal(isActivated: boolean): void {
-
-    console.log('Close modal', isActivated);  
     if (isActivated) {
-        this.loadStaffProfiles();
+        this.clearFilters();
     }
     this.modalProfile = null;
     this.isModalOpen = false;

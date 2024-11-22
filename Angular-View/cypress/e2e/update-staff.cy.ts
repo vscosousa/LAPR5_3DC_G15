@@ -47,4 +47,20 @@ describe('Update Staff Page', () => {
     cy.get('button.btn-filter').click();;
     cy.get('.table-container .table tbody').should('contain', `Test Staff${uniqueId}`);
   });
-});
+
+  it('should show an error if a required field is missing', () => {
+    cy.get('input[name="email"]').type(uniqueEmail);
+    cy.get('button.btn-filter').click();
+    cy.get('.table-container .table tbody tr').first().find('.btn-update').click();
+
+    cy.get('input[id="identifier"]').clear();
+    cy.get('input[id="phoneNumber"]').clear();
+    cy.get('input[id="email"]').clear();
+
+    cy.get('button[type="submit"]').click();
+
+    cy.get('input[id="identifier"]:invalid').should('exist');
+    cy.get('input[id="phoneNumber"]:invalid').should('exist');
+    cy.get('input[id="email"]:invalid').clear().should('exist');
+  });
+}); 

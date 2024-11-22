@@ -16,7 +16,7 @@
       {{ errorMessage }}
     </div>
 
-    <button *ngIf="!activationSuccessful" type="button" class="btn btn-filter" (click)="activateUser()">Activate</button>
+    <button *ngIf="!activationSuccessful" type="submit" class="btn btn-submit" (click)="activateUser()">Activate</button>
     
     <div *ngIf="activationSuccessful" class="success-message">
       <img src="success.jpg" alt="Success" />

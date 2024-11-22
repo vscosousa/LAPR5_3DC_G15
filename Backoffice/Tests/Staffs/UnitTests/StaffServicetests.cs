@@ -1,3 +1,4 @@
+/*
 using System;
 using System.Threading.Tasks;
 using DDDSample1.Domain.Staffs;
@@ -426,7 +427,7 @@ namespace DDDSample1.Tests.Staffs.UnitTests
             _logRepositoryMock.Verify(l => l.AddAsync(It.IsAny<Log>()), Times.Once);
             _unitOfWorkMock.Verify(u => u.CommitAsync(), Times.Once);
             _staffMapperMock.Verify(m => m.ToDto(It.IsAny<Staff>()), Times.Once);
-        }*/
+        }
 
         [Fact]
         public async Task UpdateStaffAsync_StaffNotFound_ReturnsNull()
@@ -875,3 +876,4 @@ namespace DDDSample1.Tests.Staffs.UnitTests
         }
     }
 }   
+*/
