@@ -14,8 +14,7 @@ import { StaffService } from '../../../Services/staff-sevice.service';
 
 export class ActiveModalComponent {
   @Input() profile: any;
-  @Output() close = new EventEmitter<void>();
-  @Output() submit = new EventEmitter<{ username: string }>();
+  @Output() close = new EventEmitter<boolean>();
   username: string = '';
   errorMessage: string = ''; 
 
@@ -30,7 +29,7 @@ export class ActiveModalComponent {
   }
 
   closeModal(): void {
-    this.close.emit();
+    this.close.emit(false);
   }
 
   onSubmit(): void {
@@ -52,7 +51,7 @@ export class ActiveModalComponent {
           this.errorMessage = '';
           this.username = '';
           console.log('User activated:', response);
-          this.close.emit();
+          this.close.emit(true);
         },
         error: (error) => {
           console.error('Error Activating staff', error);

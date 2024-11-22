@@ -77,10 +77,9 @@ export class StaffService {
     const body = {
       email: userInfo.email,
       username: userInfo.username,
-      role: userInfo.role,
+      role: userInfo.staffType,
       staffId: userInfo.staffId
     };
-
     return this.http.post<HttpResponse<any>>(url, body);
   }
 

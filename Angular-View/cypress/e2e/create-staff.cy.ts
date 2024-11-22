@@ -23,9 +23,34 @@ describe('Create Staff Page', () => {
         cy.get('select[id="staffType"]').select('Doctor');
         cy.get('select[id="specializationName"]').select('Cardiology');
 
+        // Verificar se os campos obrigatórios estão preenchidos
+        cy.get('input[id="firstName"]').should('have.value', `Test${uniqueId}`);
+        cy.get('input[id="lastName"]').should('have.value', `Staff${uniqueId}`);
+        cy.get('input[id="fullName"]').should('have.value', `Test Staff${uniqueId}`);
+        cy.get('input[id="email"]').should('have.value', uniqueEmail);
+        cy.get('input[id="identifier"]').should('have.value', '+351');
+        cy.get('input[id="phoneNumber"]').should('have.value', uniquePhoneNumber);
+        cy.get('select[id="staffType"]').should('have.value', 'Doctor');
+        cy.get('select[id="specializationName"]').should('have.value', 'Cardiology');
+
         cy.get('button[type="submit"]').click();
 
         cy.url().should('include', '/search-staffs');
         cy.get('.table-container .table tbody').should('contain', `Test Staff${uniqueId}`);
+    });
+
+    it('should show an error if a required field is missing', () => {
+        // Tentar submeter o formulário sem preencher os campos obrigatórios
+        cy.get('button[type="submit"]').click();
+    
+        // Verificar se as mensagens de erro são exibidas
+        cy.get('input[id="firstName"]:invalid').should('exist');
+        cy.get('input[id="lastName"]:invalid').should('exist');
+        cy.get('input[id="fullName"]:invalid').should('exist');
+        cy.get('input[id="email"]:invalid').should('exist');
+        cy.get('input[id="identifier"]:invalid').should('exist');
+        cy.get('input[id="phoneNumber"]:invalid').should('exist');
+        cy.get('select[id="staffType"]:invalid').should('exist');
+        cy.get('select[id="specializationName"]:invalid').should('exist');
     });
 });

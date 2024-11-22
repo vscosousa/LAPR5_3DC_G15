@@ -34,24 +34,29 @@ export class UpdateStaffComponent implements OnInit {
     }
   
     ngOnInit(): void {
-      this.loadSpecializations();
-      this.loadStaffDetails();
+      this.loadSpecializations().then(() => {
+        this.loadStaffDetails();
+      });
     }
-
-    loadSpecializations(): void {
-      this.staffService.getSpecialization().subscribe({
-        next: (data) => {
-          console.log("Data specialization:\n", data);
-          this.specializations = data;
-        },
-        error: (error) => {
-          console.error('Error loading specializations', error);
-          if (error.status === 401){
-            alert('Unauthorized page access');
-          } else {
-            alert('Error loading specializations');
+  
+    loadSpecializations(): Promise<void> {
+      return new Promise((resolve, reject) => {
+        this.staffService.getSpecialization().subscribe({
+          next: (data) => {
+            console.log("Data specialization:\n", data);
+            this.specializations = data;
+            resolve();
+          },
+          error: (error) => {
+            console.error('Error loading specializations', error);
+            if (error.status === 401) {
+              alert('Unauthorized page access');
+            } else {
+              alert('Error loading specializations');
+            }
+            reject(error);
           }
-        }
+        });
       });
     }
   
@@ -84,7 +89,7 @@ export class UpdateStaffComponent implements OnInit {
         email: data.email,
         addAvailabilitySlots: '',
         removeAvailabilitySlots: '',
-        specializationName: this.getSpecializationName(data.specializationId)
+        specializationName: this.getSpecializationName(data.specializationId.trim())
       });
     }
 
@@ -94,6 +99,16 @@ export class UpdateStaffComponent implements OnInit {
     }
 
     onSubmit(): void {
+      const identifier = this.updateStaffForm.value.identifier.trim();
+      const phoneNumber = this.updateStaffForm.value.phoneNumber.trim();
+  
+      if ((identifier === '' && phoneNumber !== '') || (identifier !== '' && phoneNumber === '')) {
+        this.errorMessage = 'Both Identifier and Phone Number must be filled out if one is provided.';
+        this.updateStaffForm.controls['identifier'].setErrors({ required: true });
+        this.updateStaffForm.controls['phoneNumber'].setErrors({ required: true });
+        return;
+      }
+
       const updateData = {
         phoneNumber: (this.updateStaffForm.value.identifier?.trim() || '') + (this.updateStaffForm.value.phoneNumber?.trim() || ''),
         email: this.updateStaffForm.value.email?.trim() || '',
@@ -103,9 +118,11 @@ export class UpdateStaffComponent implements OnInit {
       };
       
       if (Object.values(updateData).every(value => !value)) {
+        this.updateStaffForm.markAllAsTouched();
         this.errorMessage = "At least one search parameter is required.";
         return;
       }
+
       console.log("Update data:\n", updateData);
       this.staffService.updateStaff(this.staffId, updateData).subscribe({
         next: () => {

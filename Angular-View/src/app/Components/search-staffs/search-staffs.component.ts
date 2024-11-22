@@ -177,8 +177,12 @@ export class SearchStaffsComponent implements OnInit {
     this.isModalOpen = true;
   }
 
-  closeModal(): void {
-    this.loadStaffProfiles();
+  closeModal(isActivated: boolean): void {
+
+    console.log('Close modal', isActivated);  
+    if (isActivated) {
+        this.loadStaffProfiles();
+    }
     this.modalProfile = null;
     this.isModalOpen = false;
   }

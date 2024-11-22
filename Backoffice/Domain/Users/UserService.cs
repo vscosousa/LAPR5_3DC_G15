@@ -47,7 +47,7 @@ namespace DDDSample1.Domain.Users
         public async Task<UserDTO> CreateUser(CreatingUserDTO dto)
         {
             try
-            {
+            {   
                 var existingUserByEmail = await _userRepository.GetUserByEmailAsync(dto.Email);
                 if (existingUserByEmail != null)
                 {
@@ -252,7 +252,7 @@ namespace DDDSample1.Domain.Users
             var encodedToken = HttpUtility.UrlEncode(token);
             string kebabCaseLink = ConvertToKebabCase(typeOfLink);
             var link = $"http://localhost:4200/{kebabCaseLink}?token={encodedToken}";
-            Console.WriteLine("--------Link " + link);
+            Console.WriteLine("Link " + link);
             return link;
         }
 

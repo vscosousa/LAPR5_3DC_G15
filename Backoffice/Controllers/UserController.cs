@@ -114,8 +114,6 @@ namespace DDDSample1.Controllers
         {
             try
             {   
-                Console.WriteLine("Token Active"+ token);
-                Console.WriteLine("New Password Active"+ newPassword);  
                 if (string.IsNullOrWhiteSpace(token))
                 {
                     return Unauthorized(new{ message = "Token required."});
@@ -132,6 +130,10 @@ namespace DDDSample1.Controllers
                 return Unauthorized(new { message = "Invalid token.", details = ex.Message });
             }
             catch (BusinessRuleValidationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (ArgumentException ex)
             {
                 return BadRequest(new { message = ex.Message });
             }

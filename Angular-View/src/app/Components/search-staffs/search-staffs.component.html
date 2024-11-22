@@ -133,5 +133,5 @@
       </div>
       
     </div>
-    <app-active-modal *ngIf="isModalOpen" [profile]="modalProfile" (close)="closeModal()"></app-active-modal>
+    <app-active-modal *ngIf="isModalOpen" [profile]="modalProfile" (close)="closeModal($event)"></app-active-modal>
   </div>

@@ -11,7 +11,7 @@
       <label for="phoneNumber">Phone Number</label>
       <div class="form-row">
         <div class="form-group identifier-group">
-          <input type="text" id="identifier" formControlName="identifier" placeholder="+351" class="identifier" value="+351">
+          <input type="text" id="identifier" formControlName="identifier" placeholder="+351" class="identifier" value="+351" required>
         </div>
         <div class="form-group phone-group">
           <input type="tel" id="phoneNumber" formControlName="phoneNumber" placeholder="Phone Number" required>
@@ -19,10 +19,10 @@
       </div>
 
       <label for="email">Email</label>
-      <input type="email" id="email" formControlName="email" placeholder="example@email.com">
+      <input type="email" id="email" formControlName="email" placeholder="example@email.com" required>
 
       <label for="specializationName">Specialization</label>
-      <select id="specializationName" formControlName="specializationName" title="Specialization">
+      <select id="specializationName" formControlName="specializationName" title="Specialization" required>
         <option value="" hidden>Select Specialization</option>
         <option *ngFor="let specialization of specializations" [value]="specialization.specOption">
           {{ specialization.specOption }}
