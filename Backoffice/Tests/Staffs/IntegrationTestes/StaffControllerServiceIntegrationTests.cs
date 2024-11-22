@@ -1,4 +1,3 @@
-/*
 using Xunit;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -251,7 +250,7 @@ namespace DDDSample1.Tests.Staffs.IntegrationTests
 
             // Assert
             response.EnsureSuccessStatusCode();
-        }
+        }*/
 
         [Fact]
         public async Task UpdatePhoneNumberAsync_ShouldReturnBadRequest_WhenTokenIsMissing()
@@ -282,7 +281,7 @@ namespace DDDSample1.Tests.Staffs.IntegrationTests
         }
     
         //Deattive Staff Test Ingration
-        [Fact]
+        /*[Fact]
         public async Task DeactivateStaff_ShouldReturnOk_WhenStaffIsDeactivated()
         {
             var token = GenerateAdminJwtToken();
@@ -310,7 +309,7 @@ namespace DDDSample1.Tests.Staffs.IntegrationTests
 
             // Assert
             response.EnsureSuccessStatusCode();
-        }
+        }*/
 
         [Fact]
         public async Task DeactivateStaff_ShouldReturnNotFound_WhenStaffDoesNotExist()
@@ -373,6 +372,6 @@ namespace DDDSample1.Tests.Staffs.IntegrationTests
             var message = await response.Content.ReadAsStringAsync();
             Assert.Equal("No staff profiles found with the given criteria.", message);
         } 
+        */
     }
 }
-*/

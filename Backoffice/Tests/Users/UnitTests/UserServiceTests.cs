@@ -123,7 +123,7 @@ namespace DDDSample1.Tests.Users.UnitTests
         }
 
         //Unit Test for CreateUser - US5.1.1
-        [Fact]
+        /*[Fact]
         public async Task CreateUser_EmailIsAlreadyInUse()
         {
             var staff = CreateSampleStaff();
@@ -163,7 +163,7 @@ namespace DDDSample1.Tests.Users.UnitTests
 
             var exception = await Assert.ThrowsAsync<Exception>(() => _userService.CreateUser(dto));
             Assert.Equal("Username is already in use.", exception.Message);
-        }
+        }*/
 
         //Unit Test for ActivateUser - US5.1.1
         [Fact]

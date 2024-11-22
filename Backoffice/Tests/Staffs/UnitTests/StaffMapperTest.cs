@@ -1,4 +1,3 @@
-/*
 using System;
 using System.Linq;
 using Xunit;
@@ -102,4 +101,3 @@ namespace Projetos.LAPR5_3DC_G15.Tests.Mappers.Staffs
         }
     }
 }
-*/

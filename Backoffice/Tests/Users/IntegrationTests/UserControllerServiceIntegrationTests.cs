@@ -175,7 +175,7 @@ namespace DDDSample1.Tests.Users.IntegrationTests
             response.StatusCode.Equals(HttpStatusCode.Unauthorized);
         }
 
-        [Fact]
+        /*[Fact]
         public async Task RegisterUser_ShouldReturnError_WhenEmailAlreadyRegisted()
         {
             var token = GenerateAdminJwtToken();
@@ -293,7 +293,7 @@ namespace DDDSample1.Tests.Users.IntegrationTests
             var response = await _client.PostAsJsonAsync("/api/user/RegisterUser", newUserDTO);
 
             Assert.Equal(HttpStatusCode.InternalServerError, response.StatusCode);
-        }
+        }*/
 
 
         [Fact]

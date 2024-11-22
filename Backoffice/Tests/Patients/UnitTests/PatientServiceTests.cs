@@ -1,4 +1,3 @@
-/*
 using System.Threading.Tasks;
 using DDDSample1.Domain.Patients;
 using DDDSample1.Domain.Shared;
@@ -1167,4 +1166,4 @@ namespace DDDSample1.Tests.Patients.UnitTests
             _patientRepositoryMock.Verify(r => r.SearchPatientsAsync(searchDto), Times.Once);
         }
     }
-}*/
+}

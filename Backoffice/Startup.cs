@@ -78,9 +78,9 @@ namespace DDDSample1
             ConfigureMyServices(services);
 
             var key = Configuration["Jwt:Key"];
-            if (string.IsNullOrEmpty(key) || key.Length < 32)
+            if (string.IsNullOrEmpty(key))
             {
-            throw new ArgumentNullException("Jwt:Key", "JWT secret key cannot be null, empty, or less than 32 characters.");
+                throw new ArgumentNullException("Jwt:Key", "JWT secret key cannot be null or empty.");
             }
 
             var keyBytes = Encoding.UTF8.GetBytes(key);

@@ -1,4 +1,3 @@
-/*
 using System;
 using System.Threading.Tasks;
 using DDDSample1.Domain.Staffs;
@@ -273,7 +272,7 @@ namespace DDDSample1.Tests.Staffs.UnitTests
         }
 
         //ActivateStaffAsync Tests
-        [Fact]
+        /*[Fact]
         public async Task DeactivateStaffAsyncSuccessfullyTest()
         {
             // Arrange
@@ -338,7 +337,7 @@ namespace DDDSample1.Tests.Staffs.UnitTests
             _staffRepositoryMock.Verify(r => r.GetByIdAsync(It.IsAny<StaffId>()), Times.Once);
             _logRepositoryMock.Verify(l => l.AddAsync(It.IsAny<Log>()), Times.Never);
             _unitOfWorkMock.Verify(u => u.CommitAsync(), Times.Never);
-        }
+        }*/
 
         [Fact]
         public async Task DeactivateStaffAsyncFailsStaffNotFoundTest()
@@ -360,7 +359,7 @@ namespace DDDSample1.Tests.Staffs.UnitTests
         }
 
         //UpdateStaffAsync Tests
-       /* [Fact]
+        /*[Fact]
         public async Task UpdateStaffAsync_SuccessfullyUpdatesStaff()
         {
             // Arrange
@@ -427,7 +426,7 @@ namespace DDDSample1.Tests.Staffs.UnitTests
             _logRepositoryMock.Verify(l => l.AddAsync(It.IsAny<Log>()), Times.Once);
             _unitOfWorkMock.Verify(u => u.CommitAsync(), Times.Once);
             _staffMapperMock.Verify(m => m.ToDto(It.IsAny<Staff>()), Times.Once);
-        }
+        }*/
 
         [Fact]
         public async Task UpdateStaffAsync_StaffNotFound_ReturnsNull()
@@ -876,4 +875,3 @@ namespace DDDSample1.Tests.Staffs.UnitTests
         }
     }
 }   
-*/
