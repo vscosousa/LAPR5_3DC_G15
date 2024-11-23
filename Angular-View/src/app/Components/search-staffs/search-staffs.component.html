@@ -1,4 +1,5 @@
 <div class="manage-container">
+  <app-active-modal *ngIf="isModalOpen" [profile]="modalProfile" (close)="closeModal($event)"></app-active-modal>
     <app-sidebar></app-sidebar>
 
     <div class="screens-container">
@@ -65,8 +66,8 @@
 
                     <button type="button" routerLink="/update-staff/{{profile.id}}" class="btn btn-update">Edit</button>
 
-                    <button *ngIf="!profile.isActive" type="button" (click)="openModal(profile)"class="btn btn-activate">Activate</button>
-                    <button *ngIf="profile.isActive" type="button" (click)="deactivateStaff(profile.id)" class="btn btn-delete">Deactive</button>
+                    <button *ngIf="!profile.isActive" type="button" (click)="openModal(profile)" class="btn btn-activate">Activate</button>
+                    <button *ngIf="profile.isActive" type="button" (click)="deactivateStaff(profile.id)" class="btn btn-deactive">Deactivate</button>
                     
                     <button type="button" (click)="viewStaffDetails(profile)" class="btn btn-view">View</button>
                   
@@ -129,5 +130,4 @@
       </div>
       
     </div>
-    <app-active-modal *ngIf="isModalOpen" [profile]="modalProfile" (close)="closeModal($event)"></app-active-modal>
   </div>

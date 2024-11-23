@@ -1,7 +1,7 @@
 describe('Create Staff Page', () => {
     const uniqueId = Date.now();
     const uniqueEmail = `test.staff${uniqueId}@example.com`;
-    const uniquePhoneNumber = `23456789${uniqueId}`;
+    const uniquePhoneNumber = `${uniqueId}`;
 
     beforeEach(() => {
         cy.loginAsAdmin('admin@email.com', 'Adminadmin1@');
@@ -51,6 +51,102 @@ describe('Create Staff Page', () => {
         cy.get('input[id="identifier"]:invalid').should('exist');
         cy.get('input[id="phoneNumber"]:invalid').should('exist');
         cy.get('select[id="staffType"]:invalid').should('exist');
+        cy.get('select[id="specializationName"]:invalid').should('exist');
+    });
+
+    it('should show an error if firstName is missing', () => {
+        cy.get('input[id="lastName"]').type(`Staff${uniqueId}`);
+        cy.get('input[id="fullName"]').type(`Test Staff${uniqueId}`);
+        cy.get('input[id="email"]').type(uniqueEmail);
+        cy.get('input[id="identifier"]').type('+351');
+        cy.get('input[id="phoneNumber"]').type(uniquePhoneNumber);
+        cy.get('select[id="staffType"]').select('Doctor');
+        cy.get('select[id="specializationName"]').select('Cardiology');
+        cy.get('button[type="submit"]').click();
+        cy.get('input[id="firstName"]:invalid').should('exist');
+    });
+
+    it('should show an error if lastName is missing', () => {
+        cy.get('input[id="firstName"]').type(`Test${uniqueId}`);
+        cy.get('input[id="fullName"]').type(`Test Staff${uniqueId}`);
+        cy.get('input[id="email"]').type(uniqueEmail);
+        cy.get('input[id="identifier"]').type('+351');
+        cy.get('input[id="phoneNumber"]').type(uniquePhoneNumber);
+        cy.get('select[id="staffType"]').select('Doctor');
+        cy.get('select[id="specializationName"]').select('Cardiology');
+        cy.get('button[type="submit"]').click();
+        cy.get('input[id="lastName"]:invalid').should('exist');
+    });
+
+    it('should show an error if fullName is missing', () => {
+        cy.get('input[id="firstName"]').type(`Test${uniqueId}`);
+        cy.get('input[id="lastName"]').type(`Staff${uniqueId}`);
+        cy.get('input[id="email"]').type(uniqueEmail);
+        cy.get('input[id="identifier"]').type('+351');
+        cy.get('input[id="phoneNumber"]').type(uniquePhoneNumber);
+        cy.get('select[id="staffType"]').select('Doctor');
+        cy.get('select[id="specializationName"]').select('Cardiology');
+        cy.get('button[type="submit"]').click();
+        cy.get('input[id="fullName"]:invalid').should('exist');
+    });
+
+    it('should show an error if email is missing', () => {
+        cy.get('input[id="firstName"]').type(`Test${uniqueId}`);
+        cy.get('input[id="lastName"]').type(`Staff${uniqueId}`);
+        cy.get('input[id="fullName"]').type(`Test Staff${uniqueId}`);
+        cy.get('input[id="identifier"]').type('+351');
+        cy.get('input[id="phoneNumber"]').type(uniquePhoneNumber);
+        cy.get('select[id="staffType"]').select('Doctor');
+        cy.get('select[id="specializationName"]').select('Cardiology');
+        cy.get('button[type="submit"]').click();
+        cy.get('input[id="email"]:invalid').should('exist');
+    });
+
+    it('should show an error if identifier is missing', () => {
+        cy.get('input[id="firstName"]').type(`Test${uniqueId}`);
+        cy.get('input[id="lastName"]').type(`Staff${uniqueId}`);
+        cy.get('input[id="fullName"]').type(`Test Staff${uniqueId}`);
+        cy.get('input[id="email"]').type(uniqueEmail);
+        cy.get('input[id="phoneNumber"]').type(uniquePhoneNumber);
+        cy.get('select[id="staffType"]').select('Doctor');
+        cy.get('select[id="specializationName"]').select('Cardiology');
+        cy.get('button[type="submit"]').click();
+        cy.get('input[id="identifier"]:invalid').should('exist');
+    });
+
+    it('should show an error if phoneNumber is missing', () => {
+        cy.get('input[id="firstName"]').type(`Test${uniqueId}`);
+        cy.get('input[id="lastName"]').type(`Staff${uniqueId}`);
+        cy.get('input[id="fullName"]').type(`Test Staff${uniqueId}`);
+        cy.get('input[id="email"]').type(uniqueEmail);
+        cy.get('input[id="identifier"]').type('+351');
+        cy.get('select[id="staffType"]').select('Doctor');
+        cy.get('select[id="specializationName"]').select('Cardiology');
+        cy.get('button[type="submit"]').click();
+        cy.get('input[id="phoneNumber"]:invalid').should('exist');
+    });
+
+    it('should show an error if staffType is missing', () => {
+        cy.get('input[id="firstName"]').type(`Test${uniqueId}`);
+        cy.get('input[id="lastName"]').type(`Staff${uniqueId}`);
+        cy.get('input[id="fullName"]').type(`Test Staff${uniqueId}`);
+        cy.get('input[id="email"]').type(uniqueEmail);
+        cy.get('input[id="identifier"]').type('+351');
+        cy.get('input[id="phoneNumber"]').type(uniquePhoneNumber);
+        cy.get('select[id="specializationName"]').select('Cardiology');
+        cy.get('button[type="submit"]').click();
+        cy.get('select[id="staffType"]:invalid').should('exist');
+    });
+
+    it('should show an error if specializationName is missing', () => {
+        cy.get('input[id="firstName"]').type(`Test${uniqueId}`);
+        cy.get('input[id="lastName"]').type(`Staff${uniqueId}`);
+        cy.get('input[id="fullName"]').type(`Test Staff${uniqueId}`);
+        cy.get('input[id="email"]').type(uniqueEmail);
+        cy.get('input[id="identifier"]').type('+351');
+        cy.get('input[id="phoneNumber"]').type(uniquePhoneNumber);
+        cy.get('select[id="staffType"]').select('Doctor');
+        cy.get('button[type="submit"]').click();
         cy.get('select[id="specializationName"]:invalid').should('exist');
     });
 });

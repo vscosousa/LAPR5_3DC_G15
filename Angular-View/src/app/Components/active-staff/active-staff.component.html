@@ -3,20 +3,22 @@
     <div class="top">
       <h2>Activate User</h2>
     </div>
-    <div class="info-container" *ngIf="!activationSuccessful">
+    <form (ngSubmit)="activateUser()" class="info-container" *ngIf="!activationSuccessful">
+      
       <div class="form-group">
         <label for="newPassword">New Password</label>
-        <input type="password" id="newPassword" [(ngModel)]="newPassword" [ngClass]="{'error': newPasswordError}" placeholder="Enter new password" required>
-
+        <input type="password" id="newPassword" [(ngModel)]="newPassword" name="newPassword" [ngClass]="{'error': newPasswordError}" placeholder="Enter new password" required>
+  
         <label for="confirmPassword">Confirm Password</label>
-        <input type="password" id="confirmPassword" [(ngModel)]="confirmPassword" [ngClass]="{'error': confirmPasswordError}" placeholder="Confirm password" required>
+        <input type="password" id="confirmPassword" [(ngModel)]="confirmPassword" name="confirmPassword" [ngClass]="{'error': confirmPasswordError}" placeholder="Confirm password" required>
       </div>
-    </div>
-    <div *ngIf="errorMessage" class="error-message">
-      {{ errorMessage }}
-    </div>
-
-    <button *ngIf="!activationSuccessful" type="submit" class="btn btn-submit" (click)="activateUser()">Activate</button>
+      
+      <div *ngIf="errorMessage" class="error-message">
+        {{ errorMessage }}
+      </div>
+    
+      <button type="submit" class="btn btn-submit">Activate</button>
+    </form>
     
     <div *ngIf="activationSuccessful" class="success-message">
       <img src="success.jpg" alt="Success" />

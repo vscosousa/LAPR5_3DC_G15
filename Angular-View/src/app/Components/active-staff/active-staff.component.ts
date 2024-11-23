@@ -36,7 +36,6 @@ export class ActiveStaffComponent implements OnInit {
     this.confirmPasswordError = !this.confirmPassword.trim();
 
     if (this.newPasswordError || this.confirmPasswordError) {
-      
       return;
     }
 

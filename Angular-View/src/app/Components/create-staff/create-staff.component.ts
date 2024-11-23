@@ -73,6 +73,7 @@ export class CreateStaffComponent implements OnInit{
   }
 
   onSubmit() {
+    
     if (this.createStaffForm.invalid) {
       this.errorMessage = '';
       this.createStaffForm.markAllAsTouched();

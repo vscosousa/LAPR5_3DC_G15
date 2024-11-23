@@ -1,7 +1,7 @@
 describe('Update Staff Page', () => {
   const uniqueId = Date.now();
   const uniqueEmail = `test.staff${uniqueId}@example.com`;
-  const uniquePhoneNumber = `23456789${uniqueId}`;
+  const uniquePhoneNumber = `${uniqueId}`;
   
   before(() => {
     cy.log(`Created staff with email: ${uniqueEmail}`);
@@ -31,6 +31,18 @@ describe('Update Staff Page', () => {
     cy.get('form').should('be.visible');
   });
 
+  it('should auto-fill the form with staff details', () => {
+    cy.get('input[name="email"]').type(uniqueEmail);
+    cy.get('button.btn-filter').click();
+    cy.get('.table-container .table tbody tr').first().find('.btn-update').click();
+
+    // Verificar se os campos estão preenchidos automaticamente
+    cy.get('input[id="identifier"]').should('have.value', '+351');
+    cy.get('input[id="phoneNumber"]').should('have.value', uniquePhoneNumber);
+    cy.get('input[id="email"]').should('have.value', uniqueEmail);
+    cy.get('select[id="specializationName"]').should('have.value', 'Cardiology');
+  });
+
   it('should allow the user to update staff details', () => {
     cy.get('input[name="email"]').type(uniqueEmail);
     cy.get('button.btn-filter').click();
@@ -44,7 +56,7 @@ describe('Update Staff Page', () => {
 
     cy.url().should('include', '/search-staffs');
     cy.get('select[name="specialization"]').select('Neurology');
-    cy.get('button.btn-filter').click();;
+    cy.get('button.btn-filter').click();
     cy.get('.table-container .table tbody').should('contain', `Test Staff${uniqueId}`);
   });
 
@@ -56,11 +68,58 @@ describe('Update Staff Page', () => {
     cy.get('input[id="identifier"]').clear();
     cy.get('input[id="phoneNumber"]').clear();
     cy.get('input[id="email"]').clear();
+    cy.get('select[id="specializationName"]').select('');
 
     cy.get('button[type="submit"]').click();
 
     cy.get('input[id="identifier"]:invalid').should('exist');
     cy.get('input[id="phoneNumber"]:invalid').should('exist');
     cy.get('input[id="email"]:invalid').clear().should('exist');
+    cy.get('select[id="specializationName"]:invalid').should('exist');
   });
+
+  it('should show an error if identifier is missing', () => {
+    cy.get('input[name="email"]').type(uniqueEmail);
+    cy.get('button.btn-filter').click();
+    cy.get('.table-container .table tbody tr').first().find('.btn-update').click();
+
+    cy.get('input[id="identifier"]').clear();
+    cy.get('button[type="submit"]').click();
+
+    cy.get('input[id="identifier"]:invalid').should('exist');
+  });
+
+  it('should show an error if phoneNumber is missing', () => {
+    cy.get('input[name="email"]').type(uniqueEmail);
+    cy.get('button.btn-filter').click();
+    cy.get('.table-container .table tbody tr').first().find('.btn-update').click();
+
+    cy.get('input[id="phoneNumber"]').clear();
+    cy.get('button[type="submit"]').click();
+
+    cy.get('input[id="phoneNumber"]:invalid').should('exist');
+  });
+
+  it('should show an error if email is missing', () => {
+    cy.get('input[name="email"]').type(uniqueEmail);
+    cy.get('button.btn-filter').click();
+    cy.get('.table-container .table tbody tr').first().find('.btn-update').click();
+
+    cy.get('input[id="email"]').clear();
+    cy.get('button[type="submit"]').click();
+
+    cy.get('input[id="email"]:invalid').should('exist');
+  });
+
+  it('should show an error if specializationName is missing', () => {
+    cy.get('input[name="email"]').type(uniqueEmail);
+    cy.get('button.btn-filter').click();
+    cy.get('.table-container .table tbody tr').first().find('.btn-update').click();
+
+    cy.get('select[id="specializationName"]').select('');
+    cy.get('button[type="submit"]').click();
+
+    cy.get('select[id="specializationName"]:invalid').should('exist');
+  });
+
 }); 

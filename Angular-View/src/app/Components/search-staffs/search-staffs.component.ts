@@ -99,11 +99,17 @@ export class SearchStaffsComponent implements OnInit {
       email: this.searchForm.value.email?.trim() || '',
       specializationName: this.searchForm.value.specializationName?.trim() || '',
     };
-
+    
     if (Object.values(searchCriteria).every(value => !value)) {
       this.errorMessage = "At least one search parameter is required.";
       return;
     }
+
+    if (searchCriteria.email !== '' && this.searchForm.get('email')?.invalid) {
+      this.errorMessage = 'Invalid email address';
+      return;
+    }
+
     console.log("Search criteria", searchCriteria);
     this.staffService.searchStaffProfiles(searchCriteria)
       .subscribe({
@@ -149,7 +155,7 @@ export class SearchStaffsComponent implements OnInit {
       next: () => {
         console.log('Staff Deactivated Successfully');
         this.errorMessage = '';
-        this.loadStaffProfiles();
+        this.clearFilters();
       },
       error: (error) => {
         console.error('Error deactivating staff', error);

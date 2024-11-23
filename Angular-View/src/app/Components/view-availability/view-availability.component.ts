@@ -84,7 +84,7 @@ export class ViewAvailabilityComponent implements OnInit {
           start: date,
           end: addHours(date, 1),
           title: 'Available',
-          color: { primary: '#1e90ff', secondary: '#D1E8FF' },
+          color: { primary: '#1e90ff', secondary: '#D1E8FF' }
         } as CalendarEvent;
       }
       return null;

@@ -4,9 +4,11 @@
     justify-content: center;
     align-items: center;
     height: 100vh;
+    margin-left: 85px;
     font-family: Poppins, sans-serif;
   
     .screens-container {
+
       display: flex;
       justify-content: center;
       align-items: center;
@@ -55,7 +57,7 @@
   
       .content-container {
         display: flex;
-        gap: 20px;
+        gap: 10px;
         width: 100%;
         overflow: hidden;
       }
@@ -83,6 +85,13 @@
             border: 1px solid #ddd;
             border-radius: 4px;
             padding: 5px;
+
+            .ng-touched.ng-invalid {
+              border: 2px solid red;
+            }
+            .ng-touched.ng-valid {
+                border: 1px solid green;
+            }
           }
   
           .error-message {
@@ -97,6 +106,7 @@
             text-align: center;
             font-size: small;
           }
+
         }
         
         p {
@@ -136,7 +146,7 @@
           }
         }
   
-        &.btn-delete {
+        &.btn-deactive {
           margin-right: 5px;
           background-color: #dc3545;
           color: #fff;
@@ -229,18 +239,21 @@
             padding: 8px;
             word-wrap: break-word;
             vertical-align: middle;
-            text-align: center;
+            text-align: center; 
           }
   
           th {
             background-color: #f2f2f2;
+          }
+          td{
+            font-size: small;
           }
         }
       }
     }
   
     .details-screen {
-      padding: 20px;
+      padding: 10px;
       display: flex;
       flex-direction: column;
       justify-content: start;
@@ -259,6 +272,24 @@
         
         h3 {
           text-align: center;
+          margin: 20px auto;
+        }
+
+        th,
+        td {
+          border: 1px solid #ddd;
+          padding: 8px 5px;
+          word-wrap: break-word;
+          vertical-align: middle;
+          
+        }
+
+        th {
+          font-size: 15px;
+          background-color: #f2f2f2;
+        }
+        td{
+          font-size: small;
         }
   
         button {

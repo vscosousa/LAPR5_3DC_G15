@@ -15,7 +15,7 @@
       {{ errorMessage }}
     </div>
 
-    <button *ngIf="!updateSuccessful" type="button" class="btn btn-filter" (click)="updateContactInfo()">Confirm</button>
+    <button *ngIf="!updateSuccessful" type="submit" class="btn btn-filter" (click)="updateContactInfo()">Confirm</button>
     
     <div *ngIf="updateSuccessful" class="success-message">
       <img src="success.jpg" alt="Success" />
