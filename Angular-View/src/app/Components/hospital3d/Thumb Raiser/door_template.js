@@ -2,7 +2,7 @@ import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 
 export const doorData = {
-    url: "/models/gltf/RobotExpressive/door.glb",
+    url: "/models/gltf/RobotExpressive/hospital_door.glb",
     scale: new THREE.Vector3(1.0, 1.0, 1.0)
 };
 
@@ -15,6 +15,7 @@ export default class Door {
 
         // Create a group for the door
         this.object = new THREE.Group();
+        this.isLoaded = false; // Add a flag to track if the door model is loaded
 
         // Load the door model using GLTFLoader
         const loader = new GLTFLoader();
@@ -36,6 +37,12 @@ export default class Door {
 
                 // Add the model to the door group
                 this.object.add(model);
+
+                // Create a bounding box for the door
+                this.boundingBox = new THREE.Box3().setFromObject(model);
+
+                // Set the loaded flag to true
+                this.isLoaded = true;
             },
             undefined, // Progress callback (optional)
             (error) => {
@@ -45,6 +52,29 @@ export default class Door {
     }
 
     open() {
-        this.object.rotation.y = Math.PI / 2;
+        if (this.isLoaded) {
+            this.object.rotation.y = Math.PI / 2;
+            // Update the bounding box after rotation
+            this.boundingBox.setFromObject(this.object);
+        }
+    }
+
+    isTrespassing(object) {
+        if (this.isLoaded) {
+            // Only perform the collision check if the door is loaded
+            const objectBoundingBox = new THREE.Box3().setFromObject(object);
+            return this.boundingBox.intersectsBox(objectBoundingBox);
+        }
+        return false; // Return false if the door is not loaded
+    }
+
+    // Block movement if trespassing
+    blockMovementIfTrespassing(object) {
+        if (this.isTrespassing(object)) {
+            console.log("Movement blocked: Door is in the way!");
+            // Implement logic to prevent movement. This could involve stopping the player's movement or adjusting their position.
+            // Example: If the object is the player, stop their movement or adjust position
+            object.position.copy(object.previousPosition); // Prevent movement by reverting to the previous position
+        }
     }
 }

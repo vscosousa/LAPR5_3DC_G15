@@ -13,7 +13,7 @@
 import * as THREE from "three";
 import Stats from "three/addons/libs/stats.module.js";
 import Orientation from "./orientation.js";
-import { generalData, mazeData, playerData, lightsData, fogData, cameraData, doorData, tableData, humanData} from "./default_data.js";
+import { generalData, mazeData, playerData, lightsData, fogData, cameraData, doorData, tableData, humanData } from "./default_data.js";
 import { merge } from "./merge.js";
 import Maze from "./maze_template.js";
 import Player from "./player_template.js";
@@ -25,10 +25,12 @@ import Door from "./door_template.js";
 import UserInterface from "./user_interface_template.js";
 import Table from "./table.js";
 import Human from "./human.js";
+import { first } from "rxjs";
 
 
 export default class ThumbRaiser {
-    constructor(generalParameters, mazeParameters, playerParameters, lightsParameters, fogParameters, fixedViewCameraParameters, firstPersonViewCameraParameters, thirdPersonViewCameraParameters, topViewCameraParameters, miniMapCameraParameters, doorParameters, tableParameters, humanParameters) {
+
+    constructor(generalParameters, mazeParameters, playerParameters, lightsParameters, fogParameters, fixedViewCameraParameters, firstPersonViewCameraParameters, thirdPersonViewCameraParameters, topViewCameraParameters, miniMapCameraParameters, doorParameters, tableParameters, humanParameters, roomParameters) {
         this.generalParameters = merge({}, generalData, generalParameters);
         this.mazeParameters = merge({}, mazeData, mazeParameters);
         this.playerParameters = merge({}, playerData, playerParameters);
@@ -42,11 +44,11 @@ export default class ThumbRaiser {
         this.doorParameters = merge({}, doorData, doorParameters);
         this.tableParameters = merge({}, tableData, tableParameters);
         this.humanParameters = merge({}, humanData, humanParameters);
+        this.roomParameters = roomParameters && roomParameters.rooms ? roomParameters.rooms : [];
 
         // Create a 2D scene (the viewports frames)
         this.scene2D = new THREE.Scene();
 
-        this.rooms = []; // Add this line to define the rooms property
 
         // Create a square
         let points = [new THREE.Vector3(0.0, 0.0, 0.0), new THREE.Vector3(1.0, 0.0, 0.0), new THREE.Vector3(1.0, 1.0, 0.0), new THREE.Vector3(0.0, 1.0, 0.0)];
@@ -62,7 +64,7 @@ export default class ThumbRaiser {
         this.scene3D = new THREE.Scene();
 
         // Create the maze
-        this.maze = new Maze(this.mazeParameters, this.doorParameters, this.tableParameters, this.humanParameters);
+        this.maze = new Maze(this.mazeParameters, this.doorParameters, this.tableParameters, this.humanParameters, this.roomParameters);
 
         // Create the player
         this.player = new Player(this.playerParameters);
@@ -72,6 +74,8 @@ export default class ThumbRaiser {
 
         // Create the fog
         this.fog = new Fog(this.fogParameters);
+
+        this.door = new Door(this.doorParameters);
 
         // Create the cameras corresponding to the four different views: fixed view, first-person view, third-person view and top view
         this.fixedViewCamera = new Camera(this.fixedViewCameraParameters, window.innerWidth, window.innerHeight);
@@ -180,7 +184,7 @@ export default class ThumbRaiser {
         this.userInterfaceCheckBox.addEventListener("change", event => this.elementChange(event));
         this.helpCheckBox.addEventListener("change", event => this.elementChange(event));
         this.statisticsCheckBox.addEventListener("change", event => this.elementChange(event));
-        
+
 
         // Register the event handler to be called on input button click
         this.reset.addEventListener("click", event => this.buttonClick(event));
@@ -188,6 +192,9 @@ export default class ThumbRaiser {
 
         this.activeElement = document.activeElement;
     }
+
+
+
 
     buildHelpPanel() {
         const table = document.getElementById("help-table");
@@ -545,15 +552,22 @@ export default class ThumbRaiser {
     }
 
     collision(position) {
-        /* To-do #24 - Check if the player collided with a wall
-            - assume that a collision is detected if the distance between the player position and any of the walls is less than the player radius.
-            - player position: position
-            - player radius: this.player.radius
-            - remove the previous instruction and replace it with the following one (after completing it)*/
-        return this.maze.distanceToWestWall(position) < this.player.radius || this.maze.distanceToEastWall(position) < this.player.radius || this.maze.distanceToNorthWall(position) < this.player.radius || this.maze.distanceToSouthWall(position) < this.player.radius;
+        // Check if the player collided with a wall
+        const wallCollision = this.maze.distanceToWestWall(position) < this.player.radius ||
+            this.maze.distanceToEastWall(position) < this.player.radius ||
+            this.maze.distanceToNorthWall(position) < this.player.radius ||
+            this.maze.distanceToSouthWall(position) < this.player.radius;
+
+        // Check if the player collided with any doors (add this part)
+        const doorCollision = this.maze.distanceToDoor(position) < this.player.radius;
+
+        // Return true if there is a wall collision or a door collision
+        return wallCollision || doorCollision;
     }
 
-    openDoor(){
+
+
+    openDoor() {
         /* To-do #25 - Check if the player is close to a door and open it
         - assume that a door is opened if the distance between the player position and the door is less than the player radius
         - player radius : this.player.radius*/
@@ -649,8 +663,8 @@ export default class ThumbRaiser {
                         - (x0, y0, z0) are the player's current coordinates
                         - r is the distance covered by the player
                         - t is the player direction (expressed in radians)*/
-                
-    
+
+
 
 
                 if (this.player.keyStates.backward) { // The player is moving backward
@@ -779,5 +793,29 @@ export default class ThumbRaiser {
             this.renderer.render(this.scene3D, this.miniMapCamera.object);
             this.renderer.render(this.scene2D, this.camera2D);
         }
+
     }
+
+
+
+    dispose() {
+        // Dispose of the renderer and other resources
+        if (this.renderer) {
+            this.renderer.dispose();
+        }
+        if (this.scene) {
+            this.scene.children.forEach((child) => {
+                if (child.geometry) child.geometry.dispose();
+                if (child.material) {
+                    if (Array.isArray(child.material)) {
+                        child.material.forEach((material) => material.dispose());
+                    } else {
+                        child.material.dispose();
+                    }
+                }
+                this.scene.remove(child);
+            });
+        }
+    }
+
 }

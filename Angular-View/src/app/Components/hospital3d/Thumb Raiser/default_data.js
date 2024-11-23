@@ -58,8 +58,8 @@ export const cameraData = {
 }
 
 export const doorData = {
-    url: "/models/gltf/RobotExpressive/double_doors.glb",
-    scale: new THREE.Vector3(0.95,0.95, 0.05) // Adjusted scale to match wall dimensions
+    url: "/models/gltf/RobotExpressive/hospital_door.glb",
+    scale: new THREE.Vector3(0.42,0.269, 1) // Adjusted scale to match wall dimensions
 }
 
 export const tableData = {
@@ -71,3 +71,5 @@ export const humanData = {
   url: "/models/gltf/RobotExpressive/patient.glb",
   scale: new THREE.Vector3(0.0045, 0.010, 0.0045) // Adjusted scale to maintain proportions
 }
+
+

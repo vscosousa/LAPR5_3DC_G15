@@ -39,7 +39,7 @@ namespace DDDSample1.Controllers
         }
 
 
-        // GET: api/SurgeryRoom/GetRoomsByDate?date=
+        // GET: api/SurgeryRoom
         [HttpGet]
         [AllowAnonymous]
         public async Task<ActionResult<SurgeryRoomDTO>> GetRoomsByDate(DateTime date)

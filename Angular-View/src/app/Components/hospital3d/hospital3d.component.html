@@ -45,22 +45,26 @@
           </td>
         </tr>
         <tr>
-            <td colspan="4">
-            <div style="text-align: center;">
-              <label for="date-picker">Select a Date:</label>
-              <input
-              type="datetime-local"
-              id="date-picker"
-              [(ngModel)]="selectedDate"
-              (change)="onDateChange($event)"
-              />
-              <button (click)="checkOperations()">Check Operations</button>
-            </div>
+          <td colspan="4" style="text-align: center;">
+            <label for="date-picker" style="margin-right: 10px;">Select a Date:</label>
+            <input type="datetime-local" id="date-picker" [(ngModel)]="selectedDate" (change)="onDateChange($event)"
+              style="margin-right: 10px;" />
+            <button (click)="checkOperations()" style="padding: 5px 15px;">Check Operations</button>
+          </td>
+        </tr>
+        <tr *ngIf="error">
+          <td colspan="4" style="text-align: center; color: red;">
+            <p>{{ error }}</p>
           </td>
         </tr>
       </tbody>
     </table>
   </div>
+
+  <div id="scene-container">
+    <!-- 3D Scene will be rendered here -->
+  </div>
+
   <div id="help-panel">
     <table class="help" id="help-table">
       <tbody>
@@ -170,6 +174,7 @@
       </tbody>
     </table>
   </div>
+
   <div id="subwindows-panel">
     <table class="subwindows">
       <tbody>

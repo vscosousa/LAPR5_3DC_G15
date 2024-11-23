@@ -51,23 +51,23 @@ namespace DDDSample1.Domain.SurgeryRooms
 
         }
 
-               public async Task<List<SurgeryRoomDTO>> GetRoomsByDate(DateTime date)
+        public async Task<List<SurgeryRoomDTO>> GetRoomsByDate(DateTime date)
         {
             try
             {
-                var roomsWithAppointments = new List<SurgeryRoomDTO>();
-                var rooms = await _repo.GetByDateAsync(date) as IEnumerable<SurgeryRoom>;
+                var roomsWithOccupation = new List<SurgeryRoomDTO>();
+                var rooms = await _repo.GetAllAsync();
         
                 foreach (var room in rooms)
                 {
             
-                    if (room.AppointmentDates.Any(appointment => appointment.Date.Date == date.Date))
-                    {
-                        roomsWithAppointments.Add(_mapper.ToDto(room));
-                    }
+                    var isOccupied = room.AppointmentDates.Any(appointmentDate => appointmentDate.Date == date.Date);
+                    var roomDTO = _mapper.ToDto(room);
+                    roomDTO.isOccupied = isOccupied;
+                    roomsWithOccupation.Add(roomDTO);
                 }
         
-                return roomsWithAppointments;
+                return roomsWithOccupation;
             }
             catch (BusinessRuleValidationException e)
             {

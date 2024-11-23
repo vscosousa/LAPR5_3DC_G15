@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Moq;
 using Xunit;
+using Microsoft.Extensions.Configuration;
 
 namespace DDDSample1.Tests.Patients.UnitTests
 {
@@ -27,11 +28,13 @@ namespace DDDSample1.Tests.Patients.UnitTests
             _patientMapperMock = new Mock<IPatientMapper>();
             _logRepositoryMock = new Mock<ILogRepository>();
 
+          
             _service = new PatientService(
                 _unitOfWorkMock.Object,
                 _patientRepositoryMock.Object,
                 _patientMapperMock.Object,
                 _logRepositoryMock.Object
+               
             );
         }
 

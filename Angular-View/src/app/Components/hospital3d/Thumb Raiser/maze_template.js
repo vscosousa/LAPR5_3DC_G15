@@ -15,7 +15,7 @@ import { consumerPollProducersForChange } from "@angular/core/primitives/signals
  */
 
 export default class Maze {
-    constructor(parameters, doorParameters, tableParameters, humanParameters) {
+    constructor(parameters, doorParameters, tableParameters, humanParameters, roomParameters) {
         this.onLoad = function (description) {
             // Store the maze's map and size
             this.map = description.map;
@@ -25,6 +25,7 @@ export default class Maze {
             this.doorParameters = doorParameters;
             this.tableParameters = tableParameters;
             this.humanParameters = humanParameters;
+            this.roomParameters = roomParameters;
 
             // Store the player's initial position and direction
             this.initialPosition = this.cellToCartesian(description.initialPosition);
@@ -40,12 +41,6 @@ export default class Maze {
             // Create a wall
             this.wall = new Wall({ textureUrl: description.wallTextureUrl });
 
-            const rooms = [
-                { isOccupied: true },
-                { isOccupied: false },
-                { isOccupied: true },
-                { isOccupied: false },
-            ];
 
 
 
@@ -67,7 +62,7 @@ export default class Maze {
                         roomIndex = 3; // Bottom-right quadrant
                     }
 
-                    const currentRoom = rooms[roomIndex];
+                    const currentRoom = roomParameters[roomIndex];
 
                     // Create north walls
                     if (description.map[j][i] === 2 || description.map[j][i] === 3) {
@@ -93,6 +88,30 @@ export default class Maze {
                     }
 
                     // Add doors (only if the room is occupied)
+                    if (description.map[j][i] === 4 && !currentRoom.isOccupied) {
+                        const doorObject = new Door(this.doorParameters);
+                        doorObject.object.position.set(
+                            i - description.size.width / 2 + 0.5,
+                            0.5,
+                            j - description.size.height / 2
+                        );
+                        doorObject.object.scale.set(0.0035, 0.00635, 0);
+                        doorObject.object.translateY(-0.6);
+                        doorObject.object.translateX(0.5);
+
+
+                        // Adjust door positioning based on the wall
+                        if (description.doorMap[j][i] === 1) {
+                            doorObject.object.rotateY(-Math.PI / 2);
+                        } else if (description.doorMap[j][i] === 2) {
+                            doorObject.object.translateZ(-0.029); // Door on the south wall
+                            doorObject.object.rotateY(Math.PI / 2);
+
+                        }
+
+                        this.object.add(doorObject.object);
+                    }
+
                     if (description.map[j][i] === 4 && currentRoom.isOccupied) {
                         const doorObject = new Door(this.doorParameters);
                         doorObject.object.position.set(
@@ -102,6 +121,7 @@ export default class Maze {
                         );
                         doorObject.object.scale.set(0.0035, 0.00635, 0);
                         doorObject.object.translateY(-0.6);
+                        doorObject.object.translateX(0.5);
 
                         // Adjust door positioning based on the wall
                         if (description.map[j][i] === 1) {
@@ -113,9 +133,10 @@ export default class Maze {
                         this.object.add(doorObject.object);
                     }
 
+
                     // Add tables and humans
                     if (this.map[j][i] === 5) {
-                        console.log ("Table added: " + currentRoom.isOccupied);
+                        console.log("Table added: " + currentRoom.isOccupied);
                         const tableObject = new Table(this.tableParameters);
                         tableObject.object.position.set(
                             i - description.size.width / 2 + 0.5,
@@ -214,9 +235,6 @@ export default class Maze {
         if (this.map[indices[0]][indices[1]] === 2 || this.map[indices[0]][indices[1]] === 3) {
             return position.z - this.cellToCartesian(indices).z + this.scale.z / 2.0;
         }
-        if (this.doorMap[indices[0]][indices[1]] === 1 || this.doorMap[indices[0]][indices[1]] === 2) {
-            return position.z - this.cellToCartesian(indices).z + this.scale.z / 2.0;
-        }
         return Infinity;
     }
 
@@ -226,13 +244,35 @@ export default class Maze {
         if (this.map[indices[0]][indices[1]] === 2 || this.map[indices[0]][indices[1]] === 3) {
             return this.cellToCartesian(indices).z - this.scale.z / 2.0 - position.z;
         }
-        if (this.doorMap[indices[0]][indices[1]] === 1 || this.doorMap[indices[0]][indices[1]] === 2) {
+        return Infinity;
+    }
+
+    distanceToDoor(position) {
+        const indices = this.cartesianToCell(position);
+        indices[0]++;
+        const roomIndex = this.getRoomIndex(indices);
+        const currentRoom = this.roomParameters[roomIndex];
+    
+        // Check if the current room is occupied and the door is closed
+        if (this.map[indices[0]][indices[1]] === 4 && currentRoom.isOccupied) {
             return this.cellToCartesian(indices).z - this.scale.z / 2.0 - position.z;
         }
         return Infinity;
     }
-
-    getDoor() {
-        return this.door;
+    
+    // Helper method to get the room index based on the tile position
+    getRoomIndex(indices) {
+        const midHeight = Math.floor(this.size.height / 2);
+        const midWidth = Math.floor(this.size.width / 2);
+    
+        if (indices[0] < midHeight && indices[1] < midWidth) {
+            return 0; // Top-left quadrant
+        } else if (indices[0] < midHeight && indices[1] >= midWidth) {
+            return 1; // Top-right quadrant
+        } else if (indices[0] >= midHeight && indices[1] < midWidth) {
+            return 2; // Bottom-left quadrant
+        } else {
+            return 3; // Bottom-right quadrant
+        }
     }
 }

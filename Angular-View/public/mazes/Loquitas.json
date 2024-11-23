@@ -1,7 +1,6 @@
 {
-    "modelUrl": "/models/gltf/RobotExpressive/door.glb",
-    "groundTextureUrl": "/textures/ground2.jpg",
-    "wallTextureUrl": "/textures/walls2.jpg",
+    "groundTextureUrl": "/textures/gray-parquet.jpg",
+    "wallTextureUrl": "/textures/tiles.jpg",
     "size": { "width": 10, "height": 10 },
     "map": [
         [3, 2, 2, 2, 3, 2, 3, 2, 2, 2, 1],
@@ -46,5 +45,12 @@
     "appointments": [],
 
     "initialPosition": [4.5, 4.5],
-    "initialDirection": 0.0
+    "initialDirection": 0.0,
+
+    "rooms": [
+        { "isOccupied": true },
+        { "isOccupied": false },
+        { "isOccupied": true },
+        { "isOccupied": false }
+    ]
 }

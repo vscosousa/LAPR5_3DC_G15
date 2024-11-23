@@ -11,6 +11,8 @@ namespace DDDSample1.Domain.SurgeryRooms
         public List<string> equipment { get; set; }
         public SurgeryRoomStatus status { get; set; }
         public DateTime[] roomMaintenance { get; set; }
+        
+        public bool isOccupied { get; set; }
 
         public SurgeryRoomDTO(string roomNumber, string type, int capacity, List<string> equipment, SurgeryRoomStatus status, DateTime[] roomMaintenance)
         {
@@ -20,6 +22,7 @@ namespace DDDSample1.Domain.SurgeryRooms
             this.equipment = equipment;
             this.status = status;
             this.roomMaintenance = roomMaintenance;
+            this.isOccupied = false;
         }
 
         public SurgeryRoomDTO(){}
