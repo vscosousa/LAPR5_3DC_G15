@@ -130,6 +130,11 @@
               "2024-11-17",
               "2024-11-18",
               "2024-11-18",
+              "2024-11-21",
+              "2024-11-22",
+              "2024-11-22",
+              "2024-11-22",
+              "2024-11-22",
               "2024-11-23",
               "2024-11-23",
               "2024-11-23",
@@ -137,15 +142,33 @@
               "2024-11-23",
               "2024-11-23",
               "2024-11-23",
+              "2024-11-23",
+              "2024-11-23",
+              "2024-11-23",
+              "2024-11-23",
+              "2024-11-23",
+              "2024-11-23",
+              "2024-11-23",
+              "2024-11-24",
+              "2024-11-24",
+              "2024-11-24",
+              "2024-11-24",
+              "2024-11-24",
             ],
           },
         };
 
         function getCurrentSprint() {
           const today = new Date();
+          console.log("Today's date:", today);
           for (const sprint in sprints) {
             const { startDate, endDate } = sprints[sprint];
-            if (today >= startDate && today <= endDate) {
+            const adjustedEndDate = new Date(endDate);
+            adjustedEndDate.setDate(adjustedEndDate.getDate() + 1); // Adjust end date by adding one day
+            console.log(
+              `Checking sprint: ${sprint}, Start: ${startDate}, End: ${adjustedEndDate}`
+            );
+            if (today >= startDate && today < adjustedEndDate) {
               return sprint;
             }
           }

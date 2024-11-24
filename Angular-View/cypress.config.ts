@@ -5,6 +5,9 @@ export default defineConfig({
     baseUrl: 'http://localhost:4200',
     viewportWidth: 1720,
     viewportHeight: 1080,
+    excludeSpecPattern: [
+      '*/*/**/spec.cy.ts',
+    ],
   },
   component: {
     devServer: {
@@ -14,5 +17,8 @@ export default defineConfig({
     specPattern: '**/*.cy.ts',
     viewportWidth: 1920,
     viewportHeight: 1080,
+    excludeSpecPattern: [
+      '*/*/**/spec.cy.ts',
+    ],
   }
 })

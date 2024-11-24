@@ -18,4 +18,6 @@ This folder contains all the global artifacts for your project, split by each im
 
 [_`Design`_](./03.design/readme.md)
 
+[_`Burndown Chart`_](./01.requirements-engineering/burndown/readme.md)
+
 <img width=100% src="https://capsule-render.vercel.app/api?type=waving&height=120&color=4E1764&section=footer"/>
