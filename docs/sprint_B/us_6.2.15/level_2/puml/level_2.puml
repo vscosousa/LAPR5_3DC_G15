@@ -1,6 +1,6 @@
 @startuml level_2
 
-title Level 2 Diagram
+title Level 2 Diagram for Updating Operation Requisition
 
 hide empty members
 'skinparam Linetype ortho
@@ -16,5 +16,25 @@ skinparam class {
 skinparam package {
     BackgroundColor #EBF5FB
 }
+
+actor Doctor as D
+participant "FE" as FE
+participant "MDR" as MDR
+
+activate D
+D -> FE: Asks to edit an Operation Requisition
+activate FE
+FE --> D: Asks for Operation Requisition ID and the data to edit
+deactivate FE
+D -> FE: Sends updated operation requisition data
+note right of FE: The data can be operationType,\ndeadlineDate,\npriority, etc.
+activate FE
+FE -> MDR: Sends HTTP Request to update Operation Requisition with new data
+activate MDR
+MDR -> MDR: Validates updated operation requisition data
+MDR --> FE: Returns Operation Status Code
+deactivate MDR
+FE --> D: Returns Operation Update Success message
+deactivate FE
 
 @enduml

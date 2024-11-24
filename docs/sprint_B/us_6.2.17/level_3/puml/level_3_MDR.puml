@@ -1,0 +1,87 @@
+@startuml level_3_MDR
+
+title Level 3 MDR Diagram for Listing/Search Operation Requests
+
+hide empty members
+'skinparam Linetype ortho
+
+skinparam class {
+    BackgroundColor<<valueObject>> #D6EAF8
+    BackgroundColor<<root>> #FDEBD0
+    BackgroundColor<<service>> #D1F2EB
+    BackgroundColor #FEF9E7
+    ArrowColor Black
+}
+
+skinparam package {
+    BackgroundColor #EBF5FB
+}
+
+actor FE as FE
+participant "OperationRequestController" as C
+participant "OperationRequestService" as S
+participant "OperationRequestRepository" as R
+participant "OperationRequestMapper" as M
+participant "OperationRequestDTO" as D
+participant "Database" as DB
+
+activate FE
+FE -> C: Sends HTTP request to list the default operation requests
+activate C
+ref over C
+    This part will behave the same way as the representation below
+    but without any filters being applied.
+end ref
+C --> FE: Returns Operation Status Code
+deactivate C
+FE -> C: Sends HTTP request to list the operation requests with filters
+activate C
+C -> S: searchOperationRequests(SearchOperationRequestDTO dto)
+activate S
+S -> R: searchOperationRequestsAsync(dto)
+activate R
+R -> DB: _objs.AsQueryable()
+activate DB
+note right of DB: This will return a queryable list of all operation requests.\nThis means that other queries can be chained\nto this one in order to filter the requests.
+DB --> R: Returns the queryable list of all operation requests
+deactivate DB
+opt Filter queryable by Operation Type
+    R -> DB: query.Where(r => r.OperationType == dto.OperationType)
+    activate DB
+    DB --> R: Returns the queryable list of requests filtered by Operation Type
+    deactivate DB
+end
+opt Filter queryable by Deadline Date
+    R -> DB: query.Where(r => r.DeadlineDate == dto.DeadlineDate)
+    activate DB
+    DB --> R: Returns the queryable list of requests filtered by Deadline Date
+    deactivate DB
+end
+opt Filter queryable by Priority
+    R -> DB: query.Where(r => r.Priority == dto.Priority)
+    activate DB
+    DB --> R: Returns the queryable list of requests filtered by Priority
+    deactivate DB
+end
+R --> S: Returns the final list of operation requests
+deactivate R
+alt list is null
+    S --> C: Returns null
+else list is not null
+    loop for each requisition in the list
+        S -> M: toDTO(requisition)
+        activate M
+        M -> D: new OperationRequestDTO(requisition fields)
+        activate D
+        D -> D: OperationRequestDTO()
+        deactivate D
+        M --> S: Returns the OperationRequestDTO
+        deactivate M
+    end
+    S --> C: Returns the list of OperationRequestDTOs
+    deactivate S
+end
+C --> FE: Returns Operation Status Response Code
+deactivate C
+
+@enduml

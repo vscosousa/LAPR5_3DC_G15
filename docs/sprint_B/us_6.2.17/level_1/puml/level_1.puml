@@ -1,6 +1,6 @@
 @startuml level_1
 
-title Level 1 Diagram
+title Level 1 Diagram for Listing/Search Operation Requests
 
 hide empty members
 'skinparam Linetype ortho
@@ -16,5 +16,19 @@ skinparam class {
 skinparam package {
     BackgroundColor #EBF5FB
 }
+
+actor Doctor as D
+
+activate D
+D -> System: Asks to list/search operation requests
+activate System
+System --> D: Asks for the data to filter the requests
+deactivate System
+D -> System: Sends the data to filter the requests
+note right of System: The data can be operationType,\ndeadlineDate or priority.
+activate System
+System -> System: Validates the data and tries to list the operation requests
+System --> D: Returns Operation List/Success message
+deactivate System
 
 @enduml

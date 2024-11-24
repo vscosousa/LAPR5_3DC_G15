@@ -1,6 +1,6 @@
 @startuml level_2
 
-title Level 2 Diagram
+title Level 2 Diagram for Removing Operation Request
 
 hide empty members
 'skinparam Linetype ortho
@@ -16,5 +16,24 @@ skinparam class {
 skinparam package {
     BackgroundColor #EBF5FB
 }
+
+actor Doctor as D
+actor "FE" as FE
+participant "MDR" as MDR
+
+activate D
+D -> FE: Asks to delete an Operation Request
+activate FE
+FE --> D: Asks for Operation Request ID
+deactivate FE
+D -> FE: Sends Operation Request ID
+activate FE
+FE -> MDR: Sends HTTP request to delete the Operation Request
+activate MDR
+MDR -> MDR: Validates Operation Request ID and tries to delete it
+MDR --> FE: Returns Operation Status Code
+deactivate MDR
+FE --> D: Returns Operation Deletion Success message
+deactivate FE
 
 @enduml

@@ -1,0 +1,74 @@
+@startuml level_3_MDR
+
+title Level 3 MDR Diagram
+
+hide empty members
+
+skinparam class {
+    BackgroundColor<<valueObject>> #D6EAF8
+    BackgroundColor<<root>> #FDEBD0
+    BackgroundColor<<service>> #D1F2EB
+    BackgroundColor #FEF9E7
+    ArrowColor Black
+}
+
+skinparam package {
+    BackgroundColor #EBF5FB
+}
+
+actor FE as FE
+participant "OperationRequestController" as C
+participant "OperationRequestService" as S
+participant "OperationRequestMapper" as M
+participant "OperationRequestRepository" as R
+participant "OperationRequest" as OR
+participant "OperationRequestDTO" as DTO
+participant "Database" as DB
+
+activate FE
+FE -> C: Sends HTTP Request to create an Operation Request with data
+activate C
+C --> S: createOperationRequest(CreatingOperationRequestDTO dto)
+activate S
+S -> M: ToDomain(CreatingOperationRequestDTO dto)
+activate M
+M -> OR: new OperationRequest(dto.patientID, dto.operationType, dto.deadlineDate, dto.priority)
+activate OR
+OR -> OR: OperationRequest()
+deactivate OR
+M --> S: return OperationRequest
+deactivate M
+S -> R: getOperationRequestByPatientID(dto.patientID)
+activate R
+R -> DB: _objs.Where(x => x.PatientID.Equals(dto.patientID)).FirstOrDefaultAsync();
+activate DB
+DB --> R: return var
+deactivate DB
+R --> S: return var
+deactivate R
+alt var is null
+    S -> R: addAsync(OperationRequest operationRequest)
+    activate R
+    R -> DB: _objs.AddAsync(operationRequest)
+    activate DB
+    deactivate DB
+    R --> S: return OperationRequest
+    deactivate R
+    S -> M: ToDTO(OperationRequest operationRequest)
+    activate M
+    M -> DTO: new OperationRequestDTO(operationRequest fields)
+    activate DTO
+    DTO -> DTO: OperationRequestDTO()
+    deactivate DTO
+    M --> S: return OperationRequestDTO
+    deactivate M
+    S --> C: return OperationRequestDTO
+    deactivate S
+else var is not null
+    S --> C: return Operation Request for this Patient already exists
+    deactivate S
+end
+C --> FE: Returns Operation Status Response Code
+deactivate C
+
+@enduml

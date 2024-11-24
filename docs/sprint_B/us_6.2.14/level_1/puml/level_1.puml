@@ -3,7 +3,6 @@
 title Level 1 Diagram
 
 hide empty members
-'skinparam Linetype ortho
 
 skinparam class {
     BackgroundColor<<valueObject>> #D6EAF8
@@ -16,5 +15,21 @@ skinparam class {
 skinparam package {
     BackgroundColor #EBF5FB
 }
+
+actor Doctor as D
+actor Patient as P
+
+activate D
+D -> System: Requests to create an operation request
+activate System
+System --> D: Asks for operation request details
+deactivate System
+D -> System: Sends operation request data (patientID, operationType, deadlineDate, priority)
+activate System
+System -> System: Validates operation request data
+System -> System: Creates operation request
+System --> D: Returns Operation Request Success message
+System --> P: Notifies patient about the operation request
+deactivate System
 
 @enduml
