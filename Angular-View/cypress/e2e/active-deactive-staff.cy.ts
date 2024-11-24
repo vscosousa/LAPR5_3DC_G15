@@ -23,6 +23,12 @@ describe('Search Staff Page', () => {
       cy.loginAsAdmin('admin@email.com', 'Adminadmin1@');
       cy.visit('/search-staffs');
     });
+
+    it('should display deactive button and should display active button after', () => {
+      cy.get('input[name="email"]').type(uniqueEmail);
+      cy.get('button.btn-filter').click();
+      cy.get('.table-container .table tbody tr').should('contain', 'Deactivate');
+    });
     
     it('should deactive a staff', () => {
       cy.get('input[name="email"]').type(uniqueEmail);

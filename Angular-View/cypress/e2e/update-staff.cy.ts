@@ -2,6 +2,7 @@ describe('Update Staff Page', () => {
   const uniqueId = Date.now();
   const uniqueEmail = `test.staff${uniqueId}@example.com`;
   const uniquePhoneNumber = `${uniqueId}`;
+  const fullName = `Test Staff${uniqueId}`;
   
   before(() => {
     cy.log(`Created staff with email: ${uniqueEmail}`);
@@ -9,7 +10,7 @@ describe('Update Staff Page', () => {
     cy.createStaff({
       firstName: `Test${uniqueId}`,
       lastName: `Staff${uniqueId}`,
-      fullName: `Test Staff${uniqueId}`,
+      fullName: fullName,
       email: uniqueEmail,
       identifier: '+351',
       phoneNumber: uniquePhoneNumber,
@@ -28,7 +29,11 @@ describe('Update Staff Page', () => {
     cy.get('button.btn-filter').click();
     cy.get('.table-container .table tbody tr').first().find('.btn-update').click();
     cy.get('h2').should('contain', 'Edit Staff');
+    cy.get('h3').should('contain', fullName );
     cy.get('form').should('be.visible');
+    cy.get('input[id="identifier"]').should('be.visible');
+    cy.get('input[id="phoneNumber"]').should('be.visible');
+    cy.get('input[id="email"]').should('be.visible');
   });
 
   it('should auto-fill the form with staff details', () => {
