@@ -32,7 +32,45 @@ activate MS
 MS -> CS: routes to CreateStaffComponent
 deactivate MS
 activate CS
-CS -> CS: initializes CreateStaffComponent
+
+CS -> SS: loadSpecializations()
+activate SS
+SS -> AI: Sends HTTP Request to get all Specializations
+activate AI
+AI -> AI: Intercepts the request and adds the token to the header
+note right of AI
+    The token is added to the header so that the MDR
+    can authenticate and authorize the request.
+end note
+AI -> MDR: getSpecialization()
+activate MDR
+MDR -> MDR: Tries to get Specializations data
+MDR --> AI: Returns Specializations data
+deactivate MDR
+AI --> SS: Returns Specializations data
+deactivate AI
+SS --> CS: Returns Specializations data
+deactivate SS
+
+CS -> SS: loadStaffTypes()
+activate SS
+SS -> AI: Sends HTTP Request to get staff types
+activate AI
+AI -> AI: Intercepts the request and adds the token to the header
+note right of AI
+    The token is added to the header so that the MDR
+    can authenticate and authorize the request.
+end note
+AI -> MDR: getStaffTypes()
+activate MDR
+MDR -> MDR: Tries to get Staffs Types data
+MDR --> AI:Returns Staffs Types data
+deactivate MDR
+AI --> SS: Returns Staffs Types data
+deactivate AI
+SS --> CS: Returns Staffs Types data
+deactivate SS
+
 CS --> V: returns CreateStaffComponent
 deactivate CS
 V --> A: Asks for Staff's data

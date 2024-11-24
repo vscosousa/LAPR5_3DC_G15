@@ -28,7 +28,7 @@ export class StaffService {
     return this.http.get<any[]>(`${this.apiUrl}/staff-types`);
   }
 
-  searchStaffProfiles(criteria: any): Observable<any[]> {
+  searchStaffProfiles(criteria: {firstName:string, lastName:string, fullName:string, email:string,specializationName:string}): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/search`, { 
       params: criteria 
     });
@@ -38,7 +38,7 @@ export class StaffService {
     return this.http.put<any>(`${this.apiUrl}/deactivate/${id}`, {});
   }
 
-  updateStaff(id: string, updateData: any): Observable<any> {
+  updateStaff(id: string, updateData: {phoneNumber:string, email:string, addAvailabilitySlots:string, removeAvailabilitySlots: string, specializationName: string}): Observable<any> {
     return this.http.put<any>(`${this.apiUrl}/${id}`, updateData);
   }
 

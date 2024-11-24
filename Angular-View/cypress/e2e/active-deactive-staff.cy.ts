@@ -1,4 +1,4 @@
-describe('Update Staff Page', () => {
+describe('Search Staff Page', () => {
     const uniqueId = Date.now();
     const uniqueEmail = `test.staff${uniqueId}@example.com`;
     const uniquePhoneNumber = `${uniqueId}`;
