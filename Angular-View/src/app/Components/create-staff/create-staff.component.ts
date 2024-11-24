@@ -25,7 +25,16 @@ export class CreateStaffComponent implements OnInit{
       staffType: new FormControl('', [Validators.required]),
       specializationName: new FormControl('', [Validators.required])
     });
-  
+  newStaff = {
+    firstName: '',
+    lastName: '',
+    fullName: '',
+    email: '',
+    phoneNumber: '',
+    staffType: '',
+    specializationName: ''
+  };
+
   staffTypes: string[] = [];
   specializations:  any[] = [];
   errorMessage: string = '';
@@ -79,18 +88,18 @@ export class CreateStaffComponent implements OnInit{
       this.createStaffForm.markAllAsTouched();
       return;
     }
+    this.newStaff = {
+      firstName:this.createStaffForm.value.firstName!.trim(),
+      lastName:this.createStaffForm.value.lastName!.trim(),
+      fullName:this.createStaffForm.value.fullName!.trim(),
+      email:this.createStaffForm.value.email!.trim(),
+      phoneNumber:this.createStaffForm.value.identifier!.trim() + this.createStaffForm.value.phoneNumber!.trim(),
+      staffType:this.createStaffForm.value.staffType!.trim(),
+      specializationName:this.createStaffForm.value.specializationName!.trim()
+    };
 
     if (this.createStaffForm.valid) {
-      this.service.createStaff(
-        this.createStaffForm.value.firstName!.trim(),
-        this.createStaffForm.value.lastName!.trim(),
-        this.createStaffForm.value.fullName!.trim(),
-        this.createStaffForm.value.email!.trim(),
-        this.createStaffForm.value.identifier!.trim(),
-        this.createStaffForm.value.phoneNumber!.trim(),
-        this.createStaffForm.value.staffType!.trim(),
-        this.createStaffForm.value.specializationName!.trim()
-      ).subscribe({
+      this.service.createStaff(this.newStaff).subscribe({
         next: (response) => {
           console.log('Staff created successfully', response);
           this.errorMessage = '';

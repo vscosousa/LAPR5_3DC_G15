@@ -45,12 +45,12 @@ export class ActiveModalComponent {
       staffType: this.profile.staffType,
       staffId: this.profile.id
     }
-    console.log('Activating user:', userInfo);
+    
     this.staffService.activateStaff(userInfo).subscribe({
         next: (response) => {
+          console.log('User activated:', response);
           this.errorMessage = '';
           this.username = '';
-          console.log('User activated:', response);
           this.close.emit(true);
         },
         error: (error) => {

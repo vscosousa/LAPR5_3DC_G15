@@ -1,9 +1,8 @@
-@startuml level_3
+@startuml level_3_FE
 
-title Level 3 Diagram
+title Level 3 FE Diagram for Updating Staff
 
 hide empty members
-'skinparam Linetype ortho
 
 skinparam class {
     BackgroundColor<<valueObject>> #D6EAF8
@@ -16,5 +15,95 @@ skinparam class {
 skinparam package {
     BackgroundColor #EBF5FB
 }
+
+actor Admin as A
+participant "View" as V
+participant "SearchStaffsComponent" as MS
+participant "UpdateStaffComponent" as US
+participant "StaffService" as SS
+participant "AuthInterceptor" as AI
+participant "MDR" as MDR
+
+activate A
+A -> V: Asks to update a Staff
+activate V
+V -> MS: routerLink='/update-staff'
+activate MS
+MS -> US: routes to UpdateStaffComponent
+deactivate MS
+
+activate US
+US -> US: this.staffId = this.route.snapshot.paramMap.get('id')
+
+US -> SS: loadSpecializations()
+activate SS
+SS -> AI: Sends HTTP Request to get all Specializations
+activate AI
+AI -> AI: Intercepts the request and adds the token to the header
+note right of AI
+    The token is added to the header so that the MDR
+    can authenticate and authorize the request.
+end note
+AI -> MDR: getSpecialization()
+activate MDR
+MDR -> MDR: Tries to get Specializations data
+MDR --> AI: Returns Specializations data
+deactivate MDR
+AI --> SS: Returns Specializations data
+deactivate AI
+SS --> US: Returns Specializations data
+deactivate SS
+
+US -> SS: loadStaffDetails()
+activate SS
+SS -> AI: Sends HTTP Request to get staff by Id
+activate AI
+AI -> AI: Intercepts the request and adds the token to the header
+note right of AI
+    The token is added to the header so that the MDR
+    can authenticate and authorize the request.
+end note
+AI -> MDR: getStaffById(this.staffId)
+activate MDR
+MDR -> MDR: Tries to get Staff's Id data
+MDR --> AI:Returns Staff's data
+deactivate MDR
+AI --> SS: Returns Staff's data
+deactivate AI
+SS --> US: Returns Staff's data
+deactivate SS
+
+US --> V: returns UpdateStaffComponent
+deactivate US
+V --> A: Display Staff's data (autofill form) and Asks for Staff's data
+deactivate V
+
+A -> V: Sends Staff's data
+activate V
+note right of V: The data can be Email and/or Phone Number and/or Specialization Name
+V -> US: onSubmit()
+ACTIVATE US
+US -> SS: updateStaff(this.staffId, updateData)
+activate SS
+SS -> AI: Sends HTTP Request to update Staff's data with the new data
+activate AI
+AI -> AI: Intercepts the request and adds the token to the header
+note right of AI
+    The token is added to the header so that the MDR
+    can authenticate and authorize the request.
+end note
+AI -> MDR: updateStaff(this.staffId, updateData)
+activate MDR
+MDR -> MDR: Validates Staff's data and tries to update Staff's data
+MDR --> AI: Returns Operation Status Code
+deactivate MDR
+AI --> SS: Returns Operation Status Code
+deactivate AI
+SS --> US: Returns Operation Response
+deactivate SS
+US --> V: Returns Operation In/Success message
+deactivate US
+V --> A: Returns Operation In/Success message
+deactivate V
 
 @enduml

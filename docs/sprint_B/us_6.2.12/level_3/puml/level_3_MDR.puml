@@ -1,0 +1,94 @@
+@startuml level_3_MDR
+
+title Level 3 MDR Diagram for Deactivating Staff
+
+hide empty members
+
+skinparam class {
+    BackgroundColor<<valueObject>> #D6EAF8
+    BackgroundColor<<root>> #FDEBD0
+    BackgroundColor<<service>> #D1F2EB
+    BackgroundColor #FEF9E7
+    ArrowColor Black
+}
+
+skinparam package {
+    BackgroundColor #EBF5FB
+}
+
+actor FE as FE
+participant "StaffController" as C
+participant "StaffService" as S
+participant "Staff" as SD
+participant "StaffRepository" as R
+participant "UserRepository" as UR
+participant "LogRepository" as LR
+participant "StaffMapper" as M
+participant "StaffDTO" as DTO
+participant "Log" as L
+participant "Database" as DB
+
+activate FE
+FE -> C: Sends HTTP request to deactivate the Staff
+activate C
+C --> S: deactivateStaff(Guid id)
+activate S
+S -> R: getByIdAsync(new StaffId(id))
+activate R
+R -> DB: _objs.Where(x => id.Equals(x.Id)).FirstOrDefaultAsync()
+activate DB
+DB --> R: return staff
+deactivate DB
+R --> S: return staff
+deactivate R
+alt staff is not null
+    S -> SD: Deactivate()
+    activate SD
+    SD -> SD: staff.Deactivate()
+    deactivate SD
+
+    S -> UR: getByIdAsync(staff.UserId)
+    activate UR
+    UR -> DB: _objs.Where(x => staff.UserId.Equals(x.Id)).FirstOrDefaultAsync()
+    activate DB
+    DB --> UR: return user
+    deactivate DB
+    UR --> S: return user
+    deactivate UR
+
+    opt user is not null
+        S -> UR: Remove(user)
+        activate UR
+        UR -> DB: _objs.Remove(patient)
+        activate DB
+        deactivate DB
+        deactivate UR
+    end
+    
+    S -> L: new Log(TypeOfAction.Deactivate, id.ToString(), "Staff Deactivated")
+    activate L
+    L -> L: Log()
+    deactivate L
+    S -> LR: addAsync(log)
+    activate LR
+    LR -> DB: _objs.AddAsync(log)
+    activate DB
+    deactivate DB
+    deactivate LR
+    S -> M: ToDto(staff)
+    activate M
+    M -> DTO: new StaffDTO(staff fields)
+    activate DTO
+    DTO -> DTO: StaffDTO()
+    deactivate DTO
+    M --> S: return StaffDTO
+    deactivate M
+    S --> C: return StaffDTO
+else staff is null
+    S --> C: throw BusinessRuleValidationException("Staff not found.")
+    deactivate S
+end
+C --> FE: Returns Operation Status Response Code
+deactivate C
+
+@enduml

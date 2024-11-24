@@ -1,0 +1,67 @@
+@startuml level_3_FE
+
+title Level 3 FE Diagram for Create Staff
+
+hide empty members
+
+skinparam class {
+    BackgroundColor<<valueObject>> #D6EAF8
+    BackgroundColor<<root>> #FDEBD0
+    BackgroundColor<<service>> #D1F2EB
+    BackgroundColor #FEF9E7
+    ArrowColor Black
+}
+
+skinparam package {
+    BackgroundColor #EBF5FB
+}
+
+actor Admin as A
+participant "View" as V
+participant "SearchStaffsComponent" as MS
+participant "CreateStaffComponent" as CS
+participant "StaffService" as SS
+participant "AuthInterceptor" as AI
+participant "MDR" as MDR
+
+activate A
+A -> V: Asks to create a Staff
+activate V
+V -> MS: routerLink='/create-staff'
+activate MS
+MS -> CS: routes to CreateStaffComponent
+deactivate MS
+activate CS
+CS -> CS: initializes CreateStaffComponent
+CS --> V: returns CreateStaffComponent
+deactivate CS
+V --> A: Asks for Staff's data
+deactivate V
+A -> V: Sends Staff's data (FirstName, LastName, FullName, Email, PhoneNumber, StaffType, SpecializationName)
+activate V
+V -> CS: onSubmit()
+activate CS
+CS -> SS: createStaff(this.newStaff)
+activate SS
+SS -> AI: Sends HTTP Request to create a Staff with Staff's data
+activate AI
+AI -> AI: Intercepts the request and adds the token to the header
+note right of AI
+    The token is added to the header so that the MDR
+    can authenticate and authorize the request.
+end note
+AI -> MDR: Sends HTTP Request with token to create a Staff
+activate MDR
+MDR -> MDR: Validates Staff's data and tries to create the Staff
+MDR --> AI: Returns Operation Status Code
+deactivate MDR
+AI --> SS: Returns Operation Status Code
+deactivate AI
+SS --> CS: Returns Operation Response
+deactivate SS
+CS --> V: Returns Operation In/Sucess message
+deactivate CS
+V --> A: Returns Operation In/Sucess message
+deactivate V
+
+@enduml

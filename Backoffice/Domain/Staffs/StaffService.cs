@@ -55,15 +55,6 @@ namespace DDDSample1.Domain.Staffs
                 {
                     throw new BusinessRuleValidationException($"Invalid staff type: {dto.StaffType}");
                 }
-
-                Console.WriteLine($"Creating staff firstName... {dto.FirstName}");
-                Console.WriteLine($"Creating staff lastName... {dto.LastName}");
-                Console.WriteLine($"Creating staff fullname... {dto.FullName}");
-                Console.WriteLine($"Creating staff Email... {dto.Email}");
-                Console.WriteLine($"Creating staff PhoneNumber... {dto.PhoneNumber}");
-                Console.WriteLine($"Creating staff Type... {dto.StaffType}");
-                Console.WriteLine($"Creating staff SpecID... {dto.SpecializationId}");
-                Console.WriteLine($"Creating staff SpecName... {dto.SpecializationName}");
                 
                 var staff = _mapper.ToDomain(dto);
 

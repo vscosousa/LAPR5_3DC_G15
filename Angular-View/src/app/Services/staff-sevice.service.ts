@@ -13,24 +13,11 @@ export class StaffService {
 
   constructor(private http: HttpClient) { }
 
-  createStaff(firstName: string, lastName: string, fullName: string, email: string, identifier: string, phoneNumber: string, staffType: string, specializationName: string): Observable<HttpResponse<string>> {
-    const CreateStaff = {
-      firstName,
-      lastName,
-      fullName,
-      email,
-      phoneNumber: identifier + phoneNumber,
-      staffType,
-      specializationName
-    }
-
-    console.log(CreateStaff);
-
-    return this.http.post<string>(`${this.apiUrl}`, CreateStaff, {
+  createStaff(newStaff:{firstName: string, lastName: string, fullName: string, email: string, phoneNumber: string, staffType: string, specializationName: string}): Observable<HttpResponse<string>> {
+    return this.http.post<any>(`${this.apiUrl}`, newStaff, {
       observe: 'response',
       responseType: 'text' as 'json'
     });
-    
   }
 
   getSpecialization(): Observable<any[]> {
@@ -38,7 +25,7 @@ export class StaffService {
   }
 
   getStaffTypes(): Observable<string[]> {
-    return this.http.get<string[]>(`${this.apiUrl}/staff-types`);
+    return this.http.get<any[]>(`${this.apiUrl}/staff-types`);
   }
 
   searchStaffProfiles(criteria: any): Observable<any[]> {
@@ -72,19 +59,12 @@ export class StaffService {
     return this.http.put<any>(`${this.apiUrl}/ConfirmUpdates`, {}, { params });
   }
 
-  activateStaff(userInfo: any): Observable<HttpResponse<any>> {
+  activateStaff(userInfo: {email:string, username:string, staffType:any, staffId: any}): Observable<HttpResponse<any>> {
     const url = `${this.apiURLUser}/RegisterUser`;
-    const body = {
-      email: userInfo.email,
-      username: userInfo.username,
-      role: userInfo.staffType,
-      staffId: userInfo.staffId
-    };
-    return this.http.post<HttpResponse<any>>(url, body);
+    return this.http.post<HttpResponse<any>>(url, userInfo);
   }
 
   activateUser(token: string, newPassword: string): Observable<any> {
-    console.log('Activating user with token service------------' + token);
     const params = { token, newPassword };
     return this.http.post<any>(`${this.apiURLUser}/Activate`, null, { params });
   }

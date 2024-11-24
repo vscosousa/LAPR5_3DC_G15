@@ -1,9 +1,8 @@
 @startuml level_2
 
-title Level 2 Diagram
+title Level 2 Diagram for Deactivating Staff
 
 hide empty members
-'skinparam Linetype ortho
 
 skinparam class {
     BackgroundColor<<valueObject>> #D6EAF8
@@ -16,5 +15,24 @@ skinparam class {
 skinparam package {
     BackgroundColor #EBF5FB
 }
+
+actor Admin as A
+participant "FE" as FE
+participant "MDR" as MDR
+
+activate A
+A -> FE: Asks to deactivate a Staff
+activate FE
+FE --> A: Asks for Staff's Identifier
+deactivate FE
+A -> FE: Sends Staff's Identifier
+activate FE
+FE -> MDR: Sends HTTP request to deactivate the Staff
+activate MDR
+MDR -> MDR: Validates Staff's Identifier and tries to deactivate the Staff
+MDR --> FE: Returns Operation Status Code
+deactivate MDR
+FE --> A: Returns Operation In/Success message
+deactivate FE
 
 @enduml

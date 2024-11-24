@@ -1,9 +1,8 @@
 @startuml level_2
 
-title Level 2 Diagram
+title Level 2 Diagram for Searching Staff
 
 hide empty members
-'skinparam Linetype ortho
 
 skinparam class {
     BackgroundColor<<valueObject>> #D6EAF8
@@ -16,5 +15,30 @@ skinparam class {
 skinparam package {
     BackgroundColor #EBF5FB
 }
+
+actor Admin as A
+participant "FE" as FE
+participant "MDR" as MDR
+
+activate A
+A -> FE: Asks to search staff
+activate FE
+FE -> MDR: Sends HTTP request to list the default staff list
+activate MDR
+MDR -> MDR: Validates the data and tries to list the staff
+MDR --> FE: Returns Operation Status Code
+deactivate MDR
+FE --> A: Displays initial list and asks for the data to filter the staff
+deactivate FE
+A -> FE: Sends the data to filter the staff
+note right of FE: The data can be First Name and/or Last Name and/or\n Full Nameand/or Email and/or Specialization Name
+activate FE
+FE -> MDR: Sends HTTP request to list the staff with filters
+activate MDR
+MDR -> MDR: Validates the data and tries to list the filtered staff
+MDR --> FE: Returns filtered staff list
+deactivate MDR
+FE --> A: Displays filtered staff list
+deactivate FE
 
 @enduml

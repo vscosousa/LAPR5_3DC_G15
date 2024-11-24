@@ -1,9 +1,8 @@
-@startuml level_3
+@startuml level_3_FE
 
-title Level 3 Diagram
+title Level 3 FE Diagram for Searching Staff
 
 hide empty members
-'skinparam Linetype ortho
 
 skinparam class {
     BackgroundColor<<valueObject>> #D6EAF8
@@ -16,5 +15,96 @@ skinparam class {
 skinparam package {
     BackgroundColor #EBF5FB
 }
+
+actor Admin as A
+participant "View" as V
+participant "PanelAdminComponent" as PAC
+participant "SearchStaffsComponent" as SSC
+participant "StaffService" as SS
+participant "AuthInterceptor" as AI
+participant "MDR" as MDR
+
+activate A
+A -> V: Asks to update a Staff
+activate V
+V -> PAC: routerLink='/search-staff'
+activate PAC
+PAC -> SSC: routes to SearchStaffsComponent
+deactivate PAC
+
+activate SSC
+SSC -> SSC: this.staffId = this.route.snapshot.paramMap.get('id')
+
+SSC -> SS: loadStaffProfiles()
+activate SS
+SS -> AI: Sends HTTP Request to get staff by Id
+activate AI
+AI -> AI: Intercepts the request and adds the token to the header
+note right of AI
+    The token is added to the header so that the MDR
+    can authenticate and authorize the request.
+end note
+AI -> MDR: getAllStaffs()
+activate MDR
+MDR -> MDR: Tries to get all Staffs data
+MDR --> AI:Returns all Staffs data
+deactivate MDR
+AI --> SS: Returns all Staffs data
+deactivate AI
+SS --> SSC: Returns all Staffs data
+deactivate SS
+
+SSC -> SS: loadSpecializations()
+activate SS
+SS -> AI: Sends HTTP Request to get all Specializations
+activate AI
+AI -> AI: Intercepts the request and adds the token to the header
+note right of AI
+    The token is added to the header so that the MDR
+    can authenticate and authorize the request.
+end note
+AI -> MDR: getSpecialization()
+activate MDR
+MDR -> MDR: Tries to get Specializations data
+MDR --> AI: Returns Specializations data
+deactivate MDR
+AI --> SS: Returns Specializations data
+deactivate AI
+SS --> SSC: Returns Specializations data
+deactivate SS
+
+SSC --> V: returns SearchStaffsComponent
+deactivate SSC
+V --> A: Displays initial list and asks for the data to filter the Staffs
+deactivate V
+
+
+A -> V: Sends the data to filter the Staffs
+note right of V: The data can be First Name and/or Last Name and/or\n Full Nameand/or Email and/or Specialization Name
+activate V
+V -> SSC: onSearch()
+activate SSC
+SSC -> SS: searchStaffProfiles(searchCriteria)
+activate SS
+SS -> AI: Sends HTTP request to search staff with filters
+activate AI
+AI -> AI: Intercepts the request and adds the token to the header
+note right of AI
+    The token is added to the header so that the MDR
+    can authenticate and authorize the request.
+end note
+AI -> MDR: searchStaffProfiles(searchCriteria)
+activate MDR
+MDR -> MDR: Validates the data and tries to list the filtered staff
+MDR --> AI: Returns filtered staff list
+deactivate MDR
+AI --> SS: Returns filtered staff list
+deactivate AI
+SS --> SSC: Returns filtered staff list
+deactivate SS
+SSC --> V: Returns filtered staff list
+deactivate SSC
+V --> A: Displays filtered staff list
+deactivate V
 
 @enduml

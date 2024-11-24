@@ -1,0 +1,111 @@
+@startuml level_3_MDR
+
+title Level 3 MDR Diagram for Create Staff
+
+hide empty members
+
+skinparam class {
+    BackgroundColor<<valueObject>> #D6EAF8
+    BackgroundColor<<root>> #FDEBD0
+    BackgroundColor<<service>> #D1F2EB
+    BackgroundColor #FEF9E7
+    ArrowColor Black
+}
+
+actor FE as FE
+participant "StaffController" as C
+participant "StaffService" as S
+participant "StaffMapper" as M
+participant "StaffRepository" as R
+participant "SpecializationRepository" as RS
+participant "CreatingStaffDTO" as CS
+participant "Staff" as P
+participant "LicenseNumberGenerator" as GLN
+participant "Database" as DB
+
+activate FE
+FE -> C: Sends HTTP Request to create a Staff with Staff's data
+activate C
+C --> S: createStaff(CreatingStaffDTO dto)
+activate S
+S -> RS: GetSpecIdByOptionAsync(dto.SpecializationName).Result
+activate RS
+RS -> DB: _objs.Where(x => x.SpecOption.ToLower() == option.ToLower()).FirstOrDefaultAsync()
+activate DB
+DB --> RS: return specialization
+deactivate DB
+RS --> S: return specialization
+deactivate RS
+alt specialization is not null
+    S -> CS: dto.SetSpecializationId(specialization.Id.AsGuid())
+    activate CS
+    CS -> CS: SpecializationId = specialization.Id.AsGuid()
+    deactivate CS
+    alt !Enum.TryParse(typeof(StaffType), dto.StaffType, out var staffType)
+        S -> C: return Invalid staff type: dto.StaffType
+    else
+        S -> M: ToDomain(CreatingStaffDTO dto)
+        activate M
+        M -> P: new Staff(dto.FirstName, dto.LastName, dto.FullName, dto.Email, dto.PhoneNumber, new SpecializationId(dto.SpecializationId))
+        activate P
+        P -> P: Staff()
+        deactivate P
+        M --> S: return Staff
+        deactivate M
+        S -> R: getStaffByEmail(staff.Email)
+        activate R
+        R -> DB: _objs.Where(x => email.Equals(x.Email)).FirstOrDefaultAsync()
+        activate DB
+        DB --> R: return var
+        deactivate DB
+        R --> S: return var
+        deactivate R
+        alt var is null
+            S -> R: getStaffByPhoneNumber(staff.PhoneNumber)
+            activate R
+            R -> DB: _objs.Where(x => phoneNumber.Equals(x.PhoneNumber)).FirstOrDefaultAsync()
+            activate DB
+            DB --> R: return var
+            deactivate DB
+            R --> S: return var
+            deactivate R
+            alt var is null
+                S -> R: getAllAsync()
+                activate R
+                R -> DB: _objs.ToListAsync()
+                activate DB
+                DB --> R: return list
+                deactivate DB
+                R --> S: return list
+                deactivate R
+                S -> GLN: GenerateLicenseNumber(list.Count)
+                activate GLN
+                GLN --> S: return generateLicenseNumber
+                deactivate GLN
+                S -> P: SetLicenseNumber(generateLicenseNumber)
+                activate P
+                P -> P: LicenseNumber = generateLicenseNumber
+                deactivate P
+                S -> R: addAsync(staff)
+                activate R
+                R -> DB: _objs.AddAsync(staff)
+                activate DB
+                deactivate DB
+                R --> S: return Staff
+                deactivate R
+                S --> C: return Staff
+            else var is not null
+                S --> C: return Staff with same Phone Number already exists
+            end
+        else var is not null
+            S --> C: return Staff with same Email already exists
+        end
+    end
+else specialization is null
+    S --> C: return Specialization with this name not found.
+    deactivate S
+end
+C --> FE: Returns Operation Status Response Code
+deactivate C
+
+@enduml

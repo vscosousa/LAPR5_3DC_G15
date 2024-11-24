@@ -1,9 +1,8 @@
 @startuml level_2
 
-title Level 2 Diagram
+title Level 2 Diagram for Creating Staff
 
 hide empty members
-'skinparam Linetype ortho
 
 skinparam class {
     BackgroundColor<<valueObject>> #D6EAF8
@@ -16,5 +15,24 @@ skinparam class {
 skinparam package {
     BackgroundColor #EBF5FB
 }
+
+actor Admin as A
+participant "FE" as FE
+participant "MDR" as MDR
+
+activate A
+A -> FE: Asks to create a Staff
+activate FE
+FE --> A: Asks for Staff's data
+deactivate FE
+A -> FE: Sends Staff's data (FirstName, LastName, FullName, Email, PhoneNumber, StaffType, SpecializationName)
+activate FE
+FE -> MDR: Sends HTTP Request to create a Staff with Staff's data
+activate MDR
+MDR -> MDR: Validates Staff's data and tries to create the Staff
+MDR --> FE: Returns Operation Status Code
+deactivate MDR
+FE --> A: Returns Operation In/Success message
+deactivate FE
 
 @enduml
