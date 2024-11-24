@@ -4,6 +4,8 @@ using System.Threading.Tasks;
 using DDDSample1.Domain.OperationRequests;
 using DDDSample1.Domain.Patients;
 using DDDSample1.Domain.Shared;
+using DDDSample1.Domain.OperationTypes;
+using DDDSample1.Domain.Staffs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,33 +16,42 @@ namespace DDDSample1.Controllers
     [ApiController]
     public class OperationRequestController : ControllerBase
     {
-        private readonly OperationRequestService _service;
-
+        private readonly OperationRequestService _operationRequestService;
         public OperationRequestController(OperationRequestService operationRequestService)
         {
-            _service = operationRequestService;
+            _operationRequestService = operationRequestService;
         }
-
+        
         [HttpPost]
-        public async Task<ActionResult<OperationRequestDTO>> CreateOperationRequestAsync(CreatingOperationRequestDTO operationRequestDto)
-        {
-            try
+        [AllowAnonymous]
+        public async Task<ActionResult<OperationRequestDTO>> CreateOperationRequest(CreatingOperationRequestDTO operationRequestDTO)
+        {  
+        try
             {
-                var operationRequest = await _service.AddOperationRequestAsync(operationRequestDto);
+                var operationRequest = await _operationRequestService.AddOperationRequestAsync(operationRequestDTO);
                 return Ok(operationRequest);
             }
-            catch (BusinessRuleValidationException ex)
+            catch (InvalidOperationException ex)
             {
-                return BadRequest(new { Message = ex.Message });
+                return BadRequest(ex.Message); // Return BadRequest for already existing name
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred while creating the operation request: {ex.Message}");
             }
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin,Doctor")]
         public async Task<ActionResult<OperationRequestDTO>> UpdateOperationRequestAsync(Guid id, Guid doctorId , UpdatingOperationRequestDTO operationRequestDto)
         {
             try
             {
-                var updatedOperationRequest = await _service.UpdateOperationRequestAsync(id, doctorId, operationRequestDto);
+                var updatedOperationRequest = await _operationRequestService.UpdateOperationRequestAsync(id, doctorId, operationRequestDto);
 
                 if (updatedOperationRequest == null)
                 {
@@ -56,11 +67,12 @@ namespace DDDSample1.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult> DeleteOperationRequestAsync(Guid id, Guid doctorId)
+        [Authorize(Roles = "Admin,Doctor")]
+        public async Task<ActionResult> DeleteOperationRequestAsync(Guid id, string doctorLicenseNumber)
         {
             try
             {
-                await _service.RemoveOperationRequestAsync(id, doctorId);
+                await _operationRequestService.RemoveOperationRequestAsync(id, doctorLicenseNumber);
                 return Ok(new { Message = "Operation Request deleted successfully." });
             }
             catch (BusinessRuleValidationException ex)
@@ -70,12 +82,13 @@ namespace DDDSample1.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<SearchedOperationRequestDTO>>> GetAllOperationRequestsAsync(string patientName, string operationType, string status, string priority)
         {
             var dto = new SearchOperationRequestDTO(patientName, operationType, status, priority);
             try
             {
-                var operationRequests = await _service.SearchOperationRequests(dto);
+                var operationRequests = await _operationRequestService.SearchOperationRequests(dto);
                 return Ok(operationRequests);
             }
             catch (BusinessRuleValidationException ex)

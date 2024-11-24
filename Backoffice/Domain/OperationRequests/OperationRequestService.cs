@@ -34,22 +34,24 @@ namespace DDDSample1.Domain.OperationRequests
         {
             try
             {
-                var operationRequest = _mapper.ToDomain(operationRequestDto);
-                var patient = await _patientRepo.GetByIdAsync(operationRequest.PatientId);
+                
+               
+                var patient = await _patientRepo.GetByMedicalRecordNumberAsync(operationRequestDto.PatientMedicalRecordNumber);
                 if (patient == null)
                 {
                     throw new BusinessRuleValidationException("The patient does not exist in the system.");
                 }
-                var doctor = await _staffRepo.GetByIdAsync(operationRequest.DoctorId);
+                var doctor = await _staffRepo.GetByLicenseNumberAsync(operationRequestDto.DoctorLicenseNumber);
                 if (doctor == null || doctor.StaffType != StaffType.Doctor)
                 {
                     throw new BusinessRuleValidationException("The doctor does not exist in the system.");
                 }
-                var operationType = await _operationTypeRepo.GetByIdAsync(operationRequest.OperationTypeId);
+                var operationType = await _operationTypeRepo.GetByNameAsync(operationRequestDto.OperationType);
                 if (operationType == null)
                 {
                     throw new BusinessRuleValidationException("The operation type does not exist in the system.");
                 }
+                 var operationRequest = _mapper.ToDomainQ(operationRequestDto, patient.Id.AsGuid(), doctor.Id.AsGuid(), operationType.Id.AsGuid() );
                 await _repo.AddAsync(operationRequest);
 
                 patient.AddOperationRequest(operationRequest.DeadlineDate.ToDateTime(TimeOnly.MinValue));
@@ -125,14 +127,14 @@ namespace DDDSample1.Domain.OperationRequests
             }
         }
 
-        internal async Task<OperationRequestDTO> RemoveOperationRequestAsync(Guid id, Guid doctorId)
+        internal async Task<OperationRequestDTO> RemoveOperationRequestAsync(Guid id, string doctorLicenseNumber )
         {
             try
             {
-                var doctor = await _staffRepo.GetByIdAsync(new StaffId(doctorId));
+                var doctor = await _staffRepo.GetByLicenseNumberAsync(doctorLicenseNumber);
                 var operationRequest = await _repo.GetByIdAsync(new OperationRequestId(id));
                 var patient = await _patientRepo.GetByIdAsync(operationRequest.PatientId);
-                if (doctorId != operationRequest.DoctorId.AsGuid())
+                if (id != operationRequest.DoctorId.AsGuid())
                 {
                     throw new BusinessRuleValidationException("You are not allowed to delete this operation request, as you are not the doctor assigned to it.");
                 }
@@ -175,7 +177,8 @@ namespace DDDSample1.Domain.OperationRequests
             foreach (var operationRequest in operationRequests)
             {
                 var patient = await _patientRepo.GetByIdAsync(operationRequest.PatientId);
-                var searchedOperationRequestDTO = _mapper.ToSeachedDTO(operationRequest, patient.FullName);
+                var doctor = await _staffRepo.GetByIdAsync(operationRequest.DoctorId);
+                var searchedOperationRequestDTO = _mapper.ToSearchedDTO(operationRequest, patient.FullName, doctor.LicenseNumber);
                 list.Add(searchedOperationRequestDTO);
             }
             return list;

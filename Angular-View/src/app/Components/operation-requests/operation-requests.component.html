@@ -1,0 +1,147 @@
+<!--
+Author: Vasco Sousa (1221700)
+Last update: 12/11/2024
+Description: This component allows users to manage patients, including creating, updating, viewing, and deleting patient records.
+-->
+
+<div class="manage-container">
+  <app-sidebar></app-sidebar>
+  <div class="screens-container">
+    <div class="screen">
+      <button routerLink="/create-operation-request" class="btn btn-create">
+        Create Operation Request
+      </button>
+      <h2 class="manage-title" style="text-align: center">Operation Request Manager</h2>
+      <div class="content-container">
+        <form class="filter-form" (submit)="applyFilters($event)">
+          <input
+            type="text"
+            placeholder="Operation Request"
+            [(ngModel)]="filters.operationRequest"
+            name="operationRequest"
+        />
+          <input
+            type="text"
+            placeholder="Doctor"
+            [(ngModel)]="filters.doctorLicenseNumber"
+            name="doctorLicenseNumber"
+        />
+          <input
+            type="text"
+            placeholder="Operation Type"
+            [(ngModel)]="filters.operationType"
+            name="Operation Type"
+        />
+          <input
+            type="date"
+            placeholder="Deadline Date"
+            [(ngModel)]="filters.deadlineDate"
+            name="dateOfBirth"
+            pattern="\d{4}-\d{2}-\d{2}"
+        />
+          <input
+            type="text"
+            placeholder="Patient"
+            [(ngModel)]="filters.patientMedicalRecordNumber"
+            name="patientMedicalRecordNumber"
+        />
+           <input
+            type="text"
+            placeholder="Priority "
+            [(ngModel)]="filters.priority"
+            name="priority"
+          />
+          <!-- Buttons -->
+          <button type="submit" class="btn btn-filter">Apply Filters</button>
+          <button type="button" class="btn btn-clear" (click)="clearFilters()">
+            Clear Filters
+          </button>
+        </form>
+        <div class="table-container">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Operation Request</th>
+                <th>Patient</th>
+                <th>Doctor </th>
+                <th>Operation Type </th>
+                <th>Deadline</th>
+                <th>Priority</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let operationRequest of operationRequests ; let i = index">
+                <td>{{ i+1 }}</td>
+                <td>{{ operationRequest.patientName }}</td>
+                <td>{{ operationRequest.doctorLicenseNumber }}</td>
+                <td>{{ operationRequest.operationType }}</td>
+                <td>{{ operationRequest.deadlineDate}}</td>
+                <td>{{ operationRequest.priority}}</td>
+                <td>
+                  <a
+                    [routerLink]="['/update-request', operationRequest.id]"
+                    class="btn btn-update"
+                    >Edit</a>
+                  <a
+                    href="javascript:void(0)"
+                    (click)="
+                      deleteOperationRequest(
+                        operationRequest.id,
+                        operationRequest.doctorLicenseNumber
+                      )
+                    "
+                    class="btn btn-delete"
+                    >Delete</a
+                    >
+                  <a
+                    href="javascript:void(0)"
+                    (click)="viewOperationRequestDetails(operationRequest.id)"
+                    class="btn btn-view"
+                    >View</a
+                    >
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div *ngIf="selectedOperationRequest" class="details-screen">
+        <div class="operationRequest">
+          <h3>Operation Request Details</h3>
+          <button (click)="selectedOperationRequest = undefined">
+            <img src="fechar.png" alt="Close" />
+          </button>
+          <table class="table table-bordered">
+            <tbody>
+              <tr>
+                <th>OperationRequest</th>
+                <td>{{ selectedOperationRequest.operationRequestId }}</td>
+              </tr>
+              <tr>
+                <th>Doctor License Number  </th>
+                <td>{{ selectedOperationRequest.doctorLicenseNumber }}</td>
+              </tr>
+              <tr>
+                <th>OperationType</th>
+                <td>{{ selectedOperationRequest.operationType }}</td>
+              </tr>
+              <tr>
+                <th>Deadline Date</th>
+                <td>{{ selectedOperationRequest.deadLineDate }}</td>
+              </tr>
+              <tr>
+                <th>Medical Record Number</th>
+                <td>{{ selectedOperationRequest.patientMedicalRecordNumber }}</td>
+              </tr>
+              <tr>
+                <th>Priority</th>
+                <td>{{ selectedOperationRequest.priority }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>

@@ -17,20 +17,20 @@ namespace Projetos.LAPR5_3DC_G15.Mappers.Patients
                 DeadlineDate = domain.DeadlineDate.ToString(),
                 Priority = domain.Priority.ToString(),
                 Status = domain.Status.ToString(),
-                PatientId = domain.PatientId.AsGuid(),
-                DoctorId = domain.DoctorId.AsGuid(),
-                OperationTypeId = domain.OperationTypeId.AsGuid()
+                PatientMedicalRecordNumber = domain.Patient.MedicalRecordNumber,
+                DoctorLicenseNumber = domain.Doctor.LicenseNumber,
+                OperationType = domain.OperationType.Id.ToString()
             };
         }
 
-        public OperationRequest ToDomain(CreatingOperationRequestDTO dto)
+        public OperationRequest ToDomainQ(CreatingOperationRequestDTO dto, Guid patientId, Guid doctorId, Guid operationTypeId)
         {
             return new OperationRequest(
                 DateOnly.Parse(dto.DeadlineDate),
                 (Priority)Enum.Parse(typeof(Priority), dto.Priority),
-                new PatientId(dto.PatientId),
-                new StaffId(dto.DoctorId),
-                new OperationTypeId(dto.OperationTypeId)
+                new PatientId(patientId),
+                new StaffId(doctorId),
+                new OperationTypeId(operationTypeId)
             );
         }
 
@@ -40,22 +40,28 @@ namespace Projetos.LAPR5_3DC_G15.Mappers.Patients
             {
                 DeadlineDate = domain.DeadlineDate.ToString(),
                 Priority = domain.Priority.ToString(),
-                PatientId = domain.PatientId.AsGuid(),
-                DoctorId = domain.DoctorId.AsGuid(),
-                OperationTypeId = domain.OperationTypeId.AsGuid()   
+                PatientMedicalRecordNumber = domain.Patient.MedicalRecordNumber,
+                DoctorLicenseNumber = domain.Doctor.LicenseNumber,
+                OperationType = domain.OperationType.Id.ToString()
             };
         }
 
-        public SearchedOperationRequestDTO ToSeachedDTO(OperationRequest input, string patientName)
+        public SearchedOperationRequestDTO ToSearchedDTO(OperationRequest input, string patientName, string doctorLicenseNumber)
         {
             return new SearchedOperationRequestDTO(
                 patientName,
+                input.Id.AsGuid(),
                 input.OperationTypeId.ToString(),
                 input.Status.ToString(),
                 input.Priority.ToString(),
-                input.DoctorId.ToString(),
+                doctorLicenseNumber,
                 input.DeadlineDate.ToString()
             );
+        }
+
+        public OperationRequest ToDomain(CreatingOperationRequestDTO dto)
+        {
+            throw new NotImplementedException();
         }
     }
 }

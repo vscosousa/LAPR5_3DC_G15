@@ -25,6 +25,9 @@ import { ViewAvailabilityComponent } from './Components/view-availability/view-a
 import { ActiveStaffComponent } from './Components/active-staff/active-staff.component';
 import { DoctorGuard } from './Guards/doctor.guard';
 import { DoctorPanelComponent } from './Components/doctor-panel/doctor-panel.component';
+import { OperationRequestsComponent } from './Components/operation-requests/operation-requests.component';
+import { CreateOperationRequestComponent } from './Components/operation-requests/create-operation-request/create-operation-request.component';
+/**import { UpdateOperationRequestComponent } from './Components/operation-requests/update-operation-request/update-operation-request.component';*/
 
 
 export const routes: Routes = [
@@ -95,6 +98,16 @@ export const routes: Routes = [
         path: "", component: HomeComponent
     },
     {
+        path: "operation-requests", component: OperationRequestsComponent, canActivate: [AuthGuard]
+    },
+    {
+        path: "create-operation-request", component: CreateOperationRequestComponent, canActivate: [AuthGuard]
+    },
+    /**{
+        path: "update-operation-request/:id", component: UpdateOperationRequestComponent, canActivate: [AuthGuard]
+    },*/
+    {
+        
         path: "**", component: NotFoundComponent
     }
 
