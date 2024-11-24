@@ -1,0 +1,92 @@
+@startuml level_3_MDR
+
+title Level 3 MDR Diagram for Updating Operation Requisition
+
+hide empty members
+'skinparam Linetype ortho
+
+skinparam class {
+    BackgroundColor<<valueObject>> #D6EAF8
+    BackgroundColor<<root>> #FDEBD0
+    BackgroundColor<<service>> #D1F2EB
+    BackgroundColor #FEF9E7
+    ArrowColor Black
+}
+
+skinparam package {
+    BackgroundColor #EBF5FB
+}
+
+actor FE as FE
+participant "OperationRequestController" as C
+participant "OperationRequestService" as S
+participant "OperationRequestRepository" as R
+participant "LogRepository" as LR
+participant "OperationRequest" as OR
+participant "Log" as L
+participant "OperationRequestMapper" as M
+participant "OperationRequestDTO" as D
+participant "Database" as DB
+
+activate FE
+FE -> C: Sends HTTP Request to update Operation Requisition with new data
+activate C
+C -> S: updateOperationRequisition(string requisitionID, UpdatingOperationRequestDTO dto)
+activate S
+S -> R: getByRequisitionIDAsync(requisitionID)
+activate R
+R -> DB: _objs.Where(x => requisitionID.Equals(x.RequisitionID)).FirstOrDefaultAsync();
+activate DB
+DB --> R: return var
+deactivate DB
+R --> S: return var
+deactivate R
+alt var is not null
+    opt Operation Type is provided and different from the current data
+        S -> OR: ChangeOperationType(dto.operationType)
+        activate OR
+        OR -> OR: ChangeOperationType(string operationType)
+        deactivate OR
+    end
+    opt Deadline Date is provided and different from the current data
+        S -> OR: ChangeDeadlineDate(dto.deadlineDate)
+        activate OR
+        OR -> OR: ChangeDeadlineDate(DateTime deadlineDate)
+        deactivate OR
+    end
+    opt Priority is provided and different from the current data
+        S -> OR: ChangePriority(dto.priority)
+        activate OR
+        OR -> OR: ChangePriority(string priority)
+        deactivate OR
+    end
+    opt At least one field was updated
+        S -> L: new Log(TypeOfAction.Update, requisitionID, "Operation Requisition updated. The following fields were updated: " + updatedFields)
+        activate L
+        L -> L: Log()
+        deactivate L
+        S -> LR: addAsync(log)
+        activate LR
+        LR -> DB: _objs.AddAsync(log)
+        activate DB
+        DB --> LR: return log
+        deactivate DB
+        LR --> S: return log
+        deactivate LR
+    end
+    S -> M: toDto(operationRequest)
+    activate M
+    M -> D: new OperationRequestDTO(operationRequest fields)
+    activate D
+    D -> D: OperationRequestDTO()
+    deactivate D
+    M --> S: return dto
+    deactivate M
+    S --> C: return dto
+else var is null
+    S --> C: return Operation Requisition not found
+end
+C --> FE: Returns Operation Status Response Code
+deactivate C
+
+@enduml

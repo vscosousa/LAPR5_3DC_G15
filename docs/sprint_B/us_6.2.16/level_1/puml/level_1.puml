@@ -1,6 +1,6 @@
 @startuml level_1
 
-title Level 1 Diagram
+title Level 1 Diagram for Removing Operation Requisition
 
 hide empty members
 'skinparam Linetype ortho
@@ -16,5 +16,18 @@ skinparam class {
 skinparam package {
     BackgroundColor #EBF5FB
 }
+
+actor Doctor as D
+
+activate D
+D -> System: Asks to delete an Operation Requisition
+activate System
+System --> D: Asks for Operation Requisition ID
+deactivate System
+D -> System: Sends Operation Requisition ID
+activate System
+System -> System: Validates Operation Requisition ID and tries to delete the Operation Requisition
+System --> D: Returns Operation Deletion Success message
+deactivate System
 
 @enduml

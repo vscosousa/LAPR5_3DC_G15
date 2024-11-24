@@ -1,6 +1,6 @@
 @startuml level_2
 
-title Level 2 Diagram
+title Level 2 Diagram for Listing/Search Operation Requests
 
 hide empty members
 'skinparam Linetype ortho
@@ -16,5 +16,30 @@ skinparam class {
 skinparam package {
     BackgroundColor #EBF5FB
 }
+
+actor Doctor as D
+participant "FE" as FE
+participant "MDR" as MDR
+
+activate D
+D -> FE: Asks to list/search operation requests
+activate FE
+FE -> MDR: Sends HTTP request to list the default operation requests
+activate MDR
+MDR -> MDR: Validates the request and tries to list the operation requests
+MDR --> FE: Returns Operation Status Code
+deactivate MDR
+FE --> D: Displays initial list and asks for the data to filter the requests
+deactivate FE
+D -> FE: Sends the data to filter the requests
+note right of FE: The data can be operationType,\ndeadlineDate or priority.
+activate FE
+FE -> MDR: Sends HTTP request to list the requests with filters
+activate MDR
+MDR -> MDR: Validates the data and tries to list the operation requests
+MDR --> FE: Returns Operation Status Code
+deactivate MDR
+FE --> D: Returns Operation List/Success message
+deactivate FE
 
 @enduml
