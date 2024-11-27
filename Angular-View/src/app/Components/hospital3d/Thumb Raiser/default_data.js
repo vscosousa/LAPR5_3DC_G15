@@ -64,7 +64,8 @@ export const doorData = {
 
 export const tableData = {
     url: "/models/gltf/RobotExpressive/hospital_bed.glb",
-    scale: new THREE.Vector3(0.5, 1, 0.5)
+    scale: new THREE.Vector3(0.5, 1, 0.5),
+    name: ""
 }
 
 export const humanData = {

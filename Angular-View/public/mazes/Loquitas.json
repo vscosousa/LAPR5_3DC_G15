@@ -1,6 +1,6 @@
 {
-    "groundTextureUrl": "/textures/gray-parquet.jpg",
-    "wallTextureUrl": "/textures/tiles.jpg",
+    "groundTextureUrl": "/textures/smoothwall.jpg",
+    "wallTextureUrl": "/textures/wallteste.png",
     "size": { "width": 10, "height": 10 },
     "map": [
         [3, 2, 2, 2, 3, 2, 3, 2, 2, 2, 1],

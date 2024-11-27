@@ -3,7 +3,7 @@ import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 
 export const doorData = {
     url: "/models/gltf/RobotExpressive/hospital_door.glb",
-    scale: new THREE.Vector3(1.0, 1.0, 1.0)
+    scale: new THREE.Vector3(1.0, 1.0, 2.0) // Adjust the z-axis scale to make the door thicker
 };
 
 export default class Door {

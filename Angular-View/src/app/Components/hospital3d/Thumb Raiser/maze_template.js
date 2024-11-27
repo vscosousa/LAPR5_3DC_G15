@@ -44,6 +44,8 @@ export default class Maze {
 
 
 
+
+
             // Build the maze
             for (let j = 0; j <= description.size.height; j++) {
                 for (let i = 0; i <= description.size.width; i++) {
@@ -136,22 +138,34 @@ export default class Maze {
 
                     // Add tables and humans
                     if (this.map[j][i] === 5) {
-                        console.log("Table added: " + currentRoom.isOccupied);
-                        const tableObject = new Table(this.tableParameters);
+                        
+
+                        // Create a table instance
+                        const tableObject = new Table({
+                            url: this.tableParameters.url, // Path to the table model
+                            scale: new THREE.Vector3(0.5, 1, 0.5), // Adjust scale as needed
+                            name: `Table_${j}_${i}` // Unique identifier for the table
+                        });
+
+                        console.log("Table added: " +  tableObject.name)
+
+                        // Position the table in the scene
                         tableObject.object.position.set(
                             i - description.size.width / 2 + 0.5,
                             0.5,
                             j - description.size.height / 2
                         );
-                        tableObject.object.scale.set(1, 0.68, 1);
+                        tableObject.object.scale.set(1, 0.68, 1); // Adjust scale as necessary
                         tableObject.object.translateX(-0.6);
                         tableObject.object.translateY(-0.2);
+
+                        // Add the table to the maze
                         this.object.add(tableObject.object);
 
-
                         if (currentRoom.isOccupied) {
-                            //add a console log
+                            // Add a human if the room is occupied
                             console.log("Human added: " + currentRoom.isOccupied);
+
                             const humanObject = new Human(this.humanParameters);
                             humanObject.object.position.set(
                                 i - description.size.width / 2 + 0.5,
@@ -162,6 +176,7 @@ export default class Maze {
                             humanObject.object.rotateY(Math.PI / 2);
                             humanObject.object.translateY(0.29);
                             humanObject.object.translateZ(-0.67);
+
                             this.object.add(humanObject.object);
                         }
                     }
@@ -252,19 +267,19 @@ export default class Maze {
         indices[0]++;
         const roomIndex = this.getRoomIndex(indices);
         const currentRoom = this.roomParameters[roomIndex];
-    
+
         // Check if the current room is occupied and the door is closed
         if (this.map[indices[0]][indices[1]] === 4 && currentRoom.isOccupied) {
             return this.cellToCartesian(indices).z - this.scale.z / 2.0 - position.z;
         }
         return Infinity;
     }
-    
+
     // Helper method to get the room index based on the tile position
     getRoomIndex(indices) {
         const midHeight = Math.floor(this.size.height / 2);
         const midWidth = Math.floor(this.size.width / 2);
-    
+
         if (indices[0] < midHeight && indices[1] < midWidth) {
             return 0; // Top-left quadrant
         } else if (indices[0] < midHeight && indices[1] >= midWidth) {
