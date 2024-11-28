@@ -27,6 +27,7 @@
     "@angular/router": "^18.0.0",
     "@angular/ssr": "^18.0.5",
     "@react-oauth/google": "^0.12.1",
+    "@tweenjs/tween.js": "^25.0.0",
     "@types/three": "^0.169.0",
     "angular-view": "file:",
     "bootstrap": "^5.3.3",

@@ -24,8 +24,7 @@ import Animations from "./animations_template.js";
 import Door from "./door_template.js";
 import UserInterface from "./user_interface_template.js";
 import Table from "./table.js";
-import Human from "./human.js";
-import { first } from "rxjs";
+import RoomInfoHandler from "./RoomInfoHandler.js";
 
 
 export default class ThumbRaiser {
@@ -138,7 +137,8 @@ export default class ThumbRaiser {
         this.helpCheckBox.checked = false;
         this.statisticsCheckBox = document.getElementById("statistics");
         this.statisticsCheckBox.checked = false;
-
+        this.sceneContainer = document.getElementById("scene-container");
+        this.renderer.domElement.id = "scene-container";
 
         // Build the help panel
         this.buildHelpPanel();
@@ -173,6 +173,9 @@ export default class ThumbRaiser {
         // Register the event handler to be called on context menu
         this.renderer.domElement.addEventListener("contextmenu", event => this.contextMenu(event));
 
+        // Register the event handler to be called on mouse click
+        this.renderer.domElement.addEventListener("click", event => this.mouseClick(event));
+
         // Register the event handler to be called on select, input number, or input checkbox change
         this.view.addEventListener("change", event => this.elementChange(event));
         this.projection.addEventListener("change", event => this.elementChange(event));
@@ -191,6 +194,17 @@ export default class ThumbRaiser {
         this.resetAll.addEventListener("click", event => this.buttonClick(event));
 
         this.activeElement = document.activeElement;
+        // Usage
+        const roomInfoHandler = new RoomInfoHandler();
+
+        // Example: Hook into table click to select a room
+        document.addEventListener("click", (event) => {
+            // Assuming you can identify a table from the click event
+            const table = event.target; // Replace with your actual table detection logic
+            roomInfoHandler.selectRoomFromTable(table);
+        });
+
+
     }
 
 
@@ -464,6 +478,71 @@ export default class ThumbRaiser {
         }
     }
 
+    mouseClick(event) {
+        if (event.target.id === "scene-container") {
+            event.preventDefault();
+
+            const raycaster = new THREE.Raycaster();
+            const mouse = new THREE.Vector2(
+                (event.clientX / window.innerWidth) * 2.0 - 1.0,
+                -(event.clientY / window.innerHeight) * 2.0 + 1.0
+            );
+
+            raycaster.setFromCamera(mouse, this.activeViewCamera.object);
+            const intersects = raycaster.intersectObjects(this.scene3D.children, true);
+
+            if (intersects.length > 0) {
+                // Find the first intersected object that is a table
+                const intersectedTable = intersects.find(intersect => intersect.object.isTable);
+
+                if (intersectedTable) {
+                    const table = intersectedTable.object;
+                    console.log("Picked table: " + table.name);
+
+                    // Move the camera to the table
+                    this.moveCameraToTable(table);
+                }
+            }
+        }
+    }
+
+    moveCameraToTable(table) {
+        const box = new THREE.Box3().setFromObject(table);
+        const targetPosition = box.getCenter(new THREE.Vector3());
+    
+        const camera = this.activeViewCamera.object;
+    
+        const offset = new THREE.Vector3(0, 10, 0);
+        const finalPosition = targetPosition.clone().add(offset);
+    
+        const startPosition = camera.position.clone();
+        const duration = 1.5;
+        let elapsedTime = 0;
+    
+        const clock = new THREE.Clock();
+    
+        const animateCamera = () => {
+            elapsedTime += clock.getDelta();
+            const t = Math.min(elapsedTime / duration, 1);
+            camera.position.lerpVectors(startPosition, finalPosition, t);
+            camera.lookAt(targetPosition);
+    
+            if (this.spotlight) {
+                const spotlight = this.spotlight;
+                const spotlightOffset = new THREE.Vector3(0, 10, 0);
+                const spotlightFinalPosition = finalPosition.clone().add(spotlightOffset);
+                spotlight.position.lerpVectors(startPosition.clone().add(spotlightOffset), spotlightFinalPosition, t);
+                spotlight.target.position.copy(targetPosition);
+                spotlight.target.updateMatrixWorld();
+            }
+    
+            if (t < 1) {
+                requestAnimationFrame(animateCamera);
+            }
+        };
+    
+        animateCamera();
+    }
     contextMenu(event) {
         // Prevent the context menu from appearing when the secondary mouse button is clicked
         event.preventDefault();
