@@ -13,7 +13,7 @@
 import * as THREE from "three";
 import Stats from "three/addons/libs/stats.module.js";
 import Orientation from "./orientation.js";
-import { generalData, mazeData, playerData, lightsData, fogData, cameraData, doorData, tableData, humanData } from "./default_data.js";
+import { generalData, mazeData, playerData, lightsData, fogData, cameraData, doorData, tableData, humanData, exitDoorData } from "./default_data.js";
 import { merge } from "./merge.js";
 import Maze from "./maze_template.js";
 import Player from "./player_template.js";
@@ -29,7 +29,7 @@ import RoomInfoHandler from "./RoomInfoHandler.js";
 
 export default class ThumbRaiser {
 
-    constructor(generalParameters, mazeParameters, playerParameters, lightsParameters, fogParameters, fixedViewCameraParameters, firstPersonViewCameraParameters, thirdPersonViewCameraParameters, topViewCameraParameters, miniMapCameraParameters, doorParameters, tableParameters, humanParameters, roomParameters) {
+    constructor(generalParameters, mazeParameters, playerParameters, lightsParameters, fogParameters, fixedViewCameraParameters, firstPersonViewCameraParameters, thirdPersonViewCameraParameters, topViewCameraParameters, miniMapCameraParameters, doorParameters, tableParameters, humanParameters,exitDoorParameters, roomParameters) {
         this.generalParameters = merge({}, generalData, generalParameters);
         this.mazeParameters = merge({}, mazeData, mazeParameters);
         this.playerParameters = merge({}, playerData, playerParameters);
@@ -43,6 +43,7 @@ export default class ThumbRaiser {
         this.doorParameters = merge({}, doorData, doorParameters);
         this.tableParameters = merge({}, tableData, tableParameters);
         this.humanParameters = merge({}, humanData, humanParameters);
+        this.exitDoorParameters = merge({}, exitDoorData, exitDoorParameters);
         this.roomParameters = roomParameters && roomParameters.rooms ? roomParameters.rooms : [];
 
         // Create a 2D scene (the viewports frames)
@@ -63,7 +64,7 @@ export default class ThumbRaiser {
         this.scene3D = new THREE.Scene();
 
         // Create the maze
-        this.maze = new Maze(this.mazeParameters, this.doorParameters, this.tableParameters, this.humanParameters, this.roomParameters);
+        this.maze = new Maze(this.mazeParameters, this.doorParameters, this.tableParameters, this.humanParameters, this.exitDoorParameters, this.roomParameters);
 
         // Create the player
         this.player = new Player(this.playerParameters);
@@ -175,6 +176,7 @@ export default class ThumbRaiser {
 
         // Register the event handler to be called on mouse click
         this.renderer.domElement.addEventListener("click", event => this.mouseClick(event));
+        
 
         // Register the event handler to be called on select, input number, or input checkbox change
         this.view.addEventListener("change", event => this.elementChange(event));
@@ -195,19 +197,52 @@ export default class ThumbRaiser {
 
         this.activeElement = document.activeElement;
         // Usage
-        const roomInfoHandler = new RoomInfoHandler();
+    
 
-        // Example: Hook into table click to select a room
-        document.addEventListener("click", (event) => {
-            // Assuming you can identify a table from the click event
-            const table = event.target; // Replace with your actual table detection logic
-            roomInfoHandler.selectRoomFromTable(table);
-        });
-
+        this.roomInfoHandler = new RoomInfoHandler(this.roomParameters);
 
     }
+    
 
+    mouseClick(event) {
+        if (event.target.id === "scene-container") {
+            event.preventDefault();
+    
+            // Create a raycaster and convert mouse position
+            const raycaster = new THREE.Raycaster();
+            const mouse = new THREE.Vector2(
+                (event.clientX / window.innerWidth) * 2.0 - 1.0,
+                -(event.clientY / window.innerHeight) * 2.0 + 1.0
+            );
+    
+            // Set raycaster from camera
+            raycaster.setFromCamera(mouse, this.activeViewCamera.object);
+    
+            // Perform raycast to get intersected objects
+            const intersects = raycaster.intersectObjects(this.scene3D.children, true);
+    
+            // Check if any intersected objects are tables
+            if (intersects.length > 0) {
+                const intersectedTable = intersects.find(intersect => intersect.object.isTable);
+    
+                if (intersectedTable) {
+                    const table = intersectedTable.object;
+                    console.log("Picked table: " + table.name); // Log table name
 
+                    // Select the room corresponding to the table
+                    this.roomInfoHandler.selectRoomFromTable(table);
+
+    
+                    // Move the camera to the table (or perform any action on the table)
+                    this.moveCameraToTable(table);
+                } else {
+                    console.log("No table found in the intersection");
+                }
+            }
+        }
+    }
+
+    
 
 
     buildHelpPanel() {
@@ -395,6 +430,7 @@ export default class ThumbRaiser {
             else if (event.code == this.player.keyCodes.thumbsUp) {
                 this.player.keyStates.thumbsUp = state;
             }
+        
         }
     }
 
@@ -478,33 +514,7 @@ export default class ThumbRaiser {
         }
     }
 
-    mouseClick(event) {
-        if (event.target.id === "scene-container") {
-            event.preventDefault();
-
-            const raycaster = new THREE.Raycaster();
-            const mouse = new THREE.Vector2(
-                (event.clientX / window.innerWidth) * 2.0 - 1.0,
-                -(event.clientY / window.innerHeight) * 2.0 + 1.0
-            );
-
-            raycaster.setFromCamera(mouse, this.activeViewCamera.object);
-            const intersects = raycaster.intersectObjects(this.scene3D.children, true);
-
-            if (intersects.length > 0) {
-                // Find the first intersected object that is a table
-                const intersectedTable = intersects.find(intersect => intersect.object.isTable);
-
-                if (intersectedTable) {
-                    const table = intersectedTable.object;
-                    console.log("Picked table: " + table.name);
-
-                    // Move the camera to the table
-                    this.moveCameraToTable(table);
-                }
-            }
-        }
-    }
+    
 
     moveCameraToTable(table) {
         const box = new THREE.Box3().setFromObject(table);

@@ -19,16 +19,41 @@ export class Hospital3dComponent implements OnInit, AfterViewInit, OnDestroy {
   private animationFrameId: number | null = null;
   selectedDate: Date = new Date(); // Default value for selected date
   firstRooms: any[] = [
-    { isOccupied: true },
-    { isOccupied: false },
-    { isOccupied: true },
-    { isOccupied: false }
+    {
+      roomNumber: "101",
+      type: "Conference",
+      capacity: 20,
+      equipment: ["Projector", "Whiteboard"],
+      isOccupied: false
+    },
+    {
+      roomNumber: "102",
+      type: "Meeting",
+      capacity: 10,
+      equipment: ["TV", "Phone"],
+      isOccupied: true
+    },
+    {
+      roomNumber: "103",
+      type: "Meeting",
+      capacity: 10,
+      equipment: ["TV", "Phone"],
+      isOccupied: false
+    },
+    {
+      roomNumber: "104",
+      type: "Meeting",
+      capacity: 10,
+      equipment: ["TV", "Phone"],
+      isOccupied: true
+    }
+
   ];
   rooms: any[] = [];
   loading: boolean = false;
   error: string | null = null;
 
-  constructor(@Inject(PLATFORM_ID) private platformId: Object, private hospital3dService: Hospital3dService) {}
+  constructor(@Inject(PLATFORM_ID) private platformId: Object, private hospital3dService: Hospital3dService) { }
 
   initialize(roomParameters: any = this.firstRooms) {
     // Dispose of any existing ThumbRaiser instance
@@ -54,6 +79,7 @@ export class Hospital3dComponent implements OnInit, AfterViewInit, OnDestroy {
       {}, // Door parameters
       {}, // Table parameters
       {}, // Human parameters
+      {}, //Exit door parameters
       { rooms: roomParameters }
     );
 
@@ -83,7 +109,7 @@ export class Hospital3dComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  ngAfterViewInit(): void {}
+  ngAfterViewInit(): void { }
 
   ngOnDestroy(): void {
     this.disposeThumbRaiser();
@@ -106,6 +132,7 @@ export class Hospital3dComponent implements OnInit, AfterViewInit, OnDestroy {
       this.error = null;
       this.hospital3dService.getRoomsAvailabilityByDate(this.selectedDate).subscribe(
         (data: any[]) => {
+          console.log('Rooms fetched:', data);
           this.rooms = data;
           const roomParameters = this.rooms;
           this.update3DVisualization(roomParameters);
