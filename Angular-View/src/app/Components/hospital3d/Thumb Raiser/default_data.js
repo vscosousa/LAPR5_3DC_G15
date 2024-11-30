@@ -73,4 +73,9 @@ export const humanData = {
   scale: new THREE.Vector3(0.0045, 0.010, 0.0045) // Adjusted scale to maintain proportions
 }
 
+export const exitDoorData = {
+    url: "/models/gltf/RobotExpressive/exit_doors.glb",
+    scale: new THREE.Vector3(1.35, 1.4, 1.35) // Adjusted scale to match wall dimensions
+}
+
 

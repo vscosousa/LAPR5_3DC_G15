@@ -4,6 +4,7 @@ import Wall from "./wall_template.js";
 import Door from "./door_template.js";
 import Table from "./table.js";
 import Human from "./human.js";
+import ExitDoor from "./exitDoor.js";
 import { consumerPollProducersForChange } from "@angular/core/primitives/signals";
 
 /*
@@ -15,7 +16,7 @@ import { consumerPollProducersForChange } from "@angular/core/primitives/signals
  */
 
 export default class Maze {
-    constructor(parameters, doorParameters, tableParameters, humanParameters, roomParameters) {
+    constructor(parameters, doorParameters, tableParameters, humanParameters, exitDoorParameters, roomParameters) {
         this.onLoad = function (description) {
             // Store the maze's map and size
             this.map = description.map;
@@ -25,6 +26,7 @@ export default class Maze {
             this.doorParameters = doorParameters;
             this.tableParameters = tableParameters;
             this.humanParameters = humanParameters;
+            this.exitDoorParameters = exitDoorParameters;
             this.roomParameters = roomParameters;
 
             // Store the player's initial position and direction
@@ -45,7 +47,7 @@ export default class Maze {
 
 
 
-
+            
             // Build the maze
             for (let j = 0; j <= description.size.height; j++) {
                 for (let i = 0; i <= description.size.width; i++) {
@@ -179,6 +181,20 @@ export default class Maze {
 
                             this.object.add(humanObject.object);
                         }
+                    }
+
+                    if(this.map[j][i] === 6) {
+                        const exitDoorObject = new ExitDoor(this.exitDoorParameters);
+                        exitDoorObject.object.position.set(
+                            i - description.size.width / 2 + 0.5,
+                            0.5,
+                            j - description.size.height / 2
+                        );
+                    
+                        exitDoorObject.object.translateX(-0.34);
+                        exitDoorObject.object.translateY(-1);
+                        exitDoorObject.object.translateZ(-0.05);
+                        this.object.add(exitDoorObject.object);
                     }
                 }
             }
