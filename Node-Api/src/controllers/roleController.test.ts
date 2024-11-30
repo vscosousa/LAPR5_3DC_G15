@@ -1,42 +1,109 @@
+import 'reflect-metadata';
 import * as sinon from 'sinon';
-
 import { Response, Request, NextFunction } from 'express';
-
 import { Container } from 'typedi';
-import config from "../../config";
-
 import { Result } from '../core/logic/Result';
+import IAppointmentService from "../services/IServices/IAppointmentService";
+import AppointmentController from './AppointmentController';
+import { IAppointmentDTO } from '../dto/IAppoinmentDTO';
 
-import IRoleService from "../services/IServices/IRoleService";
-import RoleController from "./roleController";
-import IRoleDTO from '../dto/IRoleDTO';
+describe('appointment controller', function () {
+    let sandbox: sinon.SinonSandbox;
+    let appointmentServiceInstance: IAppointmentService;
 
-describe('role controller', function () {
-	beforeEach(function() {
+    beforeEach(function() {
+        sandbox = sinon.createSandbox();
+        appointmentServiceInstance = {
+            createAppointment: sandbox.stub(),
+            updateAppointment: sandbox.stub()
+        } as unknown as IAppointmentService;
+
+        Container.set('IAppointmentService', appointmentServiceInstance);
     });
 
-    it('createRole: returns json with id+name values', async function () {
-        let body = { "name":'role12' };
+    afterEach(function() {
+        sandbox.restore();
+        Container.reset();
+    });
+
+    it('createAppointment: returns json with id+details values', async function () {
+        let body = {
+            requestId: 'req123',
+            roomId: 'room123',
+            dateTime: new Date(),
+            status: 'scheduled'
+        };
         let req: Partial<Request> = {};
-		req.body = body;
+        req.body = body;
 
         let res: Partial<Response> = {
-			json: sinon.spy()
+            json: sinon.spy(),
+            status: sinon.stub().returnsThis()
         };
-		let next: Partial<NextFunction> = () => {};
+        let next: Partial<NextFunction> = () => {};
 
-		let roleServiceClass = require(config.services.role.path).default;
-		let roleServiceInstance = Container.get(roleServiceClass)
-		Container.set(config.services.role.name, roleServiceInstance);
+        (appointmentServiceInstance.createAppointment as sinon.SinonStub).returns(Result.ok<IAppointmentDTO>({
+            id: "123",
+            requestId: req.body.requestId,
+            roomId: req.body.roomId,
+            dateTime: req.body.dateTime,
+            status: req.body.status
+        }));
 
-		roleServiceInstance = Container.get(config.services.role.name);
-		sinon.stub(roleServiceInstance, "createRole").returns( Result.ok<IRoleDTO>( {"id":"123", "name": req.body.name} ));
+        const ctrl = new AppointmentController(appointmentServiceInstance);
 
-		const ctrl = new RoleController(roleServiceInstance as IRoleService);
+        await ctrl.createAppointment(<Request>req, <Response>res, <NextFunction>next);
 
-		await ctrl.createRole(<Request>req, <Response>res, <NextFunction>next);
+        sinon.assert.calledOnce(res.status as sinon.SinonStub);
+        sinon.assert.calledWith(res.status as sinon.SinonStub, 201);
+        sinon.assert.calledOnce(res.json as sinon.SinonSpy);
+        sinon.assert.calledWith(res.json as sinon.SinonSpy, sinon.match({
+            id: "123",
+            requestId: req.body.requestId,
+            roomId: req.body.roomId,
+            dateTime: req.body.dateTime,
+            status: req.body.status
+        }));
+    });
 
-		sinon.assert.calledOnce(res.json);
-		sinon.assert.calledWith(res.json, sinon.match({ "id": "123","name": req.body.name}));
-	});
+    it('updateAppointment: returns json with updated details', async function () {
+        let body = {
+            requestId: 'req123',
+            roomId: 'room123',
+            dateTime: new Date(),
+            status: 'completed'
+        };
+        let req: Partial<Request> = {};
+        req.body = body;
+        req.params = { id: '123' };
+
+        let res: Partial<Response> = {
+            json: sinon.spy(),
+            status: sinon.stub().returnsThis()
+        };
+        let next: Partial<NextFunction> = () => {};
+
+        (appointmentServiceInstance.updateAppointment as sinon.SinonStub).returns(Result.ok<IAppointmentDTO>({
+            id: req.params.id,
+            requestId: req.body.requestId,
+            roomId: req.body.roomId,
+            dateTime: req.body.dateTime,
+            status: req.body.status
+        }));
+
+        const ctrl = new AppointmentController(appointmentServiceInstance);
+
+        await ctrl.updateAppointment(<Request>req, <Response>res, <NextFunction>next);
+
+        sinon.assert.calledOnce(res.status as sinon.SinonStub);
+        sinon.assert.calledWith(res.status as sinon.SinonStub, 200);
+        sinon.assert.calledOnce(res.json as sinon.SinonSpy);
+        sinon.assert.calledWith(res.json as sinon.SinonSpy, sinon.match({
+            id: req.params.id,
+            requestId: req.body.requestId,
+            roomId: req.body.roomId,
+            dateTime: req.body.dateTime,
+            status: req.body.status
+        }));
+    });
 });

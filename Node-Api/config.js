@@ -1,4 +1,5 @@
 import dotenv from 'dotenv';
+import path from 'path';
 
 // Set the NODE_ENV to 'development' by default
 process.env.NODE_ENV = process.env.NODE_ENV || 'development';
@@ -41,27 +42,24 @@ export default {
   },
 
   controllers: {
-    role: {
-      name: "RoleController",
-      path: "../controllers/roleController"
+    appointment: {
+      name: "AppointmentController",
+      path: "../controllers/appointmentController"
     }
   },
 
   repos: {
-    role: {
-      name: "RoleRepo",
-      path: "../repos/roleRepo"
-    },
-    user: {
-      name: "UserRepo",
-      path: "../repos/userRepo"
+    appointment: {
+      name: "AppointmentRepo",
+      path: "../repos/appointmentRepo"
     }
   },
 
   services: {
-    role: {
-      name: "RoleService",
-      path: "../services/roleService"
+    appointment: {
+      name: "AppointmentService",
+      path: "../services/appointmentService"
     }
   },
 };
+

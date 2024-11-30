@@ -17,11 +17,11 @@ async function startServer() {
 
     Logger.info(`
       ################################################
-      🛡️  Server listening on port: ${config.port} 🛡️ 
+      🛡️  Server listening on port: ${config.port} 🛡️
       ################################################
     `);
     })
-    .on('error', (err) => {      
+    .on('error', (err) => {
       Logger.error(err);
       process.exit(1);
       return;
