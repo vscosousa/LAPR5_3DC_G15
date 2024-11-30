@@ -47,6 +47,7 @@ export default class Lights {
 
         // Create the directional light
         this.object.directionalLight = new THREE.DirectionalLight(this.directionalLight.color, this.directionalLight.intensity);
+        this.object.directionalLight.castShadow = true;
         this.object.directionalLight.position.set(this.directionalLight.position.x, this.directionalLight.position.y, this.directionalLight.position.z);
         this.object.directionalLight.target.position.set(this.directionalLight.target.x, this.directionalLight.target.y, this.directionalLight.target.z);
         this.object.add(this.object.directionalLight);
