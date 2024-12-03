@@ -208,32 +208,29 @@ export default class ThumbRaiser {
         if (event.target.id === "scene-container") {
             event.preventDefault();
     
-            // Create a raycaster and convert mouse position
+            // Initialize raycaster and mouse position
             const raycaster = new THREE.Raycaster();
             const mouse = new THREE.Vector2(
-                (event.clientX / window.innerWidth) * 2.0 - 1.0,
-                -(event.clientY / window.innerHeight) * 2.0 + 1.0
+                (event.clientX / window.innerWidth) * 2 - 1,
+                -(event.clientY / window.innerHeight) * 2 + 1
             );
     
-            // Set raycaster from camera
+            // Cast a ray from the camera
             raycaster.setFromCamera(mouse, this.activeViewCamera.object);
     
             // Perform raycast to get intersected objects
             const intersects = raycaster.intersectObjects(this.scene3D.children, true);
     
-            // Check if any intersected objects are tables
             if (intersects.length > 0) {
+                // Find the first intersected object that is a table
                 const intersectedTable = intersects.find(intersect => intersect.object.isTable);
     
                 if (intersectedTable) {
                     const table = intersectedTable.object;
-                    console.log("Picked table: " + table.name); // Log table name
-
-                    // Select the room corresponding to the table
-                    this.roomInfoHandler.selectRoomFromTable(table);
-
+                    console.log("Picked table:", table.name);
     
-                    // Move the camera to the table (or perform any action on the table)
+                    // Handle room selection and camera movement
+                    this.roomInfoHandler.selectRoomFromTable(table);
                     this.moveCameraToTable(table);
                 } else {
                     console.log("No table found in the intersection");
@@ -241,6 +238,82 @@ export default class ThumbRaiser {
             }
         }
     }
+    
+    moveCameraToTable(table) {
+        // Avoid redundant animations
+        if (this.isCameraAnimating) {
+            console.log("Camera is already animating");
+            return;
+        }
+    
+        // Mark camera as animating
+        this.isCameraAnimating = true;
+    
+        // Calculate target position and orientation
+        const box = new THREE.Box3().setFromObject(table);
+        console.log("Bounding Box:", box);
+        const targetPosition = box.getCenter(new THREE.Vector3());
+        console.log("Target Position:", targetPosition);
+    
+        const camera = this.activeViewCamera.object;
+        const offset = new THREE.Vector3(0, 6, 0);
+        // Final position should always be the same independent of the initial camera position
+        const finalPosition = targetPosition.clone().add(offset);
+        console.log("Final Position:", finalPosition);
+    
+        // Camera start and target state
+        const startPosition = camera.position.clone();
+        const startQuaternion = camera.quaternion.clone();
+    
+        // Ensure the camera always looks straight at the target without inclination
+        const upVector = new THREE.Vector3(0, 1, 0); // Ensure the "up" direction is consistent
+        const targetQuaternion = new THREE.Quaternion().setFromRotationMatrix(
+            new THREE.Matrix4().lookAt(finalPosition, targetPosition, upVector)
+        );
+    
+        const startZoom = camera.zoom;
+        const targetZoom = 1; // Adjust this value as needed
+    
+        const duration = 1500; // Animation duration in ms
+        const startTime = Date.now();
+    
+        const easeInOutQuad = (t) => (t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t);
+    
+        const animateCamera = () => {
+            const elapsedTime = Date.now() - startTime;
+            const t = Math.min(elapsedTime / duration, 1);
+            const easedT = easeInOutQuad(t);
+    
+            // Interpolate camera position, orientation, and zoom
+            camera.position.lerpVectors(startPosition, finalPosition, easedT);
+            camera.quaternion.slerpQuaternions(startQuaternion, targetQuaternion, easedT);
+            camera.zoom = THREE.MathUtils.lerp(startZoom, targetZoom, easedT);
+            camera.updateProjectionMatrix();
+    
+            // Update spotlight position if it exists
+            if (this.spotlight) {
+                const spotlightOffset = new THREE.Vector3(0, 10, 0);
+                const spotlightFinalPosition = finalPosition.clone().add(spotlightOffset);
+                this.spotlight.position.lerpVectors(
+                    startPosition.clone().add(spotlightOffset),
+                    spotlightFinalPosition,
+                    easedT
+                );
+                this.spotlight.target.position.copy(targetPosition);
+                this.spotlight.target.updateMatrixWorld();
+            }
+    
+            if (t < 1) {
+                requestAnimationFrame(animateCamera);
+            } else {
+                // Animation finished
+                this.isCameraAnimating = false;
+            }
+        };
+    
+        animateCamera();
+    }
+    
 
     
 
@@ -516,43 +589,6 @@ export default class ThumbRaiser {
 
     
 
-    moveCameraToTable(table) {
-        const box = new THREE.Box3().setFromObject(table);
-        const targetPosition = box.getCenter(new THREE.Vector3());
-    
-        const camera = this.activeViewCamera.object;
-    
-        const offset = new THREE.Vector3(0, 10, 0);
-        const finalPosition = targetPosition.clone().add(offset);
-    
-        const startPosition = camera.position.clone();
-        const duration = 1.5;
-        let elapsedTime = 0;
-    
-        const clock = new THREE.Clock();
-    
-        const animateCamera = () => {
-            elapsedTime += clock.getDelta();
-            const t = Math.min(elapsedTime / duration, 1);
-            camera.position.lerpVectors(startPosition, finalPosition, t);
-            camera.lookAt(targetPosition);
-    
-            if (this.spotlight) {
-                const spotlight = this.spotlight;
-                const spotlightOffset = new THREE.Vector3(0, 10, 0);
-                const spotlightFinalPosition = finalPosition.clone().add(spotlightOffset);
-                spotlight.position.lerpVectors(startPosition.clone().add(spotlightOffset), spotlightFinalPosition, t);
-                spotlight.target.position.copy(targetPosition);
-                spotlight.target.updateMatrixWorld();
-            }
-    
-            if (t < 1) {
-                requestAnimationFrame(animateCamera);
-            }
-        };
-    
-        animateCamera();
-    }
     contextMenu(event) {
         // Prevent the context menu from appearing when the secondary mouse button is clicked
         event.preventDefault();
