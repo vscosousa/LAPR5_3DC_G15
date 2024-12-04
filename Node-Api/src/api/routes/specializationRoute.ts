@@ -20,4 +20,17 @@ export default (app: Router) => {
         }),
         (req, res, next) => ctrl.createSpecialization(req, res, next)
     );
+
+    route.put(
+        '/update/:id',
+        celebrate({
+            body: Joi.object({
+                specializationType: Joi.string().required()
+            }),
+            params: Joi.object({
+                id: Joi.string().required(),
+            }),
+        }),
+        (req: any, res: any, next: any) => ctrl.updateSpecialization(req, res, next)
+    );
 };

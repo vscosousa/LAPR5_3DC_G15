@@ -8,14 +8,15 @@ import { ISpecializationDTO } from '../dto/ISpecializationDTO';
 import config from '../../config';
 
 @Service()
-export default class SpecializationService implements ISpecializationService{
+export default class SpecializationService implements ISpecializationService {
     constructor(
         @Inject(config.repos.specialization.name) private specializationRepo: ISpecializationRepo,
         @Inject('logger') private logger,
-    ){}
+    ) { }
+
 
     public async createSpecialization(specializationDTO: ISpecializationDTO): Promise<Result<ISpecializationDTO>> {
-        try{
+        try {
             this.logger.info('Creating specialization with DTO:', specializationDTO);
 
             const specializationOrError = Specialization.create({
@@ -23,7 +24,7 @@ export default class SpecializationService implements ISpecializationService{
                 specializationType: specializationDTO.specializationType
             });
 
-            if(specializationOrError.isFailure){
+            if (specializationOrError.isFailure) {
                 this.logger.error('Error creating Specialization:', specializationOrError.errorValue());
                 return Result.fail<ISpecializationDTO>(specializationOrError.errorValue());
             }
@@ -34,9 +35,35 @@ export default class SpecializationService implements ISpecializationService{
 
             const specializationDTOResult = SpecializationMap.toDTO(specialization);
             return Result.ok<ISpecializationDTO>(specializationDTOResult);
-        }catch(e){
+        } catch (e) {
             this.logger.error('Error in createSpecialization', e);
             throw e;
         }
     }
+
+    public async updateSpecialization(id: string, specializationDTO: Partial<ISpecializationDTO>): Promise<Result<ISpecializationDTO>> {
+        try {
+
+            const specialization = await this.specializationRepo.findbydomainid(id);
+
+            if (!specialization) {
+                return Result.fail<ISpecializationDTO>("Specialization not found");
+            }
+
+            if (specializationDTO.specializationType) {
+                specialization.props.specializationType = specializationDTO.specializationType;
+            }
+
+            await this.specializationRepo.save(specialization);
+
+            const specializationDTOResult = SpecializationMap.toDTO(specialization);
+
+            return Result.ok<ISpecializationDTO>(specializationDTOResult);
+            
+        } catch (e) {
+            this.logger.error("Error updating specialization:", e);
+            throw e;
+        }
+    }
+    
 }

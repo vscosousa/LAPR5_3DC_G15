@@ -15,7 +15,7 @@ export default class SpecializationRepo implements ISpecializationRepo {
         @Inject('specializationSchema') private specializationSchema: Model<ISpecializationPersistence & Document>,
         @Inject('logger') private logger
     ) { }
-
+    
 
     public async exists(specialization: Specialization): Promise<boolean> {
         
@@ -49,4 +49,15 @@ export default class SpecializationRepo implements ISpecializationRepo {
             throw err;
         }
     }
+
+    public async findbydomainid(specializationId: SpecializationId | string): Promise<Specialization> {
+        const query = { domainId: specializationId };
+        const specializationRecord = await this.specializationSchema.findOne(query as FilterQuery<ISpecializationPersistence & Document>);
+        
+        if(specializationRecord != null ){
+            return SpecializationMap.toDomain(specializationRecord);
+        }else{
+            return null;
+        }  
+    }   
 }
