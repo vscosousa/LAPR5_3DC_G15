@@ -59,11 +59,46 @@ export default class SpecializationService implements ISpecializationService {
             const specializationDTOResult = SpecializationMap.toDTO(specialization);
 
             return Result.ok<ISpecializationDTO>(specializationDTOResult);
-            
+
         } catch (e) {
             this.logger.error("Error updating specialization:", e);
             throw e;
         }
     }
+
+    public async removeSpecialization(id: string): Promise<Result<void>> {
+        try {
+            const specialization = await this.specializationRepo.findbydomainid(id);
     
+            if (!specialization) {
+                return Result.fail<void>("Specialization not found");
+            }
+    
+            await this.specializationRepo.delete(specialization);
+            return Result.ok<void>();
+        } catch (e) {
+            this.logger.error("Error removing specialization:", e);
+            throw e;
+        }
+    }
+
+    public async listSpecializations(): Promise<Result<ISpecializationDTO[]>> {
+        try {
+            // Retrieve all specializations from the repository
+            const specializations = await this.specializationRepo.findall();
+    
+            if (!specializations || specializations.length === 0) {
+                return Result.fail<ISpecializationDTO[]>("No specializations found.");
+            }
+    
+            // Map the result to DTOs (data transfer objects) if needed
+            const specializationDTOs = specializations.map(specialization => SpecializationMap.toDTO(specialization));
+    
+            return Result.ok<ISpecializationDTO[]>(specializationDTOs);
+        } catch (e) {
+            this.logger.error("Error retrieving specializations:", e);
+            return Result.fail<ISpecializationDTO[]>("An error occurred while fetching specializations.");
+        }
+    }
+
 }

@@ -33,4 +33,19 @@ export default (app: Router) => {
         }),
         (req: any, res: any, next: any) => ctrl.updateSpecialization(req, res, next)
     );
+
+    route.delete(
+        '/delete/:id',
+        celebrate({
+            params: Joi.object({
+                id: Joi.string().required(), // Validate the specialization ID
+            }),
+        }),
+        (req, res, next) => ctrl.deleteSpecialization(req, res, next)
+    );
+
+    route.get(
+        '/',
+        (req, res, next) => ctrl.listSpecializations(req, res, next)
+    );
 };

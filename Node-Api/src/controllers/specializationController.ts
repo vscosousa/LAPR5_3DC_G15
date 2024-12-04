@@ -48,5 +48,30 @@ export default class SpecializationController implements ISpecializationControll
             return next(e);
         }
     }
-     
+
+    public async deleteSpecialization(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { id } = req.params;
+    
+            const result = await this.specializationServiceInstance.removeSpecialization(id);
+    
+            if (result.isFailure) {
+                return res.status(404).send(result.errorValue());
+            }
+    
+            return res.status(200).send({ message: "Specialization successfully deleted." });
+        } catch (e) {
+            console.error("Error in removeSpecialization:", e);
+            return next(e);
+        }
+    }
+
+    public async listSpecializations(req: Request, res: Response, next: NextFunction) {
+        try {
+            const specializations = await this.specializationServiceInstance.listSpecializations();
+            return res.status(200).json(specializations);
+        } catch (e) {
+            return next(e);
+        }
+    }
 }

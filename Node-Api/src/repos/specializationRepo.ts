@@ -15,12 +15,12 @@ export default class SpecializationRepo implements ISpecializationRepo {
         @Inject('specializationSchema') private specializationSchema: Model<ISpecializationPersistence & Document>,
         @Inject('logger') private logger
     ) { }
-    
+
 
     public async exists(specialization: Specialization): Promise<boolean> {
-        
-        const idX = specialization.id instanceof SpecializationId ? (<SpecializationId> specialization.id).toValue() : specialization.id;
-        const query = {domainId: idX};
+
+        const idX = specialization.id instanceof SpecializationId ? (<SpecializationId>specialization.id).toValue() : specialization.id;
+        const query = { domainId: idX };
         const specializationDocument = await this.specializationSchema.findOne(query as FilterQuery<ISpecializationPersistence & Document>);
         return !!specializationDocument === true;
     }
@@ -29,22 +29,22 @@ export default class SpecializationRepo implements ISpecializationRepo {
         const query = { domainId: specialization.id.toString() };
         const specializationDocument = await this.specializationSchema.findOne(query);
 
-        try{
-            if(specializationDocument === null){
+        try {
+            if (specializationDocument === null) {
                 const rawSpecialization: any = SpecializationMap.toPersistence(specialization);
                 this.logger.info('Creating new Specialization', rawSpecialization);
-                
+
                 const specializationCreated = await this.specializationSchema.create(rawSpecialization);
 
                 return SpecializationMap.toDomain(specializationCreated);
-            }else{
+            } else {
                 specializationDocument.specializationType = specialization.specializationType;
                 this.logger.info('Updating existing Specialization:', specializationDocument)
 
                 await specializationDocument.save();
                 return specialization;
             }
-        }catch(err){
+        } catch (err) {
             this.logger.error('Error saving Specialization', err);
             throw err;
         }
@@ -53,11 +53,22 @@ export default class SpecializationRepo implements ISpecializationRepo {
     public async findbydomainid(specializationId: SpecializationId | string): Promise<Specialization> {
         const query = { domainId: specializationId };
         const specializationRecord = await this.specializationSchema.findOne(query as FilterQuery<ISpecializationPersistence & Document>);
-        
-        if(specializationRecord != null ){
+
+        if (specializationRecord != null) {
             return SpecializationMap.toDomain(specializationRecord);
-        }else{
+        } else {
             return null;
-        }  
-    }   
+        }
+    }
+
+    // src/repositories/specializationRepo.ts
+    public async delete(specialization: Specialization): Promise<void> {
+        const query = { domainId: specialization.id.toString() };
+        await this.specializationSchema.deleteOne(query as FilterQuery<ISpecializationPersistence & Document>);
+    }
+
+    // src/repositories/specializationRepo.ts
+    public async findall(): Promise<Specialization[]> {
+        return await this.specializationSchema.find();
+    }
 }
