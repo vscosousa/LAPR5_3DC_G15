@@ -5,6 +5,7 @@ import Logger from './logger';
 
 import config from '../../config';
 
+
 export default async ({ expressApp }) => {
   const mongoConnection = await mongooseLoader();
   Logger.info('✌️ DB loaded and connected!');
@@ -14,14 +15,29 @@ export default async ({ expressApp }) => {
     schema: '../persistence/schemas/appointmentSchema',
   };
 
+  const specializationSchema = {
+    name: 'specializationSchema',
+    schema: '../persistence/schemas/specializationSchema',
+  }
+
   const appointmentController = {
     name: config.controllers.appointment.name,
     path: config.controllers.appointment.path
   };
+  
+  const specializationController = {
+    name: config.controllers.specialization.name,
+    path: config.controllers.specialization.path
+  }
 
   const appointmentRepo = {
     name: config.repos.appointment.name,
     path: config.repos.appointment.path
+  };
+
+  const specializationRepo = {
+    name: config.repos.specialization.name,
+    path: config.repos.specialization.path
   };
 
   const appointmentService = {
@@ -29,19 +45,29 @@ export default async ({ expressApp }) => {
     path: config.services.appointment.path
   };
 
+  const specializationService = {
+    name: config.services.specialization.name,
+    path: config.services.specialization.path
+  };
+
   await dependencyInjectorLoader({
     mongoConnection,
     schemas: [
-      appointmentSchema
+      appointmentSchema,
+      specializationSchema
     ],
     controllers: [
-      appointmentController
+      appointmentController,
+      specializationController
     ],
     repos: [
-      appointmentRepo
+      appointmentRepo,
+      specializationRepo
+
     ],
     services: [
-      appointmentService
+      appointmentService,
+      specializationService
     ]
   });
   Logger.info('✌️ Schemas, Controllers, Repositories, Services, etc. loaded');
