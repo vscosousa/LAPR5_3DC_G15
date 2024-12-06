@@ -15,6 +15,7 @@ export default class SpecializationRepo implements ISpecializationRepo {
         @Inject('specializationSchema') private specializationSchema: Model<ISpecializationPersistence & Document>,
         @Inject('logger') private logger
     ) { }
+    
 
 
     public async exists(specialization: Specialization): Promise<boolean> {
@@ -61,14 +62,27 @@ export default class SpecializationRepo implements ISpecializationRepo {
         }
     }
 
-    // src/repositories/specializationRepo.ts
+
     public async delete(specialization: Specialization): Promise<void> {
         const query = { domainId: specialization.id.toString() };
         await this.specializationSchema.deleteOne(query as FilterQuery<ISpecializationPersistence & Document>);
     }
 
-    // src/repositories/specializationRepo.ts
+    
     public async findall(): Promise<Specialization[]> {
-        return await this.specializationSchema.find();
+        const query = {};
+        const specializationRecords = await this.specializationSchema.find(query as FilterQuery<ISpecializationPersistence & Document>);
+        
+        return specializationRecords.map(record => SpecializationMap.toDomain(record));
+    }
+
+    public async search(specialization: Specialization): Promise<Specialization[]> {
+        const query = {
+            domainId: specialization.id.toString(),
+            specializationType: specialization.specializationType
+        };
+        const specializationRecords = await this.specializationSchema.find(query as FilterQuery<ISpecializationPersistence & Document>);
+        
+        return specializationRecords.map(record => SpecializationMap.toDomain(record));
     }
 }

@@ -38,7 +38,8 @@ export default (app: Router) => {
         '/delete/:id',
         celebrate({
             params: Joi.object({
-                id: Joi.string().required(), // Validate the specialization ID
+                id: Joi.string().required(), 
+                
             }),
         }),
         (req, res, next) => ctrl.deleteSpecialization(req, res, next)

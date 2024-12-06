@@ -1,0 +1,44 @@
+<div class="update-specialization-container">
+    <h2>Update Specialization</h2>
+    <form (ngSubmit)="onSubmit()" #specializationForm="ngForm" novalidate>
+      <fieldset>
+        <legend>Specialization Details</legend>
+  
+        <div class="form-group">
+          <label for="specializationType">Specialization Type</label>
+          <input
+            type="text"
+            id="specializationType"
+            name="specializationType"
+            [(ngModel)]="specialization.specializationType"
+            required
+            minlength="1"
+            class="form-control"
+            aria-label="Specialization Type"
+            aria-describedby="specializationTypeHelp specializationTypeError"
+          />
+          <small id="specializationTypeHelp" class="form-text text-muted">
+            Enter the type of specialization (e.g., Doctor, Nurse).
+          </small>
+          <div *ngIf="specializationForm.submitted || specializationForm.form.get('specializationType')?.touched">
+            <p id="specializationTypeError" class="error-text" *ngIf="specializationForm.form.get('specializationType')?.errors?.['required']">
+              Specialization Type is required.
+            </p>
+            <p id="specializationTypeError" class="error-text" *ngIf="specializationForm.form.get('specializationType')?.errors?.['minlength']">
+              Specialization Type must be at least 1 character long.
+            </p>
+          </div>
+        </div>
+  
+        <button
+          type="submit"
+          class="btn btn-primary"
+          [disabled]="!specializationForm.form.valid"
+          aria-disabled="!specializationForm.form.valid"
+        >
+          Update
+        </button>
+      </fieldset>
+    </form>
+  </div>
+  

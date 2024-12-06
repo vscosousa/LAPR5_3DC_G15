@@ -31,9 +31,6 @@ export default class SpecializationController implements ISpecializationControll
 
     public async updateSpecialization(req: Request, res: Response, next: NextFunction) {
         try {
-            console.log("ID received:", req.params.id); // Log the `id` from the request
-            console.log("Body received:", req.body);   // Log the body payload
-    
             const { id } = req.params;
             const specializationOrError = await this.specializationServiceInstance.updateSpecialization(id, req.body as ISpecializationDTO) as Result<ISpecializationDTO>;
     
