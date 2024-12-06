@@ -1,0 +1,35 @@
+<div class="create-specialization-container">
+  <h2>Create Specialization</h2>
+  <form (ngSubmit)="onSubmit()" #specializationForm="ngForm" novalidate>
+    <fieldset>
+      <legend>Specialization Details</legend>
+      <div class="form-group">
+        <label for="specializationType">Specialization Type</label>
+        <input
+          type="text"
+          id="specializationType"
+          name="specializationType"
+          [(ngModel)]="specialization.specializationType"
+          required
+          minlength="3"
+          maxlength="50"
+          class="form-control"
+          aria-label="Specialization Type"
+        />
+        <small
+          *ngIf="specializationForm.form.controls['specializationType']?.invalid && specializationForm.form.controls['specializationType']?.touched"
+          class="error-message"
+        >
+          Specialization Type is required and must be between 3 and 50 characters.
+        </small>
+      </div>
+      <button
+        type="submit"
+        class="btn btn-primary"
+        [disabled]="!specializationForm.form.valid"
+      >
+        Submit
+      </button>
+    </fieldset>
+  </form>
+</div>

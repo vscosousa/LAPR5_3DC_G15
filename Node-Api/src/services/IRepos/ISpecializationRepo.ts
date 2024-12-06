@@ -7,4 +7,5 @@ export default interface ISpecializationRepo extends Repo<Specialization>{
     findbydomainid(specializationId: SpecializationId | string): Promise<Specialization>;
     delete(specialization:Specialization): Promise<void>;
     findall(): Promise<Specialization[]>;
+    search(specialization: Specialization): Promise<Specialization[]>;
 }

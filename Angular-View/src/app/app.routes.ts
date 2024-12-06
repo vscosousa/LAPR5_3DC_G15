@@ -28,7 +28,8 @@ import { DoctorPanelComponent } from './Components/doctor-panel/doctor-panel.com
 import { OperationRequestsComponent } from './Components/operation-requests/operation-requests.component';
 import { CreateOperationRequestComponent } from './Components/operation-requests/create-operation-request/create-operation-request.component';
 /**import { UpdateOperationRequestComponent } from './Components/operation-requests/update-operation-request/update-operation-request.component';*/
-
+import { SpecializationComponent } from './Components/specialization/specialization.component';
+import { CreateSpecializationComponent } from './Components/specialization/create-specialization/create-specialization.component';
 
 export const routes: Routes = [
     {
@@ -63,6 +64,12 @@ export const routes: Routes = [
     },
     {
         path: "operation-types", component: OperationTypesComponent, canActivate: [AuthGuard]
+    },
+    {
+        path: "specializations", component: SpecializationComponent, canActivate: [AuthGuard], children: [
+            { path: "create-specialization", component: CreateSpecializationComponent, canActivate: [AuthGuard] },
+            { path: "update-specialization/:id", component: CreateSpecializationComponent, canActivate: [AuthGuard] }
+        ]
     },
     {
         path: "update-operation-type/:name", component: UpdateOperationTypeComponent , canActivate: [AuthGuard]

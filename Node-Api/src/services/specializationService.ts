@@ -84,14 +84,14 @@ export default class SpecializationService implements ISpecializationService {
 
     public async listSpecializations(): Promise<Result<ISpecializationDTO[]>> {
         try {
-            // Retrieve all specializations from the repository
+        
             const specializations = await this.specializationRepo.findall();
     
             if (!specializations || specializations.length === 0) {
                 return Result.fail<ISpecializationDTO[]>("No specializations found.");
             }
     
-            // Map the result to DTOs (data transfer objects) if needed
+           
             const specializationDTOs = specializations.map(specialization => SpecializationMap.toDTO(specialization));
     
             return Result.ok<ISpecializationDTO[]>(specializationDTOs);

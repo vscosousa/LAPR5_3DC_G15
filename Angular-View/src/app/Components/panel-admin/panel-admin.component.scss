@@ -33,7 +33,8 @@
   display: grid;
   grid-template-areas:
       "box1 box2"
-      "box3 box4";
+      "box3 box4"
+      "box5 box5";
   gap: 10px;
   flex: 1;
   margin: 20px;
@@ -52,7 +53,7 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.box1, .box2, .box3, .box4 {
+.box1, .box2, .box3, .box4, .box5 {
   border: 3px solid #4a4a4a; /* Dark gray */
   background-color: #1e223a; /* Slightly lighter dark blue-gray */
 }
@@ -89,6 +90,14 @@
   border-color: #f7cac9; /* Pink */
 }
 
+.box5 {
+  grid-area: box5;
+}
+
+.box5:hover {
+  border-color: #b8b528; /* Pink */
+}
+
 a {
   display: flex;
   justify-content: center;
@@ -97,3 +106,5 @@ a {
   text-decoration: none;
   color: #ffffff;
 }
+
+

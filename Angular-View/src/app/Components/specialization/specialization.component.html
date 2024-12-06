@@ -1,0 +1,73 @@
+<!-- src/app/Components/specialization/specialization.component.html -->
+<div class="manage-container">
+  <app-sidebar></app-sidebar>
+  <div class="screens-container">
+    <div class="screen">
+      <button (click)="openCreateSpecialization()" class="btn btn-create" type="button">
+        Create Specialization
+      </button>
+      <h2 class="manage-title text-center">
+        Specializations Manager
+      </h2>
+      <div class="content-container">
+        <div class="table-container">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Specialization</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let specialization of specializations">
+                <td>{{ specialization.specializationType }}</td>
+                <td>
+                  <button
+                    (click)="openUpdateSpecialization(specialization.id)"
+                    class="btn btn-update"
+                    type="button"
+                    [attr.aria-label]="'Edit ' + specialization.specializationType"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    (click)="deleteSpecialization(specialization.id, specialization.specializationType)"
+                    class="btn btn-delete"
+                    type="button"
+                    [attr.aria-label]="'Delete ' + specialization.specializationType"
+                  >
+                    Delete
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Create Specialization Modal -->
+  <div
+    class="modal-container"
+    *ngIf="isModalOpen"
+    (click)="closeModal($event)"
+  >
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <button class="btn btn-close" (click)="closeModal()" type="button" aria-label="Close modal">X</button>
+      <app-create-specialization (specializationCreated)="refreshSpecializations()"></app-create-specialization>
+    </div>
+  </div>
+
+  <!-- Update Specialization Modal -->
+  <div
+    class="modal-container"
+    *ngIf="isUpdateModalOpen"
+    (click)="closeUpdateModal($event)"
+  >
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <button class="btn btn-close" (click)="closeUpdateModal()" type="button" aria-label="Close modal">X</button>
+      <app-update-specialization [specializationId]="selectedSpecializationId" (specializationUpdated)="refreshSpecializations()"></app-update-specialization>
+    </div>
+  </div>
+</div>
