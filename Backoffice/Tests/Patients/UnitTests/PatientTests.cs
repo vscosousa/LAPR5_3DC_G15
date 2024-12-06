@@ -18,9 +18,8 @@ namespace DDDSample1.Tests.Domain.Patients
             var email = "carlos.silva@example.com";
             var phoneNumber = "+351912345678";
             var emergencyContact = "+351987654321";
-            var medicalConditions = "Nenhuma";
 
-            var patient = new Patient(firstName, lastName, fullName, dateOfBirth, gender, email, phoneNumber, emergencyContact, medicalConditions);
+            var patient = new Patient(firstName, lastName, fullName, dateOfBirth, gender, email, phoneNumber, emergencyContact);
 
             Assert.Equal(firstName, patient.FirstName);
             Assert.Equal(lastName, patient.LastName);
@@ -30,7 +29,6 @@ namespace DDDSample1.Tests.Domain.Patients
             Assert.Equal(email, patient.Email);
             Assert.Equal(phoneNumber, patient.PhoneNumber);
             Assert.Equal(emergencyContact, patient.EmergencyContact);
-            Assert.Equal(medicalConditions, patient.MedicalConditions);
             Assert.True(patient.IsActive);
         }
 
@@ -45,9 +43,8 @@ namespace DDDSample1.Tests.Domain.Patients
             var email = "carlos.silva@example.com";
             var phoneNumber = "+351912345678";
             var emergencyContact = "+351987654321";
-            var medicalConditions = "Nenhuma";
 
-            Assert.Throws<BusinessRuleValidationException>(() => new Patient(firstName, lastName, fullName, dateOfBirth, gender, email, phoneNumber, emergencyContact, medicalConditions));
+            Assert.Throws<BusinessRuleValidationException>(() => new Patient(firstName, lastName, fullName, dateOfBirth, gender, email, phoneNumber, emergencyContact));
         }
 
         [Fact]
@@ -61,9 +58,8 @@ namespace DDDSample1.Tests.Domain.Patients
             var email = "carlos.silva@example.com";
             var phoneNumber = "+351912345678";
             var emergencyContact = "+351987654321";
-            var medicalConditions = "Nenhuma";
 
-            Assert.Throws<BusinessRuleValidationException>(() => new Patient(firstName, lastName, fullName, dateOfBirth, gender, email, phoneNumber, emergencyContact, medicalConditions));
+            Assert.Throws<BusinessRuleValidationException>(() => new Patient(firstName, lastName, fullName, dateOfBirth, gender, email, phoneNumber, emergencyContact));
         }
 
         [Fact]
@@ -77,9 +73,8 @@ namespace DDDSample1.Tests.Domain.Patients
             var email = "carlos.silva@example.com";
             var phoneNumber = "+351912345678";
             var emergencyContact = "+351987654321";
-            var medicalConditions = "Nenhuma";
 
-            Assert.Throws<BusinessRuleValidationException>(() => new Patient(firstName, lastName, fullName, dateOfBirth, gender, email, phoneNumber, emergencyContact, medicalConditions));
+            Assert.Throws<BusinessRuleValidationException>(() => new Patient(firstName, lastName, fullName, dateOfBirth, gender, email, phoneNumber, emergencyContact));
         }
 
         [Fact]
@@ -93,9 +88,8 @@ namespace DDDSample1.Tests.Domain.Patients
             var email = "carlos.silva@example.com";
             var phoneNumber = "+351912345678";
             var emergencyContact = "+351987654321";
-            var medicalConditions = "Nenhuma";
 
-            Assert.Throws<BusinessRuleValidationException>(() => new Patient(firstName, lastName, fullName, dateOfBirth, gender, email, phoneNumber, emergencyContact, medicalConditions));
+            Assert.Throws<BusinessRuleValidationException>(() => new Patient(firstName, lastName, fullName, dateOfBirth, gender, email, phoneNumber, emergencyContact));
         }
 
         [Fact]
@@ -109,9 +103,8 @@ namespace DDDSample1.Tests.Domain.Patients
             var email = "carlos.silva@example.com";
             var phoneNumber = "+351912345678";
             var emergencyContact = "+351987654321";
-            var medicalConditions = "Nenhuma";
 
-            Assert.Throws<BusinessRuleValidationException>(() => new Patient(firstName, lastName, fullName, dateOfBirth, gender, email, phoneNumber, emergencyContact, medicalConditions));
+            Assert.Throws<BusinessRuleValidationException>(() => new Patient(firstName, lastName, fullName, dateOfBirth, gender, email, phoneNumber, emergencyContact));
         }
 
 
@@ -126,9 +119,8 @@ namespace DDDSample1.Tests.Domain.Patients
             var email = "email-invalido";
             var phoneNumber = "+351912345678";
             var emergencyContact = "+351987654321";
-            var medicalConditions = "Nenhuma";
 
-            Assert.Throws<BusinessRuleValidationException>(() => new Patient(firstName, lastName, fullName, dateOfBirth, gender, email, phoneNumber, emergencyContact, medicalConditions));
+            Assert.Throws<BusinessRuleValidationException>(() => new Patient(firstName, lastName, fullName, dateOfBirth, gender, email, phoneNumber, emergencyContact));
         }
 
         [Fact]
@@ -142,9 +134,8 @@ namespace DDDSample1.Tests.Domain.Patients
             var email = "carlos.silva@example.com";
             var phoneNumber = "912345678";
             var emergencyContact = "+351987654321";
-            var medicalConditions = "Nenhuma";
 
-            Assert.Throws<BusinessRuleValidationException>(() => new Patient(firstName, lastName, fullName, dateOfBirth, gender, email, phoneNumber, emergencyContact, medicalConditions));
+            Assert.Throws<BusinessRuleValidationException>(() => new Patient(firstName, lastName, fullName, dateOfBirth, gender, email, phoneNumber, emergencyContact));
         }
 
         [Fact]
@@ -158,15 +149,14 @@ namespace DDDSample1.Tests.Domain.Patients
             var email = "carlos.silva@example.com";
             var phoneNumber = "+351912345678";
             var emergencyContact = "987654321";
-            var medicalConditions = "Nenhuma";
 
-            Assert.Throws<BusinessRuleValidationException>(() => new Patient(firstName, lastName, fullName, dateOfBirth, gender, email, phoneNumber, emergencyContact, medicalConditions));
+            Assert.Throws<BusinessRuleValidationException>(() => new Patient(firstName, lastName, fullName, dateOfBirth, gender, email, phoneNumber, emergencyContact));
         }
 
         [Fact]
         public void ChangeFirstNameDirectlyFromDomainSuccessfully()
         {
-            var patient = new Patient("Carlos", "Silva", "Carlos Silva", new DateOnly(1985, 5, 15), GenderOptions.Male, "carlos.silva@example.com", "+351912345678", "+351987654321", "Nenhuma");
+            var patient = new Patient("Carlos", "Silva", "Carlos Silva", new DateOnly(1985, 5, 15), GenderOptions.Male, "carlos.silva@example.com", "+351912345678", "+351987654321");
             var newFirstName = "João";
 
             patient.ChangeFirstName(newFirstName);
@@ -177,7 +167,7 @@ namespace DDDSample1.Tests.Domain.Patients
         [Fact]
         public void ChangeLastNameDirectlyFromDomainSuccessfully()
         {
-            var patient = new Patient("Carlos", "Silva", "Carlos Silva", new DateOnly(1985, 5, 15), GenderOptions.Male, "carlos.silva@example.com", "+351912345678", "+351987654321", "Nenhuma");
+            var patient = new Patient("Carlos", "Silva", "Carlos Silva", new DateOnly(1985, 5, 15), GenderOptions.Male, "carlos.silva@example.com", "+351912345678", "+351987654321");
             var newLastName = "Santos";
 
             patient.ChangeLastName(newLastName);
@@ -188,7 +178,7 @@ namespace DDDSample1.Tests.Domain.Patients
         [Fact]
         public void ChangeFullNameDirectlyFromDomainSuccessfully()
         {
-            var patient = new Patient("Carlos", "Silva", "Carlos Silva", new DateOnly(1985, 5, 15), GenderOptions.Male, "carlos.silva@example.com", "+351912345678", "+351987654321", "Nenhuma");
+            var patient = new Patient("Carlos", "Silva", "Carlos Silva", new DateOnly(1985, 5, 15), GenderOptions.Male, "carlos.silva@example.com", "+351912345678", "+351987654321");
             var newFullName = "João Santos";
 
             patient.ChangeFullName(newFullName);
@@ -199,7 +189,7 @@ namespace DDDSample1.Tests.Domain.Patients
         [Fact]
         public void ChangeEmailDirectlyFromDomainSuccessfully()
         {
-            var patient = new Patient("Carlos", "Silva", "Carlos Silva", new DateOnly(1985, 5, 15), GenderOptions.Male, "carlos.silva@example.com", "+351912345678", "+351987654321", "Nenhuma");
+            var patient = new Patient("Carlos", "Silva", "Carlos Silva", new DateOnly(1985, 5, 15), GenderOptions.Male, "carlos.silva@example.com", "+351912345678", "+351987654321");
             var newEmail = "novo.email@example.com";
 
             patient.ChangeEmail(newEmail);
@@ -210,7 +200,7 @@ namespace DDDSample1.Tests.Domain.Patients
         [Fact]
         public void ChangeEmailDirectlyFromDomainWithInvalidEmail()
         {
-            var patient = new Patient("Carlos", "Silva", "Carlos Silva", new DateOnly(1985, 5, 15), GenderOptions.Male, "carlos.silva@example.com", "+351912345678", "+351987654321", "Nenhuma");
+            var patient = new Patient("Carlos", "Silva", "Carlos Silva", new DateOnly(1985, 5, 15), GenderOptions.Male, "carlos.silva@example.com", "+351912345678", "+351987654321");
             var invalidEmail = "email-invalido";
 
             Assert.Throws<ArgumentException>(() => patient.ChangeEmail(invalidEmail));
@@ -219,7 +209,7 @@ namespace DDDSample1.Tests.Domain.Patients
         [Fact]
         public void ChangePhoneNumberDirectlyFromDomainSuccessfully()
         {
-            var patient = new Patient("Carlos", "Silva", "Carlos Silva", new DateOnly(1985, 5, 15), GenderOptions.Male, "carlos.silva@example.com", "+351912345678", "+351987654321", "Nenhuma");
+            var patient = new Patient("Carlos", "Silva", "Carlos Silva", new DateOnly(1985, 5, 15), GenderOptions.Male, "carlos.silva@example.com", "+351912345678", "+351987654321");
             var newPhoneNumber = "+351911234567";
 
             patient.ChangePhoneNumber(newPhoneNumber);
@@ -230,7 +220,7 @@ namespace DDDSample1.Tests.Domain.Patients
         [Fact]
         public void ChangePhoneNumberDirectlyFromDomainWithInvalidPhoneNumber()
         {
-            var patient = new Patient("Carlos", "Silva", "Carlos Silva", new DateOnly(1985, 5, 15), GenderOptions.Male, "carlos.silva@example.com", "+351912345678", "+351987654321", "Nenhuma");
+            var patient = new Patient("Carlos", "Silva", "Carlos Silva", new DateOnly(1985, 5, 15), GenderOptions.Male, "carlos.silva@example.com", "+351912345678", "+351987654321");
             var invalidPhoneNumber = "912345678";
 
             Assert.Throws<BusinessRuleValidationException>(() => patient.ChangePhoneNumber(invalidPhoneNumber));
@@ -239,7 +229,7 @@ namespace DDDSample1.Tests.Domain.Patients
         [Fact]
         public void ChangeEmergencyContactDirectlyFromDomainSuccessfully()
         {
-            var patient = new Patient("Carlos", "Silva", "Carlos Silva", new DateOnly(1985, 5, 15), GenderOptions.Male, "carlos.silva@example.com", "+351912345678", "+351987654321", "Nenhuma");
+            var patient = new Patient("Carlos", "Silva", "Carlos Silva", new DateOnly(1985, 5, 15), GenderOptions.Male, "carlos.silva@example.com", "+351912345678", "+351987654321");
             var newEmergencyContact = "+351911234567";
 
             patient.ChangeEmergencyContact(newEmergencyContact);
@@ -250,21 +240,10 @@ namespace DDDSample1.Tests.Domain.Patients
         [Fact]
         public void ChangeEmergencyContactDirectlyFromDomainWithInvalidEmergencyContact()
         {
-            var patient = new Patient("Carlos", "Silva", "Carlos Silva", new DateOnly(1985, 5, 15), GenderOptions.Male, "carlos.silva@example.com", "+351912345678", "+351987654321", "Nenhuma");
+            var patient = new Patient("Carlos", "Silva", "Carlos Silva", new DateOnly(1985, 5, 15), GenderOptions.Male, "carlos.silva@example.com", "+351912345678", "+351987654321");
             var invalidEmergencyContact = "911234567";
 
             Assert.Throws<BusinessRuleValidationException>(() => patient.ChangeEmergencyContact(invalidEmergencyContact));
-        }
-
-        [Fact]
-        public void ChangeMedicalConditionsDirectlyFromDomainSuccessfully()
-        {
-            var patient = new Patient("Carlos", "Silva", "Carlos Silva", new DateOnly(1985, 5, 15), GenderOptions.Male, "carlos.silva@example.com", "+351912345678", "+351987654321", "Nenhuma");
-            var newMedicalConditions = "Diabetes";
-
-            patient.ChangeMedicalConditions(newMedicalConditions);
-
-            Assert.Equal(newMedicalConditions, patient.MedicalConditions);
         }
     }
 }

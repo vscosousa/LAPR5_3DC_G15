@@ -14,13 +14,13 @@ namespace DDDSample1.Domain.Patients
         public string Email { get; init; }
         public string PhoneNumber { get; init; }
         public string EmergencyContact { get; init; }
-        public string MedicalConditions { get; init; }
+        public string MedicalHistory { get; init; }
         public string[] AppointmentHistory { get; init; }
         public bool IsActive { get; init; }
 
         public PatientDTO() { }
 
-        public PatientDTO(Guid id, string firstName, string lastName, string fullName, string dateOfBirth, GenderOptions gender, string medicalRecordNumber, string email, string phoneNumber, string emergencyContact, string medicalConditions, string[] appointmentHistory, bool isActive)
+        public PatientDTO(Guid id, string firstName, string lastName, string fullName, string dateOfBirth, GenderOptions gender, string medicalRecordNumber, string email, string phoneNumber, string emergencyContact, string medicalHistory, string[] appointmentHistory, bool isActive)
         {
             Id = id;
             FirstName = firstName;
@@ -32,7 +32,7 @@ namespace DDDSample1.Domain.Patients
             Email = email;
             PhoneNumber = phoneNumber;
             EmergencyContact = emergencyContact;
-            MedicalConditions = medicalConditions;
+            MedicalHistory = medicalHistory;
             AppointmentHistory = appointmentHistory;
             IsActive = isActive;
         }

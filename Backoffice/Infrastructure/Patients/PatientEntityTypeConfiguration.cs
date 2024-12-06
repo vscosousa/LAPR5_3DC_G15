@@ -15,6 +15,7 @@ namespace DDDSample1.Infrastructure.Patients
             builder.HasIndex(b => b.Email).IsUnique();
             builder.HasIndex(b => b.PhoneNumber).IsUnique();
             builder.HasIndex(b => b.MedicalRecordNumber).IsUnique();
+            builder.HasIndex(b => b.MedicalHistory).IsUnique();
             builder.Property(b => b.Id).HasConversion(new EntityIdValueConverter<PatientId>());
             builder.Property(b => b.FirstName).IsRequired();
             builder.Property(b => b.LastName).IsRequired();
@@ -25,7 +26,7 @@ namespace DDDSample1.Infrastructure.Patients
             builder.Property(b => b.Email).IsRequired();
             builder.Property(b => b.PhoneNumber).IsRequired();
             builder.Property(b => b.EmergencyContact).IsRequired();
-            builder.Property(b => b.MedicalConditions).IsRequired(false);
+            builder.Property(b => b.MedicalHistory).IsRequired();
             builder.Property(b => b.AppointmentHistory).IsRequired();
             builder.Property(b => b.IsActive).IsRequired();
         }

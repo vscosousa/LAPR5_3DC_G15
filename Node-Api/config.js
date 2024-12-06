@@ -1,5 +1,6 @@
 import dotenv from 'dotenv';
 import path from 'path';
+import patientMedicalHistory from './src/api/routes/patientMedicalHistory';
 
 // Set the NODE_ENV to 'development' by default
 process.env.NODE_ENV = process.env.NODE_ENV || 'development';
@@ -45,9 +46,21 @@ export default {
       name: "AppointmentController",
       path: "../controllers/appointmentController"
     },
+    patientMedicalHistory: {
+      name: "PatientMedicalHistoryController",
+      path: "../controllers/patientMedicalHistoryController"
+    },
     specialization: {
       name: "SpecializationController",
       path: "../controllers/specializationController"
+    },
+    allergy: {
+      name: "AllergyController",
+      path: "../controllers/allergyController"
+    },
+    medicalCondition: {
+      name: "MedicalConditionController",
+      path: "../controllers/medicalConditionController"
     }
   },
 
@@ -56,9 +69,21 @@ export default {
       name: "AppointmentRepo",
       path: "../repos/appointmentRepo"
     },
+    patientMedicalHistory: {
+      name: "PatientMedicalHistoryRepo",
+      path: "../repos/patientMedicalHistoryRepo"
+    },
     specialization: {
       name: "SpecializationRepo",
       path: "../repos/specializationRepo"
+    },
+    allergy: {
+      name: "AllergyRepo",
+      path: "../repos/allergyRepo"
+    },
+    medicalCondition: {
+      name: "MedicalConditionRepo",
+      path: "../repos/medicalConditionRepo"
     }
   },
 
@@ -67,9 +92,21 @@ export default {
       name: "AppointmentService",
       path: "../services/appointmentService"
     },
+    patientMedicalHistory: {
+      name: "PatientMedicalHistoryService",
+      path: "../services/patientMedicalHistoryService"
+    },
     specialization: {
       name: "SpecializationService",
       path: "../services/specializationService"
+    },
+    allergy: {
+      name: "AllergyService",
+      path: "../services/allergyService"
+    },
+    medicalCondition: {
+      name: "MedicalConditionService",
+      path: "../services/medicalConditionService"
     }
   },
 };

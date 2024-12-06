@@ -189,8 +189,9 @@ namespace DDDNetCore.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("MedicalConditions")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<string>("MedicalHistory")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("MedicalRecordNumber")
                         .IsRequired()
@@ -206,6 +207,9 @@ namespace DDDNetCore.Migrations
                         .IsUnique();
 
                     b.HasIndex("Id")
+                        .IsUnique();
+
+                    b.HasIndex("MedicalHistory")
                         .IsUnique();
 
                     b.HasIndex("MedicalRecordNumber")

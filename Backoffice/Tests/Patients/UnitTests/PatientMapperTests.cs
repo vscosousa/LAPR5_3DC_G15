@@ -29,8 +29,7 @@ namespace Projetos.LAPR5_3DC_G15.Tests.Mappers.Patients
                 GenderOptions.Male,
                 "john.doe@example.com",
                 "+1234567890",
-                "+0987654321",
-                "None"
+                "+0987654321"
             );
 
             // Act
@@ -47,7 +46,7 @@ namespace Projetos.LAPR5_3DC_G15.Tests.Mappers.Patients
             Assert.Equal(patient.Email, dto.Email);
             Assert.Equal(patient.PhoneNumber, dto.PhoneNumber);
             Assert.Equal(patient.EmergencyContact, dto.EmergencyContact);
-            Assert.Equal(patient.MedicalConditions, dto.MedicalConditions);
+            Assert.Equal(patient.MedicalHistory, dto.MedicalHistory);
             Assert.Equal(patient.AppointmentHistory.Select(date => date.ToString()).ToArray(), dto.AppointmentHistory);
             Assert.Equal(patient.IsActive, dto.IsActive);
         }
@@ -66,7 +65,8 @@ namespace Projetos.LAPR5_3DC_G15.Tests.Mappers.Patients
                 Email = "john.doe@example.com",
                 PhoneNumber = "+1234567890",
                 EmergencyContact = "+0987654321",
-                MedicalConditions = "None"
+                Allergies = new string[] { "None" },
+                MedicalConditions = new string[] { "None" }
             };
 
             // Act
@@ -81,7 +81,6 @@ namespace Projetos.LAPR5_3DC_G15.Tests.Mappers.Patients
             Assert.Equal(dto.Email, patient.Email);
             Assert.Equal(dto.PhoneNumber, patient.PhoneNumber);
             Assert.Equal(dto.EmergencyContact, patient.EmergencyContact);
-            Assert.Equal(dto.MedicalConditions, patient.MedicalConditions);
         }
 
         [Fact]
@@ -96,8 +95,7 @@ namespace Projetos.LAPR5_3DC_G15.Tests.Mappers.Patients
                 GenderOptions.Male,
                 "john.doe@example.com",
                 "+1234567890",
-                "+0987654321",
-                "None"
+                "+0987654321"
             );
 
             // Act
@@ -112,7 +110,6 @@ namespace Projetos.LAPR5_3DC_G15.Tests.Mappers.Patients
             Assert.Equal(patient.Email, dto.Email);
             Assert.Equal(patient.PhoneNumber, dto.PhoneNumber);
             Assert.Equal(patient.EmergencyContact, dto.EmergencyContact);
-            Assert.Equal(patient.MedicalConditions, dto.MedicalConditions);
         }
     }
 }

@@ -1,9 +1,3 @@
-/*
-  Author: Vasco Sousa (1221700)
-  Last update: 13/11/2024
-  Description: This file contains the styling for the update-patient component
-*/
-
 .update-container {
   display: flex;
   flex-direction: column;
@@ -103,6 +97,156 @@
 
         &:hover {
           background-color: #0056b3;
+        }
+      }
+
+      &.btn-select {
+        background-color: #17a2b8;
+        color: #fff;
+
+        &:hover {
+          background-color: #138496;
+        }
+      }
+
+      &.btn-save {
+        background-color: #28a745;
+        color: #fff;
+
+        &:hover {
+          background-color: #218838;
+        }
+      }
+    }
+
+    .multi-select-container {
+      margin-bottom: 20px;
+      width: 100%;
+
+      label {
+        font-weight: bold;
+        margin-bottom: 10px;
+        display: block;
+      }
+
+      .multi-select-list {
+        display: flex;
+        flex-wrap: wrap;
+        max-height: 200px;
+        overflow-y: auto;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        padding: 10px;
+        background-color: #fff;
+
+        .multi-select-item {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 5px;
+          width: 33.33%; /* Each item takes up 1/3 of the row */
+
+          span {
+            flex: 1;
+            text-align: left; /* Ensure text is aligned to the left */
+          }
+
+          input {
+            margin-left: 10px;
+          }
+        }
+      }
+    }
+  }
+
+  .modal {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(5px); /* Add blur effect to the backdrop */
+    transition: opacity 0.3s ease; /* Smooth transition for opening and closing */
+
+    .modal-content {
+      background-color: #fefefe;
+      margin: auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 80%;
+      max-width: 600px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      position: relative; /* Ensure the close button is positioned correctly */
+
+      .close {
+        color: #aaa;
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        font-size: 28px;
+        font-weight: bold;
+
+        &:hover,
+        &:focus {
+          color: #000;
+          text-decoration: none;
+          cursor: pointer;
+        }
+      }
+
+      h2 {
+        margin-top: 0;
+        text-align: center; /* Center the heading */
+      }
+
+      .multi-select-list {
+        display: flex;
+        flex-wrap: wrap;
+        max-height: 300px;
+        overflow-y: auto;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        padding: 10px;
+        background-color: #fff;
+
+        .multi-select-item {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 5px;
+          width: 100%; /* Each item takes up the full width */
+
+          span {
+            flex: 1;
+            text-align: left; /* Ensure text is aligned to the left */
+          }
+
+          input {
+            margin-left: 10px;
+          }
+        }
+      }
+
+      .btn-save {
+        display: block;
+        margin: 20px auto 0; /* Center the save button */
+        background-color: #28a745; /* Add color to the save button */
+        color: #fff;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+
+        &:hover {
+          background-color: #218838;
         }
       }
     }

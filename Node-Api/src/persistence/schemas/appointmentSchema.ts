@@ -23,12 +23,14 @@ const Appointment = new mongoose.Schema(
     dateTime: {
       type: Date,
       required: [true, 'Please enter date and time'],
+      index: true,
     },
 
     status: {
       type: String,
       enum: ['scheduled', 'completed', 'canceled'],
       required: [true, 'Please enter status'],
+      index: true,
     },
   },
   { timestamps: true },

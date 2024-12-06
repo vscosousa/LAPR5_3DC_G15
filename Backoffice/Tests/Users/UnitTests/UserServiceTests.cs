@@ -81,8 +81,7 @@ namespace DDDSample1.Tests.Users.UnitTests
                 GenderOptions.Male,
                 "joao.pereira@gmail.com",
                 "+123456789",
-                "+987654321",
-                "Medical Conditions"
+                "+987654321"
             );
         }
 

@@ -8,10 +8,9 @@ namespace DDDSample1.Domain.Patients
         public string Email { get; init; }
         public string PhoneNumber { get; init; }
         public string EmergencyContact { get; init; }
-        public string MedicalConditions { get; init; }
         public UpdatePatientDTO() { }
 
-        public UpdatePatientDTO(string firstName, string lastName, string fullName, string email, string phoneNumber, string emergencyContact, string medicalConditions)
+        public UpdatePatientDTO(string firstName, string lastName, string fullName, string email, string phoneNumber, string emergencyContact)
         {
             FirstName = firstName;
             LastName = lastName;
@@ -19,7 +18,6 @@ namespace DDDSample1.Domain.Patients
             Email = email;
             PhoneNumber = phoneNumber;
             EmergencyContact = emergencyContact;
-            MedicalConditions = medicalConditions;
         }
     }
 }

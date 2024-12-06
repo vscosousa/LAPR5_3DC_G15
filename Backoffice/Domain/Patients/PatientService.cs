@@ -10,6 +10,9 @@ using System.Security.Claims;
 using System.Text;
 using BCrypt.Net;
 using Microsoft.Extensions.Configuration;
+using System.Net.Http;
+using System.Net.Http.Json;
+using Newtonsoft.Json;
 
 namespace DDDSample1.Domain.Patients
 {
@@ -43,6 +46,15 @@ namespace DDDSample1.Domain.Patients
                 var list = await _repo.GetAllAsync();
                 patient.AssignMedicalRecordNumber(MedicalRecordNumberGenerator.GenerateMedicalRecordNumber(list.Count));
                 await _repo.AddAsync(patient);
+
+                var apiSuccess = await CallExternalApi(patient.MedicalRecordNumber, dto.Allergies, dto.MedicalConditions);
+                if (apiSuccess == null)
+                {
+                    throw new Exception("External API call failed.");
+                }
+                
+                patient.ChangeMedicalHistory(apiSuccess);
+
                 await _unitOfWork.CommitAsync();
                 Console.WriteLine("Transaction committed successfully");
 
@@ -58,6 +70,29 @@ namespace DDDSample1.Domain.Patients
                     Console.WriteLine($"Inner exception: {ex.InnerException.Message}");
                 }
                 throw;
+            }
+        }
+
+        private async Task<string> CallExternalApi(string patientMedicalRecordNumber, string[] allergies, string[] medicalConditions)
+        {
+            MedicalHistoryDTO medicalHistory = new MedicalHistoryDTO(patientMedicalRecordNumber, allergies, medicalConditions);
+            using (var httpClient = new HttpClient())
+            {
+                var response = await httpClient.PostAsJsonAsync("http://localhost:4000/api/patientsMedicalHistory/create", medicalHistory);
+                if (response.IsSuccessStatusCode)
+                {
+                    var responseContent = await response.Content.ReadAsStringAsync();
+                    var responseObject = JsonConvert.DeserializeObject<dynamic>(responseContent);
+                    return responseObject.id;
+                }
+                else
+                {
+                    var responseContent = await response.Content.ReadAsStringAsync();
+                    Console.WriteLine($"API call failed with status code: {response.StatusCode}");
+                    Console.WriteLine($"Response content: {responseContent}");
+                    Console.WriteLine($"Request content: {JsonConvert.SerializeObject(medicalHistory)}");
+                    return null;
+                }
             }
         }
 
@@ -98,7 +133,6 @@ namespace DDDSample1.Domain.Patients
                 { "Email", () => { if (!string.IsNullOrEmpty(dto.Email) && patient.Email != dto.Email) { patient.ChangeEmail(dto.Email); updatedFields.Add("Email"); } } },
                 { "Phone Number", () => { if (!string.IsNullOrEmpty(dto.PhoneNumber) && patient.PhoneNumber != dto.PhoneNumber) { patient.ChangePhoneNumber(dto.PhoneNumber); updatedFields.Add("Phone Number"); } } },
                 { "Emergency Contact", () => { if (!string.IsNullOrEmpty(dto.EmergencyContact) && patient.EmergencyContact != dto.EmergencyContact) { patient.ChangeEmergencyContact(dto.EmergencyContact); updatedFields.Add("Emergency Contact"); } } },
-                { "Medical Conditions", () => { if (!string.IsNullOrEmpty(dto.MedicalConditions) && patient.MedicalConditions != dto.MedicalConditions) { patient.ChangeMedicalConditions(dto.MedicalConditions); updatedFields.Add("Medical Conditions"); } } }
             };
 
             foreach (var action in updateActions.Values)
@@ -145,7 +179,6 @@ namespace DDDSample1.Domain.Patients
                 { "Email", patientToUpdate.Email },
                 { "PhoneNumber", patientToUpdate.PhoneNumber },
                 { "EmergencyContact", patientToUpdate.EmergencyContact },
-                { "MedicalConditions", patientToUpdate.MedicalConditions }
             };
 
             UpdatePatientFields(patientToUpdate, dto);

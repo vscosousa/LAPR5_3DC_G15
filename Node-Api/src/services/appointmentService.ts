@@ -4,7 +4,7 @@ import IAppointmentService from './IServices/IAppointmentService';
 import IAppointmentRepo from './IRepos/IAppointmentRepo';
 import { Appointment } from '../domain/appointment';
 import { AppointmentMap } from '../mappers/AppointmentMap';
-import { DateTime } from '../domain/DateTime';
+import { DateTime } from '../domain/dateTime';
 import config from '../../config';
 import { IAppointmentDTO } from '../dto/IAppoinmentDTO';
 import { AppointmentStatus } from '../domain/appointmentStatus';
@@ -18,18 +18,18 @@ export default class AppointmentService implements IAppointmentService {
 
   public async createAppointment(appointmentDTO: IAppointmentDTO): Promise<Result<IAppointmentDTO>> {
     try {
-      this.logger.info('Creating appointment with DTO:', appointmentDTO); // Add logging
+      this.logger.info('Creating appointment with DTO:', appointmentDTO);
 
       const dateTimeOrError = DateTime.create(appointmentDTO.dateTime.toISOString());
       const statusOrError = AppointmentStatus.create(appointmentDTO.status);
 
       if (dateTimeOrError instanceof Error) {
-        this.logger.error('Error creating DateTime:', dateTimeOrError.message); // Add logging
+        this.logger.error('Error creating DateTime:', dateTimeOrError.message);
         return Result.fail<IAppointmentDTO>(dateTimeOrError.message);
       }
 
       if (statusOrError instanceof Error) {
-        this.logger.error('Error creating AppointmentStatus:', statusOrError.message); // Add logging
+        this.logger.error('Error creating AppointmentStatus:', statusOrError.message);
         return Result.fail<IAppointmentDTO>(statusOrError.message);
       }
 
@@ -42,18 +42,18 @@ export default class AppointmentService implements IAppointmentService {
       });
 
       if (appointmentOrError.isFailure) {
-        this.logger.error('Error creating Appointment:', appointmentOrError.errorValue()); // Add logging
+        this.logger.error('Error creating Appointment:', appointmentOrError.errorValue()); 
         return Result.fail<IAppointmentDTO>(appointmentOrError.errorValue());
       }
 
       const appointment = appointmentOrError.getValue();
-      this.logger.info('Saving appointment:', appointment); // Add logging
+      this.logger.info('Saving appointment:', appointment);
       await this.appointmentRepo.save(appointment);
 
       const appointmentDTOResult = AppointmentMap.toDTO(appointment);
       return Result.ok<IAppointmentDTO>(appointmentDTOResult);
     } catch (e) {
-      this.logger.error('Error in createAppointment:', e); // Add logging
+      this.logger.error('Error in createAppointment:', e);
       throw e;
     }
   }

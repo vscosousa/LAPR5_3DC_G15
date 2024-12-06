@@ -4,8 +4,8 @@ import { UniqueEntityID } from "../core/domain/UniqueEntityID";
 import { Result } from "../core/logic/Result";
 import { Guard } from "../core/logic/Guard";
 import { AppointmentId } from "./appointmentId";
-import { DateTime } from './DateTime';
 import { IAppointmentDTO } from '../dto/IAppoinmentDTO';
+import { DateTime } from './DateTime';
 
 interface AppointmentProps {
   requestId: string;

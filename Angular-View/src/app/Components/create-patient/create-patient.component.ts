@@ -1,31 +1,34 @@
 import { PanelService } from './../../Services/panel.service';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { SidebarComponent } from '../sidebar/sidebar.component';
 import { PatientService } from '../../Services/patient.service';
 import { Router } from '@angular/router';
 import { RouterModule } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { AllergyService } from '../../Services/allergy.service';
+import { MedicalConditionService } from '../../Services/medical-condition.service';
 
-/**
- * @class CreatePatientComponent
- * @description TS file for the create-patient component.
- * @implements OnInit
- * @vscosousa - 12/11/2024
- */
 @Component({
   selector: 'app-create-patient',
   standalone: true,
-  imports: [FormsModule, SidebarComponent, RouterModule],
+  imports: [FormsModule, SidebarComponent, RouterModule, CommonModule],
   templateUrl: './create-patient.component.html',
   styleUrl: './create-patient.component.scss'
 })
-export class CreatePatientComponent {
-  /**
-   * Object to hold the new patient details.
-   * @property {Object} newPatient
-   * @vscosousa - 12/11/2024
-   */
-  newPatient = {
+export class CreatePatientComponent implements OnInit {
+  newPatient: {
+    firstName: string;
+    lastName: string;
+    fullName: string;
+    dateOfBirth: string;
+    genderOptions: string;
+    email: string;
+    phoneNumber: string;
+    emergencyContact: string;
+    allergies: string[];
+    medicalConditions: string[];
+  } = {
     firstName: '',
     lastName: '',
     fullName: '',
@@ -34,27 +37,31 @@ export class CreatePatientComponent {
     email: '',
     phoneNumber: '',
     emergencyContact: '',
-    medicalConditions: ''
+    allergies: [],
+    medicalConditions: []
   };
 
-  /**
-   * Service to handle patient-related operations.
-   * @constructor
-   * @param {PatientService} patientService
-   * @vscosousa - 12/11/2024
-   */
-  constructor(private patientService: PatientService, private router: Router, private panelService: PanelService) { }
+  allergies: { id: string; allergyName: string; }[] = [];
+  medicalConditions: { id: string; medicalConditionName: string; }[] = [];
+
+  showAllergiesModal = false;
+  showMedicalConditionsModal = false;
+
+  constructor(
+    private patientService: PatientService,
+    private router: Router,
+    private panelService: PanelService,
+    private allergyService: AllergyService,
+    private medicalConditionService: MedicalConditionService
+  ) {}
 
   ngOnInit() {
+    console.log('CreatePatientComponent initialized');
+    this.fetchAllergies();
+    this.fetchMedicalConditions();
     this.panelService.setPanelId('panel-admin');
   }
 
-  /**
-   * Handles the form submission to create a new patient.
-   * @method createPatient
-   * @param {Event} event - The form submission event.
-   * @vscosousa - 12/11/2024
-   */
   createPatient(event: Event) {
     event.preventDefault();
     this.patientService.createPatient(this.newPatient).subscribe(
@@ -71,11 +78,76 @@ export class CreatePatientComponent {
     );
   }
 
-  /**
-   * Clears the form fields.
-   * @method clearForm
-   * @vscosousa - 12/11/2024
-   */
+  fetchAllergies(): void {
+    this.allergyService.getAllergies().subscribe(
+      (response: any) => {
+        if (response.isSuccess && response._value) {
+          this.allergies = response._value;
+          console.log('Allergies fetched:', this.allergies);
+        } else {
+          console.error('Failed to fetch allergies:', response.error);
+        }
+      },
+      error => {
+        console.error('Error fetching allergies', error);
+      }
+    );
+  }
+
+  fetchMedicalConditions(): void {
+    this.medicalConditionService.getMedicalConditions().subscribe(
+      (response: any) => {
+        if (response.isSuccess && response._value) {
+          this.medicalConditions = response._value;
+          console.log('Medical Conditions fetched:', this.medicalConditions);
+        } else {
+          console.error('Failed to fetch medical conditions:', response.error);
+        }
+      },
+      error => {
+        console.error('Error fetching medical conditions', error);
+      }
+    );
+  }
+
+  onAllergyChange(event: any, allergyId: string) {
+    if (event.target.checked) {
+      this.newPatient.allergies.push(allergyId);
+    } else {
+      const index = this.newPatient.allergies.indexOf(allergyId);
+      if (index > -1) {
+        this.newPatient.allergies.splice(index, 1);
+      }
+    }
+  }
+
+  onMedicalConditionChange(event: any, medicalConditionId: string) {
+    if (event.target.checked) {
+      this.newPatient.medicalConditions.push(medicalConditionId);
+    } else {
+      const index = this.newPatient.medicalConditions.indexOf(medicalConditionId);
+      if (index > -1) {
+        this.newPatient.medicalConditions.splice(index, 1);
+      }
+    }
+  }
+
+  openAllergiesModal() {
+    this.showAllergiesModal = true;
+  }
+
+  closeAllergiesModal() {
+    this.showAllergiesModal = false;
+  }
+
+  openMedicalConditionsModal() {
+    this.showMedicalConditionsModal = true;
+  }
+
+  closeMedicalConditionsModal() {
+    this.showMedicalConditionsModal = false;
+  }
+
   clearForm() {
     this.newPatient = {
       firstName: '',
@@ -86,7 +158,8 @@ export class CreatePatientComponent {
       email: '',
       phoneNumber: '',
       emergencyContact: '',
-      medicalConditions: ''
+      allergies: [],
+      medicalConditions: []
     };
   }
 }

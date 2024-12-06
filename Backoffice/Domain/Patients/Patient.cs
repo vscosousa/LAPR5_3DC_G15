@@ -20,14 +20,14 @@ namespace DDDSample1.Domain.Patients
         private string _email;
         private string _phoneNumber;
         private string _emergencyContact;
-        private string _medicalConditions;
+        private string _medicalHistory;
         private DateTime[] _appointmentHistory;
         private bool _isActive;
 
         // Parameterless constructor for EF Core
         private Patient() { }
 
-        public Patient(string firstName, string lastName, string fullName, DateOnly dateOfBirth, GenderOptions gender, string email, string phoneNumber, string emergencyContact, string medicalConditions)
+        public Patient(string firstName, string lastName, string fullName, DateOnly dateOfBirth, GenderOptions gender, string email, string phoneNumber, string emergencyContact)
         {
             if (!NameStartsWithCapital(firstName) || !NameStartsWithCapital(lastName) || !NameStartsWithCapital(fullName))
                 throw new BusinessRuleValidationException("Names must start with a capital letter.");
@@ -60,7 +60,7 @@ namespace DDDSample1.Domain.Patients
             _email = email;
             _phoneNumber = phoneNumber;
             _emergencyContact = emergencyContact;
-            _medicalConditions = medicalConditions;
+            _medicalHistory = "";
             _appointmentHistory = Array.Empty<DateTime>();
             _isActive = true;
         }
@@ -74,13 +74,13 @@ namespace DDDSample1.Domain.Patients
         public string Email => _email;
         public string PhoneNumber => _phoneNumber;
         public string EmergencyContact => _emergencyContact;
-        public string MedicalConditions => _medicalConditions;
+        public string MedicalHistory => _medicalHistory;
         public DateTime[] AppointmentHistory => _appointmentHistory;
         public bool IsActive => _isActive;
         internal void ChangeFirstName(string firstName) => _firstName = firstName;
         internal void ChangeLastName(string lastName) => _lastName = lastName;
         internal void ChangeFullName(string fullName) => _fullName = fullName;
-        internal void ChangeMedicalConditions(string medicalConditions) => _medicalConditions = medicalConditions;
+        internal void ChangeMedicalHistory(string medicalHistory) => _medicalHistory = medicalHistory;
         internal void ChangeEmail(string email)
         {
             if (!Regex.IsMatch(email, @"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"))

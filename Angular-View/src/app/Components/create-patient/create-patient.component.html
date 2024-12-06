@@ -8,7 +8,12 @@ Description: This component allows users to create a new patient by filling out 
   <app-sidebar></app-sidebar>
   <div class="screens-container">
     <div class="screen">
-      <button routerLink="/manage-patients" routerLinkActive="router-link-active"  type="button" class="btn btn-back">
+      <button
+        routerLink="/manage-patients"
+        routerLinkActive="router-link-active"
+        type="button"
+        class="btn btn-back"
+      >
         Go Back
       </button>
       <h2 class="create-title" style="text-align: center">Create Patient</h2>
@@ -43,7 +48,11 @@ Description: This component allows users to create a new patient by filling out 
             pattern="\d{4}-\d{2}-\d{2}"
             required
           />
-          <select [(ngModel)]="newPatient.genderOptions" name="genderOptions" required>
+          <select
+            [(ngModel)]="newPatient.genderOptions"
+            name="genderOptions"
+            required
+          >
             <option value="">Select Gender</option>
             <option value="1">Male</option>
             <option value="0">Female</option>
@@ -69,12 +78,8 @@ Description: This component allows users to create a new patient by filling out 
             name="emergencyContact"
             required
           />
-          <textarea
-            placeholder="Medical Conditions"
-            [(ngModel)]="newPatient.medicalConditions"
-            name="medicalConditions"
-          ></textarea>
-
+          <button type="button" class="btn btn-select" (click)="openAllergiesModal()">Select Allergies</button>
+          <button type="button" class="btn btn-select" (click)="openMedicalConditionsModal()">Select Medical Conditions</button>
           <!-- Buttons -->
           <button type="submit" class="btn btn-create">Create Patient</button>
           <button type="button" class="btn btn-clear" (click)="clearForm()">
@@ -82,6 +87,45 @@ Description: This component allows users to create a new patient by filling out 
           </button>
         </form>
       </div>
+    </div>
+  </div>
+  <!-- Allergies Modal -->
+  <div class="modal" *ngIf="showAllergiesModal">
+    <div class="modal-content">
+      <span class="close" (click)="closeAllergiesModal()">&times;</span>
+      <h2>Select Allergies</h2>
+      <div class="multi-select-list">
+        <div *ngFor="let allergy of allergies" class="multi-select-item">
+          <span>{{ allergy.allergyName }}</span>
+          <input
+            type="checkbox"
+            [value]="allergy.id"
+            [checked]="newPatient.allergies.includes(allergy.id)"
+            (change)="onAllergyChange($event, allergy.id)"
+          />
+        </div>
+      </div>
+      <button type="button" class="btn btn-save" (click)="closeAllergiesModal()">Save</button>
+    </div>
+  </div>
+
+  <!-- Medical Conditions Modal -->
+  <div class="modal" *ngIf="showMedicalConditionsModal">
+    <div class="modal-content">
+      <span class="close" (click)="closeMedicalConditionsModal()">&times;</span>
+      <h2>Select Medical Conditions</h2>
+      <div class="multi-select-list">
+        <div *ngFor="let medicalCondition of medicalConditions" class="multi-select-item">
+          <span>{{ medicalCondition.medicalConditionName }}</span>
+          <input
+            type="checkbox"
+            [value]="medicalCondition.id"
+            [checked]="newPatient.medicalConditions.includes(medicalCondition.id)"
+            (change)="onMedicalConditionChange($event, medicalCondition.id)"
+          />
+        </div>
+      </div>
+      <button type="button" class="btn btn-save" (click)="closeMedicalConditionsModal()">Save</button>
     </div>
   </div>
 </div>

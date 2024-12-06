@@ -22,7 +22,7 @@ export class ManagePatientsComponent {
 
   filters: any = {};
   patients: { medicalRecordNumber: string; fullName: string; }[] = [];
-  selectedPatient: { medicalRecordNumber: string; fullName: string; dateOfBirth: string; email: string; emergencyContact: string; firstName: string; gender: number; id: string; isActive: boolean; lastName: string; medicalConditions: string; phoneNumber: string; appointmentHistory: any[] } | undefined;
+  selectedPatient: { medicalRecordNumber: string; fullName: string; dateOfBirth: string; email: string; emergencyContact: string; firstName: string; gender: number; id: string; isActive: boolean; lastName: string; medicalHistory: string; phoneNumber: string; appointmentHistory: any[] } | undefined;
 
   /**
    * Service to handle patient-related operations.
