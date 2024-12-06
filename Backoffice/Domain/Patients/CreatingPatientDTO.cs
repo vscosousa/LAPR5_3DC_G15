@@ -11,12 +11,12 @@ namespace DDDSample1.Domain.Patients
         public string PhoneNumber { get; init; }
         public string EmergencyContact { get; init; }
         public string[] Allergies { get; init; }
-        public string[] MedicalConditions { get; init; }
+        public string[] MedicalHistory { get; init; }
 
 
         public CreatingPatientDTO() { }
 
-        public CreatingPatientDTO(string firstName, string lastName, string fullName, string dateOfBirth, GenderOptions gender, string email, string phoneNumber, string emergencyContact, string[] allergies, string[] medicalConditions)
+        public CreatingPatientDTO(string firstName, string lastName, string fullName, string dateOfBirth, GenderOptions gender, string email, string phoneNumber, string emergencyContact, string[] allergies, string[] medicalHistory)
         {
             FirstName = firstName;
             LastName = lastName;
@@ -27,7 +27,7 @@ namespace DDDSample1.Domain.Patients
             PhoneNumber = phoneNumber;
             EmergencyContact = emergencyContact;
             Allergies = allergies;
-            MedicalConditions = medicalConditions;
+            MedicalHistory = medicalHistory;
         }
     }
 }
