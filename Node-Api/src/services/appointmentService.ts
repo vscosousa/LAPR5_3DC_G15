@@ -4,7 +4,7 @@ import IAppointmentService from './IServices/IAppointmentService';
 import IAppointmentRepo from './IRepos/IAppointmentRepo';
 import { Appointment } from '../domain/appointment';
 import { AppointmentMap } from '../mappers/AppointmentMap';
-import { DateTime } from '../domain/dateTime';
+import { DateTime } from '../domain/fix';
 import config from '../../config';
 import { IAppointmentDTO } from '../dto/IAppoinmentDTO';
 import { AppointmentStatus } from '../domain/appointmentStatus';

@@ -77,7 +77,18 @@ describe('PatientService', () => {
   });
 
   it('should call createPatient and return the created patient', () => {
-    const newPatient = { firstName: 'Test', lastName: 'Patient', fullName: 'Test Patient', dateOfBirth: '1990-01-01', genderOptions: '1', email: 'test@example.com', phoneNumber: '+1234567890', emergencyContact: '+234567', medicalConditions: 'None' };
+    const newPatient = {
+      firstName: 'Test',
+      lastName: 'Patient',
+      fullName: 'Test Patient',
+      dateOfBirth: '1990-01-01',
+      genderOptions: '1',
+      email: 'test@example.com',
+      phoneNumber: '+1234567890',
+      emergencyContact: '+234567',
+      allergies: [], // Add this line
+      medicalConditions: [] // Change this line to an array
+    };
     const mockResponse = { id: '1', ...newPatient };
 
     service.createPatient(newPatient).subscribe(response => {
@@ -91,7 +102,16 @@ describe('PatientService', () => {
 
   it('should call updatePatient and return the updated patient', () => {
     const medicalRecordNumber = '202411000001';
-    const updatedPatient = { firstName: 'Updated', lastName: 'Patient', fullName: 'Updated Patient', email: 'updated@example.com', phoneNumber: '+1234567890', emergencyContact: '+765432', medicalConditions: 'None' };
+    const updatedPatient = {
+      firstName: 'Updated',
+      lastName: 'Patient',
+      fullName: 'Updated Patient',
+      email: 'updated@example.com',
+      phoneNumber: '+1234567890',
+      emergencyContact: '+765432',
+      allergies: [], // Add this line
+      medicalConditions: [] // Change this line to an array
+    };
     const mockResponse = { id: '1', ...updatedPatient };
 
     service.updatePatient(medicalRecordNumber, updatedPatient).subscribe(response => {

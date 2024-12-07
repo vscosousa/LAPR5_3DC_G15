@@ -52,7 +52,8 @@ describe('CreatePatientComponent', () => {
       email: 'test@email.com',
       phoneNumber: '+1234567890',
       emergencyContact: '+1234567890',
-      medicalConditions: 'None'
+      allergies: [],
+      medicalConditions: []
     };
 
     component.newPatient = patientData;
@@ -78,7 +79,8 @@ describe('CreatePatientComponent', () => {
       email: 'test@email.com',
       phoneNumber: '+1234567890',
       emergencyContact: '+1234567890',
-      medicalConditions: 'None'
+      allergies: [],
+      medicalConditions: ['None']
     };
 
     component.newPatient = patientData;
@@ -107,7 +109,8 @@ describe('CreatePatientComponent', () => {
       email: 'test@email.com',
       phoneNumber: '+1234567890',
       emergencyContact: '+1234567890',
-      medicalConditions: 'None'
+      allergies: ['None'],
+      medicalConditions: ['None']
     };
 
     component.clearForm();
@@ -121,7 +124,8 @@ describe('CreatePatientComponent', () => {
       email: '',
       phoneNumber: '',
       emergencyContact: '',
-      medicalConditions: ''
+      allergies: [],
+      medicalConditions: []
     });
   });
 });
