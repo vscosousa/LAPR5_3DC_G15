@@ -18,7 +18,13 @@ export default (app: Router) => {
                 medicalConditionName: Joi.string().required()
             }),
         }),
-        (req, res, next) => ctrl.createMedicalCondition(req, res, next)
+        async (req: any, res: any, next: any) => {
+            try {
+                await ctrl.createMedicalCondition(req, res, next);
+            } catch (error) {
+                next(error);
+            }
+        }
     );
 
     route.put(
@@ -31,7 +37,13 @@ export default (app: Router) => {
                 id: Joi.string().required(),
             }),
         }),
-        (req: any, res: any, next: any) => ctrl.updateMedicalCondition(req, res, next)
+        async (req: any, res: any, next: any) => {
+            try {
+                await ctrl.updateMedicalCondition(req, res, next);
+            } catch (error) {
+                next(error);
+            }
+        }
     );
 
     route.delete(
@@ -41,11 +53,23 @@ export default (app: Router) => {
                 id: Joi.string().required(), // Validate the medicalCondition ID
             }),
         }),
-        (req, res, next) => ctrl.deleteMedicalCondition(req, res, next)
+        async (req, res, next) => {
+            try {
+                await ctrl.deleteMedicalCondition(req, res, next);
+            } catch (error) {
+                next(error);
+            }
+        }
     );
 
     route.get(
         '/',
-        (req, res, next) => ctrl.listMedicalConditions(req, res, next)
+        async (req: any, res: any, next: any) => {
+            try {
+                await ctrl.listMedicalConditions(req, res, next);
+            } catch (error) {
+                next(error);
+            }
+        }
     );
 };

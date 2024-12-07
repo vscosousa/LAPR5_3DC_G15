@@ -11,7 +11,7 @@ import config from '../../../config';
  * GET https://my-bulletproof-api.com/stats?apiKey=${JWT}
  * Luckily this API follow _common sense_ ergo a _good design_ and don't allow that ugly stuff
  */
-const getTokenFromHeader = req => {
+const getTokenFromHeader = (req: { headers: { authorization: string; }; }) => {
   /**
    * @TODO Edge and Internet Explorer do some weird things with the headers
    * So I believe that this should handle more 'edge' cases ;)

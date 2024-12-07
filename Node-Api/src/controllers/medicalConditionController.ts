@@ -5,6 +5,7 @@ import config from "../../config";
 import IMedicalConditionController from './IControllers/IMedicalConditionController';
 import { Result } from "../core/logic/Result";
 import { IMedicalConditionDTO } from '../dto/IMedicalConditionDTO';
+import IMedicalConditionService from '../services/IServices/IMedicalConditionService';
 
 
 @Service()

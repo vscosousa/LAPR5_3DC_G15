@@ -4,7 +4,7 @@
   "description": "Bulletproof node.js",
   "main": "src/app.ts",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && echo Build succeeded!",
     "heroku-postbuild": "npm run build",
     "start": "nodemon",
     "inspect": "nodemon --inspect src/app.ts",
@@ -33,7 +33,6 @@
   "dependencies": {
     "acorn": "^8.14.0",
     "acorn-jsx": "^5.3.2",
-    "agenda": "^5.0.0",
     "agendash": "^4.0.0",
     "argon2": "^0.41.1",
     "bcrypt": "^5.1.1",
@@ -69,7 +68,6 @@
     "winston": "^3.17.0"
   },
   "devDependencies": {
-    "@types/agenda": "^4.1.4",
     "@types/axios": "^0.9.36",
     "@types/express": "^5.0.0",
     "@types/jest": "^29.5.14",
@@ -77,6 +75,7 @@
     "@types/mocha": "^10.0.10",
     "@types/mongoose": "^5.11.97",
     "@types/node": "^22.10.0",
+    "@types/sinon": "^17.0.3",
     "@typescript-eslint/eslint-plugin": "^8.16.0",
     "@typescript-eslint/parser": "^8.16.0",
     "eslint": "^9.15.0",

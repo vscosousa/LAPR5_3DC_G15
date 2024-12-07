@@ -1,8 +1,6 @@
 import { Mapper } from "../core/infra/Mapper";
 import { Appointment } from "../domain/appointment";
 import { UniqueEntityID } from "../core/domain/UniqueEntityID";
-import { DateTime } from "../domain/dateTime";
-import { AppointmentStatus } from "../domain/appointmentStatus";
 import { IAppointmentDTO } from "../dto/IAppoinmentDTO";
 import { IAppointmentPersistence } from "../dataschema/IAppointmentPersistence";
 import { Document, Model } from "mongoose";

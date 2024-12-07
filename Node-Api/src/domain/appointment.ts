@@ -5,7 +5,7 @@ import { Result } from "../core/logic/Result";
 import { Guard } from "../core/logic/Guard";
 import { AppointmentId } from "./appointmentId";
 import { IAppointmentDTO } from '../dto/IAppoinmentDTO';
-import { DateTime } from './DateTime';
+import { DateTime } from './dateTime';
 
 interface AppointmentProps {
   requestId: string;

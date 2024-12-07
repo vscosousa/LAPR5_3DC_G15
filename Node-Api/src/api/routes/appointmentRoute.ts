@@ -21,7 +21,13 @@ export default (app: Router) => {
         status: Joi.string().valid('scheduled', 'completed', 'canceled').required()
       }),
     }),
-    (req, res, next) => ctrl.createAppointment(req, res, next)
+    async (req: any, res: any, next: any) => {
+      try {
+        await ctrl.createAppointment(req, res, next);
+      } catch (error) {
+        next(error);
+      }
+    }
   );
 
   route.put(
@@ -37,6 +43,12 @@ export default (app: Router) => {
         id: Joi.string().required(),
       }),
     }),
-    (req, res, next) => ctrl.updateAppointment(req, res, next)
+    async (req: any, res: any, next: any) => {
+      try {
+        await ctrl.updateAppointment(req, res, next);
+      } catch (error) {
+        next(error);
+      }
+    }
   );
 };

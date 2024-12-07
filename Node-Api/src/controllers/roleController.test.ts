@@ -4,8 +4,8 @@ import { Response, Request, NextFunction } from 'express';
 import { Container } from 'typedi';
 import { Result } from '../core/logic/Result';
 import IAppointmentService from "../services/IServices/IAppointmentService";
-import AppointmentController from './AppointmentController';
 import { IAppointmentDTO } from '../dto/IAppoinmentDTO';
+import AppointmentController from './appointmentController';
 
 describe('appointment controller', function () {
     let sandbox: sinon.SinonSandbox;

@@ -4,5 +4,7 @@ import config from '../../config';
 
 export default async (): Promise<Db> => {
   const connection = await mongoose.connect(config.databaseURL);
-  return connection.connection.db;
+  const db = connection.connection.db as any;
+  db.timeoutMS = config.timeoutMS || 30000;
+  return db;
 };

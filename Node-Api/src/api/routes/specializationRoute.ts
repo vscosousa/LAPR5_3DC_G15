@@ -18,7 +18,13 @@ export default (app: Router) => {
                 specializationType: Joi.string().required()
             }),
         }),
-        (req, res, next) => ctrl.createSpecialization(req, res, next)
+        async (req, res, next) => {
+            try {
+                await ctrl.createSpecialization(req, res, next);
+            } catch (error) {
+                next(error);
+            }
+        }
     );
 
     route.put(
@@ -31,7 +37,13 @@ export default (app: Router) => {
                 id: Joi.string().required(),
             }),
         }),
-        (req: any, res: any, next: any) => ctrl.updateSpecialization(req, res, next)
+        async (req, res, next) => {
+            try {
+                await ctrl.updateSpecialization(req, res, next);
+            } catch (error) {
+                next(error);
+            }
+        }
     );
 
     route.delete(
@@ -39,14 +51,25 @@ export default (app: Router) => {
         celebrate({
             params: Joi.object({
                 id: Joi.string().required(), 
-                
             }),
         }),
-        (req, res, next) => ctrl.deleteSpecialization(req, res, next)
+        async (req, res, next) => {
+            try {
+                await ctrl.deleteSpecialization(req, res, next);
+            } catch (error) {
+                next(error);
+            }
+        }
     );
 
     route.get(
         '/',
-        (req, res, next) => ctrl.listSpecializations(req, res, next)
+        async (req, res, next) => {
+            try {
+                await ctrl.listSpecializations(req, res, next);
+            } catch (error) {
+                next(error);
+            }
+        }
     );
 };

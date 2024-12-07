@@ -15,7 +15,7 @@ const logger = winston.createLogger({
   ],
 });
 
-const logRequestBody = (req, res, next) => {
+const logRequestBody = (req: { body: any; }, res: any, next: () => void) => {
   logger.info('Request body:', { body: req.body });
   next();
 };
@@ -35,10 +35,14 @@ export default (app: Router) => {
         allergies: Joi.array().items(Joi.string()).optional(),
       }),
     }),
-    (req, res, next) => {
-      logger.info('POST /patientsMedicalHistory/create called', { body: req.body });
-      console.log('Request received at /patientsMedicalHistory/create');
-      ctrl.createPatientMedicalHistory(req, res, next);
+    async (req, res, next) => {
+      try {
+        logger.info('POST /patientsMedicalHistory/create called', { body: req.body });
+        console.log('Request received at /patientsMedicalHistory/create');
+        await ctrl.createPatientMedicalHistory(req, res, next);
+      } catch (error) {
+        next(error);
+      }
     }
   );
 
@@ -54,9 +58,13 @@ export default (app: Router) => {
         patientMedicalRecordNumber: Joi.string().required(),
       }),
     }),
-    (req, res, next) => {
-      logger.info('PUT /patientsMedicalHistory/update/:id called', { body: req.body, params: req.params });
-      ctrl.updatePatientMedicalHistory(req, res, next);
+    async (req, res, next) => {
+      try {
+        logger.info('PUT /patientsMedicalHistory/update/:id called', { body: req.body, params: req.params });
+        await ctrl.updatePatientMedicalHistory(req, res, next);
+      } catch (error) {
+        next(error);
+      }
     }
   );
 };

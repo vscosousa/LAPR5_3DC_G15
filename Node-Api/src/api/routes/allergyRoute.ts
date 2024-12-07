@@ -18,7 +18,13 @@ export default (app: Router) => {
                 allergyName: Joi.string().required()
             }),
         }),
-        (req, res, next) => ctrl.createAllergy(req, res, next)
+        async (req: any, res: any, next: any) => {
+            try {
+                await ctrl.createAllergy(req, res, next);
+            } catch (error) {
+                next(error);
+            }
+        }
     );
 
     route.put(
@@ -31,7 +37,13 @@ export default (app: Router) => {
                 id: Joi.string().required(),
             }),
         }),
-        (req: any, res: any, next: any) => ctrl.updateAllergy(req, res, next)
+        async (req: any, res: any, next: any) => {
+            try {
+                await ctrl.updateAllergy(req, res, next);
+            } catch (error) {
+                next(error);
+            }
+        }
     );
 
     route.delete(
@@ -41,11 +53,23 @@ export default (app: Router) => {
                 id: Joi.string().required(), // Validate the allergy ID
             }),
         }),
-        (req, res, next) => ctrl.deleteAllergy(req, res, next)
+        async (req: any, res: any, next: any) => {
+            try {
+                await ctrl.deleteAllergy(req, res, next);
+            } catch (error) {
+                next(error);
+            }
+        }
     );
 
     route.get(
         '/',
-        (req, res, next) => ctrl.listAllergys(req, res, next)
+        async (req: any, res: any, next: any) => {
+            try {
+                await ctrl.listAllergies(req, res, next);
+            } catch (error) {
+                next(error);
+            }
+        }
     );
 };
