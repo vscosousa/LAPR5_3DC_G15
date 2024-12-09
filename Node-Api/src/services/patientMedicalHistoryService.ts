@@ -12,7 +12,7 @@ export default class PatientMedicalHistoryService implements IPatientMedicalHist
   constructor(
     @Inject(config.repos.patientMedicalHistory.name) private patientMedicalHistoryRepo: IPatientMedicalHistoryRepo,
     @Inject('logger') private logger,
-  ) {}
+  ) { }
 
   public async createPatientMedicalHistory(patientMedicalHistoryDTO: IPatientMedicalHistoryDTO): Promise<Result<IPatientMedicalHistoryDTO>> {
     try {
@@ -44,23 +44,52 @@ export default class PatientMedicalHistoryService implements IPatientMedicalHist
 
   public async updatePatientMedicalHistory(patientMedicalRecordNumber: string, patientMedicalHistoryDTO: Partial<IPatientMedicalHistoryDTO>): Promise<Result<IPatientMedicalHistoryDTO>> {
     try {
+      this.logger.info('Updating patientMedicalHistory with record number:', patientMedicalRecordNumber);
+
       const patientMedicalHistory = await this.patientMedicalHistoryRepo.findByPatientMedicalRecordNumber(patientMedicalRecordNumber);
 
       if (!patientMedicalHistory) {
+        this.logger.warn('PatientMedicalHistory not found for record number:', patientMedicalRecordNumber);
         return Result.fail<IPatientMedicalHistoryDTO>("PatientMedicalHistory not found");
       }
 
-      if (patientMedicalHistoryDTO.patientMedicalRecordNumber) patientMedicalHistory.props.patientMedicalRecordNumber = patientMedicalHistoryDTO.patientMedicalRecordNumber;
-      if (patientMedicalHistoryDTO.medicalConditions) patientMedicalHistory.props.medicalConditions = patientMedicalHistoryDTO.medicalConditions;
-      if (patientMedicalHistoryDTO.allergies) patientMedicalHistory.props.allergies = patientMedicalHistoryDTO.allergies;
+      if (patientMedicalHistoryDTO.patientMedicalRecordNumber) {
+        this.logger.info('Updating patientMedicalRecordNumber to:', patientMedicalHistoryDTO.patientMedicalRecordNumber);
+        patientMedicalHistory.props.patientMedicalRecordNumber = patientMedicalHistoryDTO.patientMedicalRecordNumber;
+      }
+      if (patientMedicalHistoryDTO.medicalConditions) {
+        this.logger.info('Updating medicalConditions to:', patientMedicalHistoryDTO.medicalConditions);
+        patientMedicalHistory.props.medicalConditions = patientMedicalHistoryDTO.medicalConditions;
+      }
+      if (patientMedicalHistoryDTO.allergies) {
+        this.logger.info('Updating allergies to:', patientMedicalHistoryDTO.allergies);
+        patientMedicalHistory.props.allergies = patientMedicalHistoryDTO.allergies;
+      }
 
+      this.logger.info('Saving updated patientMedicalHistory:', patientMedicalHistory);
       await this.patientMedicalHistoryRepo.save(patientMedicalHistory);
 
       const patientMedicalHistoryDTOResult = PatientMedicalHistoryMap.toDTO(patientMedicalHistory);
       return Result.ok<IPatientMedicalHistoryDTO>(patientMedicalHistoryDTOResult);
     } catch (e) {
-      this.logger.error(e);
+      this.logger.error('Error updating patientMedicalHistory:', e);
       throw e;
+    }
+  }
+
+  public async getPatientMedicalHistory(medicalRecordNumber: string): Promise<Result<IPatientMedicalHistoryDTO>> {
+    try {
+      const patientMedicalHistory = await this.patientMedicalHistoryRepo.findByPatientMedicalRecordNumber(medicalRecordNumber);
+  
+      if (!patientMedicalHistory) {
+        return Result.fail<IPatientMedicalHistoryDTO>("Patient medical history not found.");
+      }
+  
+      const patientMedicalHistoryDTO = PatientMedicalHistoryMap.toDTO(patientMedicalHistory);
+      return Result.ok<IPatientMedicalHistoryDTO>(patientMedicalHistoryDTO);
+    } catch (e) {
+      this.logger.error("Error retrieving patient medical history:", e);
+      return Result.fail<IPatientMedicalHistoryDTO>("An error occurred while fetching patient medical history.");
     }
   }
 }

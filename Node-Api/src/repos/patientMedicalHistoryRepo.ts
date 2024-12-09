@@ -60,14 +60,17 @@ export default class PatientMedicalHistoryRepo implements IPatientMedicalHistory
     }
   }
 
-  public async findByPatientMedicalRecordNumber(patientMedicalRecordNumber: string): Promise<PatientMedicalHistory> {
+  public async findByPatientMedicalRecordNumber(patientMedicalRecordNumber: string): Promise<PatientMedicalHistory | null> {
+    this.logger.info(`Finding patientMedicalHistory with record number: ${patientMedicalRecordNumber}`);
     const query = { patientMedicalRecordNumber: patientMedicalRecordNumber };
     const patientMedicalHistoryDocument = await this.patientMedicalHistorySchema.findOne(query as FilterQuery<IPatientMedicalHistoryPersistence & Document>);
-
+  
     if (patientMedicalHistoryDocument) {
+      this.logger.info(`Found patientMedicalHistory: ${patientMedicalHistoryDocument}`);
       return PatientMedicalHistoryMap.toDomain(patientMedicalHistoryDocument);
     }
-
+  
+    this.logger.info(`No patientMedicalHistory found with record number: ${patientMedicalRecordNumber}`);
     return null;
   }
 

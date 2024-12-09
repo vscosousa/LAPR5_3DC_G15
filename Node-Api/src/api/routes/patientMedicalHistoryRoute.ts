@@ -47,12 +47,12 @@ export default (app: Router) => {
   );
 
   route.put(
-    '/update/:id',
+    '/update/:patientMedicalRecordNumber',
     logRequestBody,
     celebrate({
       body: Joi.object({
-        medicalConditions: Joi.string().optional(),
-        allergies: Joi.string().optional(),
+        medicalConditions: Joi.array().items(Joi.string()).optional(),
+        allergies: Joi.array().items(Joi.string()).optional(),
       }),
       params: Joi.object({
         patientMedicalRecordNumber: Joi.string().required(),
@@ -60,8 +60,28 @@ export default (app: Router) => {
     }),
     async (req, res, next) => {
       try {
-        logger.info('PUT /patientsMedicalHistory/update/:id called', { body: req.body, params: req.params });
+        logger.info('PUT /patientsMedicalHistory/update/:patientMedicalRecordNumber called', { body: req.body, params: req.params });
+        console.log('Request received at /patientsMedicalHistory/update/:patientMedicalRecordNumber');
         await ctrl.updatePatientMedicalHistory(req, res, next);
+      } catch (error) {
+        next(error);
+      }
+    }
+  );
+
+  route.get(
+    '/get/:patientMedicalRecordNumber',
+    logRequestBody,
+    celebrate({
+      params: Joi.object({
+        patientMedicalRecordNumber: Joi.string().required(),
+      }),
+    }),
+    async (req, res, next) => {
+      try {
+        logger.info('GET /patientsMedicalHistory/get/:patientMedicalRecordNumber called', { params: req.params });
+        console.log('Request received at /patientsMedicalHistory/get/:patientMedicalRecordNumber');
+        await ctrl.getPatientMedicalHistory(req, res, next);
       } catch (error) {
         next(error);
       }

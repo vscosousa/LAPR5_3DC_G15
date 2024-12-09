@@ -12,4 +12,8 @@ export class MedicalConditionService {
   getMedicalConditions(): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/`);
   }
+
+  createMedicalConditions(medicalConditionName: string): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/create`, { medicalConditionName });
+  }
 }

@@ -1,3 +1,5 @@
+import { MedicalHistoryService } from './../../Services/medical-history.service';
+import { MedicalConditionService } from './../../Services/medical-condition.service';
 import { Component } from '@angular/core';
 import { SidebarComponent } from "../sidebar/sidebar.component";
 import { CommonModule } from '@angular/common';
@@ -5,12 +7,8 @@ import { PatientService } from '../../Services/patient.service';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { PanelService } from '../../Services/panel.service';
+import { AllergyService } from '../../Services/allergy.service';
 
-/**
- * @class ManagePatientsComponent
- * @description TS file for the manage-patients component.
- * @vscosousa - 12/11/2024
- */
 @Component({
   selector: 'app-manage-patients',
   standalone: true,
@@ -23,30 +21,31 @@ export class ManagePatientsComponent {
   filters: any = {};
   patients: { medicalRecordNumber: string; fullName: string; }[] = [];
   selectedPatient: { medicalRecordNumber: string; fullName: string; dateOfBirth: string; email: string; emergencyContact: string; firstName: string; gender: number; id: string; isActive: boolean; lastName: string; medicalHistory: string; phoneNumber: string; appointmentHistory: any[] } | undefined;
+  allergies: { id: string; allergyName: string; }[] = [];
+  medicalConditions: { id: string; medicalConditionName: string; }[] = [];
+  selectedAllergies: { id: string; allergyName: string; }[] = [];
+  selectedMedicalConditions: { id: string; medicalConditionName: string; }[] = [];
+  selectedMedicalHistory: { id: string, patientMedicalRecordNumber: string, medicalConditions: string[], allergies: string[] } | undefined;
+  allergySearch: string = '';
+  medicalConditionSearch: string = '';
+  filteredAllergies: { id: string; allergyName: string; }[] = [];
+  filteredMedicalConditions: { id: string; medicalConditionName: string; }[] = [];
 
-  /**
-   * Service to handle patient-related operations.
-   * @constructor
-   * @param {PatientService} patientService
-   * @vscosousa - 12/11/2024
-   */
-  constructor(private patientService: PatientService, private panelService: PanelService) { }
+  constructor(
+    private patientService: PatientService,
+    private panelService: PanelService,
+    private allergyService: AllergyService,
+    private medicalConditionService: MedicalConditionService,
+    private medicalHistoryService: MedicalHistoryService
+  ) { }
 
-  /**
-   * Lifecycle hook that is called after data-bound properties of a directive are initialized.
-   * @method ngOnInit
-   * @vscosousa - 12/11/2024
-   */
   ngOnInit(): void {
     this.panelService.setPanelId('panel-admin');
     this.clearFilters();
+    this.fetchAllergies();
+    this.fetchMedicalConditions();
   }
 
-  /**
-   * Fetches the list of patients with advanced filters.
-   * @method fetchOperationTypes
-   * @vscosousa - 12/11/2024
-   */
   fetchPatients(): void {
     this.patientService.getPatientsWithAdvancedFilter().subscribe(
       (data: any[]) => {
@@ -59,12 +58,40 @@ export class ManagePatientsComponent {
     );
   }
 
-  /**
-   * Applies the filters to fetch the filtered list of patients.
-   * @method applyFilters
-   * @param {Event} event - The form submission event.
-   * @vscosousa - 12/11/2024
-   */
+  fetchAllergies(): void {
+    this.allergyService.getAllergies().subscribe(
+      (response: any) => {
+        if (response.isSuccess && response._value) {
+          this.allergies = response._value;
+          this.filteredAllergies = this.allergies;
+          console.log('Allergies fetched:', this.allergies);
+        } else {
+          console.error('Failed to fetch allergies:', response.error);
+        }
+      },
+      error => {
+        console.error('Error fetching allergies', error);
+      }
+    );
+  }
+
+  fetchMedicalConditions(): void {
+    this.medicalConditionService.getMedicalConditions().subscribe(
+      (response: any) => {
+        if (response.isSuccess && response._value) {
+          this.medicalConditions = response._value;
+          this.filteredMedicalConditions = this.medicalConditions;
+          console.log('Medical Conditions fetched:', this.medicalConditions);
+        } else {
+          console.error('Failed to fetch medical conditions:', response.error);
+        }
+      },
+      error => {
+        console.error('Error fetching medical conditions', error);
+      }
+    );
+  }
+
   applyFilters(event: Event) {
     event.preventDefault();
     const filterString = Object.keys(this.filters)
@@ -73,12 +100,6 @@ export class ManagePatientsComponent {
     this.filterPatients(filterString);
   }
 
-  /**
-   * Filters the patients based on the provided filter string.
-   * @method filterPatients
-   * @param {string} filter - The filter string.
-   * @vscosousa - 12/11/2024
-   */
   filterPatients(filter: string): void {
     const filterParams: any = {};
 
@@ -114,11 +135,6 @@ export class ManagePatientsComponent {
     );
   }
 
-  /**
-   * Clears the applied filters and fetches the full list of patients.
-   * @method clearFilters
-   * @vscosousa - 12/11/2024
-   */
   clearFilters() {
     this.filters = {
       firstName: '',
@@ -134,13 +150,6 @@ export class ManagePatientsComponent {
     this.fetchPatients();
   }
 
-  /**
-   * Deletes a patient based on the provided medical record number.
-   * @method deletePatient
-   * @param {string} medicalRecordNumber - The medical record number of the patient to be deleted.
-   * @param {string} patientName - The name of the patient to be deleted.
-   * @vscosousa - 12/11/2024
-   */
   deletePatient(medicalRecordNumber: string, patientName: string): void {
     const confirmation = window.confirm(`Are you sure you want to delete patient ${medicalRecordNumber} called ${patientName}?`);
     if (confirmation) {
@@ -156,18 +165,13 @@ export class ManagePatientsComponent {
     }
   }
 
-  /**
-   * Views the details of a patient based on the provided medical record number.
-   * @method viewPatientDetails
-   * @param {string} medicalRecordNumber - The medical record number of the patient to be viewed.
-   * @vscosousa - 12/11/2024
-   */
   viewPatientDetails(medicalRecordNumber: string): void {
     console.log(`Viewing details for patient ${medicalRecordNumber}`);
     this.patientService.getPatientsWithAdvancedFilter(undefined, undefined, undefined, undefined, medicalRecordNumber).subscribe(
       patient => {
         this.selectedPatient = patient[0];
         console.log('Patient fetched:', patient);
+        this.fetchMedicalHistory(medicalRecordNumber);
       },
       error => {
         console.error('Error fetching patient', error);
@@ -175,12 +179,68 @@ export class ManagePatientsComponent {
     );
   }
 
-  /**
-   * Refreshes the patient list after a patient is deleted.
-   * @method refreshPatientList
-   * @param {string} deletedMedicalRecordNumber - The medical record number of the deleted patient.
-   * @vscosousa - 12/11/2024
-   */
+  fetchMedicalHistory(medicalRecordNumber: string): void {
+    this.medicalHistoryService.getPatientMedicalHistory(medicalRecordNumber).subscribe(
+      (response: any) => {
+        if (response) {
+          this.selectedMedicalHistory = {
+            id: response.id,
+            patientMedicalRecordNumber: response.patientMedicalRecordNumber,
+            medicalConditions: response.medicalConditions ? response.medicalConditions.split(',') : [],
+            allergies: response.allergies ? response.allergies.split(',') : []
+          };
+          console.log('Medical history fetched:', this.selectedMedicalHistory);
+          this.filterSelectedAllergies();
+          this.filterSelectedMedicalConditions();
+        } else {
+          console.error('Failed to fetch medical history');
+        }
+      },
+      error => {
+        if (error.status === 404) {
+          this.selectedMedicalHistory = undefined;
+          this.selectedAllergies = [];
+          this.selectedMedicalConditions = [];
+          this.filteredAllergies = [];
+          this.filteredMedicalConditions = [];
+          console.error('Medical history not found (404)');
+        } else {
+          console.error('Error fetching medical history', error);
+        }
+      }
+    );
+  }
+
+  filterSelectedAllergies(): void {
+    if (this.selectedMedicalHistory) {
+      this.selectedAllergies = this.allergies
+        .filter(allergy => this.selectedMedicalHistory!.allergies.includes(allergy.id));
+      this.filteredAllergies = this.selectedAllergies;
+      console.log('Filtered allergies:', this.selectedAllergies);
+    }
+  }
+
+  filterSelectedMedicalConditions(): void {
+    if (this.selectedMedicalHistory) {
+      this.selectedMedicalConditions = this.medicalConditions
+        .filter(condition => this.selectedMedicalHistory!.medicalConditions.includes(condition.id));
+      this.filteredMedicalConditions = this.selectedMedicalConditions;
+      console.log('Filtered medical conditions:', this.selectedMedicalConditions);
+    }
+  }
+
+  searchAllergies(): void {
+    this.filteredAllergies = this.selectedAllergies.filter(allergy =>
+      allergy.allergyName.toLowerCase().includes(this.allergySearch.toLowerCase())
+    );
+  }
+
+  searchMedicalConditions(): void {
+    this.filteredMedicalConditions = this.selectedMedicalConditions.filter(condition =>
+      condition.medicalConditionName.toLowerCase().includes(this.medicalConditionSearch.toLowerCase())
+    );
+  }
+
   refreshPatientList(deletedMedicalRecordNumber: string): void {
     this.patients = this.patients.filter(patient => patient.medicalRecordNumber !== deletedMedicalRecordNumber);
   }

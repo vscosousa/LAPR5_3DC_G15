@@ -1,6 +1,6 @@
 import dotenv from 'dotenv';
 import path from 'path';
-import patientMedicalHistory from './src/api/routes/patientMedicalHistory';
+import patientMedicalHistory from './src/api/routes/patientMedicalHistoryRoute';
 
 // Set the NODE_ENV to 'development' by default
 process.env.NODE_ENV = process.env.NODE_ENV || 'development';

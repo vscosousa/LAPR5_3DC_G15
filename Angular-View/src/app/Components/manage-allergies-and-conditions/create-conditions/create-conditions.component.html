@@ -1,0 +1,6 @@
+<h2>Create Allergy</h2>
+<form (submit)="onSubmit()">
+  <label for="condition-name">Name:</label>
+  <input type="text" id="condition-name" name="condition-name" [(ngModel)]="medicalConditionName" required>
+  <button type="submit">Submit</button>
+</form>

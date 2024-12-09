@@ -1,0 +1,49 @@
+<div class="container">
+  <app-sidebar></app-sidebar>
+
+  <div class="content">
+    <div class="section">
+      <button (click)="openModal('create-allergies')">Create Allergies</button>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Allergies</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let allergy of allergies">
+              <td>{{ allergy.allergyName }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="section">
+      <button (click)="openModal('create-conditions')">Create Medical Conditions</button>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Conditions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let medicalCondition of medicalConditions">
+              <td>{{ medicalCondition.medicalConditionName }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+    <div class="modal" *ngIf="modalType">
+    <div class="modal-content">
+      <span class="close" (click)="closeModal()">&times;</span>
+      <app-create-allergies *ngIf="modalType === 'create-allergies'" (allergyCreated)="handleAllergyCreated()"></app-create-allergies>
+      <app-create-conditions *ngIf="modalType === 'create-conditions'" (conditionCreated)="handleConditionCreated()"></app-create-conditions>
+    </div>
+  </div>
+</div>

@@ -5,8 +5,8 @@
   "compilerOptions": {
     "outDir": "./out-tsc/spec",
     "types": ["jest", "node"],
-    "esModuleInterop": true, // 2
-    "emitDecoratorMetadata": true // 3
+    "esModuleInterop": true,
+    "emitDecoratorMetadata": true
   },
   "include": [
     "src/**/*.spec.ts",

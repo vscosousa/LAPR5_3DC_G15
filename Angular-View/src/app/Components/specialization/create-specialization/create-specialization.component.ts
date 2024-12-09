@@ -14,18 +14,17 @@ import { CommonModule } from '@angular/common';
 export class CreateSpecializationComponent {
   specialization = { specializationType: '' };
 
-  @Output() specializationCreated = new EventEmitter<void>(); // Notify parent to close modal and refresh data
+  @Output() specializationCreated = new EventEmitter<void>();
 
   constructor(
     private specializationService: SpecializationService,
-    private router: Router
   ) {}
 
   onSubmit(): void {
     this.specializationService.createSpecialization(this.specialization).subscribe({
       next: () => {
         alert('Specialization created successfully!');
-        this.specializationCreated.emit(); // Notify parent
+        this.specializationCreated.emit();
       },
       error: (err: any) => {
         console.error('Error creating specialization:', err);

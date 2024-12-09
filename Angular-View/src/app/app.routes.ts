@@ -30,92 +30,100 @@ import { CreateOperationRequestComponent } from './Components/operation-requests
 /**import { UpdateOperationRequestComponent } from './Components/operation-requests/update-operation-request/update-operation-request.component';*/
 import { SpecializationComponent } from './Components/specialization/specialization.component';
 import { CreateSpecializationComponent } from './Components/specialization/create-specialization/create-specialization.component';
+import { ManageAllergiesAndConditionsComponent } from './Components/manage-allergies-and-conditions/manage-allergies-and-conditions.component';
+import { CreateAllergiesComponent } from './Components/manage-allergies-and-conditions/create-allergies/create-allergies.component';
+import { CreateConditionsComponent } from './Components/manage-allergies-and-conditions/create-conditions/create-conditions.component';
 
 export const routes: Routes = [
-    {
-        path: "register", component: RegisterComponent
-    },
-    {
-        path: 'login', component: LoginComponent
-    },
-    {
-        path: 'update-staff/ConfirmUpdates', component: ConfirmUpdatesStaffComponent
-    },
-    {
-        path: 'activate', component: ActiveStaffComponent
-    },
-    {
-        path: "panel-admin", component: PanelAdminComponent, canActivate: [AuthGuard]
-    },
-    {
-        path: "panel-doctor", component: DoctorPanelComponent, canActivate: [DoctorGuard]
-    },
-    {
-        path: "create-staff", component: CreateStaffComponent, canActivate: [AuthGuard]
-    },
-    {
-        path: "search-staffs", component: SearchStaffsComponent, canActivate: [AuthGuard]
-    },
-    {
-        path: 'update-staff/:id', component: UpdateStaffComponent, canActivate: [AuthGuard]
-    },
-    {   
-        path: 'view-availability/:id', component: ViewAvailabilityComponent , canActivate: [AuthGuard]
-    },
-    {
-        path: "operation-types", component: OperationTypesComponent, canActivate: [AuthGuard]
-    },
-    {
-        path: "specializations", component: SpecializationComponent, canActivate: [AuthGuard], children: [
-            { path: "create-specialization", component: CreateSpecializationComponent, canActivate: [AuthGuard] },
-            { path: "update-specialization/:id", component: CreateSpecializationComponent, canActivate: [AuthGuard] }
-        ]
-    },
-    {
-        path: "update-operation-type/:name", component: UpdateOperationTypeComponent , canActivate: [AuthGuard]
-    },
-    {
-        path: "create-operation-type", component: CreateOperationTypeComponent , canActivate: [AuthGuard]
-    },
-    {
-        path: "patient-panel", component: PatientPanelComponent, canActivate: [PatientGuard]
-    },
-    {
-        path: "patient-settings", component: PatientSettingsComponent, canActivate: [PatientGuard]
-    },
-    {
-        path: "hospital3d", component: Hospital3dComponent
-    },
-    {
-        path: "delete-user", component: DeleteUserComponent
-    },
-    {
-        path: "manage-patients", component: ManagePatientsComponent, canActivate: [AuthGuard]
-    },
-    {
-        path: "create-patient", component: CreatePatientComponent, canActivate: [AuthGuard]
-    },
-    {
-        path: "activate-patient-user", component: ActivatePatientUserComponent
-    },
-    {
-       path: "update-patient/:medicalRecordNumber", component: UpdatePatientComponent, canActivate: [AuthGuard]
-    },
-    {
-        path: "", component: HomeComponent
-    },
-    {
-        path: "operation-requests", component: OperationRequestsComponent, canActivate: [AuthGuard]
-    },
-    {
-        path: "create-operation-request", component: CreateOperationRequestComponent, canActivate: [AuthGuard]
-    },
-    /**{
-        path: "update-operation-request/:id", component: UpdateOperationRequestComponent, canActivate: [AuthGuard]
-    },*/
-    {
-        
-        path: "**", component: NotFoundComponent
-    }
+  {
+    path: "register", component: RegisterComponent
+  },
+  {
+    path: 'login', component: LoginComponent
+  },
+  {
+    path: 'update-staff/ConfirmUpdates', component: ConfirmUpdatesStaffComponent
+  },
+  {
+    path: 'activate', component: ActiveStaffComponent
+  },
+  {
+    path: "panel-admin", component: PanelAdminComponent, canActivate: [AuthGuard]
+  },
+  {
+    path: "panel-doctor", component: DoctorPanelComponent, canActivate: [DoctorGuard]
+  },
+  {
+    path: "create-staff", component: CreateStaffComponent, canActivate: [AuthGuard]
+  },
+  {
+    path: "search-staffs", component: SearchStaffsComponent, canActivate: [AuthGuard]
+  },
+  {
+    path: 'update-staff/:id', component: UpdateStaffComponent, canActivate: [AuthGuard]
+  },
+  {
+    path: 'view-availability/:id', component: ViewAvailabilityComponent, canActivate: [AuthGuard]
+  },
+  {
+    path: "operation-types", component: OperationTypesComponent, canActivate: [AuthGuard]
+  },
+  {
+    path: "specializations", component: SpecializationComponent, canActivate: [AuthGuard], children: [
+      { path: "create-specialization", component: CreateSpecializationComponent, canActivate: [AuthGuard] },
+      { path: "update-specialization/:id", component: CreateSpecializationComponent, canActivate: [AuthGuard] }
+    ]
+  },
+  {
+    path: "update-operation-type/:name", component: UpdateOperationTypeComponent, canActivate: [AuthGuard]
+  },
+  {
+    path: "create-operation-type", component: CreateOperationTypeComponent, canActivate: [AuthGuard]
+  },
+  {
+    path: "patient-panel", component: PatientPanelComponent, canActivate: [PatientGuard]
+  },
+  {
+    path: "patient-settings", component: PatientSettingsComponent, canActivate: [PatientGuard]
+  },
+  {
+    path: "hospital3d", component: Hospital3dComponent
+  },
+  {
+    path: "delete-user", component: DeleteUserComponent
+  },
+  {
+    path: "manage-patients", component: ManagePatientsComponent, canActivate: [AuthGuard]
+  },
+  {
+    path: "create-patient", component: CreatePatientComponent, canActivate: [AuthGuard]
+  },
+  {
+    path: "activate-patient-user", component: ActivatePatientUserComponent
+  },
+  {
+    path: "update-patient/:medicalRecordNumber", component: UpdatePatientComponent, canActivate: [AuthGuard]
+  },
+  {
+    path: "operation-requests", component: OperationRequestsComponent, canActivate: [AuthGuard]
+  },
+  {
+    path: "create-operation-request", component: CreateOperationRequestComponent, canActivate: [AuthGuard]
+  },
+  /**{
+    path: "update-operation-request/:id", component: UpdateOperationRequestComponent, canActivate: [AuthGuard]
+  },*/
+  {
+    path: "manage-allergies-and-conditions", component: ManageAllergiesAndConditionsComponent, canActivate: [AuthGuard], children: [
+      {path: "create-allergies", component: CreateAllergiesComponent, canActivate: [AuthGuard]},
+      {path: "create-conditions", component: CreateConditionsComponent, canActivate: [AuthGuard]}
+    ]
+  },
+  {
+    path: "", component: HomeComponent
+  },
+  {
+    path: "**", component: NotFoundComponent
+  }
 
 ];

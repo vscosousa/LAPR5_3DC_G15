@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import appointment from './routes/appointmentRoute';
-import patientMedicalHistory from './routes/patientMedicalHistory';
+import patientMedicalHistory from './routes/patientMedicalHistoryRoute';
 import specialization from './routes/specializationRoute';
 import allergy from './routes/allergyRoute';
 import medicalCondition from './routes/medicalConditionRoute';

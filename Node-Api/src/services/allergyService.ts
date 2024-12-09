@@ -23,6 +23,7 @@ export default class AllergyService implements IAllergyService {
                 id: allergyDTO.id,
                 allergyName: allergyDTO.allergyName
             });
+            
 
             if (allergyOrError.isFailure) {
                 this.logger.error('Error creating Allergy:', allergyOrError.errorValue());

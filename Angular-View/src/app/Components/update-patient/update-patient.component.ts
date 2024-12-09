@@ -6,6 +6,7 @@ import { Router, RouterModule } from '@angular/router';
 import { PanelService } from '../../Services/panel.service';
 import { AllergyService } from '../../Services/allergy.service';
 import { MedicalConditionService } from '../../Services/medical-condition.service';
+import { MedicalHistoryService } from '../../Services/medical-history.service';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -38,7 +39,8 @@ export class UpdatePatientComponent implements OnInit {
     private router: Router,
     private panelService: PanelService,
     private allergyService: AllergyService,
-    private medicalConditionService: MedicalConditionService
+    private medicalConditionService: MedicalConditionService,
+    private medicalHistoryService: MedicalHistoryService
   ) { }
 
   ngOnInit() {
@@ -54,9 +56,33 @@ export class UpdatePatientComponent implements OnInit {
       patient => {
         this.existingPatient = patient[0];
         console.log('Patient fetched:', patient);
+        this.fetchMedicalHistory(medicalRecordNumber); // Fetch medical history after fetching patient details
       },
       error => {
         console.error('Error fetching patient', error);
+      }
+    );
+  }
+
+  fetchMedicalHistory(medicalRecordNumber: string): void {
+    this.medicalHistoryService.getPatientMedicalHistory(medicalRecordNumber).subscribe(
+      (response: any) => {
+        if (response) {
+          this.existingPatient.allergies = response.allergies ? response.allergies.split(',') : [];
+          this.existingPatient.medicalConditions = response.medicalConditions ? response.medicalConditions.split(',') : [];
+          console.log('Medical history fetched:', response);
+        } else {
+          console.error('Failed to fetch medical history');
+        }
+      },
+      error => {
+        if (error.status === 404) {
+          this.existingPatient.allergies = [];
+          this.existingPatient.medicalConditions = [];
+          console.error('Medical history not found (404)');
+        } else {
+          console.error('Error fetching medical history', error);
+        }
       }
     );
   }
@@ -73,6 +99,14 @@ export class UpdatePatientComponent implements OnInit {
       error => {
         console.error('Error updating patient:', error);
         alert("Error updating patient" + error);
+      }
+    );
+    this.medicalHistoryService.updatePatientMedicalHistory(medicalRecordNumber, this.existingPatient.allergies, this.existingPatient.medicalConditions).subscribe(
+      response => {
+        console.log('Medical history updated successfully:', response);
+      },
+      error => {
+        console.error('Error updating medical history:', error);
       }
     );
   }
@@ -169,5 +203,13 @@ export class UpdatePatientComponent implements OnInit {
       allergies: [],
       medicalConditions: []
     };
+  }
+
+  isAllergySelected(allergyId: string): boolean {
+    return this.existingPatient.allergies.includes(allergyId);
+  }
+
+  isMedicalConditionSelected(medicalConditionId: string): boolean {
+    return this.existingPatient.medicalConditions.includes(medicalConditionId);
   }
 }

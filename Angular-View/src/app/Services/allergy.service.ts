@@ -20,4 +20,8 @@ export class AllergyService {
       })
     );
   }
+
+  createAllergy(allergyName: string): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/create`, { allergyName });
+  }
 }

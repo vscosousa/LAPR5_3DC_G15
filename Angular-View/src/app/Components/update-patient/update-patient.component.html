@@ -72,7 +72,7 @@
           <span>{{ allergy.allergyName }}</span>
           <input
             type="checkbox"
-            [value]="allergy.id"
+            [checked]="isAllergySelected(allergy.id)"
             (change)="onAllergyChange($event, allergy.id)"
           />
         </div>
@@ -91,7 +91,7 @@
           <span>{{ medicalCondition.medicalConditionName }}</span>
           <input
             type="checkbox"
-            [value]="medicalCondition.id"
+            [checked]="isMedicalConditionSelected(medicalCondition.id)"
             (change)="onMedicalConditionChange($event, medicalCondition.id)"
           />
         </div>
