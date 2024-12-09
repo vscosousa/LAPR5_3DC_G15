@@ -1,5 +1,9 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ManageAllergiesAndConditionsComponent } from './manage-allergies-and-conditions.component';
+import { AllergyService } from '../../Services/allergy.service';
+import { ActivatedRoute } from '@angular/router';
+import { of } from 'rxjs';
 
 describe('ManageAllergiesAndConditionsComponent', () => {
   let component: ManageAllergiesAndConditionsComponent;
@@ -7,7 +11,11 @@ describe('ManageAllergiesAndConditionsComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ManageAllergiesAndConditionsComponent]
+      imports: [HttpClientTestingModule, ManageAllergiesAndConditionsComponent], // Import the standalone component
+      providers: [
+        AllergyService,
+        { provide: ActivatedRoute, useValue: { params: of({ id: '123' }) } }
+      ]
     }).compileComponents();
 
     fixture = TestBed.createComponent(ManageAllergiesAndConditionsComponent);
