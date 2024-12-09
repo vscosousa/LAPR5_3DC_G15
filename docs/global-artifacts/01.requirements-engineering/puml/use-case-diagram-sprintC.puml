@@ -1,0 +1,110 @@
+@startuml use-case-diagram-sprintC
+
+left to right direction
+
+actor "Admin" as AD #white;line:red;line.bold;text:black
+actor "Patient" as PA #white;line:blue;line.bold;text:black
+actor "Staff" as ST #white;line:green;line.bold;text:black
+actor "Backoffice User" as BU #white;line:purple;line.bold;text:black
+actor "Software Architect" as SA #white;line:orange;line.bold;text:black
+actor "Doctor" as DO #white;line:yellow;line.bold;text:black
+actor "Hospital Manager" as HM #white;line:brown;line.bold;text:black
+actor "Customer" as CU #white;line:black;line.bold;text:black
+
+
+rectangle System{
+    usecase "Integrated UI for all modules" as US7_1_1
+    usecase "Role-based application menu" as US7_1_2
+    usecase "Sync 3D visualization with database room's information" as US7_1_3
+    usecase "Sync planning module with backoffice" as US7_1_4
+    usecase "Sales and Techinical presentation of the solution" as US7_1_5
+
+    usecase "Adopt a decentralized architecture of the backoffice module" as US7_2_1
+    usecase "Add a new Allergy field in the patient profile" as US7_2_2
+    usecase "Search for Allergy in the patient profile" as US7_2_3
+    usecase "Add a new Medical Condition field in the patient profile" as US7_2_4
+    usecase "Search for Medical Condition in the patient profile" as US7_2_5
+    usecase "Update the Patient Medical Record, namely respecting Medical Conditions and Allergies" as US7_2_6
+    usecase "Search for entries in the Patient Medical Record, namely respecting Medical Conditions and Allergies" as US7_2_7
+    usecase "Create a Surgery appointment" as US7_2_8
+    usecase "Update a Surgery appointment" as US7_2_9
+    usecase "Add a new room type" as US7_2_10
+    usecase "Add a new Specialization" as US7_2_11
+    usecase "Update specializations" as US7_2_12
+    usecase "Include the access of the Patient Medical Record during the patient profile visualization and management" as US7_2_13
+    usecase "List/Search  and Remove Specializations" as US7_2_14
+
+    usecase "Automatic method to assign a set of operations to several operation rooms" as US7_3_1
+    usecase "Schedule surgeries to several operations rooms using Genetic Algorithms" as US7_3_2
+    usecase "Study of state of the art of application of Robots and Computer Vision in Hospitals" as US7_3_3
+
+    usecase " disaster recovery plan that meets the MBCO" as US7_4_1
+    usecase "Justification for changes to ensure MTD of 20 minutes" as US7_4_2
+    usecase "Backup DB to Cloud with renamed format" as US7_4_3
+    usecase "Script to manage backup files on a schedule" as US7_4_4
+    usecase "Log DB backup process and alert on failure" as US7_4_5
+    usecase "Backup lifetime management" as US7_4_6
+    usecase "Business Impact Analysis (BIA) of the final solution" as US7_4_7
+    usecase "Implement access management with security criteria" as US7_4_8
+    usecase "Implement clustering system for SPA" as US7_4_9
+    usecase "SSH access to VM by certificate only" as US7_4_10
+    usecase "Create public file share in SMB/CIFS or NFS format" as US7_4_11
+    usecase "Automate backup recovery and validation" as US7_4_12
+
+    usecase "Select a room by left clicking on the corresponding surgical table (object picking)" as US7_5_1
+    usecase "Display/hide an overlay containing updated information about the selected room when 'i' key is pressed" as US7_5_2
+    usecase "Smooth camera and spotlight movement when selecting a different room" as US7_5_4
+
+    usecase "Download medical history in a portable and secure format" as US7_6_1
+    usecase "Request deletion of personal data under GDPR" as US7_6_2
+    usecase "Know what data will be processed and how to exercise rights" as US7_6_3
+    usecase "Know the retention period of personal data" as US7_6_4
+
+    PA --> US7_6_1
+    PA --> US7_6_2
+    PA --> US7_6_3
+    PA --> US7_6_4
+
+
+    BU --> US7_1_1
+    BU --> US7_1_2
+    ST --> US7_1_3
+    AD --> US7_1_4
+    CU --> US7_1_5
+
+    SA --> US7_2_1
+    AD --> US7_2_2
+    DO --> US7_2_3
+    AD --> US7_2_4
+    DO --> US7_2_5
+    DO --> US7_2_6
+    DO --> US7_2_7
+    DO --> US7_2_8
+    DO --> US7_2_9
+    AD --> US7_2_10
+    AD --> US7_2_11
+    AD --> US7_2_12
+    DO --> US7_2_13
+    AD --> US7_2_14
+
+    AD --> US7_3_1
+    AD --> US7_3_2
+    HM --> US7_3_3
+
+    AD --> US7_4_1
+    AD --> US7_4_2
+    AD --> US7_4_3
+    AD --> US7_4_4
+    AD --> US7_4_5
+    AD --> US7_4_6
+    AD --> US7_4_7
+    AD --> US7_4_8
+    AD --> US7_4_9
+    AD --> US7_4_10
+    AD --> US7_4_11
+    AD --> US7_4_12
+
+    ST --> US7_5_1
+    ST --> US7_5_2
+    ST --> US7_5_4
+}
