@@ -43,6 +43,13 @@ export class ManageAllergiesAndConditionsComponent {
     this.refreshPage();
   }
 
+  closeModalOnOutsideClick(event: MouseEvent) {
+    const target = event.target as HTMLElement;
+    if (target.classList.contains('modal')) {
+      this.closeModal();
+    }
+  }
+
   handleAllergyCreated(): void {
     this.closeModal();
   }

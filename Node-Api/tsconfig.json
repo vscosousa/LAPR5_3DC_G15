@@ -21,7 +21,8 @@
     "allowJs": true,
     "noEmit": false,
     "esModuleInterop": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "strict": true
   },
   "include": [
     "./src/**/*", "index.js"
