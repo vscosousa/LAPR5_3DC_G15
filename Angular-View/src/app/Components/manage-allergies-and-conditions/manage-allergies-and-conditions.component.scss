@@ -4,7 +4,6 @@
   justify-content: center;
   align-items: center;
   height: 100vh;
-  margin-left: 85px;
   font-family: Poppins, sans-serif;
 
   .screens-container {
@@ -15,55 +14,47 @@
   }
 
   .screen {
-    padding: 1rem;
+    padding: 20px;
     display: flex;
     flex-direction: column;
     justify-content: start;
     align-items: center;
-    width: 1000px;
-    height: 90vh;
+    width: 800px; /* Adjusted width */
+    height: 600px; /* Adjusted height */
     background-color: #f9f9f9;
+    max-width: 800px; /* Adjusted max-width */
     margin: 0 auto;
-    border: 1px solid #f5f4f4;
+    border: 1px solid #ddd;
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     position: relative;
-    overflow: hidden;
 
-    .btn-back {
-      align-self: flex-end;
-      margin-bottom: 20px;
-      background-color: #dc3545;
+    .btn-create {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background-color: #28a745;
       color: #fff;
-      padding: 10px 15px;
+      padding: 10px 20px;
       border: none;
       border-radius: 4px;
-      transition: background-color 0.3s;
       cursor: pointer;
 
       &:hover {
-        background-color: #c82333;
+        background-color: #218838;
       }
     }
 
     .manage-title {
-      font-size: 40px;
       margin-bottom: 20px;
       color: #333;
     }
 
-    .content-container {
-      display: flex;
-      gap: 10px;
-      width: 100%;
-      overflow: hidden;
-    }
-
     .table-container {
-      display: flex;
-      gap: 20px;
       width: 100%;
-      overflow: auto;
+      height: 400px; /* Adjusted height */
+      overflow-y: auto;
+      margin-bottom: 20px;
 
       &::-webkit-scrollbar {
         width: 12px;
@@ -82,67 +73,33 @@
         background: #555;
       }
 
-      .table-wrapper {
-        flex: 1;
-        overflow: auto;
+      .table {
+        width: 100%;
+        border-collapse: collapse;
 
-        .operation {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          margin-bottom: 10px;
-
-          p {
-            font-size: 1.1rem;
-            text-align: center;
-            font-weight: bold;
-            margin: 0px;
-            color: #333;
-          }
-
-          .btn {
-            padding: 5px 10px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-
-            &.btn-create {
-              background-color: #28a745;
-              color: #fff;
-
-              &:hover {
-                background-color: #218838;
-              }
-            }
-          }
+        th,
+        td {
+          border: 1px solid #ddd;
+          padding: 8px;
+          text-align: left;
         }
 
-        .table {
-          width: 100%;
-          border-collapse: separate;
-          border-spacing: 0;
-          table-layout: fixed;
-          border: 1px solid #ddd;
-          border-radius: 8px;
-          box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        th {
+          background-color: #f2f2f2;
+        }
+      }
+    }
 
-          th,
-          td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            word-wrap: break-word;
-            vertical-align: middle;
-            text-align: center;
-          }
+    .btn {
+      margin-right: 5px;
+      transition: background-color 0.3s;
 
-          th {
-            background-color: #f2f2f2;
-          }
+      &.btn-view {
+        background-color: #6c757d;
+        color: #fff;
 
-          td {
-            font-size: small;
-          }
+        &:hover {
+          background-color: #5a6268;
         }
       }
     }
@@ -179,7 +136,23 @@
         transition: color 0.3s;
 
         &:hover {
-          color: #c82333;
+          color: #007bff;
+        }
+      }
+
+      h2 {
+        margin-top: 0;
+        font-size: 24px;
+        color: #333;
+      }
+
+      p {
+        font-size: 16px;
+        color: #555;
+        margin: 10px 0;
+
+        strong {
+          color: #333;
         }
       }
     }

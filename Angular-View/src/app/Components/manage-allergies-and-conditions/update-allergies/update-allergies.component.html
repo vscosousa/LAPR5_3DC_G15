@@ -1,0 +1,12 @@
+<h2>Update Allergy</h2>
+<form (submit)="onSubmit()">
+  <label for="allergy-code">Code:</label>
+  <input type="text" id="allergy-code" name="allergy-code" [(ngModel)]="allergy.allergyCode" required>
+  <label for="allergy-name">Name:</label>
+  <input type="text" id="allergy-name" name="allergy-name" [(ngModel)]="allergy.allergyName" required>
+  <label for="allergy-description">Description:</label>
+  <input type="text" id="allergy-description" name="allergy-description" [(ngModel)]="allergy.allergyDescription" required>
+  <label for="allergy-symptoms">Symptoms:</label>
+  <input type="text" id="allergy-symptoms" name="allergy-symptoms" [(ngModel)]="allergy.allergySymptoms" required>
+  <button type="submit">Submit</button>
+</form>

@@ -1,59 +1,68 @@
 <div class="manage-container">
   <app-sidebar></app-sidebar>
-
   <div class="screens-container">
     <div class="screen">
-      <button type="button" routerLink="/panel-admin" class="btn-back">Back to Dashboard</button>
+      <button (click)="openModal('create-allergies')" class="btn btn-create">Create</button>
+      <h2 class="manage-title" style="text-align: center">Allergies</h2>
+      <div class="table-container">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Allergies</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let allergy of allergies">
+              <td>{{ allergy.allergyName }}</td>
+              <td>
+                <button (click)="openDetailsModal(allergy, 'allergy')" class="btn btn-view">View Details</button>
+                <button (click)="openUpdateModal(allergy, 'allergy')" class="btn btn-view">Update</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
 
-      <h2 class="manage-title">Manage Allergies and Medical Conditions</h2>
-
-      <div class="content-container">
-        <div class="table-container">
-          <div class="table-wrapper">
-            <div class="operation">
-              <button type="button" (click)="openModal('create-allergies')" class="btn btn-create">Create Allergy</button>
-            </div>
-            <table class="table">
-              <thead>
-                <tr>
-                  <th>Allergies</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr *ngFor="let allergy of allergies">
-                  <td>{{ allergy.allergyName }}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
-          <div class="table-wrapper">
-            <div class="operation">
-              <button type="button" (click)="openModal('create-conditions')" class="btn btn-create">Create Medical Condition</button>
-            </div>
-            <table class="table">
-              <thead>
-                <tr>
-                  <th>Medical Conditions</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr *ngFor="let medicalCondition of medicalConditions">
-                  <td>{{ medicalCondition.medicalConditionName }}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
+    <div class="screen">
+      <button (click)="openModal('create-conditions')" class="btn btn-create">Create</button>
+      <h2 class="manage-title" style="text-align: center">Medical Conditions</h2>
+      <div class="table-container">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Conditions</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let medicalCondition of medicalConditions">
+              <td>{{ medicalCondition.medicalConditionName }}</td>
+              <td>
+                <button (click)="openDetailsModal(medicalCondition, 'condition')" class="btn btn-view">View Details</button>
+                <button (click)="openUpdateModal(medicalCondition, 'condition')" class="btn btn-view">Update</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
   </div>
 
-  <div class="modal" *ngIf="modalType" (click)="closeModalOnOutsideClick($event)">
+  <div class="modal" *ngIf="modalType">
     <div class="modal-content">
       <span class="close" (click)="closeModal()">&times;</span>
       <app-create-allergies *ngIf="modalType === 'create-allergies'" (allergyCreated)="handleAllergyCreated()"></app-create-allergies>
       <app-create-conditions *ngIf="modalType === 'create-conditions'" (conditionCreated)="handleConditionCreated()"></app-create-conditions>
+      <app-update-allergies *ngIf="modalType === 'update-allergies'" [allergy]="selectedItem" (allergyUpdated)="handleAllergyUpdated()"></app-update-allergies>
+      <app-update-conditions *ngIf="modalType === 'update-conditions'" [medicalCondition]="selectedItem" (conditionUpdated)="handleConditionUpdated()"></app-update-conditions>
+      <div *ngIf="modalType === 'details'">
+        <h2>{{ selectedItemType === 'allergy' ? selectedItem.allergyName : selectedItem.medicalConditionName }} Details</h2>
+        <p><strong>Code:</strong> {{ selectedItemType === 'allergy' ? selectedItem.allergyCode : selectedItem.medicalConditionCode }}</p>
+        <p><strong>Description:</strong> {{ selectedItemType === 'allergy' ? selectedItem.allergyDescription : selectedItem.medicalConditionDescription }}</p>
+        <p><strong>Symptoms:</strong> {{ selectedItemType === 'allergy' ? selectedItem.allergySymptoms : selectedItem.medicalConditionSymptoms }}</p>
+      </div>
     </div>
   </div>
 </div>
