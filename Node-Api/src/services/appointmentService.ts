@@ -39,6 +39,7 @@ export default class AppointmentService implements IAppointmentService {
         roomId: appointmentDTO.roomId,
         dateTime: dateTimeOrError.getValue(),
         status: statusOrError.getValue(),
+        team: appointmentDTO.team
       });
 
       if (appointmentOrError.isFailure) {
@@ -82,6 +83,8 @@ export default class AppointmentService implements IAppointmentService {
         }
         appointment.props.status = statusOrError;
       }
+
+      if (appointmentDTO.team) appointment.props.team = appointmentDTO.team;
 
       await this.appointmentRepo.save(appointment);
 

@@ -12,6 +12,7 @@ interface AppointmentProps {
   roomId: string;
   dateTime: DateTime;
   status: AppointmentStatus;
+  team: string[];
 }
 
 export class Appointment extends AggregateRoot<AppointmentProps> {
@@ -39,8 +40,24 @@ export class Appointment extends AggregateRoot<AppointmentProps> {
     return this.props.status;
   }
 
+  get team(): string[] {
+    return this.props.team;
+  }
+
   set status(value: AppointmentStatus) {
     this.props.status = value;
+  }
+
+  set team(value: string[]) {
+    this.props.team = value;
+  }
+
+  set dateTime(value: DateTime) {
+    this.props.dateTime = value;
+  }
+
+  set roomId(value: string) {
+    this.props.roomId = value;
   }
 
   private constructor(props: AppointmentProps, id?: UniqueEntityID) {
@@ -48,13 +65,14 @@ export class Appointment extends AggregateRoot<AppointmentProps> {
   }
 
   public static create(appointmentDTO: IAppointmentDTO, id?: UniqueEntityID): Result<Appointment> {
-    const { requestId, roomId, dateTime, status } = appointmentDTO;
+    const { requestId, roomId, dateTime, status, team } = appointmentDTO;
 
     const guardedProps = [
       { argument: requestId, argumentName: 'requestId' },
       { argument: roomId, argumentName: 'roomId' },
       { argument: dateTime, argumentName: 'dateTime' },
-      { argument: status, argumentName: 'status' }
+      { argument: status, argumentName: 'status' },
+      { argument: team, argumentName: 'team' }
     ];
 
     const guardResult = Guard.againstNullOrUndefinedBulk(guardedProps);
@@ -66,7 +84,8 @@ export class Appointment extends AggregateRoot<AppointmentProps> {
         requestId,
         roomId,
         dateTime: DateTime.create(dateTime.toISOString()),
-        status: AppointmentStatus.create(status)
+        status: AppointmentStatus.create(status),
+        team: []
       }, id);
 
       return Result.ok<Appointment>(appointment);

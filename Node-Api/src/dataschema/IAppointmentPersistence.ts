@@ -4,4 +4,5 @@ export interface IAppointmentPersistence {
   roomId: string;
   dateTime: string;
   status: string;
+  team: string[];
 }

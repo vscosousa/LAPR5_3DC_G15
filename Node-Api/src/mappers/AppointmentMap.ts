@@ -9,11 +9,12 @@ export class AppointmentMap extends Mapper<Appointment> {
 
   public static toDTO(appointment: any): IAppointmentDTO {
     return {
-      id: appointment.id.toString(),
+      id: appointment.domainId,
       requestId: appointment.requestId,
       roomId: appointment.roomId,
       dateTime: new Date(appointment.dateTime),
-      status: appointment.status
+      status: appointment.status,
+      team: appointment.team
     };
   }
 

@@ -32,6 +32,11 @@ const Appointment = new mongoose.Schema(
       required: [true, 'Please enter status'],
       index: true,
     },
+    team: {
+      type: [String],
+      required: [true, 'Please enter team members'],
+      index: true,
+    },
   },
   { timestamps: true },
 );

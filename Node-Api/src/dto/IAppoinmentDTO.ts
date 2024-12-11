@@ -4,4 +4,5 @@ export interface IAppointmentDTO {
   roomId: string;
   dateTime: Date;
   status: 'scheduled' | 'completed' | 'canceled';
+  team: string[];
 }

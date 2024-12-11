@@ -3,6 +3,8 @@ import { celebrate, Joi } from 'celebrate';
 import { Container } from 'typedi';
 import IAppointmentController from '../../controllers/IControllers/IAppointmentController';
 import config from '../../../config';
+import checkRole from '../middlewares/checkRole';
+import isAuth from '../middlewares/isAuth';
 
 const route = Router();
 
@@ -11,6 +13,8 @@ export default (app: Router) => {
 
   const ctrl = Container.get(config.controllers.appointment.name) as IAppointmentController;
 
+  route.use(isAuth, checkRole(['Doctor']));
+
   route.post(
     '/create',
     celebrate({
@@ -18,7 +22,8 @@ export default (app: Router) => {
         requestId: Joi.string().required(),
         roomId: Joi.string().required(),
         dateTime: Joi.date().required(),
-        status: Joi.string().valid('scheduled', 'completed', 'canceled').required()
+        status: Joi.string().valid('scheduled', 'completed', 'canceled').required(),
+        team: Joi.array().items(Joi.string()).required(),
       }),
     }),
     async (req: any, res: any, next: any) => {
@@ -37,7 +42,8 @@ export default (app: Router) => {
         requestId: Joi.string().required(),
         roomId: Joi.string().required(),
         dateTime: Joi.date().required(),
-        status: Joi.string().valid('scheduled', 'completed', 'canceled').required()
+        status: Joi.string().valid('scheduled', 'completed', 'canceled').required(),
+        team: Joi.array().items(Joi.string()).required(),
       }),
       params: Joi.object({
         id: Joi.string().required(),
