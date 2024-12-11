@@ -83,7 +83,7 @@ export class PatientService {
    * @returns {Observable<any>} - The observable containing the response.
    * @vscosousa - 12/11/2024
    */
-  createPatient(newPatient: { firstName: string; lastName: string; fullName: string; dateOfBirth: string; genderOptions: string; email: string; phoneNumber: string; emergencyContact: string; allergies: string[]; medicalConditions: string[];}) {
+  createPatient(newPatient: { firstName: string; lastName: string; fullName: string; dateOfBirth: string; genderOptions: string; email: string; phoneNumber: string; emergencyContact: string; allergies: string[]; medicalConditions: string[]; familyHistory: { relationship: string; conditions: string[]; }[]; freeText: string; }) {
     return this.http.post<any>(`${this.apiUrl}/Patient`, newPatient).pipe(
       catchError((error: any) => {
         console.error('Error creating patient:', error);
@@ -98,7 +98,7 @@ export class PatientService {
    * @returns {Observable<any>} - The observable containing the response.
    * @vscosousa - 12/11/2024
    */
-  updatePatient(medicalRecordNumber: string, patient: { firstName: string; lastName: string; fullName: string; email: string; phoneNumber: string; emergencyContact: string; allergies: string[]; medicalConditions: string[]; }) {
+  updatePatient(medicalRecordNumber: string, patient: { firstName: string; lastName: string; fullName: string; email: string; phoneNumber: string; emergencyContact: string; }) {
     return this.http.put<any>(`${this.apiUrl}/Patient/${medicalRecordNumber}`, patient, { responseType: 'json' }).pipe(
       catchError((error: any) => {
         console.error('Error updating patient:', error);

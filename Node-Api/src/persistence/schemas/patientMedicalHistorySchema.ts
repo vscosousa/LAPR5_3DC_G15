@@ -23,6 +23,16 @@ const PatientMedicalHistory = new mongoose.Schema(
       type: [String],
       index: true
     },
+
+    familyHistory: {
+      type: [String],
+      index: true
+    },
+
+    freeText: {
+      type: String,
+      index: true
+    },
   },
   { timestamps: true },
 );

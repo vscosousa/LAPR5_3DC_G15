@@ -5,10 +5,13 @@ import { Guard } from "../core/logic/Guard";
 import { PatientMedicalHistoryId } from "./patientMedicalHistoryId";
 import { IPatientMedicalHistoryDTO } from '../dto/IPatientMedicalHistoryDTO';
 
+
 interface PatientMedicalHistoryProps {
   patientMedicalRecordNumber: string;
   medicalConditions: string[];
   allergies: string[];
+  familyHistory: string[];
+  freeText: string;
 }
 
 export class PatientMedicalHistory extends AggregateRoot<PatientMedicalHistoryProps> {
@@ -40,17 +43,35 @@ export class PatientMedicalHistory extends AggregateRoot<PatientMedicalHistoryPr
     this.props.allergies = value;
   }
 
+  get familyHistory(): string[] {
+    return this.props.familyHistory;
+  }
+
+  set familyHistory(value: string[]) {
+    this.props.familyHistory = value;
+  }
+
+  get freeText(): string {
+    return this.props.freeText;
+  }
+
+  set freeText(value: string) {
+    this.props.freeText = value;
+  }
+
   private constructor(props: PatientMedicalHistoryProps, id?: UniqueEntityID) {
     super(props, id);
   }
 
   public static create(patientMedicalHistoryDTO: IPatientMedicalHistoryDTO, id?: UniqueEntityID): Result<PatientMedicalHistory> {
-    const { patientMedicalRecordNumber, medicalConditions, allergies } = patientMedicalHistoryDTO;
+    const { patientMedicalRecordNumber, medicalConditions, allergies , familyHistory, freeText } = patientMedicalHistoryDTO;
 
     const guardedProps = [
       { argument: patientMedicalRecordNumber, argumentName: 'patientMedicalRecordNumber' },
       { argument: medicalConditions, argumentName: 'medicalConditions' },
-      { argument: allergies, argumentName: 'allergies' }
+      { argument: allergies, argumentName: 'allergies' },
+      { argument: familyHistory, argumentName: 'familyHistory' },
+      { argument: freeText, argumentName: 'freeText' }
     ];
 
     const guardResult = Guard.againstNullOrUndefinedBulk(guardedProps);
@@ -61,7 +82,9 @@ export class PatientMedicalHistory extends AggregateRoot<PatientMedicalHistoryPr
       const patientMedicalHistory = new PatientMedicalHistory({
         patientMedicalRecordNumber,
         medicalConditions,
-        allergies
+        allergies,
+        familyHistory,
+        freeText
       }, id);
 
       return Result.ok<PatientMedicalHistory>(patientMedicalHistory);
@@ -71,7 +94,9 @@ export class PatientMedicalHistory extends AggregateRoot<PatientMedicalHistoryPr
   public toString(): string {
     const allergies = this.props.allergies.map(allergy => `- ${allergy}`).join('\n');
     const medicalConditions = this.props.medicalConditions.map(condition => `- ${condition}`).join('\n');
+    const familyHistory = this.props.familyHistory.map(familyMember => `- ${familyMember.toString()}`).join('\n');
+    const freeText = this.props.freeText;
     
-    return `Allergies:\n${allergies}\n\nMedical Conditions:\n${medicalConditions}`;
+    return `Allergies:\n${allergies}\n\nMedical Conditions:\n${medicalConditions}\n\nFamily History:\n${familyHistory}\n\nFree Text:\n${freeText}`;
   }
 }

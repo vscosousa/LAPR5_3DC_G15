@@ -178,7 +178,8 @@ namespace DDDSample1.Domain.OperationRequests
             {
                 var patient = await _patientRepo.GetByIdAsync(operationRequest.PatientId);
                 var doctor = await _staffRepo.GetByIdAsync(operationRequest.DoctorId);
-                var searchedOperationRequestDTO = _mapper.ToSearchedDTO(operationRequest, patient.FullName, doctor.LicenseNumber);
+                var operationType = await _operationTypeRepo.GetByIdAsync(operationRequest.OperationTypeId);
+                var searchedOperationRequestDTO = _mapper.ToSearchedDTO(operationRequest, patient.FullName, doctor.LicenseNumber, operationType.Name);
                 list.Add(searchedOperationRequestDTO);
             }
             return list;

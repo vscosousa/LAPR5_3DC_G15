@@ -23,6 +23,8 @@ export default class PatientMedicalHistoryService implements IPatientMedicalHist
         patientMedicalRecordNumber: patientMedicalHistoryDTO.patientMedicalRecordNumber,
         medicalConditions: patientMedicalHistoryDTO.medicalConditions,
         allergies: patientMedicalHistoryDTO.allergies,
+        familyHistory: patientMedicalHistoryDTO.familyHistory,
+        freeText: patientMedicalHistoryDTO.freeText
       });
 
       if (patientMedicalHistoryOrError.isFailure) {
@@ -64,6 +66,14 @@ export default class PatientMedicalHistoryService implements IPatientMedicalHist
       if (patientMedicalHistoryDTO.allergies) {
         this.logger.info('Updating allergies to:', patientMedicalHistoryDTO.allergies);
         patientMedicalHistory.props.allergies = patientMedicalHistoryDTO.allergies;
+      }
+      if (patientMedicalHistoryDTO.familyHistory) {
+        this.logger.info('Updating familyHistory to:', patientMedicalHistoryDTO.familyHistory);
+        patientMedicalHistory.props.familyHistory = patientMedicalHistoryDTO.familyHistory;
+      }
+      if (patientMedicalHistoryDTO.freeText) {
+        this.logger.info('Updating freeText to:', patientMedicalHistoryDTO.freeText);
+        patientMedicalHistory.props.freeText = patientMedicalHistoryDTO.freeText;
       }
 
       this.logger.info('Saving updated patientMedicalHistory:', patientMedicalHistory);

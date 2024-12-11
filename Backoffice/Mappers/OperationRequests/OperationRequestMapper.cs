@@ -46,12 +46,12 @@ namespace Projetos.LAPR5_3DC_G15.Mappers.Patients
             };
         }
 
-        public SearchedOperationRequestDTO ToSearchedDTO(OperationRequest input, string patientName, string doctorLicenseNumber)
+        public SearchedOperationRequestDTO ToSearchedDTO(OperationRequest input, string patientName, string doctorLicenseNumber, string OperationTypeName)
         {
             return new SearchedOperationRequestDTO(
                 patientName,
                 input.Id.AsGuid(),
-                input.OperationTypeId.ToString(),
+                OperationTypeName,
                 input.Status.ToString(),
                 input.Priority.ToString(),
                 doctorLicenseNumber,

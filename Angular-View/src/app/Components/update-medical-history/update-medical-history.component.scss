@@ -1,0 +1,456 @@
+.content {
+  display: flex;
+  gap: 20px;
+  width: 100%;
+  height: 100vh;
+  overflow-y: auto;
+  box-sizing: border-box;
+  align-items: center;
+}
+
+.medical-history-container {
+  padding: 20px;
+  max-width: 1200px;
+  height: fit-content;
+  margin: 0 auto;
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+
+  h2 {
+    text-align: center;
+    margin-top: 0;
+  }
+
+  .top-section {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 20px;
+
+    .box {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      background-color: #fff;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+
+      h3 {
+        margin-bottom: 10px;
+        font-size: 16px;
+        font-weight: bold;
+        color: #333;
+      }
+
+      .multi-select-list {
+        max-height: 200px;
+        overflow-y: auto;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        padding: 10px;
+        background-color: #f9f9f9;
+
+        .multi-select-item {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 5px;
+
+          span {
+            flex: 1;
+            text-align: left;
+            font-size: 14px;
+            color: #333;
+          }
+
+          input {
+            margin-left: 10px;
+          }
+        }
+      }
+    }
+  }
+
+  .middle-section {
+    margin-bottom: 20px;
+
+    h3 {
+      margin-bottom: 10px;
+      font-size: 16px;
+      font-weight: bold;
+      color: #333;
+    }
+
+    .family-history-input {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 10px;
+
+      input {
+        flex: 1;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        padding: 10px;
+        font-size: 14px;
+      }
+
+      button {
+        background-color: #28a745;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        padding: 10px 20px;
+        font-size: 14px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+
+        &:hover {
+          background-color: #218838;
+        }
+      }
+    }
+
+    .family-history-table {
+      width: 100%;
+      border-collapse: collapse;
+      position: relative;
+
+      thead {
+        display: table;
+        width: calc(100% - 16px);
+        table-layout: fixed;
+      }
+
+      tbody {
+        display: block;
+        max-height: 150px;
+        overflow-y: scroll;
+        width: 100%;
+      }
+
+      th,
+      td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+        font-size: 14px;
+        box-sizing: border-box;
+      }
+
+      th {
+        background-color: #f2f2f2;
+        font-weight: bold;
+      }
+
+      tbody tr {
+        display: table;
+        width: 100%;
+        table-layout: fixed;
+      }
+
+      tbody::-webkit-scrollbar {
+        width: 16px;
+      }
+
+      tbody::-webkit-scrollbar-thumb {
+        background: #ccc;
+        border-radius: 8px;
+      }
+
+      tbody::-webkit-scrollbar-thumb:hover {
+        background: #b3b3b3;
+      }
+
+      td button {
+        background-color: #dc3545;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        padding: 5px 10px;
+        font-size: 14px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        margin-right: 5px;
+
+        &:hover {
+          background-color: #c82333;
+        }
+      }
+    }
+  }
+
+  .bottom-section {
+    margin-bottom: 20px;
+
+    textarea {
+      width: 100%;
+      height: 100px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      padding: 10px;
+      font-size: 14px;
+      resize: none;
+      overflow-y: auto;
+    }
+  }
+
+  .btn-save {
+    display: block;
+    margin: 20px auto 0;
+    background-color: #28a745;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+
+    &:hover {
+      background-color: #218838;
+    }
+  }
+
+  .btn-select {
+    display: block;
+    margin: 10px auto;
+    background-color: #17a2b8;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+
+    &:hover {
+      background-color: #138496;
+    }
+  }
+}
+
+.modal {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  z-index: 1;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(5px);
+  transition: opacity 0.3s ease;
+
+  .modal-content {
+    background-color: #fefefe;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #888;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    position: relative;
+
+    .close {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-size: 28px;
+      font-weight: bold;
+      color: #aaa;
+      cursor: pointer;
+      transition: color 0.3s;
+
+      &:hover,
+      &:focus {
+        color: #000;
+        text-decoration: none;
+      }
+    }
+
+    h2 {
+      margin-top: 0;
+      text-align: center;
+    }
+
+    .multi-select-list {
+      max-height: 200px;
+      overflow-y: auto;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      padding: 10px;
+      background-color: #f9f9f9;
+
+      .multi-select-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 5px;
+
+        span {
+          flex: 1;
+          text-align: left;
+          font-size: 14px;
+          color: #333;
+        }
+
+        input {
+          margin-left: 10px;
+        }
+      }
+    }
+  }
+}
+
+.update-family-history-modal-content {
+  background-color: #fefefe;
+  margin: auto;
+  padding: 20px;
+  border: 1px solid #888;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  position: relative;
+  z-index: 2;
+
+  .update-family-history-close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 28px;
+    font-weight: bold;
+    color: #aaa;
+    cursor: pointer;
+    transition: color 0.3s;
+
+    &:hover,
+    &:focus {
+      color: #000;
+      text-decoration: none;
+    }
+  }
+
+  h2 {
+    margin-top: 0;
+    text-align: center;
+  }
+
+  .family-history-input {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+
+    input {
+      flex: 1;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      padding: 10px;
+      font-size: 14px;
+    }
+
+    button {
+      background-color: #28a745;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      padding: 10px 20px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+
+      &:hover {
+        background-color: #218838;
+      }
+    }
+  }
+}
+
+.family-conditions-modal-content {
+  background-color: #fefefe;
+  margin: auto;
+  padding: 20px;
+  border: 1px solid #888;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  position: relative;
+  z-index: 100;
+
+  .family-conditions-close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 28px;
+    font-weight: bold;
+    color: #aaa;
+    cursor: pointer;
+    transition: color 0.3s;
+
+    &:hover,
+    &:focus {
+      color: #000;
+      text-decoration: none;
+    }
+  }
+
+  h2 {
+    margin-top: 0;
+    text-align: center;
+  }
+
+  .family-conditions-multi-select-list {
+    max-height: 200px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 10px;
+    background-color: #f9f9f9;
+
+    .family-conditions-multi-select-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 5px;
+
+      span {
+        flex: 1;
+        text-align: left;
+        font-size: 14px;
+        color: #333;
+      }
+
+      input {
+        margin-left: 10px;
+      }
+    }
+  }
+}
+
+.btn-save {
+  display: block;
+  margin: 20px auto 0;
+  background-color: #28a745;
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.btn-save:hover {
+  background-color: #218838;
+}

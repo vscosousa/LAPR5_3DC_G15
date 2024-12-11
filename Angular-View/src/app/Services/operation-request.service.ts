@@ -1,12 +1,12 @@
 /**
  * Service for managing operation requests and their associated data.
  * Developed by: Tiago Sousa - 1150736
- * 
+ *
  * @service
  * @providedIn root
- * 
+ *
  * @class OperationRequestService
- * 
+ *
  * @method getOperationRequests Fetches all operation requests from the backend.
  * @method getOperationTypes Fetches all operation types from the backend.
  * @method createOperationRequest Creates a new operation request.
@@ -31,7 +31,7 @@ export class OperationRequestService {
    * @param {string} operationRequestName - The name of the operation request to edit.
    * @param {object} operationRequest - The updated operation type data.
    * @param {string} operationRequest.name - The name of the operation request.
-   * @param {string} operationRequest.patient 
+   * @param {string} operationRequest.patient
    * @returns {Observable<any>} An observable containing the updated operation type.
    */
   editOperationRequest(operationRequestName: string, operationRequest: { name: string; estimatedDuration: string; specializations: any[] }): Observable<any> {
@@ -89,7 +89,7 @@ export class OperationRequestService {
       })
     );
   }
-  
+
   getOperationRequestsWithAdvancedFilter(
     operationRequest?: string,
     doctorLicenseNumber?: string,

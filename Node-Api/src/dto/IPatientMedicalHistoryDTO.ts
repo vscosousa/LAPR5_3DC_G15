@@ -3,4 +3,6 @@ export interface IPatientMedicalHistoryDTO {
   patientMedicalRecordNumber: string;
   medicalConditions: string[];
   allergies: string[];
+  familyHistory: string[];
+  freeText: string;
 }

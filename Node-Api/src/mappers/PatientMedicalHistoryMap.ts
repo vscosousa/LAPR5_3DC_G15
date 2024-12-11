@@ -12,7 +12,9 @@ export class PatientMedicalHistoryMap extends Mapper<PatientMedicalHistory> {
       id: patientMedicalHistory.id.toString(),
       patientMedicalRecordNumber: patientMedicalHistory.patientMedicalRecordNumber,
       medicalConditions: patientMedicalHistory.medicalConditions.toString(),
-      allergies: patientMedicalHistory.allergies.toString()
+      allergies: patientMedicalHistory.allergies.toString(),
+      familyHistory: patientMedicalHistory.familyHistory.toString(),
+      freeText: patientMedicalHistory.freeText
     };
   }
 
@@ -32,7 +34,9 @@ export class PatientMedicalHistoryMap extends Mapper<PatientMedicalHistory> {
       domainId: patientMedicalHistory.id.toString(),
       patientMedicalRecordNumber: patientMedicalHistory.patientMedicalRecordNumber,
       medicalConditions: patientMedicalHistory.medicalConditions.toString(),
-      allergies: patientMedicalHistory.allergies.toString()
+      allergies: patientMedicalHistory.allergies.toString(),
+      familyHistory: patientMedicalHistory.familyHistory.toString(),
+      freeText: patientMedicalHistory.freeText
     };
   }
 }

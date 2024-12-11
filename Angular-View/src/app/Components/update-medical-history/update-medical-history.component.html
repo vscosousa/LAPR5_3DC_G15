@@ -1,0 +1,173 @@
+<div class="content">
+  <app-sidebar></app-sidebar>
+  <div class="medical-history-container">
+    <h2>Medical History</h2>
+
+    <div class="top-section">
+      <div class="box">
+        <h3>Allergies</h3>
+        <div class="multi-select-list">
+          <div *ngFor="let allergy of allergies" class="multi-select-item">
+            <span>{{ allergy.allergyName }}</span>
+            <input
+              type="checkbox"
+              [value]="allergy.id"
+              [checked]="medicalHistory.allergies.includes(allergy.id)"
+              (change)="onAllergyChange($event, allergy.id)"
+            />
+          </div>
+        </div>
+      </div>
+      <div class="box">
+        <h3>Medical Conditions</h3>
+        <div class="multi-select-list">
+          <div
+            *ngFor="let medicalCondition of medicalConditions"
+            class="multi-select-item"
+          >
+            <span>{{ medicalCondition.medicalConditionName }}</span>
+            <input
+              type="checkbox"
+              [value]="medicalCondition.id"
+              [checked]="medicalHistory.medicalConditions.includes(medicalCondition.id)"
+              (change)="onMedicalConditionChange($event, medicalCondition.id)"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="middle-section">
+      <h3>Family History</h3>
+      <div class="family-history-input">
+        <input
+          type="text"
+          placeholder="Relationship"
+          [(ngModel)]="newFamilyHistory.relationship"
+          name="newRelationship"
+          required
+        />
+        <button type="button" (click)="openFamilyConditionsModal()">
+          Select Conditions
+        </button>
+        <button
+          type="button"
+          (click)="addFamilyHistory()"
+          [disabled]="
+            !newFamilyHistory.relationship ||
+            newFamilyHistory.conditions.length === 0
+          "
+        >
+          Add Family History
+        </button>
+      </div>
+      <table class="family-history-table">
+        <thead>
+          <tr>
+            <th>Family History</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let history of medicalHistory.familyHistory; let i = index">
+            <td>{{ history }}</td>
+            <td>
+              <button type="button" (click)="editFamilyHistory(i)">Edit</button>
+              <button type="button" (click)="removeFamilyHistory(i)">
+                Remove
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="bottom-section">
+      <h3>Free Text Field</h3>
+      <textarea
+        placeholder="Free Text Field"
+        [(ngModel)]="medicalHistory.freeText"
+        name="freeTextField"
+      ></textarea>
+    </div>
+
+    <button type="button" class="btn btn-save" (click)="submitMedicalHistory()">Save</button>
+  </div>
+
+  <!-- Family Conditions Modal -->
+  <div class="modal" *ngIf="showFamilyConditionsModal">
+    <div class="family-conditions-modal-content">
+      <span
+        class="family-conditions-close"
+        (click)="closeFamilyConditionsModal()"
+        >&times;</span
+      >
+      <h2>Select Family Conditions</h2>
+      <div class="family-conditions-multi-select-list">
+        <div
+          *ngFor="let medicalCondition of medicalConditions"
+          class="family-conditions-multi-select-item"
+        >
+          <span>{{ medicalCondition.medicalConditionName }}</span>
+          <input
+            type="checkbox"
+            [value]="medicalCondition.medicalConditionName"
+            [checked]="
+              newFamilyHistory.conditions.includes(
+                medicalCondition.medicalConditionName
+              )
+            "
+            (change)="
+              onFamilyHistoryConditionChange(
+                $event,
+                medicalCondition.medicalConditionName
+              )
+            "
+          />
+        </div>
+      </div>
+      <button
+        type="button"
+        class="btn btn-save"
+        (click)="closeFamilyConditionsModal()"
+      >
+        Save
+      </button>
+    </div>
+  </div>
+
+  <!-- Edit Family History Modal -->
+  <div class="modal" *ngIf="showUpdateFamilyHistoryModal">
+    <div class="update-family-history-modal-content">
+      <span
+        class="update-family-history-close"
+        (click)="closeUpdateFamilyHistoryModal()"
+        >&times;</span
+      >
+      <h2>Edit Family History</h2>
+      <div class="family-history-input">
+        <input
+          type="text"
+          placeholder="Relationship"
+          [(ngModel)]="newFamilyHistory.relationship"
+          name="editRelationship"
+          required
+        />
+        <button type="button" (click)="openFamilyConditionsModal()">
+          Select Conditions
+        </button>
+      </div>
+      <button
+        type="button"
+        class="btn btn-save"
+        (click)="updateFamilyHistory()"
+        [disabled]="
+          !newFamilyHistory.relationship ||
+          newFamilyHistory.conditions.length === 0
+        "
+      >
+        Save
+      </button>
+    </div>
+  </div>
+</div>

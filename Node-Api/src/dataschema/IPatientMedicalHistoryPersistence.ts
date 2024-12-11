@@ -3,4 +3,6 @@ export interface IPatientMedicalHistoryPersistence {
   patientMedicalRecordNumber: string;
   medicalConditions: string[];
   allergies: string[];
+  familyHistory: string[];
+  freeText: string;
 }

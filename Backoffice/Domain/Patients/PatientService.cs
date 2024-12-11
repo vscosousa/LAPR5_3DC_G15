@@ -4,12 +4,6 @@ using System;
 using System.Collections.Generic;
 using DDDSample1.Domain.Logs;
 using System.Text.RegularExpressions; // Ensure you have this using directive for Regex
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
-using BCrypt.Net;
-using Microsoft.Extensions.Configuration;
 using System.Net.Http;
 using System.Net.Http.Json;
 using Newtonsoft.Json;
@@ -47,7 +41,7 @@ namespace DDDSample1.Domain.Patients
                 patient.AssignMedicalRecordNumber(MedicalRecordNumberGenerator.GenerateMedicalRecordNumber(list.Count));
                 await _repo.AddAsync(patient);
 
-                var apiSuccess = await CallExternalApi(patient.MedicalRecordNumber, dto.Allergies, dto.MedicalConditions);
+                var apiSuccess = await CallExternalApi(patient.MedicalRecordNumber, dto.Allergies, dto.MedicalConditions, dto.FamilyHistory, dto.FreeText);
                 if (apiSuccess == null)
                 {
                     throw new Exception("External API call failed.");
@@ -73,9 +67,9 @@ namespace DDDSample1.Domain.Patients
             }
         }
 
-        private async Task<string> CallExternalApi(string patientMedicalRecordNumber, string[] allergies, string[] medicalConditions)
+        private async Task<string> CallExternalApi(string patientMedicalRecordNumber, string[] allergies, string[] medicalConditions, string[] familyHistory, string freeText)
         {
-            MedicalHistoryDTO medicalHistory = new MedicalHistoryDTO(patientMedicalRecordNumber, allergies, medicalConditions);
+            MedicalHistoryDTO medicalHistory = new MedicalHistoryDTO(patientMedicalRecordNumber, allergies, medicalConditions, familyHistory, freeText);
             using (var httpClient = new HttpClient())
             {
                 var response = await httpClient.PostAsJsonAsync("http://localhost:4000/api/patientsMedicalHistory/create", medicalHistory);

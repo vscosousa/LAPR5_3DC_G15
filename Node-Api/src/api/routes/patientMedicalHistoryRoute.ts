@@ -4,6 +4,8 @@ import { Container } from 'typedi';
 import config from '../../../config';
 import IPatientMedicalHistoryController from '../../controllers/IControllers/IPatientMedicalHistory';
 import winston from 'winston';
+import checkRole from '../middlewares/checkRole';
+import isAuth from '../middlewares/isAuth';
 
 const route = Router();
 const logger = winston.createLogger({
@@ -33,6 +35,8 @@ export default (app: Router) => {
         patientMedicalRecordNumber: Joi.string().required(),
         medicalConditions: Joi.array().items(Joi.string()).optional(),
         allergies: Joi.array().items(Joi.string()).optional(),
+        familyHistory: Joi.array().items(Joi.string()).optional(),
+        freeText: Joi.string().optional().allow(''),
       }),
     }),
     async (req, res, next) => {
@@ -48,11 +52,15 @@ export default (app: Router) => {
 
   route.put(
     '/update/:patientMedicalRecordNumber',
+    isAuth,
+    checkRole(['Doctor']),
     logRequestBody,
     celebrate({
       body: Joi.object({
         medicalConditions: Joi.array().items(Joi.string()).optional(),
         allergies: Joi.array().items(Joi.string()).optional(),
+        familyHistory: Joi.array().items(Joi.string()).optional(),
+        freeText: Joi.string().optional().allow(''),
       }),
       params: Joi.object({
         patientMedicalRecordNumber: Joi.string().required(),
@@ -71,6 +79,8 @@ export default (app: Router) => {
 
   route.get(
     '/get/:patientMedicalRecordNumber',
+    isAuth,
+    checkRole(['Doctor', 'Admin']),
     logRequestBody,
     celebrate({
       params: Joi.object({

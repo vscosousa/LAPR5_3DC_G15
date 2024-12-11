@@ -13,13 +13,21 @@ namespace DDDSample1.Domain.Patients
         [JsonProperty("medicalConditions")]
         public string[] MedicalConditions { get; init; }
 
+        [JsonProperty("familyHistory")]
+        public string[] FamilyHistory { get; init; }
+
+        [JsonProperty("freeText")]
+        public string FreeText { get; init; }
+
         public MedicalHistoryDTO() { }
 
-        public MedicalHistoryDTO(string patientMedicalRecordNumber, string[] allergies, string[] medicalConditions)
+        public MedicalHistoryDTO(string patientMedicalRecordNumber, string[] allergies, string[] medicalConditions, string[] familyHistory, string freeText)
         {
             PatientMedicalRecordNumber = patientMedicalRecordNumber;
             Allergies = allergies;
             MedicalConditions = medicalConditions;
+            FamilyHistory = familyHistory;
+            FreeText = freeText;
         }
     }
 }

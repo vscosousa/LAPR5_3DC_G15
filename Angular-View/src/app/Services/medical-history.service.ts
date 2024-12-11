@@ -23,12 +23,20 @@ export class MedicalHistoryService {
     );
   }
 
-  updatePatientMedicalHistory(patientMedicalRecordNumber: string, allergies: string[], medicalConditions: string[]): Observable<any> {
+   updatePatientMedicalHistory(patientMedicalRecordNumber: string, allergies: string[], medicalConditions: string[], familyHistory: string[], freeText: string): Observable<any> {
     const url = `${this.apiUrl}/update/${patientMedicalRecordNumber}`;
     const body = {
+      medicalConditions: medicalConditions,
       allergies: allergies,
-      medicalConditions: medicalConditions
+      familyHistory: familyHistory, // Ensure this is an array of strings
+      freeText: freeText
     };
-    return this.http.put(url, body);
+    return this.http.put<any>(url, body).pipe(
+      tap((response: any) => console.log('Update response:', response)),
+      catchError((error: any) => {
+        console.error('Error updating medical history:', error);
+        return throwError(() => error);
+      })
+    );
   }
 }

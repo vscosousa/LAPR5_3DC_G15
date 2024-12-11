@@ -48,6 +48,8 @@ export default class PatientMedicalHistoryRepo implements IPatientMedicalHistory
         patientMedicalHistoryDocument.patientMedicalRecordNumber = patientMedicalHistory.patientMedicalRecordNumber;
         patientMedicalHistoryDocument.medicalConditions = patientMedicalHistory.medicalConditions;
         patientMedicalHistoryDocument.allergies = patientMedicalHistory.allergies;
+        patientMedicalHistoryDocument.familyHistory = patientMedicalHistory.familyHistory.map(fm => fm.toString());
+        patientMedicalHistoryDocument.freeText = patientMedicalHistory.freeText;
         this.logger.info('Updating existing patientMedicalHistory:', patientMedicalHistoryDocument);
 
         await patientMedicalHistoryDocument.save();
