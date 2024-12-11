@@ -7,10 +7,27 @@ const Allergy = new mongoose.Schema(
             type: String,
             unique: true
         },
+        allergyCode:{
+            type: String,
+            required: [true, 'Please enter Allergy Code'],
+            unique: true,
+            index: true,
+        },
         allergyName:{
             type: String,
             required: [true, 'Please enter Allergy Name'],
-            unique: true
+            unique: true,
+            index: true,
+        },
+        allergyDescription:{
+            type: String,
+            required: [true, 'Please enter Allergy Description'],
+            index: true,
+        },
+        allergySymptoms:{
+            type: String,
+            required: [true, 'Please enter Allergy Symptoms'],
+            index: true,
         }
     },
     { timestamps: true },

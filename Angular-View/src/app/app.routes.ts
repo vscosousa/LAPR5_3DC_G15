@@ -33,6 +33,10 @@ import { CreateSpecializationComponent } from './Components/specialization/creat
 import { ManageAllergiesAndConditionsComponent } from './Components/manage-allergies-and-conditions/manage-allergies-and-conditions.component';
 import { CreateAllergiesComponent } from './Components/manage-allergies-and-conditions/create-allergies/create-allergies.component';
 import { CreateConditionsComponent } from './Components/manage-allergies-and-conditions/create-conditions/create-conditions.component';
+import { UpdateAllergiesComponent } from './Components/manage-allergies-and-conditions/update-allergies/update-allergies.component';
+import { UpdateConditionsComponent } from './Components/manage-allergies-and-conditions/update-conditions/update-conditions.component';
+import { UpdateMedicalHistoryComponent } from './Components/update-medical-history/update-medical-history.component';
+import { MedicalHistoryManagerComponent } from './Components/medical-history-manager/medical-history-manager.component';
 
 export const routes: Routes = [
   {
@@ -116,8 +120,16 @@ export const routes: Routes = [
   {
     path: "manage-allergies-and-conditions", component: ManageAllergiesAndConditionsComponent, canActivate: [AuthGuard], children: [
       {path: "create-allergies", component: CreateAllergiesComponent, canActivate: [AuthGuard]},
-      {path: "create-conditions", component: CreateConditionsComponent, canActivate: [AuthGuard]}
+      {path: "create-conditions", component: CreateConditionsComponent, canActivate: [AuthGuard]},
+      {path: "update-allergies/:id", component: UpdateAllergiesComponent, canActivate: [AuthGuard]},
+      {path: "update-conditions/:id", component: UpdateConditionsComponent, canActivate: [AuthGuard]}
     ]
+  },
+  {
+    path: "update-medical-history/:medicalRecordNumber", component: UpdateMedicalHistoryComponent, canActivate: [DoctorGuard]
+  },
+  {
+    path: "medical-history-manager", component: MedicalHistoryManagerComponent, canActivate: [DoctorGuard]
   },
   {
     path: "", component: HomeComponent

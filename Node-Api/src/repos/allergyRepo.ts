@@ -25,24 +25,27 @@ export default class AllergyRepo implements IAllergyRepo {
         return !!allergyDocument === true;
     }
 
-    public async save(allergy: Allergy): Promise<Allergy> {
+        public async save(allergy: Allergy): Promise<Allergy> {
         const query = { domainId: allergy.id.toString() };
         const allergyDocument = await this.allergySchema.findOne(query);
-
+    
         try {
             if (allergyDocument === null) {
                 const rawAllergy: any = AllergyMap.toPersistence(allergy);
                 this.logger.info('Creating new Allergy', rawAllergy);
-
+    
                 const allergyCreated = await this.allergySchema.create(rawAllergy);
-
+    
                 return AllergyMap.toDomain(allergyCreated);
             } else {
+                allergyDocument.allergyCode = allergy.allergyCode;
                 allergyDocument.allergyName = allergy.allergyName;
-                this.logger.info('Updating existing Allergy:', allergyDocument)
-
+                allergyDocument.allergyDescription = allergy.allergyDescription;
+                allergyDocument.allergySymptoms = allergy.allergySymptoms;
+                this.logger.info('Updating existing Allergy:', allergyDocument);
+    
                 await allergyDocument.save();
-                return allergy;
+                return AllergyMap.toDomain(allergyDocument);
             }
         } catch (err) {
             this.logger.error('Error saving Allergy', err);
@@ -68,5 +71,15 @@ export default class AllergyRepo implements IAllergyRepo {
 
     public async findall(): Promise<Allergy[]> {
         return await this.allergySchema.find();
+    }
+
+    public async findbycode(allergyCode: string): Promise<Allergy> {
+        const query = { allergyCode: allergyCode };
+        const allergyRecord = await this.allergySchema.findOne(query as FilterQuery<IAllergyPersistence & Document>);
+        if (allergyRecord != null) {
+            return AllergyMap.toDomain(allergyRecord);
+        } else {
+            return null;
+        }
     }
 }

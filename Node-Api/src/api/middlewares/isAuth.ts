@@ -1,4 +1,3 @@
-// remove by JRT : import jwt from 'express-jwt';
 var { expressjwt: jwt } = require("express-jwt");
 import config from '../../../config';
 
@@ -11,16 +10,19 @@ import config from '../../../config';
  * GET https://my-bulletproof-api.com/stats?apiKey=${JWT}
  * Luckily this API follow _common sense_ ergo a _good design_ and don't allow that ugly stuff
  */
-const getTokenFromHeader = (req: { headers: { authorization: string; }; }) => {
-  /**
-   * @TODO Edge and Internet Explorer do some weird things with the headers
-   * So I believe that this should handle more 'edge' cases ;)
-   */
-  if (
-    (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Token') ||
-    (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer')
-  ) {
-    return req.headers.authorization.split(' ')[1];
+const getTokenFromHeader = (req: { headers: { authorization: string | string[]; }; }) => {
+  let authorizationHeader = req.headers.authorization;
+
+  // Handle case where authorization header is an array
+  if (Array.isArray(authorizationHeader)) {
+    authorizationHeader = authorizationHeader[0];
+  }
+
+  if (authorizationHeader) {
+    const parts = authorizationHeader.split(' ');
+    if (parts[0] === 'Token' || parts[0] === 'Bearer') {
+      return parts[1];
+    }
   }
   return null;
 };

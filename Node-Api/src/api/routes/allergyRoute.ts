@@ -4,6 +4,8 @@ import { Container } from 'typedi';
 import config from '../../../config';
 import IAllergyController from '../../controllers/IControllers/IAllergyController';
 import winston from 'winston';
+import isAuth from '../middlewares/isAuth';
+import checkRole from '../middlewares/checkRole';
 
 const route = Router();
 
@@ -16,6 +18,9 @@ const logger = winston.createLogger({
     ],
 });
 
+const MAX_NAME_LENGTH = 100;
+const MAX_DESCRIPTION_LENGTH = 2048;
+
 const logRequestBody = (req: { body: any; }, res: any, next: () => void) => {
     logger.info('Request body:', { body: req.body });
     next();
@@ -26,12 +31,27 @@ export default (app: Router) => {
 
     const ctrl = Container.get(config.controllers.allergy.name) as IAllergyController;
 
+    route.use(isAuth, checkRole(['Admin']));
+
     route.post(
         '/create',
         logRequestBody,
         celebrate({
             body: Joi.object({
-                allergyName: Joi.string().required()
+                allergyCode: Joi.string()
+                .pattern(/^[A-TV-Z][0-9][0-9AB]\.?[0-9A-TV-Z]{0,4}$|^[A-HJ-NP-Z0-9][A-HJ-NP-Z][0-9][A-HJ-NP-Z0-9]((\.?[A-HJ-NP-Z0-9]{1,2})?)$/)
+                .required()
+                .messages({
+                    'string.pattern.base': 'Invalid ICD code format. Ensure it matches ICD-10 or ICD-11 standards.',
+                    'string.empty': 'Allergy code is required.',
+                }),
+                allergyName: Joi.string().max(MAX_NAME_LENGTH).required().messages({
+                    'string.max': `Allergy name cannot exceed ${MAX_NAME_LENGTH} characters`
+                }),
+                allergyDescription: Joi.string().max(MAX_DESCRIPTION_LENGTH).required().messages({
+                    'string.max': `Allergy description cannot exceed ${MAX_DESCRIPTION_LENGTH} characters`
+                }),
+                allergySymptoms: Joi.string().required()
             }),
         }),
         async (req, res, next) => {
@@ -39,6 +59,7 @@ export default (app: Router) => {
                 logger.info('POST /allergies/create called', { body: req.body });
                 await ctrl.createAllergy(req, res, next);
             } catch (error) {
+                logger.error('Error in POST /allergies/create', { error });
                 next(error);
             }
         }
@@ -49,7 +70,20 @@ export default (app: Router) => {
         logRequestBody,
         celebrate({
             body: Joi.object({
-                allergyName: Joi.string().required()
+                allergyCode: Joi.string()
+                .pattern(/^[A-TV-Z][0-9][0-9AB]\.?[0-9A-TV-Z]{0,4}$|^[A-HJ-NP-Z0-9][A-HJ-NP-Z][0-9][A-HJ-NP-Z0-9]((\.?[A-HJ-NP-Z0-9]{1,2})?)$/)
+                .optional()
+                .messages({
+                    'string.pattern.base': 'Invalid ICD code format. Ensure it matches ICD-10 or ICD-11 standards.',
+                    'string.empty': 'Allergy code is required.',
+                }),
+                allergyName: Joi.string().max(MAX_NAME_LENGTH).optional().messages({
+                    'string.max': `Allergy name cannot exceed ${MAX_NAME_LENGTH} characters`
+                }),
+                allergyDescription: Joi.string().max(MAX_DESCRIPTION_LENGTH).optional().messages({
+                    'string.max': `Allergy description cannot exceed ${MAX_DESCRIPTION_LENGTH} characters`
+                }),
+                allergySymptoms: Joi.string().optional()
             }),
             params: Joi.object({
                 id: Joi.string().required(),

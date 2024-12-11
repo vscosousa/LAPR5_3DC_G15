@@ -1,6 +1,4 @@
 import dotenv from 'dotenv';
-import path from 'path';
-import patientMedicalHistory from './src/api/routes/patientMedicalHistoryRoute';
 
 // Set the NODE_ENV to 'development' by default
 process.env.NODE_ENV = process.env.NODE_ENV || 'development';
@@ -11,7 +9,7 @@ if (!envFound) {
   throw new Error("⚠️  Couldn't find .env file  ⚠️");
 }
 
-export default {
+const config = {
   /**
    * Your favorite port : optional change to 4000 by JRT
    */
@@ -25,7 +23,7 @@ export default {
   /**
    * Your secret sauce
    */
-  jwtSecret: process.env.JWT_SECRET || "my sakdfho2390asjod$%jl)!sdjas0i secret",
+  jwtSecret: process.env.JWT_SECRET || "your-very-secure-key-that-is-at-least-256-bits-long",
 
   /**
    * Used by winston logger
@@ -110,3 +108,5 @@ export default {
     }
   },
 };
+
+export default config;

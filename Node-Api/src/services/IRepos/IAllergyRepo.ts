@@ -5,6 +5,7 @@ import { AllergyId } from "../../domain/allergyId";
 export default interface IAllergyRepo extends Repo<Allergy>{
     save(allergy: Allergy): Promise<Allergy>;
     findbydomainid(allergyId: AllergyId | string): Promise<Allergy>;
+    findbycode(allergyCode: string): Promise<Allergy>;
     delete(allergy:Allergy): Promise<void>;
     findall(): Promise<Allergy[]>;
 }

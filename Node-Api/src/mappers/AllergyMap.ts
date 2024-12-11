@@ -9,8 +9,11 @@ import { Document, Model } from "mongoose";
 export class AllergyMap extends Mapper<Allergy> {
     public static toDTO(allergy: any): IAllergyDTO{
         return{
-            id: allergy.id.toString(),
-            allergyName: allergy.allergyName
+            id: allergy.domainId,
+            allergyCode: allergy.allergyCode,
+            allergyName: allergy.allergyName,
+            allergyDescription: allergy.allergyDescription,
+            allergySymptoms: allergy.allergySymptoms
         };
     }
 
@@ -27,7 +30,10 @@ export class AllergyMap extends Mapper<Allergy> {
     public static toPersistence(allergy: Allergy): any{
         return{
             domainId: allergy.id.toString(),
-            allergyName: allergy.allergyName
+            allergyCode: allergy.allergyCode,
+            allergyName: allergy.allergyName,
+            allergyDescription: allergy.allergyDescription,
+            allergySymptoms: allergy.allergySymptoms
         };
     }
 }

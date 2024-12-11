@@ -21,9 +21,11 @@ export default class AllergyService implements IAllergyService {
 
             const allergyOrError = Allergy.create({
                 id: allergyDTO.id,
-                allergyName: allergyDTO.allergyName
+                allergyCode: allergyDTO.allergyCode,
+                allergyName: allergyDTO.allergyName,
+                allergyDescription: allergyDTO.allergyDescription,
+                allergySymptoms: allergyDTO.allergySymptoms
             });
-            
 
             if (allergyOrError.isFailure) {
                 this.logger.error('Error creating Allergy:', allergyOrError.errorValue());
@@ -35,6 +37,7 @@ export default class AllergyService implements IAllergyService {
             await this.allergyRepo.save(allergy);
 
             const allergyDTOResult = AllergyMap.toDTO(allergy);
+            this.logger.info('Allergy created successfully:', allergyDTOResult);
             return Result.ok<IAllergyDTO>(allergyDTOResult);
         } catch (e) {
             this.logger.error('Error in createAllergy', e);
@@ -44,20 +47,39 @@ export default class AllergyService implements IAllergyService {
 
     public async updateAllergy(id: string, allergyDTO: Partial<IAllergyDTO>): Promise<Result<IAllergyDTO>> {
         try {
+            this.logger.info('Updating allergy with ID:', id);
 
             const allergy = await this.allergyRepo.findbydomainid(id);
 
             if (!allergy) {
+                this.logger.warn('Allergy not found with ID:', id);
                 return Result.fail<IAllergyDTO>("Allergy not found");
             }
 
+            this.logger.info('Found allergy:', allergy);
+
+            if (allergyDTO.allergyCode) {
+                this.logger.info('Updating allergyCode to:', allergyDTO.allergyCode);
+                allergy.props.allergyCode = allergyDTO.allergyCode;
+            }
             if (allergyDTO.allergyName) {
+                this.logger.info('Updating allergyName to:', allergyDTO.allergyName);
                 allergy.props.allergyName = allergyDTO.allergyName;
             }
+            if (allergyDTO.allergyDescription) {
+                this.logger.info('Updating allergyDescription to:', allergyDTO.allergyDescription);
+                allergy.props.allergyDescription = allergyDTO.allergyDescription;
+            }
+            if (allergyDTO.allergySymptoms) {
+                this.logger.info('Updating allergySymptoms to:', allergyDTO.allergySymptoms);
+                allergy.props.allergySymptoms = allergyDTO.allergySymptoms;
+            }
 
+            this.logger.info('Saving updated allergy:', allergy);
             await this.allergyRepo.save(allergy);
 
             const allergyDTOResult = AllergyMap.toDTO(allergy);
+            this.logger.info('Allergy updated successfully:', allergyDTOResult);
 
             return Result.ok<IAllergyDTO>(allergyDTOResult);
 
