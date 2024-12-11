@@ -1,0 +1,12 @@
+<h2>Update Condition</h2>
+<form (submit)="onSubmit()">
+  <label for="medicalCondition-code">Code:</label>
+  <input type="text" id="medicalCondition-code" name="medicalCondition-code" [(ngModel)]="medicalCondition.medicalConditionCode" required>
+  <label for="medicalCondition-name">Name:</label>
+  <input type="text" id="medicalCondition-name" name="medicalCondition-name" [(ngModel)]="medicalCondition.medicalConditionName" required>
+  <label for="medicalCondition-description">Description:</label>
+  <input type="text" id="medicalCondition-description" name="medicalCondition-description" [(ngModel)]="medicalCondition.medicalConditionDescription" required>
+  <label for="medicalCondition-symptoms">Symptoms:</label>
+  <input type="text" id="medicalCondition-symptoms" name="medicalCondition-symptoms" [(ngModel)]="medicalCondition.medicalConditionSymptoms" required>
+  <button type="submit">Submit</button>
+</form>
