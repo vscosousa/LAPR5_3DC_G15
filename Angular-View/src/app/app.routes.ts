@@ -33,6 +33,7 @@ import { CreateSpecializationComponent } from './Components/specialization/creat
 import { ManageAllergiesAndConditionsComponent } from './Components/manage-allergies-and-conditions/manage-allergies-and-conditions.component';
 import { CreateAllergiesComponent } from './Components/manage-allergies-and-conditions/create-allergies/create-allergies.component';
 import { CreateConditionsComponent } from './Components/manage-allergies-and-conditions/create-conditions/create-conditions.component';
+import { PatientPolicyComponent } from './Components/patient-policy/patient-policy.component';
 
 export const routes: Routes = [
   {
@@ -85,6 +86,9 @@ export const routes: Routes = [
   },
   {
     path: "patient-settings", component: PatientSettingsComponent, canActivate: [PatientGuard]
+  },
+  {
+    path: "patient-policy", component: PatientPolicyComponent
   },
   {
     path: "hospital3d", component: Hospital3dComponent

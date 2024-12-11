@@ -39,6 +39,11 @@ Description: This component displays the sidebar with navigation links for the h
       >
     </li>
     <li>
+      <a [routerLink]="['/patient-policy']">
+      <img src="insurance.png" alt="icon" class="colored-icon" />Privacy Policy
+      </a>
+    </li>
+    <li>
       <a href="/" (click)="logout()"
         ><img src="logout.png" alt="icon" />Logout</a
       >
