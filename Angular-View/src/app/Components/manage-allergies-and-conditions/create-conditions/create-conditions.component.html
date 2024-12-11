@@ -1,6 +1,12 @@
-<h2>Create Allergy</h2>
+<h2>Create Medical Condition</h2>
 <form (submit)="onSubmit()">
+  <label for="condition-code">Code:</label>
+  <input type="text" id="condition-code" name="condition-code" [(ngModel)]="medicalCondition.medicalConditionCode" required>
   <label for="condition-name">Name:</label>
-  <input type="text" id="condition-name" name="condition-name" [(ngModel)]="medicalConditionName" required>
+  <input type="text" id="condition-name" name="condition-name" [(ngModel)]="medicalCondition.medicalConditionName" required>
+  <label for="condition-description">Description:</label>
+  <input type="text" id="condition-description" name="condition-description" [(ngModel)]="medicalCondition.medicalConditionDescription" required>
+  <label for="condition-sypmtoms">Symptoms:</label>
+  <input type="text" id="condition-symptoms" name="condition-symptoms" [(ngModel)]="medicalCondition.medicalConditionSymptoms" required>
   <button type="submit">Submit</button>
 </form>

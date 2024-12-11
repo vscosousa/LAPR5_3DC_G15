@@ -9,8 +9,11 @@ import { Document, Model } from "mongoose";
 export class MedicalConditionMap extends Mapper<MedicalCondition> {
     public static toDTO(medicalCondition: any): IMedicalConditionDTO{
         return{
-            id: medicalCondition.id.toString(),
-            medicalConditionName: medicalCondition.medicalConditionName
+            id: medicalCondition.domainId,
+            medicalConditionCode: medicalCondition.medicalConditionCode,
+            medicalConditionName: medicalCondition.medicalConditionName,
+            medicalConditionDescription: medicalCondition.medicalConditionDescription,
+            medicalConditionSymptoms: medicalCondition.medicalConditionSymptoms
         };
     }
 
@@ -27,7 +30,10 @@ export class MedicalConditionMap extends Mapper<MedicalCondition> {
     public static toPersistence(medicalCondition: MedicalCondition): any{
         return{
             domainId: medicalCondition.id.toString(),
-            medicalConditionName: medicalCondition.medicalConditionName
+            medicalConditionCode: medicalCondition.medicalConditionCode,
+            medicalConditionName: medicalCondition.medicalConditionName,
+            medicalConditionDescription: medicalCondition.medicalConditionDescription,
+            medicalConditionSymptoms: medicalCondition.medicalConditionSymptoms
         };
     }
 }

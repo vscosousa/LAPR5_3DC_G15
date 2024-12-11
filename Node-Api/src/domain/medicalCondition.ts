@@ -5,12 +5,15 @@ import { Guard } from "../core/logic/Guard";
 import { IMedicalConditionDTO } from "../dto/IMedicalConditionDTO";
 import { MedicalConditionId } from "./medicalConditionId";
 
-
 interface MedicalConditionProps {
-  medicalConditionName: string;
+    medicalConditionCode: string;
+    medicalConditionName: string;
+    medicalConditionDescription: string;
+    medicalConditionSymptoms: string;
 }
 
-export class MedicalCondition extends AggregateRoot<MedicalConditionProps>{
+export class MedicalCondition extends AggregateRoot<MedicalConditionProps> {
+
     get id(): UniqueEntityID {
         return this._id;
     }
@@ -19,8 +22,36 @@ export class MedicalCondition extends AggregateRoot<MedicalConditionProps>{
         return new MedicalConditionId(this.id.toValue());
     }
 
+    get medicalConditionCode(): string {
+        return this.props.medicalConditionCode;
+    }
+
     get medicalConditionName(): string {
         return this.props.medicalConditionName;
+    }
+
+    get medicalConditionDescription(): string {
+        return this.props.medicalConditionDescription;
+    }
+
+    get medicalConditionSymptoms(): string {
+        return this.props.medicalConditionSymptoms;
+    }
+
+    set medicalConditionCode(value: string) {
+        this.props.medicalConditionCode = value;
+    }
+
+    set medicalConditionName(value: string) {
+        this.props.medicalConditionName = value;
+    }
+
+    set medicalConditionDescription(value: string) {
+        this.props.medicalConditionDescription = value;
+    }
+
+    set medicalConditionSymptoms(value: string) {
+        this.props.medicalConditionSymptoms = value;
     }
 
     private constructor(props: MedicalConditionProps, id?: UniqueEntityID) {
@@ -28,20 +59,22 @@ export class MedicalCondition extends AggregateRoot<MedicalConditionProps>{
     }
 
     public static create(medicalConditionDTO: IMedicalConditionDTO, id?: UniqueEntityID): Result<MedicalCondition> {
-        const { medicalConditionName } = medicalConditionDTO;
+        const { medicalConditionCode, medicalConditionName, medicalConditionDescription, medicalConditionSymptoms } = medicalConditionDTO;
 
         const guardedProps = [
-            { argument: medicalConditionName, argumentName: 'medicalConditionName' }
+            { argument: medicalConditionCode, argumentName: 'medicalConditionCode' },
+            { argument: medicalConditionName, argumentName: 'medicalConditionName' },
+            { argument: medicalConditionDescription, argumentName: 'medicalConditionDescription' },
+            { argument: medicalConditionSymptoms, argumentName: 'medicalConditionSymptoms' }
         ];
 
         const guardResult = Guard.againstNullOrUndefinedBulk(guardedProps);
 
-        if(!guardResult.succeeded) {
+        if (!guardResult.succeeded) {
             return Result.fail<MedicalCondition>(guardResult.message);
         } else {
-            const medicalCondition = new MedicalCondition({ medicalConditionName }, id);
+            const medicalCondition = new MedicalCondition({ medicalConditionCode, medicalConditionName, medicalConditionDescription, medicalConditionSymptoms }, id);
             return Result.ok<MedicalCondition>(medicalCondition);
         }
-
     }
 }

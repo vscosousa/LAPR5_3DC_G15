@@ -10,7 +10,18 @@ import { MedicalConditionService } from '../../../Services/medical-condition.ser
   styleUrls: ['./create-conditions.component.scss']
 })
 export class CreateConditionsComponent {
-  medicalConditionName: string = '';
+
+  medicalCondition: {
+    medicalConditionCode: string,
+    medicalConditionName: string,
+    medicalConditionDescription: string,
+    medicalConditionSymptoms: string
+  } = {
+    medicalConditionCode: '',
+    medicalConditionName: '',
+    medicalConditionDescription: '',
+    medicalConditionSymptoms: ''
+  };
 
   @Output() conditionCreated = new EventEmitter<void>();
 
@@ -19,7 +30,7 @@ export class CreateConditionsComponent {
   ) {}
 
   onSubmit(): void {
-    this.conditionService.createMedicalConditions(this.medicalConditionName).subscribe({
+    this.conditionService.createMedicalConditions(this.medicalCondition).subscribe({
       next: () => {
         alert('Medical Condition created successfully!');
         this.conditionCreated.emit();

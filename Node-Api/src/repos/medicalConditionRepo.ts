@@ -38,7 +38,10 @@ export default class MedicalConditionRepo implements IMedicalConditionRepo {
 
                 return MedicalConditionMap.toDomain(medicalConditionCreated);
             } else {
+                medicalConditionDocument.medicalConditionCode = medicalCondition.medicalConditionCode;
                 medicalConditionDocument.medicalConditionName = medicalCondition.medicalConditionName;
+                medicalConditionDocument.medicalConditionDescription = medicalCondition.medicalConditionDescription;
+                medicalConditionDocument.medicalConditionSymptoms = medicalCondition.medicalConditionSymptoms;
                 this.logger.info('Updating existing MedicalCondition:', medicalConditionDocument)
 
                 await medicalConditionDocument.save();

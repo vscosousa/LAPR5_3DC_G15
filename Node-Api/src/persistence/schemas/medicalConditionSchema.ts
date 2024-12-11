@@ -7,10 +7,27 @@ const MedicalCondition = new mongoose.Schema(
             type: String,
             unique: true
         },
+        medicalConditionCode:{
+            type: String,
+            required: [true, 'Please enter MedicalCondition Code'],
+            unique: true,
+            index: true,
+        },
         medicalConditionName:{
             type: String,
             required: [true, 'Please enter MedicalCondition Name'],
-            unique: true
+            unique: true,
+            index: true,
+        },
+        medicalConditionDescription:{
+            type: String,
+            required: [true, 'Please enter MedicalCondition Description'],
+            index: true,
+        },
+        medicalConditionSymptoms:{
+            type: String,
+            required: [true, 'Please enter MedicalCondition Symptoms'],
+            index: true,
         }
     },
     { timestamps: true },

@@ -16,18 +16,23 @@ export default class MedicalConditionController implements IMedicalConditionCont
 
     public async createMedicalCondition(req: Request, res: Response, next: NextFunction) {
         try {
+            console.log("Body received:", req.body);
+
             const medicalConditionOrError = await this.medicalConditionServiceInstance.createMedicalCondition(req.body as IMedicalConditionDTO) as Result<IMedicalConditionDTO>;
 
             if (medicalConditionOrError.isFailure) {
+                console.error("Error in createMedicalCondition:", medicalConditionOrError.errorValue());
                 return res.status(400).send(medicalConditionOrError.errorValue());
             }
 
             const medicalConditionDTO = medicalConditionOrError.getValue();
+            console.log("MedicalCondition created:", medicalConditionDTO);
             return res.status(201).json(medicalConditionDTO);
         } catch (e) {
+            console.error("Error in createMedicalCondition:", e);
             return next(e);
         }
-    };
+    }
 
     public async updateMedicalCondition(req: Request, res: Response, next: NextFunction) {
         try {

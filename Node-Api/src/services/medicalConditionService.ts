@@ -21,7 +21,10 @@ export default class MedicalConditionService implements IMedicalConditionService
 
             const medicalConditionOrError = MedicalCondition.create({
                 id: medicalConditionDTO.id,
-                medicalConditionName: medicalConditionDTO.medicalConditionName
+                medicalConditionCode: medicalConditionDTO.medicalConditionCode,
+                medicalConditionName: medicalConditionDTO.medicalConditionName,
+                medicalConditionDescription: medicalConditionDTO.medicalConditionDescription,
+                medicalConditionSymptoms: medicalConditionDTO.medicalConditionSymptoms
             });
 
             if (medicalConditionOrError.isFailure) {
@@ -34,6 +37,7 @@ export default class MedicalConditionService implements IMedicalConditionService
             await this.medicalConditionRepo.save(medicalCondition);
 
             const medicalConditionDTOResult = MedicalConditionMap.toDTO(medicalCondition);
+            this.logger.info('MedicalCondition created successfully:', medicalConditionDTOResult);
             return Result.ok<IMedicalConditionDTO>(medicalConditionDTOResult);
         } catch (e) {
             this.logger.error('Error in createMedicalCondition', e);
@@ -49,9 +53,21 @@ export default class MedicalConditionService implements IMedicalConditionService
             if (!medicalCondition) {
                 return Result.fail<IMedicalConditionDTO>("MedicalCondition not found");
             }
+            
+            if (medicalConditionDTO.medicalConditionCode) {
+                medicalCondition.props.medicalConditionCode = medicalConditionDTO.medicalConditionCode;
+            }
 
             if (medicalConditionDTO.medicalConditionName) {
                 medicalCondition.props.medicalConditionName = medicalConditionDTO.medicalConditionName;
+            }
+
+            if (medicalConditionDTO.medicalConditionDescription) {
+                medicalCondition.props.medicalConditionDescription = medicalConditionDTO.medicalConditionDescription;
+            }
+
+            if (medicalConditionDTO.medicalConditionSymptoms) {
+                medicalCondition.props.medicalConditionSymptoms = medicalConditionDTO.medicalConditionSymptoms;
             }
 
             await this.medicalConditionRepo.save(medicalCondition);
