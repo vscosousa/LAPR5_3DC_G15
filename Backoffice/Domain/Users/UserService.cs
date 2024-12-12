@@ -61,7 +61,7 @@ namespace DDDSample1.Domain.Users
                 {
                     throw new BusinessRuleValidationException("Username is already in use.");
                 }
-
+                
                 staff.Activate();
                 var user = _userMapper.ToDomain(dto);
                 string token = CreateToken(user);

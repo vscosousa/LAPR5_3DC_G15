@@ -42,7 +42,7 @@ export class ActiveModalComponent {
     const userInfo = {
       email: this.profile.email,
       username: this.username,
-      staffType: this.profile.staffType,
+      role: this.profile.staffType,
       staffId: this.profile.id
     }
     

@@ -37,6 +37,7 @@ import { UpdateAllergiesComponent } from './Components/manage-allergies-and-cond
 import { UpdateConditionsComponent } from './Components/manage-allergies-and-conditions/update-conditions/update-conditions.component';
 import { UpdateMedicalHistoryComponent } from './Components/update-medical-history/update-medical-history.component';
 import { MedicalHistoryManagerComponent } from './Components/medical-history-manager/medical-history-manager.component';
+import { PatientPolicyComponent } from './Components/patient-policy/patient-policy.component';
 
 export const routes: Routes = [
   {
@@ -89,6 +90,9 @@ export const routes: Routes = [
   },
   {
     path: "patient-settings", component: PatientSettingsComponent, canActivate: [PatientGuard]
+  },
+  {
+    path: "patient-policy", component: PatientPolicyComponent
   },
   {
     path: "hospital3d", component: Hospital3dComponent

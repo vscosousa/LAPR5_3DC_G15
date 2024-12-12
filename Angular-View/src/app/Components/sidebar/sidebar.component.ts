@@ -21,6 +21,7 @@ export class SidebarComponent implements OnInit {
   settingsId: string = '';
   name: string = '';
   role: string = '';
+  privacyId: string = '';
 
   /**
    * Service to handle panel-related operations.

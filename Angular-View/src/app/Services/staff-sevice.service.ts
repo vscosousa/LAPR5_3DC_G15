@@ -59,7 +59,7 @@ export class StaffService {
     return this.http.put<any>(`${this.apiUrl}/ConfirmUpdates`, {}, { params });
   }
 
-  activateStaff(userInfo: {email:string, username:string, staffType:any, staffId: any}): Observable<HttpResponse<any>> {
+  activateStaff(userInfo: {email:string, username:string, role: string, staffId: string}): Observable<HttpResponse<any>> {
     const url = `${this.apiURLUser}/RegisterUser`;
     return this.http.post<HttpResponse<any>>(url, userInfo);
   }
