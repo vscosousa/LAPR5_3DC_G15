@@ -10,25 +10,28 @@ Description: This component displays the registration form for new users.
     </a>
     <div class="register-left">
         <div class="top">
-            <img src="logo.png" alt="logo" />
+            <img src="logo.png" alt="Hospital Management App Logo" />
             <h2>Hospital Management App</h2>
         </div>
         <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
             <label for="email">Email</label>
             <input type="email" id="email" formControlName="email" placeholder="example@email.com" required>
+
             <label for="identifier">Phone Number</label>
             <div class="identifier-container">
                 <input type="text" id="identifier" formControlName="identifier" placeholder="+1"
                     class="identifier-input" required>
                 <input type="tel" id="phone" formControlName="phoneNumber" placeholder="123456789" required>
             </div>
+
             <div class="input-container">
                 <label for="password">Password</label>
                 <input [type]="passwordFieldType" id="password" formControlName="password" placeholder="******"
                     required>
-                <img [src]="passwordFieldType === 'password' ? 'eye.png' : 'eye-slash.png'"
-                    alt="Show/Hide Password" (click)="togglePasswordVisibility('password')" class="eye-icon">
+                <img [src]="passwordFieldType === 'password' ? 'eye.png' : 'eye-slash.png'" alt="Show/Hide Password"
+                    (click)="togglePasswordVisibility('password')" class="eye-icon">
             </div>
+
             <div class="input-container">
                 <label for="confirm-password">Confirm Password</label>
                 <input [type]="confirmPasswordFieldType" id="confirm-password" formControlName="confirmPassword"
@@ -36,16 +39,219 @@ Description: This component displays the registration form for new users.
                 <img [src]="confirmPasswordFieldType === 'password' ? 'eye.png' : 'eye-slash.png'"
                     alt="Show/Hide Password" (click)="togglePasswordVisibility('confirm-password')" class="eye-icon">
             </div>
-            <button type="submit" class="btn btn-register">Register</button>
+
+            <div class="input-container">
+                <input type="checkbox" id="acceptPolicy" formControlName="acceptPolicy" required>
+                <label for="acceptPolicy">
+                    I accept the
+                    <a href="#" (click)="openPrivacyPolicy($event)">Privacy Policy</a>
+                </label>
+            </div>
+
+            <button type="submit" class="btn btn-register" [disabled]="!registerForm.valid">Register</button>
         </form>
-        <p>Already have an account? <a class="button" routerLink="/login">Login Now</a></p>
+
+        <p>Already have an account? <a routerLink="/login">Login Now</a></p>
     </div>
+
     <div class="register-right">
         <div class="register-info">
             <h3>Why should I register?</h3>
-            <p>By registering, you can access your personal dashboard, where you can manage your account, view your
-                profile, and much more.</p>
+            <p>
+                By registering, you can access your personal dashboard, where you can manage your account, view your
+                profile, and much more.
+            </p>
             <img src="healthcare-dashboard.png" alt="Dashboard example">
         </div>
+    </div>
+</div>
+
+<!-- Privacy Policy Modal -->
+<div class="modal-container" [class.active]="isModalVisible">
+    <div class="modal-content">
+        <h1>Privacy Policy</h1>
+        <p>Last updated: 11 de Dezembro de 2024</p>
+
+        <section>
+            <h2>Introdução</h2>
+            <p>
+                No mundo da saúde, a confidencialidade é fundamental. A proteção de
+                dados de saúde é um direito fundamental de cada paciente, consagrado no
+                Regulamento Geral sobre a Proteção de Dados (RGPD) (Artigo 4º, nº
+                Artigo 32º). A gestão manual ou sistemas desatualizados podem levar à perda
+                de dados, acesso não autorizado e incumprimento do RGPD. As consequências
+                podem ser graves: multas elevadas, processos judiciais e danos à reputação.
+                A nossa equipa é composta pelos especialistas em segurança informática e
+                gestão de dados, Vasco Sousa, João Pereira e Tiago Sousa e pela advogada
+                especializada em proteção de dados, Maria Medina e hoje estamos aqui com o
+                objetivo de apresentar o Hospital Management App, um sistema inovador que
+                garante a gestão eficiente e segura de recursos e a marcação de consultas
+                cirúrgicas, com total respeito pela privacidade dos seus pacientes (Artigo 13
+                e 14º).
+                O Hospital Management App foi concebido com base nos princípios de
+                proteção de dados desde a conceção e por defeito (Artigo 25º)
+                Este minimiza a recolha e o tratamento de dados, utilizando a pseudonimização
+                para proteger a identidade dos pacientes, encripta todos os dados, garantindo
+                a sua confidencialidade e integridade, controla o acesso aos dados, permitindo
+                apenas a utilizadores autorizados aceder à informação necessária para o
+                desempenho das suas funções e mantém registos detalhados de todas as
+                operações de tratamento, permitindo auditorias e a demonstração de
+                conformidade com o RGPD (Artigo 24º e 28º)
+                Com o Hospital Management App, pode ter a certeza de que está a otimizar os
+                seus processos, reduzindo custos e protegendo os dados sensíveis dos seus
+                pacientes, em total conformidade com o RGPD
+            </p>
+        </section>
+
+        <section>
+            <h2>Responsável pelo Tratamento de Dados</h2>
+            <p>
+                <strong>Nome da Empresa/Organização:</strong> Hospital Management App<br>
+                <strong>Contato:</strong> 1211503&#64;isep.ipp.pt<br>
+                <strong>Encarregado de Proteção de Dados:</strong> João Pereira
+            </p>
+        </section>
+
+        <section>
+            <h2>Dados Pessoais Coletados</h2>
+            <ul>
+                <li>Identificação (nome, email, NIF)</li>
+                <li>Dados de contato (número de telemóvel pessoal e de emergência, e-mail)</li>
+                <li>Dados médicos (histórico de saúde, alergias)</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>Processamento dos Dados pessoais</h2>
+            <p>Os dados passam por diversos tipos de processamento, incluindo:</p>
+            <ul>
+                <li>Recolha: Os dados são obtidos através de diferentes meios, como
+                    formulários de registo, prontuários médicos ou sistemas de agendamento.</li>
+                <li>Registo: Os dados recolhidos são inseridos no Hospital Management App,
+                    nos campos apropriados de cada funcionalidade.</li>
+                <li>Organização: Os dados são estruturados e categorizados dentro do
+                    sistema, de forma lógica e eficiente, facilitando a sua consulta e utilização.
+                </li>
+                <li>Consulta: Os dados são acedidos e visualizados pelos utilizadores
+                    autorizados do Hospital Management App, de acordo com as suas funções
+                    e permissões.
+                </li>
+                <li>Utilização: Os dados são utilizados para as finalidades específicas para as
+                    quais foram recolhidos, como a gestão de informações, o planeamento e
+                    agendamento cirúrgico, a visualização do hospital, a garantia da
+                    continuidade das operações e a conformidade com o RGPD.</li>
+                <li>Quando aplicável, apagamento: Os dados são eliminados do sistema
+                    quando deixam de ser necessários para as finalidades para as quais foram
+                    recolhidos, ou quando o titular dos dados exerce o seu direito de
+                    apagamento (direito a ser esquecido)</li>
+                <p>Todas estas operações respeitam os princípios do RGPD, como a limitação das
+                    finalidades e a integridade e confidencialidade dos dados (Artigo 5.º)</p>
+            </ul>
+        </section>
+
+        <section>
+            <h2>Finalidades do Tratamento</h2>
+            <p>Utilizamos os seus dados pessoais para:</p>
+            <ul>
+                <li>Gestão de Informações Essenciais</li>
+                <li>Planeamento e Agendamento Cirúrgico</li>
+
+            </ul>
+        </section>
+
+        <section>
+            <h2>Base Legal para o Tratamento</h2>
+            <p>O tratamento de dados pessoais pode ser baseado nas seguintes bases legais:</p>
+            <ul>
+                <li>Execução de um contrato</li>
+                <li>Cumprimento de uma obrigação legal</li>
+                <li>Consentimento explícito (para finalidades específicas, como marketing)</li>
+                <li>Interesses legítimos da aplicação</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>Compartilhamento de Dados</h2>
+            <p>Os seus dados podem ser compartilhados com:</p>
+            <ul>
+                <li>Parceiros e prestadores de serviços que auxiliam na execução das nossas atividades</li>
+                <li>Autoridades legais, quando exigido por lei</li>
+                <li>Familiares quando se encontrar com limitações físicas e psícológicas</li>
+            </ul>
+        </section>
+
+        <section>
+            <h2>Retenção de Dados</h2>
+            <p>
+                Os seus dados pessoais serão armazenados apenas pelo tempo necessário para cumprir as finalidades
+                descritas
+                nesta Política ou conforme exigido por lei. Após o período de retenção, os dados serão apagados ou
+                anonimizados.
+            </p>
+        </section>
+
+        <section>
+            <h2>Direitos do Titular dos Dados</h2>
+            <p>Você possui os seguintes direitos em relação aos seus dados pessoais:</p>
+            <ul>
+                <li>Acesso aos dados tratados</li>
+                <li>Retificação de dados incorretos ou desatualizados</li>
+                <li>Exclusão dos dados (direito ao esquecimento)</li>
+                <li>Restrição do tratamento</li>
+                <li>Portabilidade dos dados</li>
+                <li>Oposição ao tratamento em determinadas circunstâncias</li>
+                <li>Retirada do consentimento, quando aplicável</li>
+            </ul>
+            <p>Para exercer os seus direitos, entre em contato connosco pelo e-mail
+                <strong>1211503&#64;isep.ipp.pt</strong>.
+            </p>
+        </section>
+
+        <section>
+            <h2>Transferência Internacional de Dados</h2>
+            <p>
+                Se houver necessidade de transferência de dados para fora do Espaço Econômico Europeu (EEE),
+                garantiremos
+                que os seus dados estarão protegidos com medidas adequadas, como cláusulas contratuais padrão ou outras
+                bases
+                legais reconhecidas pelo RGPD.
+            </p>
+        </section>
+
+        <section>
+            <h2>Segurança dos Dados</h2>
+            <p>
+                Implementamos medidas técnicas e organizacionais para proteger os seus dados pessoais contra acessos não
+                autorizados, perda, alteração ou destruição.
+            </p>
+        </section>
+
+        <section>
+            <h2>Alterações à Política de Privacidade</h2>
+            <p>
+                Podemos atualizar esta Política de Privacidade periodicamente. Notificaremos sobre mudanças
+                significativas, caso necessário.
+            </p>
+        </section>
+
+        <section>
+            <h2>Reclamações</h2>
+            <p>
+                Se acreditar que os seus direitos foram violados, pode entrar em contato connosco para esclarecimentos.
+                Além disso, você tem o direito de apresentar uma reclamação junto à autoridade supervisora do seu país.
+            </p>
+        </section>
+
+        <section>
+            <h2>Contato</h2>
+            <p>
+                Para quaisquer dúvidas, entre em contato conosco:
+            </p>
+            <ul>
+                <li><strong>E-mail:</strong> 1211503&#64;isep.ipp.pt</li>
+                <li><strong>Telefone:</strong> +351912345678</li>
+            </ul>
+        </section>
+        <button (click)="closeModal()">Close</button>
     </div>
 </div>

@@ -70,6 +70,7 @@ describe('RegisterComponent', () => {
     component.registerForm.controls['phoneNumber'].setValue('1234567890');
     component.registerForm.controls['password'].setValue('password123');
     component.registerForm.controls['confirmPassword'].setValue('password456');
+    component.registerForm.controls['acceptPolicy'].setValue(true);
     component.onSubmit();
     expect(window.alert).toHaveBeenCalledWith('Passwords do not match');
   });
@@ -80,6 +81,7 @@ describe('RegisterComponent', () => {
     component.registerForm.controls['phoneNumber'].setValue('1234567890');
     component.registerForm.controls['password'].setValue('password123');
     component.registerForm.controls['confirmPassword'].setValue('password123');
+    component.registerForm.controls['acceptPolicy'].setValue(true);
     component.onSubmit();
     expect(registerServiceMock.register).toHaveBeenCalledWith('test@example.com', '12345', '1234567890', 'password123');
   });
@@ -91,6 +93,7 @@ describe('RegisterComponent', () => {
     component.registerForm.controls['phoneNumber'].setValue('1234567890');
     component.registerForm.controls['password'].setValue('password123');
     component.registerForm.controls['confirmPassword'].setValue('password123');
+    component.registerForm.controls['acceptPolicy'].setValue(true);
     component.onSubmit();
     expect(console.error).toHaveBeenCalledWith('Registration failed', { error: 'Registration failed' });
     expect(window.alert).toHaveBeenCalledWith('Registration failed - Registration failed');

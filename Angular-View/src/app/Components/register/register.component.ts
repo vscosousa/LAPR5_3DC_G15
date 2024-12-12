@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule, ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { jwtDecode } from 'jwt-decode';
+import { CommonModule } from '@angular/common';
 
 /**
  * @class RegisterComponent
@@ -13,19 +14,22 @@ import { jwtDecode } from 'jwt-decode';
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [FormsModule, ReactiveFormsModule, RouterModule],
+  imports: [FormsModule, ReactiveFormsModule, RouterModule, CommonModule],
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.scss']
 })
 export class RegisterComponent {
   passwordFieldType = 'password';
   confirmPasswordFieldType = 'password';
+  isModalVisible = false;
+
   registerForm = new FormGroup({
     email: new FormControl('', [Validators.required, Validators.email]),
     identifier: new FormControl('', Validators.required),
     phoneNumber: new FormControl('', Validators.required),
     password: new FormControl('', Validators.required),
-    confirmPassword: new FormControl('', Validators.required)
+    confirmPassword: new FormControl('', Validators.required),
+    acceptPolicy: new FormControl(false, Validators.requiredTrue)
   });
 
   /**
@@ -98,5 +102,19 @@ export class RegisterComponent {
       }
     );
   }
+
+  openPrivacyPolicy(event: Event): void {
+    event.preventDefault(); // Prevent default anchor action
+    this.isModalVisible = true;
+    console.log('Modal opened:', this.isModalVisible); // Debugging line
 }
+
+closeModal(): void {
+    this.isModalVisible = false;
+    console.log('Modal closed:', this.isModalVisible); // Debugging line
+}
+
+
+}
+
 
