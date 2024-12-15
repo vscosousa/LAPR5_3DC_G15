@@ -21,12 +21,12 @@ namespace DDDSample1.Controllers
         {
             _operationRequestService = operationRequestService;
         }
-        
+
         [HttpPost]
         [AllowAnonymous]
         public async Task<ActionResult<OperationRequestDTO>> CreateOperationRequest(CreatingOperationRequestDTO operationRequestDTO)
-        {  
-        try
+        {
+            try
             {
                 var operationRequest = await _operationRequestService.AddOperationRequestAsync(operationRequestDTO);
                 return Ok(operationRequest);
@@ -46,8 +46,8 @@ namespace DDDSample1.Controllers
         }
 
         [HttpPut("{id}")]
-        [Authorize(Roles = "Admin,Doctor")]
-        public async Task<ActionResult<OperationRequestDTO>> UpdateOperationRequestAsync(Guid id, Guid doctorId , UpdatingOperationRequestDTO operationRequestDto)
+        [Authorize(Roles = "Admin, Doctor")]
+        public async Task<ActionResult<OperationRequestDTO>> UpdateOperationRequestAsync(Guid id, Guid doctorId, UpdatingOperationRequestDTO operationRequestDto)
         {
             try
             {
@@ -65,6 +65,33 @@ namespace DDDSample1.Controllers
                 return BadRequest(new { Message = ex.Message });
             }
         }
+
+        [HttpPut("schedule/{id}")]
+        [Authorize(Roles = "Admin, Doctor")]
+        public async Task<ActionResult> ScheduleOperationRequestAsync(Guid id)
+        {
+            Console.WriteLine($"ScheduleOperationRequestAsync called with id: {id}");
+            try
+            {
+                var result = await _operationRequestService.ScheduleOperationRequest(id);
+
+                if (!result)
+                {
+                    return NotFound(new { Message = $"Operation Request with ID {id} not found." });
+                }
+
+                return Ok(new { Message = "Operation Request scheduled successfully." });
+            }
+            catch (BusinessRuleValidationException ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Message = "An error occurred while scheduling the operation request.", Details = ex.Message });
+            }
+        }
+
 
         [HttpDelete("{id}")]
         [Authorize(Roles = "Admin,Doctor")]

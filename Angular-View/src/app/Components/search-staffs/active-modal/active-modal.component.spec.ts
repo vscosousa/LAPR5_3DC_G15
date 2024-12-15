@@ -28,7 +28,7 @@ describe('ActiveModalComponent', () => {
     component = fixture.componentInstance;
     component.profile = {
       email: 'test@example.com',
-      staffType: 'Admin',
+      staffType: 'Admin', // Updated to match the new structure
       id: '123'
     };
     fixture.detectChanges();
@@ -50,7 +50,7 @@ describe('ActiveModalComponent', () => {
     expect(mockStaffService.activateStaff).toHaveBeenCalledWith({
       email: 'test@example.com',
       username: 'testuser',
-      staffType: 'Admin',
+      role: 'Admin', // Updated to match the new structure
       staffId: '123'
     });
     expect(component.errorMessage).toBe('');
@@ -64,7 +64,7 @@ describe('ActiveModalComponent', () => {
     expect(mockStaffService.activateStaff).toHaveBeenCalledWith({
       email: 'test@example.com',
       username: 'testuser',
-      staffType: 'Admin',
+      role: 'Admin', // Updated to match the new structure
       staffId: '123'
     });
     expect(component.errorMessage).toBe('Activation failed');
@@ -77,7 +77,7 @@ describe('ActiveModalComponent', () => {
     expect(mockStaffService.activateStaff).toHaveBeenCalledWith({
       email: 'test@example.com',
       username: 'testuser',
-      staffType: 'Admin',
+      role: 'Admin', // Updated to match the new structure
       staffId: '123'
     });
     expect(component.close.emit).toHaveBeenCalledWith(true);

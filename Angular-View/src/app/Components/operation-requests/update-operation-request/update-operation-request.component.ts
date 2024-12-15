@@ -2,69 +2,80 @@
  * US 6.2.15 - As a Doctor, I want to update an operation requisition, so that the Patient has
  * access to the necessary healthcare.
  * US Developed By: Tiago Sousa - 1150736`
- * 
+ *
  * Finished at [24/11/2024]
  * Component for updating an operation requisition.
  */
 
 import { Component, OnInit } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
-import { FormsModule, FormGroup, FormBuilder, Validators, ReactiveFormsModule, FormArray } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 import { SidebarComponent } from '../../sidebar/sidebar.component';
-import { CommonModule } from '@angular/common';
 import { OperationRequestService } from '../../../Services/operation-request.service';
 import { PanelService } from '../../../Services/panel.service';
-import { PatientService } from '../../../Services/patient.service';
-import { OperationTypeService } from '../../../Services/operation-type.service';
-import { StaffService } from '../../../Services/staff-sevice.service';
-/**
+import { CommonModule } from '@angular/common';
 @Component({
   selector: 'app-update-operation-request',
   standalone: true,
-  imports: [FormsModule, SidebarComponent, RouterModule],
+  imports: [FormsModule, SidebarComponent, RouterModule, CommonModule],
   styleUrls: ['./update-operation-request.component.scss'],
   templateUrl: './update-operation-request.component.html',
 })
+
 export class UpdateOperationRequestComponent implements OnInit {
   existingOperationRequest = {
-    id: '', 
-    patientMedicalRecordNumber: '', 
-    patientFullName: '', 
-    doctorLicenseNumber: '', 
-    operationType: '', 
     priority: '',
     deadlineDate: ''
   };
-
 
   constructor(
     private operationRequestService: OperationRequestService,
     private router: Router,
     private panelService: PanelService
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.panelService.setPanelId('panel-admin');
-    this.getOperationRequest(); 
+    const operationRequestId = this.extractOperationRequestFromUrl();
+    this.getOperationRequest(operationRequestId);
   }
 
-  getOperationRequest() {
-    const operationRequest = this.extractOperationRequestFromUrl();
+  getOperationRequest(id: string) {
     this.operationRequestService.getOperationRequests().subscribe(
-      operationRequest => {
-        this.existingOperationRequest = operationRequest[0];
-        console.log('Patient fetched:', operationRequest);
+      operationRequests => {
+        console.log('Operation requests fetched:', operationRequests);
+        const operationRequest = operationRequests.find(req => req.id === id);
+        if (operationRequest) {
+          this.existingOperationRequest = {
+            ...operationRequest,
+            deadlineDate: this.formatDate(operationRequest.deadlineDate)
+          };
+          console.log('Operation request fetched:', operationRequest);
+        } else {
+          console.error('Operation request not found with id:', id);
+        }
       },
       error => {
-        console.error('Error fetching patient', error);
+        console.error('Error fetching operation request', error);
       }
     );
   }
 
+
   updateOperationRequest(event: Event) {
     event.preventDefault();
+
+    const today = new Date();
+    const selectedDate = new Date(this.existingOperationRequest.deadlineDate);
+
+    if (selectedDate <= today) {
+      alert("The deadline date must be higher than today.");
+      return;
+    }
+
     const operationRequest = this.extractOperationRequestFromUrl();
-    this.operationRequestService.updateOperationRequest(operationRequest, this.existingOperationRequest).subscribe(
+    console.log('Updating operation request:', operationRequest);
+    this.operationRequestService.editOperationRequest(operationRequest, this.existingOperationRequest).subscribe(
       response => {
         console.log('Operation request updated successfully:', response);
         alert("Operation request updated successfully!");
@@ -72,14 +83,15 @@ export class UpdateOperationRequestComponent implements OnInit {
       },
       error => {
         console.error('Error updating operation request:', error);
-        alert("Error updating operation request" + error);
+        alert("Error updating operation request: " + JSON.stringify(error));
       }
     );
-  } 
+  }
+
 
   extractOperationRequestFromUrl() {
     const url = window.location.href;
-    const regex = /\/update-operationRequest\/(\d+)/;
+    const regex = /\/update-operation-request\/([0-9a-fA-F-]+)/;
     const match = url.match(regex);
     if (match && match[1]) {
       return match[1];
@@ -88,17 +100,15 @@ export class UpdateOperationRequestComponent implements OnInit {
     }
   }
 
+  formatDate(dateString: string): string {
+    const [day, month, year] = dateString.split('/');
+    return `${year}-${month}-${day}`;
+  }
+
   clearForm() {
     this.existingOperationRequest = {
-      id: '', 
-    patientMedicalRecordNumber: '', 
-    patientFullName: '', 
-    doctorLicenseNumber: '',
-    operationType: '', 
-    priority: '', 
-    deadlineDate: '',
+      priority: '',
+      deadlineDate: '',
     };
   }
-    
 }
-*/

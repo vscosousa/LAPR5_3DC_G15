@@ -1,56 +1,87 @@
 <div class="operationRequest-container">
-    <app-sidebar></app-sidebar>
-    <h2 class="operation-title">Create Operation Request</h2>
-    <div class="form-and-table-container">
-        <div class="form-container">
-            <form [formGroup]="operationRequestForm" (ngSubmit)="onSubmit()">
-                <div class="form-group">
-                    <label for="deadlineDate">Deadline Date:</label>
-                    <input type="date" id="deadlineDate" formControlName="deadlineDate" />
-                    <div *ngIf="operationRequestForm.get('deadlineDate')?.invalid && operationRequestForm.get('deadlineDate')?.touched">
-                        <small class="error">Deadline date is required.</small>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="priority">Priority:</label>
-                    <input type="text" id="priority" formControlName="priority" />
-                    <div *ngIf="operationRequestForm.get('priority')?.invalid && operationRequestForm.get('priority')?.touched">
-                        <small class="error">Priority is required.</small>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="patientMedicalRecordNumber">Select Patient:</label>
-                    <select id="patientMedicalRecordNumber" formControlName="patientMedicalRecordNumber">
-                        <option *ngFor="let patient of patients" >
-                            {{ patient.medicalRecordNumber }}
-                        </option>
-                    </select>
-                    <div *ngIf="operationRequestForm.get('patientMedicalRecordNumber')?.invalid && operationRequestForm.get('patientMedicalRecordNumber')?.touched">
-                        <small class="error">Patient selection is required.</small>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="operationType">Select Operation Type:</label>
-                    <select id="operationType" formControlName="operationType">
-                        <option *ngFor="let operationType of operationTypes">
-                        {{operationType.name}}
-                        </option>
-                    </select>
-                    <div *ngIf="operationRequestForm.get('operationType')?.invalid && operationRequestForm.get('operationType')?.touched">
-                        <small class="error">Operation type selection is required.</small>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="doctorLicenseNumber">Select Doctor:</label>
-                    <select id="doctorLicenseNumber" formControlName="doctorLicenseNumber">
-                        <option *ngFor="let doctor of doctors">
-                            {{ doctor.licenseNumber }}
-                          </option>
-                    </select>
-                </div>
-                <button type="submit" [disabled]="operationRequestForm.invalid" class="btn btn-create">Create Request</button>
-                <a [routerLink]="['/operation-requests']" class="btn btn-back">Back</a>
-            </form>
+  <app-sidebar></app-sidebar>
+  <div class="form-and-table-container">
+    <div class="form-container">
+      <h2 class="operation-title">Create Operation Request</h2>
+      <form [formGroup]="operationRequestForm" (ngSubmit)="onSubmit()">
+        <div class="form-group">
+          <label for="deadlineDate">Deadline Date:</label>
+          <input type="date" id="deadlineDate" formControlName="deadlineDate" placeholder="YYYY-MM-DD" />
+          <div
+            *ngIf="
+              operationRequestForm.get('deadlineDate')?.invalid &&
+              operationRequestForm.get('deadlineDate')?.touched
+            "
+          >
+            <small class="error">Deadline date is required.</small>
+          </div>
         </div>
+        <div class="form-group">
+          <label for="priority">Priority:</label>
+          <select id="priority" formControlName="priority">
+            <option value="" disabled selected>Select priority</option>
+            <option value="ElectiveSurgery">Elective Surgery</option>
+            <option value="UrgentSurgery">Urgent Surgery</option>
+            <option value="EmergencySurgery">Emergency Surgery</option>
+          </select>
+          <div
+            *ngIf="
+              operationRequestForm.get('priority')?.invalid &&
+              operationRequestForm.get('priority')?.touched
+            "
+          >
+            <small class="error">Priority is required.</small>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="patientMedicalRecordNumber">Select Patient:</label>
+          <select
+            id="patientMedicalRecordNumber"
+            formControlName="patientMedicalRecordNumber"
+          >
+            <option value="" disabled selected>Select patient</option>
+            <option
+              *ngFor="let patient of patients"
+              [value]="patient.medicalRecordNumber"
+            >
+              {{ patient.medicalRecordNumber }} - {{ patient.fullName }}
+            </option>
+          </select>
+          <div
+            *ngIf="
+              operationRequestForm.get('patientMedicalRecordNumber')?.invalid &&
+              operationRequestForm.get('patientMedicalRecordNumber')?.touched
+            "
+          >
+            <small class="error">Patient selection is required.</small>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="operationType">Select Operation Type:</label>
+          <select id="operationType" formControlName="operationType">
+            <option value="" disabled selected>Select operation type</option>
+            <option *ngFor="let operationType of operationTypes">
+              {{ operationType.name }}
+            </option>
+          </select>
+          <div
+            *ngIf="
+              operationRequestForm.get('operationType')?.invalid &&
+              operationRequestForm.get('operationType')?.touched
+            "
+          >
+            <small class="error">Operation type selection is required.</small>
+          </div>
+        </div>
+        <button
+          type="submit"
+          [disabled]="operationRequestForm.invalid"
+          class="btn btn-create"
+        >
+          Create Request
+        </button>
+        <a [routerLink]="['/operation-requests']" class="btn btn-back">Back</a>
+      </form>
     </div>
+  </div>
 </div>

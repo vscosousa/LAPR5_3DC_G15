@@ -65,5 +65,10 @@ namespace DDDSample1.Domain.OperationRequests
         {
             _priority = Enum.Parse<Priority>(priority);
         }
+
+        internal void ChangeStatus(string status)
+        {
+            _status = Enum.Parse<OperationRequestStatus>(status);
+        }
     }
 }

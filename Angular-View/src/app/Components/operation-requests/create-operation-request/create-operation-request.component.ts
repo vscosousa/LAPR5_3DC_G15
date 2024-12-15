@@ -2,17 +2,17 @@
  * US 6.2.14 - As a Doctor, I want to request an operation, so that the Patient has access to the
 necessary healthcare.
  * US Developed By: Tiago Sousa - 1150736
- * 
+ *
  * Finished at 23/11/2024
  * Component for requesting an  operation.
- * 
+ *
  * @component
  * @selector app-create-operation-request
  * @standalone true
  * @imports [CommonModule, ReactiveFormsModule, RouterModule, SidebarComponent]
- * 
+ *
  * @class CreateOperationRequestComponent
- * 
+ *
  * @property {object} operationType - The operation request data.
  * @property {number} operationRequest.patient - The patient's id.
  * @property {number} operationRequest.staff - The id from the doctor in charge.
@@ -31,6 +31,7 @@ import { OperationRequestService } from '../../../Services/operation-request.ser
 import { PatientService } from '../../../Services/patient.service';
 import { OperationTypeService } from '../../../Services/operation-type.service';
 import { StaffService } from '../../../Services/staff-sevice.service';
+import { jwtDecode } from 'jwt-decode';
 
 @Component({
   selector: 'app-create-operation-request',
@@ -38,15 +39,18 @@ import { StaffService } from '../../../Services/staff-sevice.service';
   imports: [CommonModule, ReactiveFormsModule, RouterModule, SidebarComponent],
   styleUrls: ['./create-operation-request.component.scss'],
   templateUrl: './create-operation-request.component.html',
-  
+
 })
 export class CreateOperationRequestComponent implements OnInit {
-  patients: { medicalRecordNumber: string; 
-  fullName: string; }[] = [];
+  patients: {
+    medicalRecordNumber: string;
+    fullName: string;
+  }[] = [];
   operationRequestForm: FormGroup;
   operationTypes: any[] = [];
   doctors: any[] = [];
   staffProfiles: any[] = [];
+  email: string = '';
 
   constructor(
     private fb: FormBuilder,
@@ -65,7 +69,7 @@ export class CreateOperationRequestComponent implements OnInit {
     });
   }
 
-  ngOnInit(): void{
+  ngOnInit(): void {
     this.operationRequestForm = this.fb.group({
       deadlineDate: ['', Validators.required],
       priority: ['', Validators.required],
@@ -74,7 +78,6 @@ export class CreateOperationRequestComponent implements OnInit {
       operationType: ['', Validators.required]
     });
     this.fetchPatients();
-    this.fetchOperationTypes();
     this.loadStaffProfiles();
   }
 
@@ -93,27 +96,53 @@ export class CreateOperationRequestComponent implements OnInit {
   fetchOperationTypes(): void {
     this.operationTypeService.getOperationTypes().subscribe(
       (data: any[]) => {
-        this.operationTypes = data;
-        console.log('Operation types fetched:', data);
+        const doctorSpecializationId = this.doctors.length > 0 ? this.doctors[0].specializationId : null;
+        if (doctorSpecializationId) {
+          data.forEach(operationType => {
+            operationType.specializations.forEach((spec: { id: { value: string; }; }) => {
+              console.log('Operation type specialization ID:', spec.id.value);
+            });
+          });
+          this.operationTypes = data.filter(operationType =>
+            operationType.specializations.some((spec: { id: { value: string; }; }) => spec.id.value === doctorSpecializationId)
+          );
+        } else {
+          this.operationTypes = data;
+        }
+        console.log('Filtered operation types:', this.operationTypes);
       },
       error => {
         console.error('Error fetching operation types', error);
       }
     );
   }
- 
 
   loadStaffProfiles(): void {
     this.staffService.getAllStaffs().subscribe({
       next: (data) => {
         console.log("Data staff profiles:\n", data);
         this.staffProfiles = data;
-        this.doctors = this.staffProfiles.filter(profile => profile.staffType === 'Doctor');
+        const token = localStorage.getItem('token');
+        if (token) {
+          console.log('Token:', token);
+          const decodedToken: any = jwtDecode(token);
+          console.log('Decoded Token:', decodedToken);
+          this.email = decodedToken['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress'];
+          console.log('Email:', this.email);
+          this.doctors = this.staffProfiles.filter(profile => profile.email === this.email);
+          if (this.doctors.length > 0) {
+            this.operationRequestForm.patchValue({
+              doctorLicenseNumber: this.doctors[0].licenseNumber
+            });
+          }
+        }
+        console.log('Doctors:', this.doctors);
+        this.fetchOperationTypes();
       },
       error: (error) => {
         console.error('Error loading staff profiles', error);
         this.staffProfiles = [];
-        if (error.status === 401){
+        if (error.status === 401) {
           alert('Unauthorized page access');
         } else {
           alert('Error loading staff profiles');

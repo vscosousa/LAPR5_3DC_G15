@@ -34,11 +34,8 @@ export class OperationRequestService {
    * @param {string} operationRequest.patient
    * @returns {Observable<any>} An observable containing the updated operation type.
    */
-  editOperationRequest(operationRequestName: string, operationRequest: { name: string; estimatedDuration: string; specializations: any[] }): Observable<any> {
-    return this.http.put(`${this.apiUrl}/OperationType/${operationRequestName}`, operationRequest);
-  }
 
-    private apiUrl = 'https://localhost:5001/api';
+  private apiUrl = 'https://localhost:5001/api';
 
   constructor(private http: HttpClient) { }
 
@@ -46,11 +43,21 @@ export class OperationRequestService {
     return this.http.get<any[]>(`${this.apiUrl}/OperationType`);
   }
 
-  createOperationRequest(operationRequestData: {deadlineDate: string ,priority: string , medicalRecordNumber: string , doctorLicenseNumber: string , operationType: string  }) {
+  createOperationRequest(operationRequestData: { deadlineDate: string, priority: string, medicalRecordNumber: string, doctorLicenseNumber: string, operationType: string }) {
     console.log(operationRequestData);
     return this.http.post<any>(`${this.apiUrl}/OperationRequest`, operationRequestData).pipe(
       catchError((error: any) => {
         console.error('Error creating operation request:', error);
+        return throwError(error);
+      })
+    );
+  }
+
+  editOperationRequest(operationRequestId: string, operationRequest: { deadlineDate: string, priority: string }): Observable<any> {
+    console.log(operationRequestId);
+    return this.http.put<any>(`${this.apiUrl}/OperationRequest/${operationRequestId}`, operationRequest, { responseType: 'json' }).pipe(
+      catchError((error: any) => {
+        console.error('Error editing operation request:', error);
         return throwError(error);
       })
     );
@@ -110,4 +117,4 @@ export class OperationRequestService {
     return this.http.get<any[]>(`${this.apiUrl}/OperationRequest?${queryParams.toString()}`);
   }
 
-  }
+}

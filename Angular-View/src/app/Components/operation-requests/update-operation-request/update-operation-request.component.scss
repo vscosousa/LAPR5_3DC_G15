@@ -1,166 +1,259 @@
-/**
-Author: Tiago Sousa (1150736)
-Last update: 24/11/2024
-*/
-.operationRequest-container {
-    width: 100%;
-    max-width: 600px;
-    margin: 20px auto;
-    padding: 30px;
-    background-color: #fff;
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    font-family: 'Arial', sans-serif;
+// Variables
+$primary-color: #2c3e50;
+$secondary-color: #34495e;
+$background-color: #f9f9f9;
+$white-color: #ffffff;
+$shadow-color: rgba(0, 0, 0, 0.2);
+$hover-shadow-color: rgba(0, 0, 0, 0.1);
+$border-color: #dcdcdc;
+$focus-border-color: #3498db;
+$btn-update-color: #27ae60;
+$btn-update-hover-color: #219150;
+$btn-clear-color: #e74c3c;
+$btn-clear-hover-color: #c0392b;
+
+// Mixins
+@mixin button-styles($bg-color, $hover-color) {
+  background-color: $bg-color;
+  color: $white-color;
+  border: none;
+  border-radius: 4px;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background-color 0.3s;
+
+  &:hover {
+    background-color: $hover-color;
+  }
 }
 
-.operation-title {
-    text-align: center;
-    font-size: 28px;
-    margin-bottom: 25px;
-    color: #333;
-}
+.update-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  font-family: Poppins, sans-serif;
 
-form {
+  .screens-container {
     display: flex;
-    flex-direction: column;
+    justify-content: center;
+    align-items: center;
     gap: 20px;
-}
+  }
 
-.form-group {
+  .screen {
+    padding: 20px;
     display: flex;
     flex-direction: column;
-    gap: 5px;
-    font-size: 30px;
-}
-
-.form-group label {
-    font-size: 16px;
-    font-weight: 600;
-    color: #444;
-    margin-bottom: 8px;
-}
-
-.form-control {
-    padding: 12px;
-    font-size: 16px;
+    justify-content: start;
+    align-items: center;
+    width: 900px;
+    height: 35;
+    background-color: $background-color;
+    max-width: 900px;
+    margin: 0 auto;
     border: 1px solid #ddd;
     border-radius: 8px;
-    box-sizing: border-box;
-    transition: all 0.3s ease-in-out;
-}
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    position: relative;
 
-.form-control:focus {
-    border-color: #007bff;
-    outline: none;
-}
-
-/* Style for required fields */
-.form-control:required {
-    border-color: #ff4d4d;
-    background-color: #fff6f6;
-}
-
-.form-control:required:focus {
-    border-color: #ff1a1a;
-}
-
-/* Style for valid fields */
-.form-control:valid {
-    border-color: #28a745;  /* Green border when valid */
-    background-color: #e6ffe6;  /* Light green background when valid */
-}
-
-/* Error icon or indicator */
-.form-group input:invalid {
-    border-color: #ff4d4d;
-}
-
-.form-group input:invalid + label::after {
-    content: "*";
-    color: #ff4d4d;
-    font-size: 18px;
-    margin-left: 5px;
-}
-
-/* Hover and focus effects for buttons */
-.btn {
-    padding: 12px 25px;
-    font-size: 16px;
-    text-align: center;
-    text-decoration: none;
-    cursor: pointer;
-    border-radius: 8px;
-    border: none;
-    transition: background-color 0.3s ease;
-}
-
-.btn-update {
-    background-color: #007bff; /* Blue background for update button */
-    color: white;
-}
-
-.btn-update:hover {
-    background-color: #0056b3; /* Darker blue on hover */
-}
-
-.btn-back {
-    background-color: #a5342c;
-    color: white;
-}
-
-.btn-back:hover {
-    background-color: #5a6268;
-}
-
-.form-actions {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 20px;
-}
-
-@media (max-width: 600px) {
-    .operationRequest-container {
-        padding: 20px;
+    .update-title {
+      margin-bottom: 20px;
+      color: #333;
     }
 
-    .operation-title {
-        font-size: 24px;
+    .content-container {
+      display: flex;
+      gap: 20px;
+      width: 100%;
     }
 
-    .form-actions {
-        flex-direction: column;
-        gap: 15px;
+    .update-form {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      background-color: $white-color;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      padding: 5px;
+    }
+
+    textarea {
+      height: 260px;
+      resize: none;
+      overflow-y: auto;
     }
 
     .btn {
-        width: 100%;
+      margin-right: 5px;
+      transition: background-color 0.3s;
+
+      &.btn-update {
+        @include button-styles(#ffc107, #e0a800);
+      }
+
+      &.btn-clear {
+        @include button-styles(#4e4d49, #1d1c1b);
+      }
+
+      &.btn-back {
+        @include button-styles(#007bff, #0056b3);
+        top: 10px;
+        right: 10px;
+        position: absolute;
+      }
+
+      &.btn-select {
+        @include button-styles(#17a2b8, #138496);
+      }
+
+      &.btn-save {
+        @include button-styles(#28a745, #218838);
+      }
     }
-}
 
-.form-group input[type="checkbox"] {
-    width: 20px;
-    height: 20px;
-    margin-right: 10px;
-    cursor: pointer;
-    transform: scale(1.3);
-    transition: transform 0.3s ease-in-out;
-    margin-left: 10px;
-}
+    .multi-select-container {
+      margin-bottom: 20px;
+      width: 100%;
 
-.form-group label {
-    font-size: 16px;
-    color: #444;
-    margin-left: 5px;
-    cursor: pointer;
-}
+      label {
+        font-weight: bold;
+        margin-bottom: 10px;
+        display: block;
+      }
 
-.form-group input[type="checkbox"]:hover {
-    transform: scale(1.4);
-}
+      .multi-select-list {
+        display: flex;
+        flex-wrap: wrap;
+        max-height: 200px;
+        overflow-y: auto;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        padding: 10px;
+        background-color: $white-color;
 
-.error-message {
-    margin-top: 10px;
-    font-size: 14px;
-    color: #ff4d4d;  /* Red color for the error message */
+        .multi-select-item {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 5px;
+          width: 33.33%; /* Each item takes up 1/3 of the row */
+
+          span {
+            flex: 1;
+            text-align: left; /* Ensure text is aligned to the left */
+          }
+
+          input {
+            margin-left: 10px;
+          }
+        }
+      }
+    }
+  }
+
+  .modal {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(5px); /* Add blur effect to the backdrop */
+    transition: opacity 0.3s ease; /* Smooth transition for opening and closing */
+
+    .modal-content {
+      background-color: #fefefe;
+      margin: auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 80%;
+      max-width: 600px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      position: relative; /* Ensure the close button is positioned correctly */
+
+      .close {
+        color: #aaa;
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        font-size: 28px;
+        font-weight: bold;
+
+        &:hover,
+        &:focus {
+          color: #000;
+          text-decoration: none;
+          cursor: pointer;
+        }
+      }
+
+      h2 {
+        margin-top: 0;
+        text-align: center; /* Center the heading */
+      }
+
+      .multi-select-list {
+        display: flex;
+        flex-wrap: wrap;
+        max-height: 300px;
+        overflow-y: auto;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        padding: 10px;
+        background-color: $white-color;
+
+        .multi-select-item {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 5px;
+          width: 100%; /* Each item takes up the full width */
+
+          span {
+            flex: 1;
+            text-align: left; /* Ensure text is aligned to the left */
+          }
+
+          input {
+            margin-left: 10px;
+          }
+        }
+      }
+
+      .btn-save {
+        display: block;
+        margin: 20px auto 0; /* Center the save button */
+        background-color: #28a745; /* Add color to the save button */
+        color: #fff;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+
+        &:hover {
+          background-color: #218838;
+        }
+      }
+    }
+  }
 }

@@ -127,6 +127,40 @@ namespace DDDSample1.Domain.OperationRequests
             }
         }
 
+        public async Task<bool> ScheduleOperationRequest(Guid id)
+        {
+            try
+            {
+                var operationRequest = await _repo.GetByIdAsync(new OperationRequestId(id));
+                if (operationRequest == null)
+                {
+                    return false;
+                }
+
+                if (operationRequest.Status != OperationRequestStatus.Pending)
+                {
+                    throw new BusinessRuleValidationException("You are not allowed to schedule this operation request, as it is already scheduled or was cancelled.");
+                }
+
+                operationRequest.ChangeStatus(OperationRequestStatus.Accepted.ToString());
+                await _repo.UpdateAsync(operationRequest);
+                var log = new Log(TypeOfAction.Update, operationRequest.Id.ToString(), "Operation Request scheduled.");
+                await _logRepo.AddAsync(log);
+                await _unitOfWork.CommitAsync();
+                Console.WriteLine("Transaction committed successfully");
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred: {ex.Message}");
+                if (ex.InnerException != null)
+                {
+                    Console.WriteLine($"Inner exception: {ex.InnerException.Message}");
+                }
+                throw;
+            }
+        }
         internal async Task<OperationRequestDTO> RemoveOperationRequestAsync(Guid id, string doctorLicenseNumber )
         {
             try
@@ -141,6 +175,11 @@ namespace DDDSample1.Domain.OperationRequests
                 if (operationRequest == null)
                 {
                     return null;
+                }
+
+                if (operationRequest.Status != OperationRequestStatus.Pending)
+                {
+                    throw new BusinessRuleValidationException("You are not allowed to delete this operation request, as it is already scheduled.");
                 }
 
                 _repo.Remove(operationRequest);
