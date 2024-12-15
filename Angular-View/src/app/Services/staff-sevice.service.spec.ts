@@ -29,18 +29,18 @@ describe('StaffService', () => {
     const newStaff = {
       firstName: 'Teste',
       lastName: 'Admin',
-      fullName: 'Teste Teste',  
+      fullName: 'Teste Teste',
       phoneNumber: '+3512345672228',
       email: 'teste@email.com',
       staffType: 'Admin',
       specializationName: 'Cardiology'
     };
     const mockResponse = new HttpResponse({ status: 201, statusText: 'Created', body: 'Staff created successfully' });
-  
+
     service.createStaff(newStaff).subscribe(response => {
       expect(response).toEqual(mockResponse);
     });
-  
+
     const req = httpMock.expectOne(`${service['apiUrl']}`);
     expect(req.request.method).toBe('POST');
     expect(req.request.body).toEqual(newStaff);
@@ -66,7 +66,7 @@ describe('StaffService', () => {
         availabilitySlots: [],
         email: 'teste@email.com',
         firstName: 'Teste',
-        fullName: 'Teste Teste',  
+        fullName: 'Teste Teste',
         id: '089d21ad-4ccd-43a0-8ee4-8348c830e98d',
         isActive: true,
         lastName: 'Admin',
@@ -91,23 +91,23 @@ describe('StaffService', () => {
       { id: '12332', specOption: 'Cardiology' },
       { id: '21312', specOption: 'Neurology' }
     ];
-  
+
     service.getSpecialization().subscribe(specializations => {
       expect(specializations).toEqual(mockSpecializations);
     });
-  
+
     const req = httpMock.expectOne(`${service['apiURLSpecializaction']}`);
     expect(req.request.method).toBe('GET');
     req.flush(mockSpecializations);
   });
-  
+
   it('should call getStaffTypes and return an array of staff types', () => {
     const mockStaffTypes = ['Doctor', 'Nurse', 'Admin'];
-  
+
     service.getStaffTypes().subscribe(staffTypes => {
       expect(staffTypes).toEqual(mockStaffTypes);
     });
-  
+
     const req = httpMock.expectOne(`${service['apiUrl']}/staff-types`);
     expect(req.request.method).toBe('GET');
     req.flush(mockStaffTypes);
@@ -116,7 +116,7 @@ describe('StaffService', () => {
   it('should call confirmUpdates and return a response', () => {
     const updateData = { phoneNumber: '+1234567890', email: 'test@example.com', token: 'test-token' };
     const mockResponse = { status: 'success' };
-   
+
     service.confirmUpdates(updateData).subscribe(response => {
       expect(response).toEqual(mockResponse);
     });
@@ -127,7 +127,7 @@ describe('StaffService', () => {
   });
 
   it('should call activateStaff and return a HttpResponse', () => {
-    const userInfo = { email: 'test@example.com', username: 'testuser', staffType: 'Doctor', staffId: '1130b0d0-0821-4370-9936-a2899b577663' };
+    const userInfo = { email: 'test@example.com', username: 'testuser', role: 'Doctor', staffId: '1130b0d0-0821-4370-9936-a2899b577663' };
     const mockResponse = new HttpResponse({ status: 200 });
 
     service.activateStaff(userInfo).subscribe(response => {

@@ -1,0 +1,58 @@
+<div class="create-container">
+  <app-sidebar></app-sidebar>
+  <div class="screens-container">
+    <div class="screen">
+      <button
+        routerLink="/operation-requests"
+        routerLinkActive="router-link-active"
+        type="button"
+        class="btn btn-back"
+      >
+        Go Back
+      </button>
+      <h2 class="create-title" style="text-align: center">Create Appointment</h2>
+      <div class="content-container">
+        <form class="create-form" (submit)="createAppointment($event)">
+          <select [(ngModel)]="newAppointment.roomId" name="roomId" required>
+            <option value="">Select Room</option>
+            <option *ngFor="let room of rooms" [value]="room.id">{{ room.name }}</option>
+          </select>
+          <input
+            type="datetime-local"
+            [(ngModel)]="newAppointment.dateTime"
+            name="dateTime"
+            required
+          />
+          <div class="checkbox-container">
+            <div class="checkbox-box">
+              <label>Doctors:</label>
+              <div *ngFor="let doctor of doctors" class="checkbox-item">
+                {{ doctor.licenseNumber + ' - ' + doctor.fullName }}
+                <input
+                  type="checkbox"
+                  [value]="doctor.id"
+                  (change)="updateTeam($event, doctor.id)"
+                />
+              </div>
+            </div>
+            <div class="checkbox-box">
+              <label>Nurses:</label>
+              <div *ngFor="let nurse of nurses" class="checkbox-item">
+                {{ nurse.licenseNumber + ' - ' + nurse.fullName }}
+                <input
+                  type="checkbox"
+                  [value]="nurse.id"
+                  (change)="updateTeam($event, nurse.id)"
+                />
+              </div>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-create">Create Appointment</button>
+          <button type="button" class="btn btn-clear" (click)="clearForm()">
+            Clear Form
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

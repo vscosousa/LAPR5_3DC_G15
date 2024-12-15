@@ -87,7 +87,9 @@ describe('PatientService', () => {
       phoneNumber: '+1234567890',
       emergencyContact: '+234567',
       allergies: [], // Add this line
-      medicalConditions: [] // Change this line to an array
+      medicalConditions: [], // Change this line to an array
+      familyHistory: [], // Add this line
+      freeText: '' // Add this line
     };
     const mockResponse = { id: '1', ...newPatient };
 

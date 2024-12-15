@@ -85,7 +85,7 @@ export class Appointment extends AggregateRoot<AppointmentProps> {
         roomId,
         dateTime: DateTime.create(dateTime.toISOString()),
         status: AppointmentStatus.create(status),
-        team: []
+        team: team
       }, id);
 
       return Result.ok<Appointment>(appointment);

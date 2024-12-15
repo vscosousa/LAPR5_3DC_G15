@@ -49,6 +49,7 @@ export default class AppointmentRepo implements IAppointmentRepo {
         appointmentDocument.roomId = appointment.roomId;
         appointmentDocument.dateTime = appointment.dateTime.getValue().toISOString();
         appointmentDocument.status = appointment.status.getValue();
+        appointmentDocument.team = appointment.team;
         this.logger.info('Updating existing appointment:', appointmentDocument); // Add logging
 
         await appointmentDocument.save();
@@ -70,5 +71,9 @@ export default class AppointmentRepo implements IAppointmentRepo {
     } else {
       return null;
     }
+  }
+
+  public async findall(): Promise<Appointment[]> {
+    return await this.appointmentSchema.find();
   }
 }

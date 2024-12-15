@@ -35,7 +35,8 @@ export class AppointmentMap extends Mapper<Appointment> {
       requestId: appointment.requestId,
       roomId: appointment.roomId,
       dateTime: appointment.dateTime.getValue().toISOString(),
-      status: appointment.status.getValue()
+      status: appointment.status.getValue(),
+      team: appointment.team
     };
   }
 }

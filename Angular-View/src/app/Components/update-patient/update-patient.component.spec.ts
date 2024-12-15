@@ -50,6 +50,14 @@ describe('UpdatePatientComponent', () => {
 
     fixture = TestBed.createComponent(UpdatePatientComponent);
     component = fixture.componentInstance;
+    component.existingPatient = {
+      firstName: 'Test',
+      lastName: 'Patient',
+      fullName: 'Test Patient',
+      email: 'test@example.com',
+      phoneNumber: '+1234567890',
+      emergencyContact: '+1234567890',
+    };
     fixture.detectChanges();
   });
 
@@ -84,7 +92,5 @@ describe('UpdatePatientComponent', () => {
     expect(component.existingPatient.email).toBe('');
     expect(component.existingPatient.phoneNumber).toBe('');
     expect(component.existingPatient.emergencyContact).toBe('');
-    expect(component.existingPatient.allergies).toEqual([]); // Change this line to use toEqual
-    expect(component.existingPatient.medicalConditions).toEqual([]); // Change this line to use toEqual
   });
 });

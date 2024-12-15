@@ -15,6 +15,7 @@ describe('UpdateAllergiesComponent', () => {
 
     fixture = TestBed.createComponent(UpdateAllergiesComponent);
     component = fixture.componentInstance;
+    component.allergy = { allergyCode: 'A123', allergyName: 'Peanuts' }; // Provide necessary input data
     fixture.detectChanges();
   });
 

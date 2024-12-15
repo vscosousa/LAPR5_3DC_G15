@@ -31,7 +31,8 @@ describe('appointment controller', function () {
             requestId: 'req123',
             roomId: 'room123',
             dateTime: new Date(),
-            status: 'scheduled'
+            status: 'scheduled',
+            team: ['teamMember1', 'teamMember2'] // Added team property
         };
         let req: Partial<Request> = {};
         req.body = body;
@@ -47,7 +48,8 @@ describe('appointment controller', function () {
             requestId: req.body.requestId,
             roomId: req.body.roomId,
             dateTime: req.body.dateTime,
-            status: req.body.status
+            status: req.body.status,
+            team: req.body.team // Added team property
         }));
 
         const ctrl = new AppointmentController(appointmentServiceInstance);
@@ -62,7 +64,8 @@ describe('appointment controller', function () {
             requestId: req.body.requestId,
             roomId: req.body.roomId,
             dateTime: req.body.dateTime,
-            status: req.body.status
+            status: req.body.status,
+            team: req.body.team // Added team property
         }));
     });
 
@@ -71,7 +74,8 @@ describe('appointment controller', function () {
             requestId: 'req123',
             roomId: 'room123',
             dateTime: new Date(),
-            status: 'completed'
+            status: 'completed',
+            team: ['teamMember1', 'teamMember2'] // Added team property
         };
         let req: Partial<Request> = {};
         req.body = body;
@@ -88,7 +92,8 @@ describe('appointment controller', function () {
             requestId: req.body.requestId,
             roomId: req.body.roomId,
             dateTime: req.body.dateTime,
-            status: req.body.status
+            status: req.body.status,
+            team: req.body.team // Added team property
         }));
 
         const ctrl = new AppointmentController(appointmentServiceInstance);
@@ -103,7 +108,8 @@ describe('appointment controller', function () {
             requestId: req.body.requestId,
             roomId: req.body.roomId,
             dateTime: req.body.dateTime,
-            status: req.body.status
+            status: req.body.status,
+            team: req.body.team // Added team property
         }));
     });
 });

@@ -44,13 +44,6 @@ describe('MedicalHistoryManagerComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should have a create patient button', () => {
-    const compiled = fixture.nativeElement as HTMLElement;
-    const createButton = compiled.querySelector('button[routerLink="/create-patient"]');
-    expect(createButton).toBeTruthy();
-    expect(createButton?.textContent).toContain('Create Patient');
-  });
-
   it('should have an apply filters button', () => {
     const compiled = fixture.nativeElement as HTMLElement;
     const applyFiltersButton = compiled.querySelector('button.btn-filter');

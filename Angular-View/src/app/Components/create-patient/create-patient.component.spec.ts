@@ -53,7 +53,9 @@ describe('CreatePatientComponent', () => {
       phoneNumber: '+1234567890',
       emergencyContact: '+1234567890',
       allergies: [],
-      medicalConditions: []
+      medicalConditions: [],
+      familyHistory: [], // Add this line
+      freeText: '' // Add this line
     };
 
     component.newPatient = patientData;
@@ -80,7 +82,9 @@ describe('CreatePatientComponent', () => {
       phoneNumber: '+1234567890',
       emergencyContact: '+1234567890',
       allergies: [],
-      medicalConditions: ['None']
+      medicalConditions: [],
+      familyHistory: [], // Add this line
+      freeText: '' // Add this line
     };
 
     component.newPatient = patientData;
@@ -110,7 +114,9 @@ describe('CreatePatientComponent', () => {
       phoneNumber: '+1234567890',
       emergencyContact: '+1234567890',
       allergies: ['None'],
-      medicalConditions: ['None']
+      medicalConditions: ['None'],
+      familyHistory: [], // Add this line
+      freeText: '' // Add this line
     };
 
     component.clearForm();
@@ -125,7 +131,9 @@ describe('CreatePatientComponent', () => {
       phoneNumber: '',
       emergencyContact: '',
       allergies: [],
-      medicalConditions: []
+      medicalConditions: [],
+      familyHistory: [], // Add this line
+      freeText: '' // Add this line
     });
   });
 });

@@ -1,0 +1,48 @@
+<div class="manage-container">
+  <app-sidebar></app-sidebar>
+  <div class="screens-container">
+    <div class="screen">
+      <h2 class="manage-title" style="text-align: center">Appointments Manager</h2>
+      <div class="content-container">
+        <div class="table-container">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Patient Name</th>
+                <th>Doctor License Number</th>
+                <th>Priority</th>
+                <th>Room ID</th>
+                <th>Date and Time</th>
+                <th>Status</th>
+                <th>Doctors</th>
+                <th>Nurses</th>
+                <th>Operation Type</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let appointment of appointments">
+                <td>{{ appointment.operationRequest?.patientName }}</td>
+                <td>{{ appointment.operationRequest?.doctorLicenseNumber }}</td>
+                <td>{{ appointment.operationRequest?.priority }}</td>
+                <td>{{ appointment.roomId }}</td>
+                <td>{{ appointment.dateTime | date: 'dd/MM/yyyy - HH:mm' }}</td>
+                <td>{{ appointment.status }}</td>
+                <td>{{ getDoctorNames(appointment.teamDetails) }}</td>
+                <td>{{ getNurseNames(appointment.teamDetails) }}</td>
+                <td>{{ appointment.operationRequest?.operationType }}</td>
+                <td>
+                  <a
+                    [routerLink]="['/update-appointment', appointment.id]"
+                    class="btn btn-update"
+                    >Edit</a
+                  >
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

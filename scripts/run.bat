@@ -3,7 +3,7 @@ setlocal
 
 REM
 cd /d "%~dp0..\Backoffice"
-start dotnet run --launch-profile https
+start dotnet watch run --launch-profile https
 
 REM
 cd /d "%~dp0..\Angular-View"

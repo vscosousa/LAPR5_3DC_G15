@@ -38,6 +38,10 @@ import { UpdateConditionsComponent } from './Components/manage-allergies-and-con
 import { UpdateMedicalHistoryComponent } from './Components/update-medical-history/update-medical-history.component';
 import { MedicalHistoryManagerComponent } from './Components/medical-history-manager/medical-history-manager.component';
 import { PatientPolicyComponent } from './Components/patient-policy/patient-policy.component';
+import { UpdateOperationRequestComponent } from './Components/operation-requests/update-operation-request/update-operation-request.component';
+import { CreateAppointmentComponent } from './Components/create-appointment/create-appointment.component';
+import { AppointmentManagerComponent } from './Components/appointment-manager/appointment-manager.component';
+import { UpdateAppointmentComponent } from './Components/update-appointment/update-appointment.component';
 
 export const routes: Routes = [
   {
@@ -118,9 +122,9 @@ export const routes: Routes = [
   {
     path: "create-operation-request", component: CreateOperationRequestComponent, canActivate: [AuthGuard]
   },
-  /**{
+  {
     path: "update-operation-request/:id", component: UpdateOperationRequestComponent, canActivate: [AuthGuard]
-  },*/
+  },
   {
     path: "manage-allergies-and-conditions", component: ManageAllergiesAndConditionsComponent, canActivate: [AuthGuard], children: [
       {path: "create-allergies", component: CreateAllergiesComponent, canActivate: [AuthGuard]},
@@ -134,6 +138,15 @@ export const routes: Routes = [
   },
   {
     path: "medical-history-manager", component: MedicalHistoryManagerComponent, canActivate: [DoctorGuard]
+  },
+  {
+    path: "create-appointment/:id", component: CreateAppointmentComponent, canActivate: [AuthGuard]
+  },
+  {
+    path: "appointment-manager", component: AppointmentManagerComponent, canActivate: [AuthGuard]
+  },
+  {
+    path: "update-appointment/:id", component: UpdateAppointmentComponent, canActivate: [AuthGuard]
   },
   {
     path: "", component: HomeComponent

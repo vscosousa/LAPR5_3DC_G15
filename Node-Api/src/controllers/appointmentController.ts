@@ -46,4 +46,25 @@ export default class AppointmentController implements IAppointmentController {
       return next(e);
     }
   };
+
+  public async getAppointments(req: Request, res: Response, next: NextFunction) {
+    try {
+      const appointments = await this.appointmentServiceInstance.getAppointments();
+      return res.status(200).json(appointments);
+    }
+    catch (e) {
+      return next(e);
+    }
+  }
+
+  public async getAppointmentById(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { id } = req.params;
+      const appointment = await this.appointmentServiceInstance.getAppointmentById(id);
+      return res.status(200).json(appointment);
+    }
+    catch (e) {
+      return next(e);
+    }
+  }
 }
