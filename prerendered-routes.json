@@ -1,0 +1,32 @@
+{
+  "routes": [
+    "/",
+    "/activate",
+    "/activate-patient-user",
+    "/appointment-manager",
+    "/create-operation-request",
+    "/create-operation-type",
+    "/create-patient",
+    "/create-staff",
+    "/delete-user",
+    "/hospital3d",
+    "/login",
+    "/manage-allergies-and-conditions",
+    "/manage-allergies-and-conditions/create-allergies",
+    "/manage-allergies-and-conditions/create-conditions",
+    "/manage-patients",
+    "/medical-history-manager",
+    "/operation-requests",
+    "/operation-types",
+    "/panel-admin",
+    "/panel-doctor",
+    "/patient-panel",
+    "/patient-policy",
+    "/patient-settings",
+    "/register",
+    "/search-staffs",
+    "/specializations",
+    "/specializations/create-specialization",
+    "/update-staff/ConfirmUpdates"
+  ]
+}
