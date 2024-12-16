@@ -42,7 +42,7 @@ jobs:
     - name: Deploy to GitHub Pages
       if: github.ref == 'refs/heads/main'
       run: |
-        npx angular-cli-ghpages --dir=Angular-View/dist/Angular-View/browser --no-silent
+        npx angular-cli-ghpages --dir=Angular-View/dist/Angular-View/browser --branch=gh-pages-angular --no-silent
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
