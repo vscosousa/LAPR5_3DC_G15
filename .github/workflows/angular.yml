@@ -34,3 +34,10 @@ jobs:
     - name: Run Angular tests
       run: npm run test
       working-directory: Angular-View
+
+    - name: Deploy to GitHub Pages
+      if: github.ref == 'refs/heads/main'
+      run: |
+        npx angular-cli-ghpages --dir=dist/Angular-View
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
