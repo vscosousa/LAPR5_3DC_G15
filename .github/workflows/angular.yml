@@ -50,7 +50,7 @@ jobs:
 
     - name: Pull latest changes from gh-pages
       run: |
-        git clone https://github.com/vscosousa/LAPR5_3DC_G15.git
+        git clone https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/vscosousa/LAPR5_3DC_G15.git
         cd LAPR5_3DC_G15
         git checkout gh-pages
         git pull origin gh-pages
