@@ -1,5 +1,8 @@
 name: Angular CI
 
+permissions:
+  contents: write
+
 on:
   push:
     branches: [ "main" ]
