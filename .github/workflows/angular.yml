@@ -31,11 +31,17 @@ jobs:
       working-directory: Angular-View
 
     - name: Build Angular project
-      run: npm run build --if-present -- --output-path docs --base-href /LAPR5_3DC_G15/
+      run: npm run build --if-present -- --base-href /LAPR5_3DC_G15/
       working-directory: Angular-View
 
+    - name: Copy server folder and prerendered-routes.json
+      run: |
+        mkdir -p Angular-View/dist/Angular-View/browser/server
+        cp -r Angular-View/dist/Angular-View/server/* Angular-View/dist/Angular-View/browser/server/
+        cp Angular-View/dist/Angular-View/prerendered-routes.json Angular-View/dist/Angular-View/browser/
+
     - name: Copy index.html to 404.html
-      run: cp Angular-View/docs/index.html Angular-View/docs/404.html
+      run: cp Angular-View/dist/Angular-View/browser/index.html Angular-View/dist/Angular-View/browser/404.html
 
     - name: Set up Git user
       run: |
@@ -45,7 +51,7 @@ jobs:
     - name: Deploy to GitHub Pages
       if: github.ref == 'refs/heads/main'
       run: |
-        npx angular-cli-ghpages --dir=Angular-View/docs --branch=gh-pages --no-silent
+        npx angular-cli-ghpages --dir=Angular-View/dist/Angular-View/browser --branch=gh-pages --no-silent
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
