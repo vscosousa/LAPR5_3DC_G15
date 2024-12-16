@@ -1,5 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NotFoundComponent } from './not-found.component';
+import { RouterModule } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
+import { of } from 'rxjs';
 
 // Test suite for NotFoundComponent
 // Author: Vasco Sousa (1221700)
@@ -12,7 +15,10 @@ describe('NotFoundComponent', () => {
   beforeEach(async () => {
     // Set up the testing module for NotFoundComponent
     await TestBed.configureTestingModule({
-      imports: [NotFoundComponent]
+      imports: [RouterModule, NotFoundComponent],
+      providers: [
+        { provide: ActivatedRoute, useValue: { params: of({}) } }
+      ]
     })
     .compileComponents();
 
@@ -34,7 +40,7 @@ describe('NotFoundComponent', () => {
 
   it('should have a link to the home page', () => {
     const compiled = fixture.nativeElement as HTMLElement;
-    const homeLink = compiled.querySelector('a[href="/"]');
+    const homeLink = compiled.querySelector('a[routerLink="/"]');
     expect(homeLink).toBeTruthy();
     expect(homeLink?.textContent).toContain('Go to Home Page');
   });

@@ -1,6 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { HomeComponent } from './home.component';
+import { RouterModule, ActivatedRoute } from '@angular/router';
+import { of } from 'rxjs';
 
 // Test suite for HomeComponent
 // Author: Vasco Sousa (1221700)
@@ -13,7 +15,10 @@ describe('HomeComponent', () => {
   beforeEach(async () => {
     // Set up the testing module for HomeComponent
     await TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule, HomeComponent]
+      imports: [HttpClientTestingModule, RouterModule, HomeComponent],
+      providers: [
+        { provide: ActivatedRoute, useValue: { params: of({}) } }
+      ]
     })
     .compileComponents();
 
@@ -29,14 +34,14 @@ describe('HomeComponent', () => {
 
   it('should have a login button', () => {
     const compiled = fixture.nativeElement as HTMLElement;
-    const loginButton = compiled.querySelector('a[href="login"]');
+    const loginButton = compiled.querySelector('a[routerLink="/login"]');
     expect(loginButton).toBeTruthy();
     expect(loginButton?.textContent).toContain('Login');
   });
 
   it('should have a register button', () => {
     const compiled = fixture.nativeElement as HTMLElement;
-    const registerButton = compiled.querySelector('a[href="register"]');
+    const registerButton = compiled.querySelector('a[routerLink="/register"]');
     expect(registerButton).toBeTruthy();
     expect(registerButton?.textContent).toContain('Register');
   });

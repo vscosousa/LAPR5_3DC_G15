@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { RouterModule } from '@angular/router';
 
 /**
  * @class NotFoundComponent
@@ -8,7 +9,7 @@ import { Component } from '@angular/core';
 @Component({
   selector: 'app-not-found',
   standalone: true,
-  imports: [],
+  imports: [RouterModule],
   templateUrl: './not-found.component.html',
   styleUrl: './not-found.component.scss'
 })

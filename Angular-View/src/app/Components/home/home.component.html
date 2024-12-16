@@ -4,14 +4,14 @@ Last update: 06/11/2024
 Description: This component displays the home page with navigation links and health & wellness articles.
 -->
 <body>
-    <section class="hero">
+    <section class="hero" style="background-image: url('/hero.gif'); background-size: cover; background-position: center;">
         <div class="logo">
             <img src="logo.png" alt="logo" />
             <p>Hospital Management App</p>
         </div>
         <div class="buttons">
-            <a href="login" class="btn">Login</a>
-            <a href="register" class="btn">Register</a>
+            <a routerLink="/login" class="btn">Login</a>
+            <a routerLink="/register" class="btn">Register</a>
         </div>
         <img class="hero-img" src="arrow.png" alt="Hero Image" onclick="document.querySelector('.articles-container').scrollIntoView({ behavior: 'smooth' });" />
     </section>
@@ -23,19 +23,19 @@ Description: This component displays the home page with navigation links and hea
                 <h2>5 Tips for a Healthy Lifestyle</h2>
                 <p>Discover essential tips to maintain a healthy lifestyle, including diet, exercise, and mental
                     well-being.</p>
-                <a href="">Read more</a>
+                <a routerLink="/">Read more</a>
             </article>
             <article>
                 <img src="meds.jpg" alt="Article 2 Image">
                 <h2>Understanding Common Medications</h2>
                 <p>Learn about the most commonly prescribed medications, their uses, and potential side effects.</p>
-                <a href="">Read more</a>
+                <a routerLink="/">Read more</a>
             </article>
             <article>
                 <img src="stress.jpg" alt="Article 3 Image">
                 <h2>How to Manage Stress Effectively</h2>
                 <p>Explore various techniques and strategies to manage stress and improve your overall well-being.</p>
-                <a href="">Read more</a>
+                <a routerLink="/">Read more</a>
             </article>
         </section>
     </div>
@@ -46,24 +46,24 @@ Description: This component displays the home page with navigation links and hea
             <div class="footer-col">
                 <h4>company</h4>
                 <ul>
-                    <li><a href="about-us">About Us</a></li>
-                    <li><a href="our-services">Our Services</a></li>
-                    <li><a href="privacy-policy">Privacy Policy</a></li>
+                    <li><a routerLink="/about-us">About Us</a></li>
+                    <li><a routerLink="/our-services">Our Services</a></li>
+                    <li><a routerLink="/privacy-policy">Privacy Policy</a></li>
                 </ul>
             </div>
             <div class="footer-col">
                 <h4>get help</h4>
                 <ul>
-                    <li><a href="faq">FAQ</a></li>
+                    <li><a routerLink="/faq">FAQ</a></li>
                 </ul>
             </div>
             <div class="footer-col">
                 <h4>resources</h4>
                 <ul>
-                    <li><a href="patient-portal">Patient Portal</a></li>
-                    <li><a href="doctor-directory">Doctor Directory</a></li>
-                    <li><a href="health-library">Health Library</a></li>
-                    <li><a href="emergency-services">Emergency Services</a></li>
+                    <li><a routerLink="/patient-portal">Patient Portal</a></li>
+                    <li><a routerLink="/doctor-directory">Doctor Directory</a></li>
+                    <li><a routerLink="/health-library">Health Library</a></li>
+                    <li><a routerLink="/emergency-services">Emergency Services</a></li>
                 </ul>
             </div>
             <div class="footer-col">

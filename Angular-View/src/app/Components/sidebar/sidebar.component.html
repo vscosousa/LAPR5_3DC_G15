@@ -24,14 +24,14 @@ Description: This component displays the sidebar with navigation links for the h
       <div class="menu-separator"></div>
     </h4>
     <li>
-      <a href="#"><img src="notifications.png" alt="icon" />Notifications</a>
+      <a routerLink="/#"><img src="notifications.png" alt="icon" />Notifications</a>
     </li>
     <h4>
       <span>Account</span>
       <div class="menu-separator"></div>
     </h4>
     <li>
-      <a href="#"><img src="profile.png" alt="icon" />Profile</a>
+      <a routerLink="/#"><img src="profile.png" alt="icon" />Profile</a>
     </li>
     <li>
       <a [routerLink]="['/', settingsId]"
@@ -44,7 +44,7 @@ Description: This component displays the sidebar with navigation links for the h
       </a>
     </li>
     <li>
-      <a href="/" (click)="logout()"
+      <a routerLink="/"(click)="logout()"
         ><img src="logout.png" alt="icon" />Logout</a
       >
     </li>

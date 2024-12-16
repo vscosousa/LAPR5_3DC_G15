@@ -5,7 +5,7 @@ Description: This component displays the registration form for new users.
 -->
 
 <div class="register-container">
-    <a href="/" class="btn btn-home">
+    <a routerLink="/" class="btn btn-home">
         <img src="home.png" alt="Home">
     </a>
     <div class="register-left">
@@ -44,7 +44,7 @@ Description: This component displays the registration form for new users.
                 <input type="checkbox" id="acceptPolicy" formControlName="acceptPolicy" required>
                 <label for="acceptPolicy">
                     I accept the
-                    <a href="#" (click)="openPrivacyPolicy($event)">Privacy Policy</a>
+                    <a routerLink="/#" (click)="openPrivacyPolicy($event)">Privacy Policy</a>
                 </label>
             </div>
 
