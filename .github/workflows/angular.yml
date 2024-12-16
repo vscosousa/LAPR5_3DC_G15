@@ -54,6 +54,8 @@ jobs:
         cd LAPR5_3DC_G15
         git checkout gh-pages
         git pull origin gh-pages
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Deploy to GitHub Pages
       if: github.ref == 'refs/heads/main'
