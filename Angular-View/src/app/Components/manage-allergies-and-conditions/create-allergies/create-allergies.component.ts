@@ -1,7 +1,6 @@
 import { Component, EventEmitter, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AllergyService } from '../../../Services/allergy.service';
-import { string } from 'three/webgpu';
 
 @Component({
   selector: 'app-create-allergies',
