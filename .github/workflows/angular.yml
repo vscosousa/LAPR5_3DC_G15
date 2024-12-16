@@ -31,14 +31,18 @@ jobs:
       run: npm run build --if-present
       working-directory: Angular-View
 
+    - name: Set up Git user
+      run: |
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
     - name: Deploy to GitHub Pages
       if: github.ref == 'refs/heads/main'
       run: |
         npx angular-cli-ghpages --dir=Angular-View/dist/Angular-View/browser --no-silent
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        
+
     - name: Run Angular tests
       run: npm run test
       working-directory: Angular-View
-
