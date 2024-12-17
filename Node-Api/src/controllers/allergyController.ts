@@ -54,7 +54,7 @@ export default class AllergyController implements IAllergyController {
             return next(e);
         }
     }
-
+    
     public async deleteAllergy(req: Request, res: Response, next: NextFunction) {
         try {
             const { id } = req.params;
@@ -65,16 +65,22 @@ export default class AllergyController implements IAllergyController {
                 return res.status(404).send(result.errorValue());
             }
     
-            return res.status(200).send({ message: "Allergy successfully deleted." });
+            return res.status(204).send();
         } catch (e) {
             console.error("Error in removeAllergy:", e);
             return next(e);
         }
     }
-
+    
     public async listAllergies(req: Request, res: Response, next: NextFunction) {
         try {
-            const allergys = await this.allergyServiceInstance.listAllergys();
+            const allergysOrError = await this.allergyServiceInstance.listAllergys();
+    
+            if (allergysOrError.isFailure) {
+                return next(new Error(allergysOrError.errorValue() as unknown as string));
+            }
+    
+            const allergys = allergysOrError.getValue();
             return res.status(200).json(allergys);
         } catch (e) {
             return next(e);

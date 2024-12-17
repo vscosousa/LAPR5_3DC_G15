@@ -1,4 +1,3 @@
-import { AppointmentStatus, StatusType } from './appointmentStatus';
 import { AggregateRoot } from "../core/domain/AggregateRoot";
 import { UniqueEntityID } from "../core/domain/UniqueEntityID";
 import { Result } from "../core/logic/Result";
@@ -10,7 +9,7 @@ interface SpecializationProps {
   specializationType: string;
 }
 
-export class Specialization extends AggregateRoot<SpecializationProps>{
+export class Specialization extends AggregateRoot<SpecializationProps> {
     get id(): UniqueEntityID {
         return this._id;
     }
@@ -36,12 +35,15 @@ export class Specialization extends AggregateRoot<SpecializationProps>{
 
         const guardResult = Guard.againstNullOrUndefinedBulk(guardedProps);
 
-        if(!guardResult.succeeded) {
+        if (!guardResult.succeeded) {
             return Result.fail<Specialization>(guardResult.message);
-        } else {
-            const specialization = new Specialization({ specializationType }, id);
-            return Result.ok<Specialization>(specialization);
         }
 
+        if (specializationType.trim() === '') {
+            return Result.fail<Specialization>('specializationType cannot be an empty string');
+        }
+
+        const specialization = new Specialization({ specializationType }, id);
+        return Result.ok<Specialization>(specialization);
     }
 }
