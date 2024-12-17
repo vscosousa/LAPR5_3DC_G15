@@ -26,7 +26,7 @@ export class ManageAllergiesAndConditionsComponent {
   selectedItemType: string | null = null;
 
   constructor(private renderer: Renderer2, private router: Router, private panelService: PanelService, private allergyService: AllergyService,
-    private medicalConditionService: MedicalConditionService) {}
+    private medicalConditionService: MedicalConditionService) { }
 
   ngOnInit(): void {
     this.panelService.setPanelId('panel-admin');
@@ -92,12 +92,8 @@ export class ManageAllergiesAndConditionsComponent {
   fetchAllergies(): void {
     this.allergyService.getAllergies().subscribe(
       (response: any) => {
-        if (response.isSuccess && response._value) {
-          this.allergies = response._value;
-          console.log('Allergies fetched:', this.allergies);
-        } else {
-          console.error('Failed to fetch allergies:', response.error);
-        }
+        this.allergies = response;
+        console.log('Allergies fetched:', this.allergies);
       },
       error => {
         console.error('Error fetching allergies', error);
@@ -108,12 +104,8 @@ export class ManageAllergiesAndConditionsComponent {
   fetchMedicalConditions(): void {
     this.medicalConditionService.getMedicalConditions().subscribe(
       (response: any) => {
-        if (response.isSuccess && response._value) {
-          this.medicalConditions = response._value;
-          console.log('Medical Conditions fetched:', this.medicalConditions);
-        } else {
-          console.error('Failed to fetch medical conditions:', response.error);
-        }
+        this.medicalConditions = response;
+        console.log('Medical Conditions fetched:', this.medicalConditions);
       },
       error => {
         console.error('Error fetching medical conditions', error);

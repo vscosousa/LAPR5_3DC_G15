@@ -104,36 +104,36 @@ export class UpdateMedicalHistoryComponent implements OnInit {
       }
     );
   }
-  
+
   parseFamilyHistoryString(familyHistoryString: string): string[] {
     return familyHistoryString
       .split(/,(?=\s*[A-Za-z]+:)/) // Split entries by comma followed by a relationship
       .map(entry => entry.trim()); // Trim each entry
   }
-  
+
 
   parseFamilyHistory(familyHistory: string[]): { relationship: string; conditions: string[] }[] {
     return familyHistory.map(entry => {
       // Split the entry into relationship and conditions
       const [relationship, conditionsString] = entry.split(': ');
-  
+
       if (!conditionsString) {
         return { relationship, conditions: [] };
       }
-  
+
       // Split conditions by semicolons, handling commas inside condition names
       const conditions = conditionsString
         .split(';') // Split by semicolons
         .map(cond => cond.trim()) // Trim each condition
         .filter(cond => cond.length > 0); // Exclude empty conditions
-  
+
       return {
         relationship: relationship.trim(),
         conditions,
       };
     });
   }
-  
+
 
   filterSelectedAllergies(): void {
     console.log('filterSelectedAllergies called');
@@ -188,12 +188,8 @@ export class UpdateMedicalHistoryComponent implements OnInit {
     console.log('fetchAllergies called');
     this.allergyService.getAllergies().subscribe(
       (response: any) => {
-        if (response.isSuccess && response._value) {
-          this.allergies = response._value;
+          this.allergies = response;
           console.log('Allergies fetched:', this.allergies);
-        } else {
-          console.error('Failed to fetch allergies:', response.error);
-        }
       },
       error => {
         console.error('Error fetching allergies', error);
@@ -205,12 +201,8 @@ export class UpdateMedicalHistoryComponent implements OnInit {
     console.log('fetchMedicalConditions called');
     this.medicalConditionService.getMedicalConditions().subscribe(
       (response: any) => {
-        if (response.isSuccess && response._value) {
-          this.medicalConditions = response._value;
+          this.medicalConditions = response;
           console.log('Medical conditions fetched:', this.medicalConditions);
-        } else {
-          console.error('Failed to fetch medical conditions:', response.error);
-        }
       },
       error => {
         console.error('Error fetching medical conditions', error);
@@ -263,15 +255,15 @@ export class UpdateMedicalHistoryComponent implements OnInit {
 
   addFamilyHistory() {
     console.log('addFamilyHistory called with newFamilyHistory:', this.newFamilyHistory);
-  
+
     // Format conditions by joining with a semicolon
     const formattedConditions = this.newFamilyHistory.conditions.join('; ');
-  
+
     const familyHistoryString = `${this.newFamilyHistory.relationship}: ${formattedConditions}`;
     if (!this.medicalHistory.familyHistory.includes(familyHistoryString)) {
       this.medicalHistory.familyHistory.push(familyHistoryString);
     }
-  
+
     this.newFamilyHistory = { relationship: '', conditions: [] }; // Reset form
     console.log('Updated family history:', this.medicalHistory.familyHistory);
   }
@@ -309,7 +301,7 @@ export class UpdateMedicalHistoryComponent implements OnInit {
     this.showUpdateFamilyHistoryModal = true;
     console.log('Editing family history:', this.newFamilyHistory);
   }
-  
+
 
   closeUpdateFamilyHistoryModal() {
     console.log('closeUpdateFamilyHistoryModal called');
@@ -333,7 +325,7 @@ export class UpdateMedicalHistoryComponent implements OnInit {
 
   submitMedicalHistory() {
     console.log('submitMedicalHistory called with medicalHistory:', this.medicalHistory);
-  
+
     this.medicalHistoryService.updatePatientMedicalHistory(
       this.medicalHistory.patientMedicalRecordNumber,
       this.medicalHistory.allergies,
@@ -351,5 +343,5 @@ export class UpdateMedicalHistoryComponent implements OnInit {
       }
     );
   }
-  
+
 }

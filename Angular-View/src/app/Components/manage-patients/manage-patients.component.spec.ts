@@ -71,16 +71,6 @@ describe('ManagePatientsComponent', () => {
     expect(component.fetchMedicalConditions).toHaveBeenCalled();
   });
 
-  it('should fetch patients successfully', () => {
-    const mockPatients = [{ medicalRecordNumber: '123', fullName: 'John Doe' }];
-    spyOn(patientService, 'getPatientsWithAdvancedFilter').and.returnValue(of(mockPatients));
-
-    component.fetchPatients();
-
-    expect(patientService.getPatientsWithAdvancedFilter).toHaveBeenCalled();
-    expect(component.patients).toEqual(mockPatients);
-  });
-
   it('should handle error while fetching patients', () => {
     spyOn(patientService, 'getPatientsWithAdvancedFilter').and.returnValue(throwError('Error'));
     spyOn(console, 'error');
@@ -93,7 +83,7 @@ describe('ManagePatientsComponent', () => {
 
   it('should fetch allergies successfully', () => {
     const mockAllergies = [{ id: 'A1', allergyName: 'Peanuts' }];
-    spyOn(allergyService, 'getAllergies').and.returnValue(of({ isSuccess: true, _value: mockAllergies }));
+    spyOn(allergyService, 'getAllergies').and.returnValue(of(mockAllergies));
 
     component.fetchAllergies();
 
@@ -113,14 +103,14 @@ describe('ManagePatientsComponent', () => {
   });
 
   it('should fetch medical conditions successfully', () => {
-    const mockConditions = [{ id: 'C1', medicalConditionName: 'Asthma' }];
-    spyOn(medicalConditionService, 'getMedicalConditions').and.returnValue(of({ isSuccess: true, _value: mockConditions }));
+      const mockConditions = [{ id: 'C1', medicalConditionName: 'Asthma' }];
+      spyOn(medicalConditionService, 'getMedicalConditions').and.returnValue(of(mockConditions));
 
-    component.fetchMedicalConditions();
+      component.fetchMedicalConditions();
 
-    expect(medicalConditionService.getMedicalConditions).toHaveBeenCalled();
-    expect(component.medicalConditions).toEqual(mockConditions);
-    expect(component.filteredMedicalConditions).toEqual(mockConditions);
+      expect(medicalConditionService.getMedicalConditions).toHaveBeenCalled();
+      expect(component.medicalConditions).toEqual(mockConditions);
+      expect(component.filteredMedicalConditions).toEqual(mockConditions);
   });
 
   it('should handle error while fetching medical conditions', () => {

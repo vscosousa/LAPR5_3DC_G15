@@ -61,13 +61,9 @@ export class ManagePatientsComponent {
   fetchAllergies(): void {
     this.allergyService.getAllergies().subscribe(
       (response: any) => {
-        if (response.isSuccess && response._value) {
-          this.allergies = response._value;
-          this.filteredAllergies = this.allergies;
-          console.log('Allergies fetched:', this.allergies);
-        } else {
-          console.error('Failed to fetch allergies:', response.error);
-        }
+        this.allergies = response;
+        this.filteredAllergies = this.allergies;
+        console.log('Allergies fetched:', this.allergies);
       },
       error => {
         console.error('Error fetching allergies', error);
@@ -78,13 +74,9 @@ export class ManagePatientsComponent {
   fetchMedicalConditions(): void {
     this.medicalConditionService.getMedicalConditions().subscribe(
       (response: any) => {
-        if (response.isSuccess && response._value) {
-          this.medicalConditions = response._value;
-          this.filteredMedicalConditions = this.medicalConditions;
-          console.log('Medical Conditions fetched:', this.medicalConditions);
-        } else {
-          console.error('Failed to fetch medical conditions:', response.error);
-        }
+        this.medicalConditions = response;
+        this.filteredMedicalConditions = this.medicalConditions;
+        console.log('Medical Conditions fetched:', this.medicalConditions);
       },
       error => {
         console.error('Error fetching medical conditions', error);

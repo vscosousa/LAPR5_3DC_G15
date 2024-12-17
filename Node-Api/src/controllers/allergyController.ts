@@ -81,6 +81,7 @@ export default class AllergyController implements IAllergyController {
             }
     
             const allergys = allergysOrError.getValue();
+            console.log("Allergies listed:", allergys);
             return res.status(200).json(allergys);
         } catch (e) {
             return next(e);
