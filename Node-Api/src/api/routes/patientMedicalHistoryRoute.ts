@@ -53,7 +53,7 @@ export default (app: Router) => {
   route.put(
     '/update/:patientMedicalRecordNumber',
     isAuth,
-    checkRole(['Doctor']),
+    checkRole(['Admin']),
     logRequestBody,
     celebrate({
       body: Joi.object({
