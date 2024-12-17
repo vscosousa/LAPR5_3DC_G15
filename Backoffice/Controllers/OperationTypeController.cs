@@ -136,10 +136,6 @@ namespace DDDSample1.Controllers
             }
         }
 
-
-
-
-
         [HttpGet("id")]
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult<OperationTypeDTO>> GetOperationType(Guid id)

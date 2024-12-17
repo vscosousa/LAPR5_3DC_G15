@@ -117,13 +117,13 @@ export const routes: Routes = [
     path: "update-patient/:medicalRecordNumber", component: UpdatePatientComponent, canActivate: [AuthGuard]
   },
   {
-    path: "operation-requests", component: OperationRequestsComponent, canActivate: [AuthGuard]
+    path: "operation-requests", component: OperationRequestsComponent, canActivate: [DoctorGuard]
   },
   {
-    path: "create-operation-request", component: CreateOperationRequestComponent, canActivate: [AuthGuard]
+    path: "create-operation-request", component: CreateOperationRequestComponent, canActivate: [DoctorGuard]
   },
   {
-    path: "update-operation-request/:id", component: UpdateOperationRequestComponent, canActivate: [AuthGuard]
+    path: "update-operation-request/:id", component: UpdateOperationRequestComponent, canActivate: [DoctorGuard]
   },
   {
     path: "manage-allergies-and-conditions", component: ManageAllergiesAndConditionsComponent, canActivate: [AuthGuard], children: [

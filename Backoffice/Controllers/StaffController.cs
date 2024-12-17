@@ -125,7 +125,7 @@ namespace DDDSample1.Controllers
         }
 
         [HttpGet("search")]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin, Doctor")]
         public async Task<ActionResult<IEnumerable<StaffDTO>>> SearchStaffProfiles(string firstName, string lastName, string email, string fullName, string specializationName)
         {
             var dto = new SearchStaffDTO
@@ -163,7 +163,7 @@ namespace DDDSample1.Controllers
         }
 
         [HttpGet("staff-types")]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin, Doctor")]
         public IActionResult GetStaffTypes()
         {
             var staffTypes = _staffService.GetStaffTypes();
@@ -171,7 +171,7 @@ namespace DDDSample1.Controllers
         }
 
         [HttpGet("{id}")]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin, Doctor")]
         public async Task<IActionResult> GetStaffById(Guid id)
         {
             try
@@ -190,7 +190,7 @@ namespace DDDSample1.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin, Doctor")]
         public async Task<IActionResult> GetAllStaffs()
         {
             try

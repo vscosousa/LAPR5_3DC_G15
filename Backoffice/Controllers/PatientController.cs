@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Mvc;
 namespace DDDSample1.Controllers
 {
     [Route("api/[controller]")]
-    [Authorize (Roles = "Admin")]
     [ApiController]
     public class PatientController : ControllerBase
     {
@@ -22,6 +21,7 @@ namespace DDDSample1.Controllers
         }
 
         [HttpPost]
+        [Authorize (Roles = "Admin")]
         public async Task<ActionResult<PatientDTO>> CreatePatient(CreatingPatientDTO patientDTO)
         {
             try
@@ -40,6 +40,7 @@ namespace DDDSample1.Controllers
         }
 
         [HttpDelete("{medicalRecordNumber}")]
+        [Authorize (Roles = "Admin")]
         public async Task<ActionResult<PatientDTO>> DeletePatient(string medicalRecordNumber)
         {
             try
@@ -60,6 +61,7 @@ namespace DDDSample1.Controllers
         }
 
         [HttpPut("{medicalRecordNumber}")]
+        [Authorize (Roles = "Admin")]
         public async Task<ActionResult<PatientDTO>> UpdatePatient(string medicalRecordNumber, UpdatePatientDTO dto)
         {
             try
@@ -79,6 +81,7 @@ namespace DDDSample1.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Admin, Doctor")]
         public async Task<ActionResult<IEnumerable<PatientDTO>>> SearchPatients(string firstName, string lastName, string fullName, string dateOfBirth, string medicalRecordNumber, string gender, string email, string phoneNumber)
         {
             var dto = new SearchPatientDTO

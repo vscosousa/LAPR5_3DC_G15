@@ -4,8 +4,6 @@ using System.Threading.Tasks;
 using DDDSample1.Domain.OperationRequests;
 using DDDSample1.Domain.Patients;
 using DDDSample1.Domain.Shared;
-using DDDSample1.Domain.OperationTypes;
-using DDDSample1.Domain.Staffs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -23,7 +21,7 @@ namespace DDDSample1.Controllers
         }
 
         [HttpPost]
-        [AllowAnonymous]
+        [Authorize(Roles = "Doctor")]
         public async Task<ActionResult<OperationRequestDTO>> CreateOperationRequest(CreatingOperationRequestDTO operationRequestDTO)
         {
             try
@@ -46,7 +44,7 @@ namespace DDDSample1.Controllers
         }
 
         [HttpPut("{id}")]
-        [Authorize(Roles = "Admin, Doctor")]
+        [Authorize(Roles = "Doctor")]
         public async Task<ActionResult<OperationRequestDTO>> UpdateOperationRequestAsync(Guid id, Guid doctorId, UpdatingOperationRequestDTO operationRequestDto)
         {
             try
@@ -67,7 +65,7 @@ namespace DDDSample1.Controllers
         }
 
         [HttpPut("schedule/{id}")]
-        [Authorize(Roles = "Admin, Doctor")]
+        [Authorize(Roles = "Doctor")]
         public async Task<ActionResult> ScheduleOperationRequestAsync(Guid id)
         {
             Console.WriteLine($"ScheduleOperationRequestAsync called with id: {id}");
@@ -94,7 +92,7 @@ namespace DDDSample1.Controllers
 
 
         [HttpDelete("{id}")]
-        [Authorize(Roles = "Admin,Doctor")]
+        [Authorize(Roles = "Doctor")]
         public async Task<ActionResult> DeleteOperationRequestAsync(Guid id, string doctorLicenseNumber)
         {
             try
@@ -109,7 +107,7 @@ namespace DDDSample1.Controllers
         }
 
         [HttpGet]
-        [Authorize]
+        [Authorize(Roles = "Doctor")]
         public async Task<ActionResult<IEnumerable<SearchedOperationRequestDTO>>> GetAllOperationRequestsAsync(string patientName, string operationType, string status, string priority)
         {
             var dto = new SearchOperationRequestDTO(patientName, operationType, status, priority);
