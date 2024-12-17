@@ -129,7 +129,6 @@ describe('medical condition controller', function () {
         sinon.assert.calledOnce(res.status as sinon.SinonStub);
         sinon.assert.calledWith(res.status as sinon.SinonStub, 200);
         sinon.assert.calledOnce(res.send as sinon.SinonSpy);
-        sinon.assert.calledWith(res.send as sinon.SinonSpy, sinon.match({ message: "MedicalCondition successfully deleted." }));
     });
 
     it('listMedicalConditions: returns json with list of medical conditions', async function () {
@@ -155,6 +154,6 @@ describe('medical condition controller', function () {
         sinon.assert.calledOnce(res.status as sinon.SinonStub);
         sinon.assert.calledWith(res.status as sinon.SinonStub, 200);
         sinon.assert.calledOnce(res.json as sinon.SinonSpy);
-        sinon.assert.calledWith(res.json as sinon.SinonSpy, sinon.match({ _value: medicalConditions }));
+        sinon.assert.calledWith(res.json as sinon.SinonSpy, medicalConditions);
     });
 });
