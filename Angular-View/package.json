@@ -54,6 +54,7 @@
     "angular-calendar": "^0.31.1",
     "angular-cli-ghpages": "^2.0.3",
     "cypress": "latest",
+    "gh-pages": "^6.2.0",
     "jasmine": "^5.4.0",
     "jest": "^29.7.0",
     "jest-jasmine2": "^29.7.0",
