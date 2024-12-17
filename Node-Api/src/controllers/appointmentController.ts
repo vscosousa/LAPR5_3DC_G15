@@ -60,8 +60,14 @@ export default class AppointmentController implements IAppointmentController {
   public async getAppointmentById(req: Request, res: Response, next: NextFunction) {
     try {
       const { id } = req.params;
-      const appointment = await this.appointmentServiceInstance.getAppointmentById(id);
-      return res.status(200).json(appointment);
+      const appointmentOrError = await this.appointmentServiceInstance.getAppointmentById(id) as Result<IAppointmentDTO>;
+
+      if (appointmentOrError.isFailure) {
+        return res.status(404).send(appointmentOrError.errorValue());
+      }
+
+      const appointmentDTO = appointmentOrError.getValue();
+      return res.status(200).json(appointmentDTO);
     }
     catch (e) {
       return next(e);
