@@ -34,6 +34,10 @@ jobs:
       run: npm run build --if-present -- --base-href /LAPR5_3DC_G15/
       working-directory: Angular-View
 
+    - name: Run Angular tests
+      run: npm run test
+      working-directory: Angular-View
+      
     - name: Copy server folder and prerendered-routes.json
       run: |
         mkdir -p Angular-View/dist/Angular-View/browser/server
@@ -63,7 +67,3 @@ jobs:
         npx angular-cli-ghpages --dir=Angular-View/dist/Angular-View/browser --branch=gh-pages --no-silent
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-    - name: Run Angular tests
-      run: npm run test
-      working-directory: Angular-View

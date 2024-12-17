@@ -2,10 +2,10 @@ import 'reflect-metadata';
 import * as sinon from 'sinon';
 import { Response, Request, NextFunction } from 'express';
 import { Container } from 'typedi';
-import { Result } from '../core/logic/Result';
-import IAppointmentService from "../services/IServices/IAppointmentService";
-import { IAppointmentDTO } from '../dto/IAppoinmentDTO';
-import AppointmentController from './appointmentController';
+import { Result } from '../../../src/core/logic/Result';
+import IAppointmentService from "../../../src/services/IServices/IAppointmentService";
+import { IAppointmentDTO } from '../../../src/dto/IAppoinmentDTO';
+import AppointmentController from '../../../src/controllers/appointmentController';
 
 describe('appointment controller', function () {
     let sandbox: sinon.SinonSandbox;

@@ -140,13 +140,13 @@ export const routes: Routes = [
     path: "medical-history-manager", component: MedicalHistoryManagerComponent, canActivate: [DoctorGuard]
   },
   {
-    path: "create-appointment/:id", component: CreateAppointmentComponent, canActivate: [AuthGuard]
+    path: "create-appointment/:id", component: CreateAppointmentComponent, canActivate: [DoctorGuard]
   },
   {
-    path: "appointment-manager", component: AppointmentManagerComponent, canActivate: [AuthGuard]
+    path: "appointment-manager", component: AppointmentManagerComponent, canActivate: [DoctorGuard]
   },
   {
-    path: "update-appointment/:id", component: UpdateAppointmentComponent, canActivate: [AuthGuard]
+    path: "update-appointment/:id", component: UpdateAppointmentComponent, canActivate: [DoctorGuard]
   },
   {
     path: "", component: HomeComponent
