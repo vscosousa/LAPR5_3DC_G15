@@ -91,6 +91,7 @@ export default class AllergyService implements IAllergyService {
 
     public async removeAllergy(id: string): Promise<Result<void>> {
         try {
+            this.logger.info('Removing allergy with ID:', id);
             const allergy = await this.allergyRepo.findbydomainid(id);
     
             if (!allergy) {
@@ -107,21 +108,12 @@ export default class AllergyService implements IAllergyService {
 
     public async listAllergys(): Promise<Result<IAllergyDTO[]>> {
         try {
-            // Retrieve all allergys from the repository
-            const allergys = await this.allergyRepo.findall();
-    
-            if (!allergys || allergys.length === 0) {
-                return Result.fail<IAllergyDTO[]>("No allergys found.");
-            }
-    
-            // Map the result to DTOs (data transfer objects) if needed
-            const allergyDTOs = allergys.map(allergy => AllergyMap.toDTO(allergy));
-    
+            const allergies = await this.allergyRepo.findall();
+            const allergyDTOs = allergies.map(allergy => AllergyMap.toDTO(allergy));
             return Result.ok<IAllergyDTO[]>(allergyDTOs);
         } catch (e) {
-            this.logger.error("Error retrieving allergys:", e);
-            return Result.fail<IAllergyDTO[]>("An error occurred while fetching allergys.");
+            this.logger.error('Error in listAllergys', e);
+            return Result.fail<IAllergyDTO[]>('An error occurred while fetching allergys.');
         }
     }
-
 }

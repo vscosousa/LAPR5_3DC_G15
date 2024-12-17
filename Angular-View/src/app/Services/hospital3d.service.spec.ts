@@ -23,4 +23,16 @@ describe('Hospital3dService', () => {
     expect(service).toBeTruthy();
   });
 
+  it('should fetch rooms availability by date', () => {
+    const mockRoomsAvailability = [{ roomId: '1', available: true }];
+    const date = '2023-10-10';
+
+    service.getRoomsAvailabilityByDate(date).subscribe(roomsAvailability => {
+      expect(roomsAvailability).toEqual(mockRoomsAvailability);
+    });
+
+    const req = httpMock.expectOne(`${service['apiUrl']}?date=2023-10-10`);
+    expect(req.request.method).toBe('GET');
+    req.flush(mockRoomsAvailability);
+  });
 });
