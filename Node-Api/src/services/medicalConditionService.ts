@@ -53,7 +53,7 @@ export default class MedicalConditionService implements IMedicalConditionService
             if (!medicalCondition) {
                 return Result.fail<IMedicalConditionDTO>("MedicalCondition not found");
             }
-            
+
             if (medicalConditionDTO.medicalConditionCode) {
                 medicalCondition.props.medicalConditionCode = medicalConditionDTO.medicalConditionCode;
             }
@@ -85,11 +85,11 @@ export default class MedicalConditionService implements IMedicalConditionService
     public async removeMedicalCondition(id: string): Promise<Result<void>> {
         try {
             const medicalCondition = await this.medicalConditionRepo.findbydomainid(id);
-    
+
             if (!medicalCondition) {
                 return Result.fail<void>("MedicalCondition not found");
             }
-    
+
             await this.medicalConditionRepo.delete(medicalCondition);
             return Result.ok<void>();
         } catch (e) {
@@ -100,20 +100,12 @@ export default class MedicalConditionService implements IMedicalConditionService
 
     public async listMedicalConditions(): Promise<Result<IMedicalConditionDTO[]>> {
         try {
-            // Retrieve all medicalConditions from the repository
             const medicalConditions = await this.medicalConditionRepo.findall();
-    
-            if (!medicalConditions || medicalConditions.length === 0) {
-                return Result.fail<IMedicalConditionDTO[]>("No medicalConditions found.");
-            }
-    
-            // Map the result to DTOs (data transfer objects) if needed
             const medicalConditionDTOs = medicalConditions.map(medicalCondition => MedicalConditionMap.toDTO(medicalCondition));
-    
             return Result.ok<IMedicalConditionDTO[]>(medicalConditionDTOs);
         } catch (e) {
-            this.logger.error("Error retrieving medicalConditions:", e);
-            return Result.fail<IMedicalConditionDTO[]>("An error occurred while fetching medicalConditions.");
+            this.logger.error('Error in listMedicalConditions', e);
+            return Result.fail<IMedicalConditionDTO[]>('An error occurred while fetching medical conditions.');
         }
     }
 

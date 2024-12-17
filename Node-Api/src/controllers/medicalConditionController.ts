@@ -73,7 +73,14 @@ export default class MedicalConditionController implements IMedicalConditionCont
 
     public async listMedicalConditions(req: Request, res: Response, next: NextFunction) {
         try {
-            const medicalConditions = await this.medicalConditionServiceInstance.listMedicalConditions();
+            const medicalConditionsOrError = await this.medicalConditionServiceInstance.listMedicalConditions();
+    
+            if (medicalConditionsOrError.isFailure) {
+                return next(new Error(medicalConditionsOrError.errorValue() as unknown as string));
+            }
+    
+            const medicalConditions = medicalConditionsOrError.getValue();
+            console.log("MedicalConditions listed:", medicalConditions);
             return res.status(200).json(medicalConditions);
         } catch (e) {
             return next(e);

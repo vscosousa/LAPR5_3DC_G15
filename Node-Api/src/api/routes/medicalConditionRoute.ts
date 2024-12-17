@@ -112,6 +112,7 @@ export default (app: Router) => {
         '/',
         async (req: any, res: any, next: any) => {
             try {
+                logger.info('GET /medicalConditions called');
                 await ctrl.listMedicalConditions(req, res, next);
             } catch (error) {
                 next(error);
