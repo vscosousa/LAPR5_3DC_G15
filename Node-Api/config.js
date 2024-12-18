@@ -1,4 +1,6 @@
+// filepath: /c:/Projetos/LAPR5_3DC_G15/Node-Api/config.js
 import dotenv from 'dotenv';
+import { MongoMemoryServer } from 'mongodb-memory-server';
 
 // Set the NODE_ENV to 'development' by default
 process.env.NODE_ENV = process.env.NODE_ENV || 'development';
@@ -9,6 +11,16 @@ if (!envFound) {
   throw new Error("⚠️  Couldn't find .env file  ⚠️");
 }
 
+let databaseURL = process.env.MONGODB_URI || "mongodb://mongoadmin:fb2760583afec14f39c8aa64@vs884.dei.isep.ipp.pt:27017/admin";
+
+const getDatabaseURL = async () => {
+  if (process.env.NODE_ENV === 'test') {
+    const mongoServer = await MongoMemoryServer.create();
+    return mongoServer.getUri();
+  }
+  return databaseURL;
+};
+
 const config = {
   /**
    * Your favorite port : optional change to 4000 by JRT
@@ -18,7 +30,7 @@ const config = {
   /**
    * That long string from mlab
    */
-  databaseURL: process.env.MONGODB_URI || "mongodb://mongoadmin:fb2760583afec14f39c8aa64@vs884.dei.isep.ipp.pt:27017/admin",
+  databaseURL: databaseURL,
 
   /**
    * Your secret sauce

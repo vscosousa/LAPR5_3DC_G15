@@ -30,6 +30,8 @@ export default (app: Router) => {
   route.post(
     '/create',
     logRequestBody,
+    isAuth,
+    checkRole(['Doctor']),
     celebrate({
       body: Joi.object({
         patientMedicalRecordNumber: Joi.string().required(),
@@ -53,7 +55,7 @@ export default (app: Router) => {
   route.put(
     '/update/:patientMedicalRecordNumber',
     isAuth,
-    checkRole(['Admin']),
+    checkRole(['Doctor']),
     logRequestBody,
     celebrate({
       body: Joi.object({
