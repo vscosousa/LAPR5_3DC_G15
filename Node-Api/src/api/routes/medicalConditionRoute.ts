@@ -26,10 +26,11 @@ export default (app: Router) => {
 
     const ctrl = Container.get(config.controllers.medicalCondition.name) as IMedicalConditionController;
 
-    route.use(isAuth, checkRole(['Admin']));
 
     route.post(
         '/create',
+        isAuth,
+        checkRole(['Admin']),
         celebrate({
             body: Joi.object({
                 medicalConditionCode: Joi.string()
@@ -62,6 +63,8 @@ export default (app: Router) => {
 
     route.put(
         '/update/:id',
+        isAuth,
+        checkRole(['Admin']),
         celebrate({
             body: Joi.object({
                 medicalConditionCode: Joi.string()
@@ -94,6 +97,8 @@ export default (app: Router) => {
 
     route.delete(
         '/delete/:id',
+        isAuth,
+        checkRole(['Admin']),
         celebrate({
             params: Joi.object({
                 id: Joi.string().required(), // Validate the medicalCondition ID
@@ -110,6 +115,8 @@ export default (app: Router) => {
 
     route.get(
         '/',
+        isAuth,
+        checkRole(['Doctor', 'Admin']),
         async (req: any, res: any, next: any) => {
             try {
                 logger.info('GET /medicalConditions called');
