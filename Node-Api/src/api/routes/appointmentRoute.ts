@@ -79,9 +79,13 @@ export default (app: Router) => {
       }),
     }),
     async (req: any, res: any, next: any) => {
+      console.log('Received request to get appointment by ID:', req.params.id);
       try {
         await ctrl.getAppointmentById(req, res, next);
+        console.log('Appointment retrieved successfully:', req.params.id);
+        console.log('Response:', res.locals.data); // Log the response data
       } catch (error) {
+        console.error('Error retrieving appointment:', error);
         next(error);
       }
     }

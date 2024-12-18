@@ -57,20 +57,24 @@ export default class AppointmentController implements IAppointmentController {
     }
   }
 
-  public async getAppointmentById(req: Request, res: Response, next: NextFunction) {
+  public async getAppointmentById(req: any, res: any, next: any) {
+    const appointmentId = req.params.id;
+    console.log('Fetching appointment with id:', appointmentId);
+  
     try {
-      const { id } = req.params;
-      const appointmentOrError = await this.appointmentServiceInstance.getAppointmentById(id) as Result<IAppointmentDTO>;
-
-      if (appointmentOrError.isFailure) {
-        return res.status(404).send(appointmentOrError.errorValue());
+      const appointment = await this.appointmentServiceInstance.getAppointmentById(appointmentId);
+      if (!appointment) {
+        console.error('No appointment found with id:', appointmentId);
+        return res.status(404).json({ message: 'Appointment not found' });
       }
-
-      const appointmentDTO = appointmentOrError.getValue();
-      return res.status(200).json(appointmentDTO);
-    }
-    catch (e) {
-      return next(e);
+  
+      console.log('Successfully fetched appointment with id:', appointmentId, appointment);
+  
+      res.locals.data = appointment;
+      res.status(200).json(appointment);
+    } catch (error) {
+      console.error('Error fetching appointment with id:', appointmentId, error);
+      next(error);
     }
   }
 }

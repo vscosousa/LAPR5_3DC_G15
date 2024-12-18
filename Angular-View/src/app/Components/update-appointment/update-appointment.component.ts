@@ -57,6 +57,7 @@ export class UpdateAppointmentComponent implements OnInit {
     this.appointmentService.getAppointmentById(appointmentId).subscribe(
       (response) => {
         if (response.isSuccess) {
+          console.log('Appointment loaded:', response._value);
           this.existingAppointment = response._value;
           this.existingAppointment.dateTime = new Date(this.existingAppointment.dateTime).toISOString().slice(0, 16);
           this.fetchOperationRequests();

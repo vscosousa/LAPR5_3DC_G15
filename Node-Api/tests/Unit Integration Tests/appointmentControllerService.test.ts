@@ -185,8 +185,15 @@ describe('Appointment Service and Controller Integration Tests', () => {
   describe('getAppointmentById', () => {
     it('should get an appointment by id', async () => {
       const req = { params: { id: '1' } } as any as Request;
-      const res = { status: jest.fn().mockReturnThis(), json: jest.fn() } as any as Response;
+      const res = { status: jest.fn().mockReturnThis(), json: jest.fn(), locals: {} } as any as Response;
       const next = jest.fn() as NextFunction;
+
+      const mockResult = {
+        _value: mockAppointmentDTO,
+        error: null,
+        isFailure: false,
+        isSuccess: true
+      };
 
       mockAppointmentRepo.findByDomainId.mockResolvedValue(mockAppointment);
       jest.spyOn(AppointmentMap, 'toDTO').mockReturnValue(mockAppointmentDTO);
@@ -194,7 +201,8 @@ describe('Appointment Service and Controller Integration Tests', () => {
       await appointmentController.getAppointmentById(req, res, next);
 
       expect(res.status).toHaveBeenCalledWith(200);
-      expect(res.json).toHaveBeenCalledWith(mockAppointmentDTO);
+      expect(res.json).toHaveBeenCalledWith(mockResult);
+      expect(res.locals.data).toEqual(mockResult);
     });
 
     it('should handle errors during fetching appointment by id', async () => {
