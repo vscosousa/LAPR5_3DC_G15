@@ -31,10 +31,11 @@ export default (app: Router) => {
 
     const ctrl = Container.get(config.controllers.allergy.name) as IAllergyController;
 
-    route.use(isAuth, checkRole(['Admin']));
 
     route.post(
         '/create',
+        isAuth,
+        checkRole(['Admin']),
         logRequestBody,
         celebrate({
             body: Joi.object({
@@ -67,6 +68,8 @@ export default (app: Router) => {
 
     route.put(
         '/update/:id',
+        isAuth,
+        checkRole(['Admin']),
         logRequestBody,
         celebrate({
             body: Joi.object({
@@ -101,6 +104,9 @@ export default (app: Router) => {
 
     route.delete(
         '/delete/:id',
+        isAuth,
+        checkRole(['Admin']),
+        logRequestBody,
         celebrate({
             params: Joi.object({
                 id: Joi.string().required(),
@@ -118,6 +124,9 @@ export default (app: Router) => {
 
     route.get(
         '/',
+        isAuth,
+        checkRole(['Doctor', 'Admin']),
+        logRequestBody,
         async (req, res, next) => {
             try {
                 logger.info('GET /allergies called');

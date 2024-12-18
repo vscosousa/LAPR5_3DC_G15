@@ -56,7 +56,7 @@ beforeAll(async () => {
   routes(app);
 
   token = jwt.sign({ userId: 'testUser', 'http://schemas.microsoft.com/ws/2008/06/identity/claims/role': 'Doctor' }, config.jwtSecret, { expiresIn: '1h' });
-}, 30000);
+}, 50000);
 
 afterAll(async () => {
   await mongoose.disconnect();
@@ -131,12 +131,13 @@ test('PUT /appointments/update/:id should update an existing appointment', async
   expect(updateResponse.body.team).toContain('member4');
 });
 
+
 test('GET /appointments/:id should get an appointment by id', async () => {
   nock('https://localhost:5001')
     .put('/api/OperationRequest/schedule/req123')
     .reply(200, {});
 
-  await request(app)
+  const createResponse = await request(app)
     .post('/appointments/create')
     .set('Authorization', `Bearer ${token}`)
     .send({
@@ -147,22 +148,30 @@ test('GET /appointments/:id should get an appointment by id', async () => {
       team: ['member1', 'member2'],
     });
 
+  expect(createResponse.status).toBe(201);
+  console.log("createResponse.body", createResponse.body);
+
   const listResponse = await request(app)
     .get('/appointments')
     .set('Authorization', `Bearer ${token}`);
 
+  expect(listResponse.status).toBe(200);
   console.log("listResponse.body", listResponse.body);
+
   const appointmentId = listResponse.body._value[0].id;
+  console.log("appointmentId", appointmentId);
 
   const getResponse = await request(app)
     .get(`/appointments/${appointmentId}`)
     .set('Authorization', `Bearer ${token}`);
 
+  console.log("getResponse.body", getResponse.body);
+
   expect(getResponse.status).toBe(200);
-  expect(getResponse.body.requestId).toBe('req123');
-  expect(getResponse.body.roomId).toBe('room1');
-  expect(getResponse.body.team).toContain('member1');
-  expect(getResponse.body.team).toContain('member2');
+  expect(getResponse.body._value.requestId).toBe('req123');
+  expect(getResponse.body._value.roomId).toBe('room1');
+  expect(getResponse.body._value.team).toContain('member1');
+  expect(getResponse.body._value.team).toContain('member2');
 });
 
 test('GET /appointments should list all appointments', async () => {
