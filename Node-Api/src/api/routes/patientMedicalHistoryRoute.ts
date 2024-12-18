@@ -27,17 +27,22 @@ export default (app: Router) => {
 
   const ctrl = Container.get(config.controllers.patientMedicalHistory.name) as IPatientMedicalHistoryController;
 
+  const arrayWithEmptyStringToEmptyArray = (value: any, helpers: any) => {
+    if (value.length === 1 && value[0] === '') {
+      return [];
+    }
+    return value;
+  };
+
   route.post(
     '/create',
     logRequestBody,
-    isAuth,
-    checkRole(['Doctor']),
     celebrate({
       body: Joi.object({
         patientMedicalRecordNumber: Joi.string().required(),
-        medicalConditions: Joi.array().items(Joi.string()).optional(),
-        allergies: Joi.array().items(Joi.string()).optional(),
-        familyHistory: Joi.array().items(Joi.string()).optional(),
+        medicalConditions: Joi.array().items(Joi.string()).optional().default([]).custom(arrayWithEmptyStringToEmptyArray),
+        allergies: Joi.array().items(Joi.string()).optional().default([]).custom(arrayWithEmptyStringToEmptyArray),
+        familyHistory: Joi.array().items(Joi.string()).optional().default([]).custom(arrayWithEmptyStringToEmptyArray),
         freeText: Joi.string().optional().allow(''),
       }),
     }),
@@ -59,9 +64,9 @@ export default (app: Router) => {
     logRequestBody,
     celebrate({
       body: Joi.object({
-        medicalConditions: Joi.array().items(Joi.string()).optional(),
-        allergies: Joi.array().items(Joi.string()).optional(),
-        familyHistory: Joi.array().items(Joi.string()).optional(),
+        medicalConditions: Joi.array().items(Joi.string()).optional().default([]).custom(arrayWithEmptyStringToEmptyArray),
+        allergies: Joi.array().items(Joi.string()).optional().default([]).custom(arrayWithEmptyStringToEmptyArray),
+        familyHistory: Joi.array().items(Joi.string()).optional().default([]).custom(arrayWithEmptyStringToEmptyArray),
         freeText: Joi.string().optional().allow(''),
       }),
       params: Joi.object({

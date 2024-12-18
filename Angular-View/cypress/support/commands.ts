@@ -14,10 +14,22 @@ declare namespace Cypress {
       email: string;
       phoneNumber: string;
       emergencyContact: string;
-      medicalConditions: string;
+    }): Chainable<any>;
+    createAllergy(allergy: {
+      allergyCode: string;
+      allergyName: string;
+      allergyDescription: string;
+      allergySymptoms: string;
+    }): Chainable<any>;
+    createCondition(medicalCondition: {
+      conditionCode: string;
+      conditionName: string;
+      conditionDescription: string;
+      conditionSymptoms: string;
     }): Chainable<any>;
     loginAsAdmin(email: string, password: string): Chainable<any>;
     loginAsPatient(email: string, password: string): Chainable<any>;
+    loginAsDoctor(email: string, password: string): Chainable<any>;
     activatePatientAccount(token: string): Chainable<any>;
     createStaff(staff: {
       firstName: string;
@@ -78,8 +90,33 @@ Cypress.Commands.add('createPatient', (patient) => {
   cy.get('input[name="email"]').type(patient.email);
   cy.get('input[name="phoneNumber"]').type(patient.phoneNumber);
   cy.get('input[name="emergencyContact"]').type(patient.emergencyContact);
-  cy.get('textarea[name="medicalConditions"]').type(patient.medicalConditions);
   cy.get('form').submit();
+});
+
+Cypress.Commands.add('createAllergy', (allergy) => {
+  cy.visit('/panel-admin');
+  cy.get('button[routerLink="/manage-allergies-and-conditions"]').click();
+  cy.get('div.screen:has(h2:contains("Allergies")) button.btn-create').contains('Create').click();
+  cy.get('app-create-allergies form').within(() => {
+    cy.get('input[name="allergy-code"]').type(allergy.allergyCode);
+    cy.get('input[name="allergy-name"]').type(allergy.allergyName);
+    cy.get('input[name="allergy-description"]').type(allergy.allergyDescription);
+    cy.get('input[name="allergy-symptoms"]').type(allergy.allergySymptoms);
+    cy.get('button[type="submit"]').click();
+  });
+});
+
+Cypress.Commands.add('createCondition', (medicalCondition) => {
+  cy.visit('/panel-admin');
+  cy.get('button[routerLink="/manage-allergies-and-conditions"]').click();
+  cy.get('div.screen:has(h2:contains("Medical Conditions")) button.btn-create').contains('Create').click();
+  cy.get('app-create-conditions form').within(() => {
+    cy.get('input[name="condition-code"]').type(medicalCondition.conditionCode);
+    cy.get('input[name="condition-name"]').type(medicalCondition.conditionName);
+    cy.get('input[name="condition-description"]').type(medicalCondition.conditionDescription);
+    cy.get('input[name="condition-symptoms"]').type(medicalCondition.conditionSymptoms);
+    cy.get('button[type="submit"]').click();
+  });
 });
 
 Cypress.Commands.add('loginAsAdmin', (email, password) => {
@@ -88,6 +125,14 @@ Cypress.Commands.add('loginAsAdmin', (email, password) => {
   cy.get('input[id="password"]').type(password);
   cy.get('form').submit();
   cy.url().should('include', '/panel-admin');
+});
+
+Cypress.Commands.add('loginAsDoctor', (email, password) => {
+  cy.visit('/login');
+  cy.get('input[id="email"]').type(email);
+  cy.get('input[id="password"]').type(password);
+  cy.get('form').submit();
+  cy.url().should('include', '/panel-doctor');
 });
 
 Cypress.Commands.add('activatePatientAccount', (token) => {

@@ -75,13 +75,14 @@ export class UpdateMedicalHistoryComponent implements OnInit {
     this.medicalHistoryService.getPatientMedicalHistory(medicalRecordNumber).subscribe(
       (response: any) => {
         if (response) {
+          console.log('Family History:', response.familyHistory);
           this.medicalHistory = {
             id: response.id,
             patientMedicalRecordNumber: response.patientMedicalRecordNumber,
             medicalConditions: response.medicalConditions ? response.medicalConditions.split(',') : [],
             allergies: response.allergies ? response.allergies.split(',') : [],
             freeText: response.freeText,
-            familyHistory: Array.isArray(response.familyHistory) ? response.familyHistory : this.parseFamilyHistoryString(response.familyHistory)
+            familyHistory: response.familyHistory === "" ? [] : Array.isArray(response.familyHistory) ? response.familyHistory : this.parseFamilyHistoryString(response.familyHistory)
           };
           console.log('Medical history fetched:', this.medicalHistory);
           this.filterSelectedAllergies();
@@ -188,8 +189,8 @@ export class UpdateMedicalHistoryComponent implements OnInit {
     console.log('fetchAllergies called');
     this.allergyService.getAllergies().subscribe(
       (response: any) => {
-          this.allergies = response;
-          console.log('Allergies fetched:', this.allergies);
+        this.allergies = response;
+        console.log('Allergies fetched:', this.allergies);
       },
       error => {
         console.error('Error fetching allergies', error);
@@ -201,8 +202,8 @@ export class UpdateMedicalHistoryComponent implements OnInit {
     console.log('fetchMedicalConditions called');
     this.medicalConditionService.getMedicalConditions().subscribe(
       (response: any) => {
-          this.medicalConditions = response;
-          console.log('Medical conditions fetched:', this.medicalConditions);
+        this.medicalConditions = response;
+        console.log('Medical conditions fetched:', this.medicalConditions);
       },
       error => {
         console.error('Error fetching medical conditions', error);
@@ -256,7 +257,6 @@ export class UpdateMedicalHistoryComponent implements OnInit {
   addFamilyHistory() {
     console.log('addFamilyHistory called with newFamilyHistory:', this.newFamilyHistory);
 
-    // Format conditions by joining with a semicolon
     const formattedConditions = this.newFamilyHistory.conditions.join('; ');
 
     const familyHistoryString = `${this.newFamilyHistory.relationship}: ${formattedConditions}`;

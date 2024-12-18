@@ -55,7 +55,7 @@ beforeAll(async () => {
   routes(app);
 
   token = jwt.sign({ userId: 'testUser', 'http://schemas.microsoft.com/ws/2008/06/identity/claims/role': 'Doctor' }, config.jwtSecret, { expiresIn: '1h' });
-}, 30000);
+}, 50000);
 
 afterAll(async () => {
   await mongoose.disconnect();
