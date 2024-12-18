@@ -13,7 +13,7 @@ export default (app: Router) => {
 
   const ctrl = Container.get(config.controllers.appointment.name) as IAppointmentController;
 
-  route.use(isAuth, checkRole(['Admin']));
+  route.use(isAuth, checkRole(['Doctor']));
 
   route.post(
     '/create',

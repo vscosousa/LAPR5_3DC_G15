@@ -66,7 +66,7 @@ export class Appointment extends AggregateRoot<AppointmentProps> {
 
   public static create(appointmentDTO: IAppointmentDTO, id?: UniqueEntityID): Result<Appointment> {
     const { requestId, roomId, dateTime, status, team } = appointmentDTO;
-
+  
     const guardedProps = [
       { argument: requestId, argumentName: 'requestId' },
       { argument: roomId, argumentName: 'roomId' },
@@ -74,20 +74,20 @@ export class Appointment extends AggregateRoot<AppointmentProps> {
       { argument: status, argumentName: 'status' },
       { argument: team, argumentName: 'team' }
     ];
-
+  
     const guardResult = Guard.againstNullOrUndefinedBulk(guardedProps);
-
+  
     if (!guardResult.succeeded) {
       return Result.fail<Appointment>(guardResult.message);
     } else {
       const appointment = new Appointment({
         requestId,
         roomId,
-        dateTime: DateTime.create(dateTime.toISOString()),
+        dateTime: DateTime.create(new Date(dateTime).toISOString()),
         status: AppointmentStatus.create(status),
         team: team
       }, id);
-
+  
       return Result.ok<Appointment>(appointment);
     }
   }
