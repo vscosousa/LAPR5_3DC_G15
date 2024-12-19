@@ -31,10 +31,7 @@ participant "AppointmentService" as AS
 participant "AppointmentRepository" as ARP
 participant "AppointmentSchema" as ASC
 participant "AppointmentMapper" as AM
-participant "Appointment" as A
-participant "AppointmentPersistence" as AP
 participant "AppointmentDTO" as AD
-participant MDR as MDR
 participant "Database" as DB
 
 
@@ -76,56 +73,25 @@ RR -> FE: returns Operation Status Code
 deactivate RR
 deactivate FE
 
-FE -> AR: Makes Http Request to create an appointment
+FE -> AR: Makes Http Request to get Appointment's data
 activate FE
 activate AR
-AR -> AC: createAppointment(request, response, next)
+AR -> AC: getAppointment(id)
 activate AC
-AC -> AS: createAppointment(appointmentDTO)
+AC -> AS: getAppointment(id)
 activate AS
-AS -> A: create(appointmentProps, id)
-activate A
-A -> A: create()
-deactivate A
-AS -> MDR: Make Http Request to set Operation Request's status to "Accepted"
-activate MDR
-MDR -> MDR: Changes Operation Request's status to "Accepted"
-MDR -> AS: returns Operation Status Code
-deactivate MDR
-
-AS -> ARP: save(appointment)
+AS -> ARP: findByDomainId(id)
 activate ARP
 ARP -> ASC: findOne(query)
 activate ASC
-ASC -> DB: query(query)
+ASC -> DB: query()
 activate DB
 DB -> DB: SELECT * FROM Appointment WHERE id = id
-DB -> ASC: returns Result
+DB --> ASC: returns Result
 deactivate DB
-ASC -> ARP: returns appointmentPersistence
+ASC --> ARP: returns appointment
 deactivate ASC
-ARP -> AM: toPersistence(appointment)
-activate AM
-AM -> AP: create(persistenceProps)
-activate AP
-AP -> AP: create()
-deactivate AP
-AM -> ARP: returns appointmentPersistence
-deactivate AM
-ARP -> AM: toDomain(appointmentPersistence)
-activate AM
-AM -> A: create(appointmentProps, id)
-activate A
-A -> A: create()
-deactivate A
-AM -> ARP: returns appointment
-deactivate AM
-ARP -> DB: save(appointment)
-activate DB
-DB -> DB: INSERT INTO Appointment VALUES (appointment)
-DB -> ARP: returns Result
-deactivate DB
-ARP -> AS: returns appointment
+ARP --> AS: returns appointment
 deactivate ARP
 AS -> AM: toDTO(appointment)
 activate AM
@@ -141,5 +107,69 @@ AC -> AR: returns Operation Status Code
 deactivate AC
 AR -> FE: returns Operation Status Code
 deactivate AR
+deactivate FE
+
+FE -> AR: Makes Http Request to update an appointment
+activate FE
+activate AR
+AR -> AC: updateAppointment(request, response, next)
+activate AC
+AC -> AS: updateAppointment(appointmentDTO)
+activate AS
+AS -> ARP: findByDomainId(id)
+activate ARP
+ARP -> ASC: findOne(query)
+activate ASC
+ASC -> DB: query(query)
+activate DB	
+DB -> DB: SELECT * FROM Appointment WHERE id = id
+DB --> ASC: returns Result
+deactivate DB
+ASC --> ARP: returns appointment
+deactivate ASC
+ARP --> AS: returns appointment
+deactivate ARP
+AS -> AM: toDto(appointment)
+activate AM
+AM -> AD: create(appointmentProps)
+activate AD
+AD -> AD: create()
+deactivate AD
+AM -> AS: returns appointmentDTO
+deactivate AM
+AS -> ARP: save(appointment)
+activate ARP
+ARP -> ASC: findOne(query)
+activate ASC
+ASC -> DB: query(query)
+activate DB
+DB -> DB: SELECT * FROM Appointment WHERE id = id
+DB --> ASC: returns Result
+deactivate DB
+ASC --> ARP: returns appointment
+deactivate ASC
+ARP -> ARP: Updates the fields of the appointment
+ARP -> DB: save(appointment)
+activate DB
+DB -> DB: UPDATE Appointment SET ... WHERE id = id
+DB --> ARP: returns Result
+deactivate DB
+ARP -> AS: returns appointment
+deactivate ARP
+AS -> AM: toDto(appointment)
+activate AM
+AM -> AD: create(appointmentProps)
+activate AD
+AD -> AD: create()
+deactivate AD
+AM -> AS: returns appointmentDTO
+deactivate AM
+AS -> AC: returns result(appointmentDTO)
+deactivate AS
+AC -> AR: returns Operation Status Code
+deactivate AC
+AR -> FE: returns Operation Status Code
+deactivate AR
+deactivate FE
 
 @enduml

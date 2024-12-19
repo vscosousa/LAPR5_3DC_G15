@@ -1,10 +1,10 @@
 <img width=100% src="https://capsule-render.vercel.app/api?type=waving&height=120&color=4E1764"/>
 
-# 7.2.8 - As a Doctor, I want to create a Surgery Appointment
+# 7.2.9 - As a Doctor, I want to update a Surgery Appointment
 
 ## 1. Context
 
- `Description:` As a Doctor, I want to create a Surgery Appointment, so that the Patient doesn’t need to wait for the automatically generated planning.
+ `Description:` As a Doctor, I want to update a Surgery Appointment, so that I can override the automatically generated planning.
 
  `Sprint:` This US makes part of the final stage of development of the integrative project of this semester, Sprint C.
 

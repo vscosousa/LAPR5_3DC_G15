@@ -1,0 +1,88 @@
+@startuml level_3_MDR
+
+title Level 3 MDR Diagram
+
+hide empty members
+'skinparam Linetype ortho
+
+skinparam class {
+    BackgroundColor<<valueObject>> #D6EAF8
+    BackgroundColor<<root>> #FDEBD0
+    BackgroundColor<<service>> #D1F2EB
+    BackgroundColor #UIF9E7
+    ArrowColor Black
+}
+
+skinparam package {
+    BackgroundColor #EBF5FB
+}
+
+participant FE as FE
+participant MDV as MDV
+participant "OperationRequestController" as ORC
+participant "OperationRequestService" as ORS
+participant "OperationRequestRepository" as ORR
+participant "OperationRequestMapper" as M
+participant "OperationRequestDTO" as ORD
+participant "OperationRequest" as O
+participant "LogRepository" as LR
+participant "Log" as L
+participant "StaffController" as SC
+participant "StaffService" as SS
+participant "StaffRepository" as SR
+participant "StaffMapper" as SM
+participant "StaffDTO" as SD
+participant "Database" as DB
+
+activate FE
+FE -> ORC: Makes Http Request to get Operation Request
+activate ORC
+ORC -> ORS: getOperationRequest(id)
+activate ORS
+ORS -> ORR: findById(id)
+activate ORR
+ORR -> DB: SELECT * FROM OperationRequest WHERE id = id
+activate DB
+DB --> ORR: returns OperationRequest
+deactivate DB
+ORR --> ORS: returns OperationRequest
+deactivate ORR
+ORS -> M: toDto(OperationRequest)
+activate M
+M -> ORD: new OperationRequestDTO(operationRequest fields)
+activate ORD
+ORD --> ORD: operationRequestDTO()
+deactivate ORD
+M --> ORS: returns OperationRequestDTO
+deactivate M
+ORS --> ORC: returns OperationRequestDTO
+deactivate ORS
+ORC --> FE: returns Operation Status Code
+deactivate ORC
+FE -> SC: Makes Http Request to get Staff's data
+activate SC
+SC -> SS: getStaff()
+activate SS
+SS -> SR: findAll()
+activate SR
+SR -> DB: SELECT * FROM Staff
+activate DB
+DB --> SR: returns Staffs
+deactivate DB
+SR --> SS: returns Staffs
+deactivate SR
+SS -> SM: toDto(Staff)
+activate SM
+SM -> SD: new StaffDTO(Staff fields)
+activate SD
+SD --> SD: StaffDTO()
+deactivate SD
+SM --> SS: returns StaffDTO
+deactivate SM
+SS --> SC: returns StaffDTO
+deactivate SS
+SC --> FE: returns Operation Status Code
+deactivate SC
+deactivate FE
+
+@enduml
