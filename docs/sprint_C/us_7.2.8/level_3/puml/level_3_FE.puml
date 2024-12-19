@@ -1,0 +1,128 @@
+@startuml level_3_FE
+
+title Level 3 FE Diagram
+
+hide empty members
+'skinparam Linetype ortho
+
+skinparam class {
+    BackgroundColor<<valueObject>> #D6EAF8
+    BackgroundColor<<root>> #FDEBD0
+    BackgroundColor<<service>> #D1F2EB
+    BackgroundColor #UIF9E7
+    ArrowColor Black
+}
+
+skinparam package {
+    BackgroundColor #EBF5FB
+}
+
+actor Doctor as A
+participant View as UI
+participant "OperationRequestsComponent" as ORC
+participant "CreateAppointmentComponent" as CAC
+participant "OperationRequestService" as ORS
+participant "StaffService" as SS
+participant "RoomService" as RS
+participant "AppointmentService" as AS
+participant "AuthInterceptor" as AI
+participant MDV as MDV
+participant MDR as MDR
+
+activate A
+A -> UI: Asks to create an appointment for an operation request
+activate UI
+UI -> ORC: routerLink='/create-appointment/:id'
+activate ORC
+ORC -> CAC: routes to CreateAppointmentComponent
+deactivate ORC
+activate CAC
+CAC -> ORS: fetchOperationRequest(id)
+activate ORS
+ORS -> AI: Makes Http Request to get Operation Request
+activate AI
+AI -> AI: Intercepts the request and adds the token to the header
+note right of AI
+    The token is added to the header so that the MDR
+    can authenticate and authorize the request.
+end note
+AI -> MDR: getOperationRequest(id)
+activate MDR
+MDR -> MDR: Fetches Operation Request
+MDR --> AI: returns Operation Status Code
+deactivate MDR
+AI --> ORS: returns Operation Status Code
+deactivate AI
+ORS -> CAC: returns Operation Response
+deactivate ORS
+CAC -> SS: fetchStaff()
+activate SS
+SS -> AI: Makes Http Request to get Staff's data
+activate AI
+AI -> AI: Intercepts the request and adds the token to the header
+note right of AI
+    The token is added to the header so that the MDR
+    can authenticate and authorize the request.
+end note
+AI -> MDR: getStaffData()
+activate MDR
+MDR -> MDR: Fetches Staff's data
+MDR --> AI: returns Operation Status Code
+deactivate MDR
+AI --> SS: returns Operation Status Code
+deactivate AI
+SS -> CAC: returns Operation Response
+deactivate SS
+CAC -> CAC: filter Staff by Specialization
+CAC -> RS: fetchRooms()
+activate RS
+RS -> AI: Makes Http Request to get Room's data
+activate AI
+AI -> AI: Intercepts the request and adds the token to the header
+note right of AI
+    The token is added to the header so that the MDV
+    can authenticate and authorize the request.
+end note
+AI -> MDV: getRoomData()
+activate MDV
+MDV -> MDV: Fetches Room's data
+MDV --> AI: returns Operation Status Code
+deactivate MDV
+AI --> RS: returns Operation Status Code
+deactivate AI
+RS -> CAC: returns Operation Response
+deactivate RS
+CAC -> CAC: filter Rooms by Operation Type
+CAC -> CAC: initializes CreateAppointmentComponent
+CAC --> UI: returns CreateAppointmentComponent
+deactivate CAC
+UI --> A: Displays the fetched data and asks for the appointment's data
+deactivate UI
+A -> UI: Sends appointment's data (DateTime, Room, Team)
+activate UI
+UI -> CAC: createAppointment($event)
+activate CAC
+CAC -> AS: createAppointment(newAppointment)
+activate AS
+AS -> AI: Makes Http Request to create an appointment
+activate AI
+AI -> AI: Intercepts the request and adds the token to the header
+note right of AI
+    The token is added to the header so that the MDV
+    can authenticate and authorize the request.
+end note
+AI -> MDV: createAppointment(newAppointment)
+activate MDV
+MDV -> MDV: Validates appointment's data and creates it
+MDV --> AI: Returns Operation Status Code
+deactivate MDV
+AI --> AS: returns Operation Status Code
+deactivate AI
+AS --> CAC: returns Operation Response
+deactivate AS
+CAC --> UI: returns Operation In/Sucess message
+deactivate CAC
+UI --> A: returns Operation In/Sucess message
+deactivate UI
+
+@enduml

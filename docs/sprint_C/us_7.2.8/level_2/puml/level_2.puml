@@ -1,0 +1,60 @@
+@startuml level_2
+
+title Level 2 Diagram
+
+hide empty members
+'skinparam Linetype ortho
+
+skinparam class {
+    BackgroundColor<<valueObject>> #D6EAF8
+    BackgroundColor<<root>> #FDEBD0
+    BackgroundColor<<service>> #D1F2EB
+    BackgroundColor #FEF9E7
+    ArrowColor Black
+}
+
+skinparam package {
+    BackgroundColor #EBF5FB
+}
+
+actor Doctor as A
+participant FE as FE
+participant MDV as MDV
+participant MDR as MDR
+
+activate A
+A -> FE: Asks to create an appointment for an operation request
+activate FE
+FE -> MDR: Makes Http Request to get Operation Request
+activate MDR
+MDR -> MDR: Fetches Operation Request
+MDR --> FE: return Operation Request
+deactivate MDR
+FE -> MDR: Makes Http Request to get Staff's data
+activate MDR
+MDR -> MDR: Fetches Staff's data
+MDR --> FE: return Staff
+deactivate MDR
+FE -> MDV: Makes Http Request to get Room's data
+activate MDV
+MDV -> MDV: Fetches Room's data
+MDV --> FE: return Rooms
+deactivate MDV
+FE --> A: Displays the fetched data and asks for the appointment's data
+deactivate FE
+A -> FE: Sends appointment's data (DateTime, Room, Team)
+activate FE
+FE -> MDV: Makes Http Request to create an appointment
+activate MDV
+MDV -> MDR: Makes Http Request to change Operation Request's status to "Accepted"
+activate MDR
+MDR -> MDR: Changes Operation Request's status to "Accepted"
+MDR --> MDV: Returns Operation Status Code
+deactivate MDR
+MDV -> MDV: Validates appointment's data and creates it
+MDV --> FE: Returns Operation Status Code
+deactivate MDV
+FE --> A: Returns Operation In/Sucess message
+deactivate FE
+
+@enduml

@@ -1,0 +1,147 @@
+@startuml level_3_MDV
+
+title Level 3 MDV Diagram
+
+hide empty members
+'skinparam Linetype ortho
+
+skinparam class {
+    BackgroundColor<<valueObject>> #D6EAF8
+    BackgroundColor<<root>> #FDEBD0
+    BackgroundColor<<service>> #D1F2EB
+    BackgroundColor #UIF9E7
+    ArrowColor Black
+}
+
+skinparam package {
+    BackgroundColor #EBF5FB
+}
+
+participant FE as FE
+participant "RoomRouter" as RR
+participant "RoomController" as RC
+participant "RoomService" as RS
+participant "RoomRepository" as RRE
+participant "RoomSchema" as RSC
+participant "RoomMapper" as RM
+participant "Room" as R
+participant "RoomPersistence" as RP
+participant "RoomDTO" as RD
+participant "AppointmentRouter" as AR
+participant "AppointmentController" as AC
+participant "AppointmentService" as AS
+participant "AppointmentRepository" as ARP
+participant "AppointmentSchema" as ASC
+participant "AppointmentMapper" as AM
+participant "Appointment" as A
+participant "AppointmentPersistence" as AP
+participant "AppointmentDTO" as AD
+participant MDR as MDR
+participant "Database" as DB
+
+
+activate FE
+FE -> RR: Makes Http Request to get Room's data
+activate RR
+RR -> RC: getRooms()
+activate RC
+RC -> RS: findAll()
+activate RS
+RS -> RRE: findAll()
+activate RRE
+RRE -> RSC: find()
+activate RSC
+RSC -> DB: query()
+activate DB
+DB -> DB: SELECT * FROM Room
+DB --> RSC: returns Result
+deactivate DB
+RSC --> RRE: returns rooms
+deactivate RSC
+RRE --> RS: returns rooms
+deactivate RRE
+loop for each room in rooms
+    RS -> RM: toDTO(rooms)
+    activate RM
+    RM -> RD: create(roomProps)
+    activate RD
+    RD -> RD: create()
+    deactivate RD
+    RM -> RS: returns roomDTO
+    deactivate RM
+end
+RS -> RC: returns result(roomDTOs)
+deactivate RS
+RC -> RR: returns Operation Status Code
+deactivate RC
+RR -> FE: returns Operation Status Code
+deactivate RR
+deactivate FE
+
+FE -> AR: Makes Http Request to create an appointment
+activate FE
+activate AR
+AR -> AC: createAppointment(request, response, next)
+activate AC
+AC -> AS: createAppointment(appointmentDTO)
+activate AS
+AS -> A: create(appointmentProps, id)
+activate A
+A -> A: create()
+deactivate A
+AS -> MDR: Make Http Request to set Operation Request's status to "Accepted"
+activate MDR
+MDR -> MDR: Changes Operation Request's status to "Accepted"
+MDR -> AS: returns Operation Status Code
+deactivate MDR
+
+AS -> ARP: save(appointment)
+activate ARP
+ARP -> ASC: findOne(query)
+activate ASC
+ASC -> DB: query(query)
+activate DB
+DB -> DB: SELECT * FROM Appointment WHERE id = id
+DB -> ASC: returns Result
+deactivate DB
+ASC -> ARP: returns appointmentPersistence
+deactivate ASC
+ARP -> AM: toPersistence(appointment)
+activate AM
+AM -> AP: create(persistenceProps)
+activate AP
+AP -> AP: create()
+deactivate AP
+AM -> ARP: returns appointmentPersistence
+deactivate AM
+ARP -> AM: toDomain(appointmentPersistence)
+activate AM
+AM -> A: create(appointmentProps, id)
+activate A
+A -> A: create()
+deactivate A
+AM -> ARP: returns appointment
+deactivate AM
+ARP -> DB: save(appointment)
+activate DB
+DB -> DB: INSERT INTO Appointment VALUES (appointment)
+DB -> ARP: returns Result
+deactivate DB
+ARP -> AS: returns appointment
+deactivate ARP
+AS -> AM: toDTO(appointment)
+activate AM
+AM -> AD: create(appointmentProps)
+activate AD
+AD -> AD: create()
+deactivate AD
+AM -> AS: returns appointmentDTO
+deactivate AM
+AS -> AC: returns result(appointmentDTO)
+deactivate AS
+AC -> AR: returns Operation Status Code
+deactivate AC
+AR -> FE: returns Operation Status Code
+deactivate AR
+
+@enduml
