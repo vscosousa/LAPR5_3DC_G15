@@ -1,0 +1,112 @@
+@startuml level_3_MDV
+
+title Level 3 MDV Diagram
+
+hide empty members
+'skinparam Linetype ortho
+
+skinparam class {
+    BackgroundColor<<valueObject>> #D6EAF8
+    BackgroundColor<<root>> #FDEBD0
+    BackgroundColor<<service>> #D1F2EB
+    BackgroundColor #UIF9E7
+    ArrowColor Black
+}
+
+skinparam package {
+    BackgroundColor #EBF5FB
+}
+
+participant FE as FE
+participant "AllergyRouter" as RR
+participant "AllergyController" as RC
+participant "AllergyService" as RS
+participant "AllergyRepository" as RRE
+participant "AllergySchema" as RSC
+participant "AllergyMapper" as RM
+participant "AllergyDTO" as RD
+participant "PatientMedicalHistoryRouter" as AR
+participant "PatientMedicalHistoryController" as AC
+participant "PatientMedicalHistoryService" as AS
+participant "PatientMedicalHistoryRepository" as ARP
+participant "PatientMedicalHistorySchema" as ASC
+participant "PatientMedicalHistoryMapper" as AM
+participant "PatientMedicalHistoryDTO" as AD
+participant "Database" as DB
+
+
+activate FE
+FE -> RR: Makes Http Request to get Allergy's data
+activate RR
+RR -> RC: getAllergys()
+activate RC
+RC -> RS: findAll()
+activate RS
+RS -> RRE: findAll()
+activate RRE
+RRE -> RSC: find()
+activate RSC
+RSC -> DB: query()
+activate DB
+DB -> DB: SELECT * FROM Allergy
+DB --> RSC: returns Result
+deactivate DB
+RSC --> RRE: returns Allergys
+deactivate RSC
+RRE --> RS: returns Allergys
+deactivate RRE
+loop for each Allergy in Allergys
+    RS -> RM: toDTO(Allergys)
+    activate RM
+    RM -> RD: create(AllergyProps)
+    activate RD
+    RD -> RD: create()
+    deactivate RD
+    RM -> RS: returns AllergyDTO
+    deactivate RM
+end
+RS -> RC: returns result(AllergyDTOs)
+deactivate RS
+RC -> RR: returns Operation Status Code
+deactivate RC
+RR -> FE: returns Operation Status Code
+deactivate RR
+deactivate FE
+
+FE -> AR: Makes Http Request to get PatientMedicalHistory's data
+activate FE
+activate AR
+AR -> AC: getPatientMedicalHistory(patientMedicalRecordNumber)
+activate AC
+AC -> AS: getPatientMedicalHistory(patientMedicalRecordNumber)
+activate AS
+AS -> ARP: findByPatientMedicalRecordNumber(patientMedicalRecordNumber)
+activate ARP
+ARP -> ASC: findOne(query)
+activate ASC
+ASC -> DB: query()
+activate DB
+DB -> DB: SELECT * FROM PatientMedicalHistory WHERE patientMedicalRecordNumber = patientMedicalRecordNumber
+DB --> ASC: returns Result
+deactivate DB
+ASC --> ARP: returns PatientMedicalHistory
+deactivate ASC
+ARP --> AS: returns PatientMedicalHistory
+deactivate ARP
+AS -> AM: toDTO(PatientMedicalHistory)
+activate AM
+AM -> AD: create(PatientMedicalHistoryProps)
+activate AD
+AD -> AD: create()
+deactivate AD
+AM -> AS: returns PatientMedicalHistoryDTO
+deactivate AM
+AS -> AC: returns result(PatientMedicalHistoryDTO)
+deactivate AS
+AC -> AR: returns Operation Status Code
+deactivate AC
+AR -> FE: returns Operation Status Code
+deactivate AR
+deactivate FE
+
+@enduml

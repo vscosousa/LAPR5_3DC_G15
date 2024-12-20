@@ -18,7 +18,6 @@ skinparam package {
 }
 
 participant FE as FE
-participant MDV as MDV
 participant "OperationRequestController" as ORC
 participant "OperationRequestService" as ORS
 participant "OperationRequestRepository" as ORR

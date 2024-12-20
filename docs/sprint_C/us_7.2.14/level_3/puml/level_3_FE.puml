@@ -1,0 +1,96 @@
+@startuml level_3_FE
+
+title Level 3 FE Diagram
+
+hide empty members
+'skinparam Linetype ortho
+
+skinparam class {
+    BackgroundColor<<valueObject>> #D6EAF8
+    BackgroundColor<<root>> #FDEBD0
+    BackgroundColor<<service>> #D1F2EB
+    BackgroundColor #UIF9E7
+    ArrowColor Black
+}
+
+skinparam package {
+    BackgroundColor #EBF5FB
+}
+
+actor Doctor as A
+participant View as UI
+participant "MedicalHistoryManagerComponent" as MHMC
+participant "MedicalHistoryService" as MHS
+participant "AllergyService" as AS
+participant "MedicalConditionService" as MCS
+participant "AuthInterceptor" as AI
+participant MDV as MDV
+
+activate A
+A -> UI: Asks to see the medical History of a patients
+activate UI
+UI -> MHMC: viewPatientDetails(patient.medicalRecordNumber)
+activate MHMC
+MHMC -> MHMC: openMedicalHistoryModal()
+MHMC -> AS: getAllergies()
+activate AS
+AS -> AI: Makes Http Request to get Allergies
+activate AI
+AI -> AI: Intercepts the request and adds the token to the header
+note right of AI
+    The token is added to the header so that the MDR
+    can authenticate and authorize the request.
+end note
+AI -> MDV: getAllegies()
+activate MDV
+MDV -> MDV: Fetches the Allergies
+MDV --> AI: returns Operation Status Code
+deactivate MDV
+AI --> AS: returns Operation Status Code
+deactivate AI
+AS --> MHMC: returns Operation Response
+deactivate AS
+MHMC -> MCS: getMedicalConditions()
+activate MCS
+MCS -> AI: Makes Http Request to get the Medical Conditions of the patient
+activate AI
+AI -> AI: Intercepts the request and adds the token to the header
+note right of AI
+    The token is added to the header so that the MDR
+    can authenticate and authorize the request.
+end note    
+AI -> MDV: getMedicalConditions()
+activate MDV
+MDV -> MDV: Fetches the Medical Conditions
+MDV --> AI: returns Operation Status Code
+deactivate MDV
+AI --> MCS: returns Operation Status Code
+deactivate AI
+MCS --> MHMC: returns Operation Response
+deactivate MCS
+MHMC -> MHS: getMedicalHistory(patient.medicalRecordNumber)
+activate MHS
+MHS -> AI: Makes Http Request to get the Medical History of the patient
+activate AI
+AI -> AI: Intercepts the request and adds the token to the header
+note right of AI
+    The token is added to the header so that the MDR
+    can authenticate and authorize the request.
+end note
+AI -> MDV: getMedicalHistory()
+activate MDV
+MDV -> MDV: Fetches the Medical History of the patient
+MDV --> AI: returns Operation Status Code
+deactivate MDV
+AI --> MHS: returns Operation Status Code
+deactivate AI
+MHS --> MHMC: returns Operation Response
+deactivate MHS
+MHMC -> MHMC: filterSelectedAllergies()
+MHMC -> MHMC: filterSelectedMedicalConditions()
+MHMC -> UI: returns medical history with filtered allergies and medical conditions
+deactivate MHMC
+UI --> A: Displays the medical history of the patient
+
+
+@enduml

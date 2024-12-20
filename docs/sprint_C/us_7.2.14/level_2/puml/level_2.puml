@@ -1,0 +1,44 @@
+@startuml level_2
+
+title Level 2 Diagram
+
+hide empty members
+'skinparam Linetype ortho
+
+skinparam class {
+    BackgroundColor<<valueObject>> #D6EAF8
+    BackgroundColor<<root>> #FDEBD0
+    BackgroundColor<<service>> #D1F2EB
+    BackgroundColor #FEF9E7
+    ArrowColor Black
+}
+
+skinparam package {
+    BackgroundColor #EBF5FB
+}
+
+actor Doctor as A
+participant FE as FE
+participant MDV as MDV
+
+activate A
+A -> FE: Asks to see the medical History of a patient
+activate FE
+FE -> MDV: Makes Http Request to get Allergies
+activate MDV
+MDV -> MDV: Fetches the Allergies
+MDV --> FE: returns Operation Response
+deactivate MDV
+FE -> MDV: Makes Http Request to get Medical Conditions
+activate MDV
+MDV -> MDV: Fetches the Medical Conditions
+MDV --> FE: returns Operation Response
+deactivate MDV
+FE -> MDV: Makes Http Request to get the Medical History of the patient
+activate MDV
+MDV -> MDV: Fetches the Medical History of the patient
+MDV --> FE: returns Operation Response
+deactivate MDV
+FE --> A: Displays the medical history of the patient
+
+@enduml

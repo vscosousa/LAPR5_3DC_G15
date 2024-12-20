@@ -28,22 +28,22 @@ activate FE
 FE -> MDR: Makes Http Request to get Operation Request
 activate MDR
 MDR -> MDR: Fetches Operation Request
-MDR --> FE: return Operation Request
+MDR --> FE: returns Operation Response
 deactivate MDR
 FE -> MDR: Makes Http Request to get Staff's data
 activate MDR
 MDR -> MDR: Fetches Staff's data
-MDR --> FE: return Staff
+MDR --> FE: returns Operation Response
 deactivate MDR
 FE -> MDV: Makes Http Request to get Room's data
 activate MDV
 MDV -> MDV: Fetches Room's data
-MDV --> FE: return Rooms
+MDV --> FE: return Operation Response
 deactivate MDV
 FE -> MDV: Makes Http Request to get Appointment data
 activate MDV
 MDV -> MDV: Fetches Appointment data
-MDV --> FE: return Appointments
+MDV --> FE: returns Operation Response
 deactivate MDV
 FE --> A: Displays the fetched data and asks for the appointment's data
 deactivate FE
@@ -52,7 +52,7 @@ activate FE
 FE -> MDV: Makes Http Request to update an appointment
 activate MDV
 MDV -> MDV: Validates appointment's data and creates it
-MDV --> FE: Returns Operation Status Code
+MDV --> FE: Returns Operation Response
 deactivate MDV
 FE --> A: Returns Operation In/Sucess message
 deactivate FE
