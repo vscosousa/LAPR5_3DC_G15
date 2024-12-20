@@ -1,14 +1,14 @@
 <img width=100% src="https://capsule-render.vercel.app/api?type=waving&height=120&color=4E1764"/>
 
-# 7.2.20 - As Doctor I want to add an entry about family history in the medical record of a patient
+# 7.2.21 - As Doctor I want to update a family history entry in a medical record
 
 ## 1. Context
 
- `Description:` As Doctor I want to add an entry about family history in the medical record of a patient
+ `Description:` As Doctor I want to update a family history entry in a medical record.
 
  `Sprint:` This US makes part of the final stage of development of the integrative project of this semester, Sprint C.
 
-`Objectives:` This US aims to implement the feature of adding an entry about family history in the medical record of a patient.
+`Objectives:` This US aims to implement the update of a family history entry in a medical record.
 
 ## Level 1
 

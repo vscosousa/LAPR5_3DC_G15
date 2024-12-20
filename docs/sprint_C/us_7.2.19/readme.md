@@ -1,6 +1,6 @@
 <img width=100% src="https://capsule-render.vercel.app/api?type=waving&height=120&color=4E1764"/>
 
-# 7.2.18 - As Doctor I want to update a medical condition entry in a medical record
+# 7.2.19 - As Doctor I want to update a medical condition entry in a medical record
 
 ## 1. Context
 

@@ -1,0 +1,86 @@
+@startuml level_3_FE
+
+title Level 3 FE Diagram
+
+hide empty members
+'skinparam Linetype ortho
+
+skinparam class {
+    BackgroundColor<<valueObject>> #D6EAF8
+    BackgroundColor<<root>> #FDEBD0
+    BackgroundColor<<service>> #D1F2EB
+    BackgroundColor #UIF9E7
+    ArrowColor Black
+}
+
+skinparam package {
+    BackgroundColor #EBF5FB
+}
+
+actor Doctor as A
+participant View as UI
+participant "MedicalHistoryComponent" as AMC
+participant "UpdateMedicalHistoryComponent" as UAC
+participant "MedicalHistoryService" as ORS
+participant "AuthInterceptor" as AI
+participant MDV as MDV
+
+activate A
+A -> UI: Asks to update a family history entry in the patient's medical record
+activate UI
+UI -> AMC: routerLink='/update-medical-history/:patientMedicalRecordNumber'
+activate AMC
+AMC -> UAC: routes to UpdateMedicalHistoryComponent
+activate UAC
+deactivate AMC
+UAC -> AS: fetchMedicalHistory(patientMedicalRecordNumber)
+activate AS
+AS -> AI: Makes Http Request to get Medical History data
+activate AI
+AI -> AI: Intercepts the request and adds the token to the header
+note right of AI
+    The token is added to the header so that the MDV
+    can authenticate and authorize the request.
+end note
+AI -> MDV: getMedicalHistory(patientMedicalRecordNumber)
+activate MDV
+MDV -> MDV: Fetches Medical History data
+MDV --> AI: returns Operation Status Code
+deactivate MDV
+AI --> AS: returns Operation Status Code
+deactivate AI
+AS --> UAC: returns Operation Response
+deactivate AS
+UAC -> UAC: initializes UpdateMedicalHistoryComponent
+UAC --> UI: returns UpdateMedicalHistoryComponent
+deactivate UAC
+UI --> A: Displays the fetched data and asks for the new data
+deactivate UI
+A -> UI: Sends the new data(FamilyHistory) to be updated
+activate UI
+UI -> UAC: updateMedicalHistory($event)
+activate UAC
+UAC -> AS: updateMedicalHistory(newMedicalHistory)
+activate AS
+AS -> AI: Makes Http Request to update a family history entry in the patient's medical record
+activate AI
+AI -> AI: Intercepts the request and adds the token to the header
+note right of AI
+    The token is added to the header so that the MDV
+    can authenticate and authorize the request.
+end note
+AI -> MDV: updateMedicalHistory(newMedicalHistory)
+activate MDV
+MDV -> MDV: Validates the data and updates the patient's medical record
+MDV --> AI: Returns Operation Status Code
+deactivate MDV
+AI --> AS: returns Operation Status Code
+deactivate AI
+AS --> UAC: returns Operation Response
+deactivate AS
+UAC --> UI: returns Operation In/Sucess message
+deactivate UAC
+UI --> A: returns Operation In/Sucess message
+deactivate UI
+
+@enduml
