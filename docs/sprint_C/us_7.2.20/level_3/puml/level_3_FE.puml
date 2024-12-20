@@ -26,7 +26,7 @@ participant "AuthInterceptor" as AI
 participant MDV as MDV
 
 activate A
-A -> UI: Asks to update an allergy entry in the patient's medical record
+A -> UI: Asks to add a family history entry in the patient's medical record
 activate UI
 UI -> AMC: routerLink='/update-medical-history/:patientMedicalRecordNumber'
 activate AMC
@@ -54,15 +54,15 @@ deactivate AS
 UAC -> UAC: initializes UpdateMedicalHistoryComponent
 UAC --> UI: returns UpdateMedicalHistoryComponent
 deactivate UAC
-UI --> A: Displays the fetched data and asks for the new data
+UI --> A: Displays the fetched data and asks for the data to be added
 deactivate UI
-A -> UI: Sends the new data(Allergies) to be updated
+A -> UI: Sends the new data(FamilyHistory) to be added
 activate UI
 UI -> UAC: updateMedicalHistory($event)
 activate UAC
 UAC -> AS: updateMedicalHistory(newMedicalHistory)
 activate AS
-AS -> AI: Makes Http Request to update an allergy entry in the patient's medical record
+AS -> AI: Makes Http Request to add a family history entry in the patient's medical record
 activate AI
 AI -> AI: Intercepts the request and adds the token to the header
 note right of AI

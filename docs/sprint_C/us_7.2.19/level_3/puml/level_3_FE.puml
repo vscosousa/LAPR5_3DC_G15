@@ -28,12 +28,12 @@ participant MDV as MDV
 activate A
 A -> UI: Asks to update a medical condition entry in the patient's medical record
 activate UI
-UI -> AMC: routerLink='/update-medical-history/:id'
+UI -> AMC: routerLink='/update-medical-history/:patientMedicalRecordNumber'
 activate AMC
 AMC -> UAC: routes to UpdateMedicalHistoryComponent
 activate UAC
 deactivate AMC
-UAC -> AS: fetchMedicalHistory(id)
+UAC -> AS: fetchMedicalHistory(patientMedicalRecordNumber)
 activate AS
 AS -> AI: Makes Http Request to get Medical History data
 activate AI
@@ -42,7 +42,7 @@ note right of AI
     The token is added to the header so that the MDV
     can authenticate and authorize the request.
 end note
-AI -> MDV: getMedicalHistory(id)
+AI -> MDV: getMedicalHistory(patientMedicalRecordNumber)
 activate MDV
 MDV -> MDV: Fetches Medical History data
 MDV --> AI: returns Operation Status Code
