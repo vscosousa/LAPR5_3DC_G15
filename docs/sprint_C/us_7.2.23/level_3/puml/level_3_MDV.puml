@@ -1,0 +1,129 @@
+@startuml level_3_MDV
+
+title Level 3 MDV Diagram
+
+hide empty members
+'skinparam Linetype ortho
+
+skinparam class {
+    BackgroundColor<<valueObject>> #D6EAF8
+    BackgroundColor<<root>> #FDEBD0
+    BackgroundColor<<service>> #D1F2EB
+    BackgroundColor #UIF9E7
+    AARowColor Black
+}
+
+skinparam package {
+    BackgroundColor #EBF5FB
+}
+
+participant FE as FE
+participant "MedicalHistoryRouter" as AR
+participant "MedicalHistoryController" as AC
+participant "MedicalHistoryService" as AS
+participant "MedicalHistoryRepository" as ARP
+participant "MedicalHistorySchema" as ASC
+participant "MedicalHistoryMapper" as AM
+participant "MedicalHistoryDTO" as AD
+participant "Database" as DB
+
+activate FE
+FE -> AR: Makes Http Request to get Medical History's data
+activate AR
+AR -> AC: getMedicalHistory(patientMedicalRecordNumber)
+activate AC
+AC -> AS: getMedicalHistory(patientMedicalRecordNumber)
+activate AS
+AS -> ARP: findByPatientMedicalRecordNumber(patientMedicalRecordNumber)
+activate ARP
+ARP -> ASC: findOne(query)
+activate ASC
+ASC -> DB: query()
+activate DB
+DB -> DB: SELECT * FROM MedicalHistory WHERE patientMedicalRecordNumber = patientMedicalRecordNumber
+DB --> ASC: returns Result
+deactivate DB
+ASC --> ARP: returns MedicalHistory
+deactivate ASC
+ARP --> AS: returns MedicalHistory
+deactivate ARP
+AS -> AM: toDTO(MedicalHistory)
+activate AM
+AM -> AD: create(MedicalHistoryProps)
+activate AD
+AD -> AD: create()
+deactivate AD
+AM -> AS: returns MedicalHistoryDTO
+deactivate AM
+AS -> AC: returns result(MedicalHistoryDTO)
+deactivate AS
+AC -> AR: returns Operation Status Code
+deactivate AC
+AR -> FE: returns Operation Status Code
+deactivate AR
+deactivate FE
+
+FE -> AR: Makes Http Request to update a free text entry in the patient's medical record
+activate FE
+activate AR
+AR -> AC: updateMedicalHistory(patientMedicalRecordNumber, MedicalHistoryDTO)
+activate AC
+AC -> AS: updateMedicalHistory(req, res, next)
+activate AS
+AS -> ARP: findByPatientMedicalRecordNumber(patientMedicalRecordNumber)
+activate ARP
+ARP -> ASC: findOne(query)
+activate ASC
+ASC -> DB: query(query)
+activate DB	
+DB -> DB: SELECT * FROM MedicalHistory WHERE patientMedicalRecordNumber = patientMedicalRecordNumber
+DB --> ASC: returns Result
+deactivate DB
+ASC --> ARP: returns MedicalHistory
+deactivate ASC
+ARP --> AS: returns MedicalHistory
+deactivate ARP
+AS -> AM: toDto(MedicalHistory)
+activate AM
+AM -> AD: create(MedicalHistoryProps)
+activate AD
+AD -> AD: create()
+deactivate AD
+AM -> AS: returns MedicalHistoryDTO
+deactivate AM
+AS -> ARP: save(MedicalHistory)
+activate ARP
+ARP -> ASC: findOne(query)
+activate ASC
+ASC -> DB: query(query)
+activate DB
+DB -> DB: SELECT * FROM MedicalHistory WHERE id = id
+DB --> ASC: returns Result
+deactivate DB
+ASC --> ARP: returns MedicalHistory
+deactivate ASC
+ARP -> ARP: Updates the Free Text field in the Medical History
+ARP -> DB: save(MedicalHistory)
+activate DB
+DB -> DB: UPDATE MedicalHistory SET ... WHERE id = id
+DB --> ARP: returns Result
+deactivate DB
+ARP -> AS: returns MedicalHistory
+deactivate ARP
+AS -> AM: toDto(MedicalHistory)
+activate AM
+AM -> AD: create(MedicalHistoryProps)
+activate AD
+AD -> AD: create()
+deactivate AD
+AM -> AS: returns MedicalHistoryDTO
+deactivate AM
+AS -> AC: returns result(MedicalHistoryDTO)
+deactivate AS
+AC -> AR: returns Operation Status Code
+deactivate AC
+AR -> FE: returns Operation Status Code
+deactivate AR
+deactivate FE
+
+@enduml
