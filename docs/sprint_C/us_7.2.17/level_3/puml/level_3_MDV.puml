@@ -1,0 +1,129 @@
+@startuml level_3_MDV
+
+title Level 3 MDV Diagram
+
+hide empty members
+'skinparam Linetype ortho
+
+skinparam class {
+    BackgroundColor<<valueObject>> #D6EAF8
+    BackgroundColor<<root>> #FDEBD0
+    BackgroundColor<<service>> #D1F2EB
+    BackgroundColor #UIF9E7
+    AARowColor Black
+}
+
+skinparam package {
+    BackgroundColor #EBF5FB
+}
+
+participant FE as FE
+participant "MedicalConditionRouter" as AR
+participant "MedicalConditionController" as AC
+participant "MedicalConditionService" as AS
+participant "MedicalConditionRepository" as ARP
+participant "MedicalConditionSchema" as ASC
+participant "MedicalConditionMapper" as AM
+participant "MedicalConditionDTO" as AD
+participant "Database" as DB
+
+activate FE
+FE -> AR: Makes Http Request to get Medical Condition's data
+activate AR
+AR -> AC: getMedicalCondition(id)
+activate AC
+AC -> AS: getMedicalCondition(id)
+activate AS
+AS -> ARP: findByDomainId(id)
+activate ARP
+ARP -> ASC: findOne(query)
+activate ASC
+ASC -> DB: query()
+activate DB
+DB -> DB: SELECT * FROM MedicalCondition WHERE id = id
+DB --> ASC: returns Result
+deactivate DB
+ASC --> ARP: returns MedicalCondition
+deactivate ASC
+ARP --> AS: returns MedicalCondition
+deactivate ARP
+AS -> AM: toDTO(MedicalCondition)
+activate AM
+AM -> AD: create(MedicalConditionProps)
+activate AD
+AD -> AD: create()
+deactivate AD
+AM -> AS: returns MedicalConditionDTO
+deactivate AM
+AS -> AC: returns result(MedicalConditionDTO)
+deactivate AS
+AC -> AR: returns Operation Status Code
+deactivate AC
+AR -> FE: returns Operation Status Code
+deactivate AR
+deactivate FE
+
+FE -> AR: Makes Http Request to update an Medical Condition
+activate FE
+activate AR
+AR -> AC: updateMedicalCondition(request, response, next)
+activate AC
+AC -> AS: updateMedicalCondition(MedicalConditionDTO)
+activate AS
+AS -> ARP: findByDomainId(id)
+activate ARP
+ARP -> ASC: findOne(query)
+activate ASC
+ASC -> DB: query(query)
+activate DB	
+DB -> DB: SELECT * FROM MedicalCondition WHERE id = id
+DB --> ASC: returns Result
+deactivate DB
+ASC --> ARP: returns MedicalCondition
+deactivate ASC
+ARP --> AS: returns MedicalCondition
+deactivate ARP
+AS -> AM: toDto(MedicalCondition)
+activate AM
+AM -> AD: create(MedicalConditionProps)
+activate AD
+AD -> AD: create()
+deactivate AD
+AM -> AS: returns MedicalConditionDTO
+deactivate AM
+AS -> ARP: save(MedicalCondition)
+activate ARP
+ARP -> ASC: findOne(query)
+activate ASC
+ASC -> DB: query(query)
+activate DB
+DB -> DB: SELECT * FROM MedicalCondition WHERE id = id
+DB --> ASC: returns Result
+deactivate DB
+ASC --> ARP: returns MedicalCondition
+deactivate ASC
+ARP -> ARP: Updates the fields of the Medical Condition
+ARP -> DB: save(MedicalCondition)
+activate DB
+DB -> DB: UPDATE MedicalCondition SET ... WHERE id = id
+DB --> ARP: returns Result
+deactivate DB
+ARP -> AS: returns MedicalCondition
+deactivate ARP
+AS -> AM: toDto(MedicalCondition)
+activate AM
+AM -> AD: create(MedicalConditionProps)
+activate AD
+AD -> AD: create()
+deactivate AD
+AM -> AS: returns MedicalConditionDTO
+deactivate AM
+AS -> AC: returns result(MedicalConditionDTO)
+deactivate AS
+AC -> AR: returns Operation Status Code
+deactivate AC
+AR -> FE: returns Operation Status Code
+deactivate AR
+deactivate FE
+
+@enduml
