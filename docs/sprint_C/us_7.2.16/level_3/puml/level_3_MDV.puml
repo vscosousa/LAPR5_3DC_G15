@@ -1,0 +1,129 @@
+@startuml level_3_MDV
+
+title Level 3 MDV Diagram
+
+hide empty members
+'skinparam Linetype ortho
+
+skinparam class {
+    BackgroundColor<<valueObject>> #D6EAF8
+    BackgroundColor<<root>> #FDEBD0
+    BackgroundColor<<service>> #D1F2EB
+    BackgroundColor #UIF9E7
+    AARowColor Black
+}
+
+skinparam package {
+    BackgroundColor #EBF5FB
+}
+
+participant FE as FE
+participant "AllergyRouter" as AR
+participant "AllergyController" as AC
+participant "AllergyService" as AS
+participant "AllergyRepository" as ARP
+participant "AllergySchema" as ASC
+participant "AllergyMapper" as AM
+participant "AllergyDTO" as AD
+participant "Database" as DB
+
+activate FE
+FE -> AR: Makes Http Request to get Allergy's data
+activate AR
+AR -> AC: getAllergy(id)
+activate AC
+AC -> AS: getAllergy(id)
+activate AS
+AS -> ARP: findByDomainId(id)
+activate ARP
+ARP -> ASC: findOne(query)
+activate ASC
+ASC -> DB: query()
+activate DB
+DB -> DB: SELECT * FROM Allergy WHERE id = id
+DB --> ASC: returns Result
+deactivate DB
+ASC --> ARP: returns Allergy
+deactivate ASC
+ARP --> AS: returns Allergy
+deactivate ARP
+AS -> AM: toDTO(Allergy)
+activate AM
+AM -> AD: create(AllergyProps)
+activate AD
+AD -> AD: create()
+deactivate AD
+AM -> AS: returns AllergyDTO
+deactivate AM
+AS -> AC: returns result(AllergyDTO)
+deactivate AS
+AC -> AR: returns Operation Status Code
+deactivate AC
+AR -> FE: returns Operation Status Code
+deactivate AR
+deactivate FE
+
+FE -> AR: Makes Http Request to update an Allergy
+activate FE
+activate AR
+AR -> AC: updateAllergy(request, response, next)
+activate AC
+AC -> AS: updateAllergy(AllergyDTO)
+activate AS
+AS -> ARP: findByDomainId(id)
+activate ARP
+ARP -> ASC: findOne(query)
+activate ASC
+ASC -> DB: query(query)
+activate DB	
+DB -> DB: SELECT * FROM Allergy WHERE id = id
+DB --> ASC: returns Result
+deactivate DB
+ASC --> ARP: returns Allergy
+deactivate ASC
+ARP --> AS: returns Allergy
+deactivate ARP
+AS -> AM: toDto(Allergy)
+activate AM
+AM -> AD: create(AllergyProps)
+activate AD
+AD -> AD: create()
+deactivate AD
+AM -> AS: returns AllergyDTO
+deactivate AM
+AS -> ARP: save(Allergy)
+activate ARP
+ARP -> ASC: findOne(query)
+activate ASC
+ASC -> DB: query(query)
+activate DB
+DB -> DB: SELECT * FROM Allergy WHERE id = id
+DB --> ASC: returns Result
+deactivate DB
+ASC --> ARP: returns Allergy
+deactivate ASC
+ARP -> ARP: Updates the fields of the Allergy
+ARP -> DB: save(Allergy)
+activate DB
+DB -> DB: UPDATE Allergy SET ... WHERE id = id
+DB --> ARP: returns Result
+deactivate DB
+ARP -> AS: returns Allergy
+deactivate ARP
+AS -> AM: toDto(Allergy)
+activate AM
+AM -> AD: create(AllergyProps)
+activate AD
+AD -> AD: create()
+deactivate AD
+AM -> AS: returns AllergyDTO
+deactivate AM
+AS -> AC: returns result(AllergyDTO)
+deactivate AS
+AC -> AR: returns Operation Status Code
+deactivate AC
+AR -> FE: returns Operation Status Code
+deactivate AR
+deactivate FE
+
+@enduml

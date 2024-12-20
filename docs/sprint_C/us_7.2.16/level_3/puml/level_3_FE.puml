@@ -1,0 +1,87 @@
+@startuml level_3_FE
+
+title Level 3 FE Diagram
+
+hide empty members
+'skinparam Linetype ortho
+
+skinparam class {
+    BackgroundColor<<valueObject>> #D6EAF8
+    BackgroundColor<<root>> #FDEBD0
+    BackgroundColor<<service>> #D1F2EB
+    BackgroundColor #UIF9E7
+    ArrowColor Black
+}
+
+skinparam package {
+    BackgroundColor #EBF5FB
+}
+
+actor Doctor as A
+participant View as UI
+participant "AllergiesAndMedicalConditionsManagerComponent" as AMC
+participant "UpdateAllergyComponent" as UAC
+participant "OperationRequestService" as ORS
+participant "AllergyService" as AS
+participant "AuthInterceptor" as AI
+participant MDV as MDV
+
+activate A
+A -> UI: Asks to update an Allergy
+activate UI
+UI -> AMC: routerLink='/update-Allergy/:id'
+activate AMC
+AMC -> UAC: routes to UpdateAllergyComponent
+activate UAC
+deactivate AMC
+UAC -> AS: fetchAllergy(id)
+activate AS
+AS -> AI: Makes Http Request to get Allergy data
+activate AI
+AI -> AI: Intercepts the request and adds the token to the header
+note right of AI
+    The token is added to the header so that the MDV
+    can authenticate and authorize the request.
+end note
+AI -> MDV: getAllergyData(id)
+activate MDV
+MDV -> MDV: Fetches Allergy data
+MDV --> AI: returns Operation Status Code
+deactivate MDV
+AI --> AS: returns Operation Status Code
+deactivate AI
+AS --> UAC: returns Operation Response
+deactivate AS
+UAC -> UAC: initializes UpdateAllergyComponent
+UAC --> UI: returns UpdateAllergyComponent
+deactivate UAC
+UI --> A: Displays the fetched data and asks for the new Allergy's data
+deactivate UI
+A -> UI: Sends Allergy's data (AllergyCode, AllergyName, AllergyDescription, AllergySymptoms)
+activate UI
+UI -> UAC: updateAllergy($event)
+activate UAC
+UAC -> AS: updateAllergy(newAllergy)
+activate AS
+AS -> AI: Makes Http Request to update an Allergy
+activate AI
+AI -> AI: Intercepts the request and adds the token to the header
+note right of AI
+    The token is added to the header so that the MDV
+    can authenticate and authorize the request.
+end note
+AI -> MDV: updateAllergy(newAllergy)
+activate MDV
+MDV -> MDV: Validates Allergy's data and updates it
+MDV --> AI: Returns Operation Status Code
+deactivate MDV
+AI --> AS: returns Operation Status Code
+deactivate AI
+AS --> UAC: returns Operation Response
+deactivate AS
+UAC --> UI: returns Operation In/Sucess message
+deactivate UAC
+UI --> A: returns Operation In/Sucess message
+deactivate UI
+
+@enduml
