@@ -1,4 +1,4 @@
-ç<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -171,9 +171,45 @@
               "2024-11-25",
               "2024-11-25",
               "2024-11-25",
+              "2024-11-25",
+              "2024-11-25",
+              "2024-12-10",
+              "2024-12-10",
+              "2024-12-10",
+              "2024-12-10",
+              "2024-12-10",
+              "2024-12-10",
+              "2024-12-10",
+              "2024-12-10",
             ],
             closedStories: [
-              
+                "2024-11-30",
+                "2024-11-30",
+                "2024-12-03",
+                "2024-12-03",
+                "2024-12-15",
+                "2024-12-15",
+                "2024-12-15",
+                "2024-12-15",
+                "2024-12-15",
+                "2024-12-17",
+                "2024-12-17",
+                "2024-12-17",
+                "2024-12-18",
+                "2024-12-18",
+                "2024-12-18",
+                "2024-12-18",
+                "2024-12-19",
+                "2024-12-19",
+                "2024-12-20",
+                "2024-12-20",
+                "2024-12-20",
+                "2024-12-20",
+                "2024-12-20",
+                "2024-12-20",
+                "2024-12-20",
+                "2024-12-20",
+                "2024-12-20"
             ],
           },
         };
@@ -215,7 +251,7 @@
             for (let i = fromIndex; i < totalDays; i++) {
               idealBurn[i] = Math.max(
                 0,
-                Math.round(totalUserStories - i * dailyBurnRate)
+                Math.round(totalUserStories - dailyBurnRate * i)
               );
             }
             idealBurn[totalDays - 1] = 0;
@@ -260,8 +296,6 @@
               for (let i = closeIndex; i < totalDays; i++) {
                 actualBurn[i] = Math.max(0, actualBurn[i] - 1);
               }
-
-              calculateIdealBurn(closeIndex);
 
               chart.series[0].setData(idealBurn);
               chart.series[1].setData(actualBurn);
