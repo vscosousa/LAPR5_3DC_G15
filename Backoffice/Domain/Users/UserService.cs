@@ -551,5 +551,20 @@ namespace DDDSample1.Domain.Users
                 return null;
             }
         }
+
+        public async Task<string> GetCode(string email)
+        {
+            try
+            {
+                var code = new Random().Next(100000, 999999).ToString();
+                await _mailService.SendCodeAsync(email, code);
+                return code;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error: " + ex.Message);
+                return null;
+            }
+        }
     }
 }

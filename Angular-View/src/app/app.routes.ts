@@ -42,6 +42,7 @@ import { UpdateOperationRequestComponent } from './Components/operation-requests
 import { CreateAppointmentComponent } from './Components/create-appointment/create-appointment.component';
 import { AppointmentManagerComponent } from './Components/appointment-manager/appointment-manager.component';
 import { UpdateAppointmentComponent } from './Components/update-appointment/update-appointment.component';
+import { PatientProfileComponent } from './Components/patient-profile/patient-profile.component';
 
 export const routes: Routes = [
   {
@@ -97,6 +98,9 @@ export const routes: Routes = [
   },
   {
     path: "patient-policy", component: PatientPolicyComponent
+  },
+  {
+    path: "patient-profile", component: PatientProfileComponent, canActivate: [PatientGuard]
   },
   {
     path: "hospital3d", component: Hospital3dComponent

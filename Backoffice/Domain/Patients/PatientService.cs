@@ -41,7 +41,7 @@ namespace DDDSample1.Domain.Patients
                 patient.AssignMedicalRecordNumber(MedicalRecordNumberGenerator.GenerateMedicalRecordNumber(list.Count));
                 await _repo.AddAsync(patient);
 
-                var apiSuccess = await CallExternalApi(patient.MedicalRecordNumber, dto.Allergies, dto.MedicalConditions, dto.FamilyHistory, dto.FreeText);
+                var apiSuccess = await CallExternalApi(patient.MedicalRecordNumber);
                 if (apiSuccess == null)
                 {
                     throw new Exception("External API call failed.");
@@ -67,9 +67,9 @@ namespace DDDSample1.Domain.Patients
             }
         }
 
-        private async Task<string> CallExternalApi(string patientMedicalRecordNumber, string[] allergies, string[] medicalConditions, string[] familyHistory, string freeText)
+        private async Task<string> CallExternalApi(string patientMedicalRecordNumber)
         {
-            MedicalHistoryDTO medicalHistory = new MedicalHistoryDTO(patientMedicalRecordNumber, allergies, medicalConditions, familyHistory, freeText);
+            MedicalHistoryDTO medicalHistory = new MedicalHistoryDTO(patientMedicalRecordNumber, new string[] { }, new string[] { }, new string[] { }, string.Empty);
             using (var httpClient = new HttpClient())
             {
                 var response = await httpClient.PostAsJsonAsync("http://localhost:4000/api/patientsMedicalHistory/create", medicalHistory);

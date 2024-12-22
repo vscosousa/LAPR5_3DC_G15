@@ -57,6 +57,24 @@ namespace DDDSample1.Controllers
             }
         }
 
+        [HttpGet("GetCode"), Authorize(Roles = "Patient")]
+        public async Task<ActionResult<string>> GetCode([FromQuery] string email)
+        {
+            if (string.IsNullOrWhiteSpace(email))
+            {
+                return BadRequest("Email is required.");
+            }
+            try
+            {
+                var code = await _userService.GetCode(email);
+                return Ok(code);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred while getting the code: {ex.Message}");
+            }
+        }
+
         [HttpPost("RequestResetPassword"), Authorize(Roles = "Admin, Doctor, Nurse, Technician")]
         public async Task<IActionResult> RequestPasswordReset(RequestPasswordResetDTO dto)
         {
@@ -88,14 +106,14 @@ namespace DDDSample1.Controllers
             {
                 if (string.IsNullOrWhiteSpace(token))
                 {
-                    return Unauthorized(new{ message = "Token required."});
+                    return Unauthorized(new { message = "Token required." });
                 }
                 if (string.IsNullOrWhiteSpace(dto.NewPassword) && string.IsNullOrWhiteSpace(dto.NewPasswordConfirm))
                 {
-                    return BadRequest(new{ message = "Token and new password are required."});
+                    return BadRequest(new { message = "Token and new password are required." });
                 }
                 await _userService.ResetPassword(token, dto);
-                return Ok(new{ message = "Your password has been reset successfully."});
+                return Ok(new { message = "Your password has been reset successfully." });
             }
             catch (BusinessRuleValidationException ex)
             {
@@ -113,14 +131,14 @@ namespace DDDSample1.Controllers
         public async Task<ActionResult<User>> ActivateUser(string token, string newPassword)
         {
             try
-            {   
+            {
                 if (string.IsNullOrWhiteSpace(token))
                 {
-                    return Unauthorized(new{ message = "Token required."});
+                    return Unauthorized(new { message = "Token required." });
                 }
                 if (string.IsNullOrWhiteSpace(newPassword))
                 {
-                    return BadRequest(new{ message = "New password is required."});
+                    return BadRequest(new { message = "New password is required." });
                 }
                 var user = await _userService.ActivateUser(token, newPassword);
                 return Ok(user);

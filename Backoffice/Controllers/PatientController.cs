@@ -106,6 +106,25 @@ namespace DDDSample1.Controllers
             }
         }
 
+        [HttpGet("myProfile/{emailaddress}")]
+        [Authorize(Roles = "Patient")]
+        public async Task<ActionResult<PatientDTO>> GetMyProfile(string emailaddress)
+        {
+            try
+            {
+                var patient = await _service.SearchPatients(new SearchPatientDTO { Email = emailaddress });
+                if (patient == null)
+                {
+                    return NotFound();
+                }
+                return Ok(patient);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+
         [HttpPut("updateProfile")]
         [Authorize(Roles = "Patient")]
         public async Task<ActionResult<PatientDTO>> UpdateProfile(UpdatePatientDTO dto)

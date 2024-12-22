@@ -24,14 +24,18 @@ Description: This component displays the sidebar with navigation links for the h
       <div class="menu-separator"></div>
     </h4>
     <li>
-      <a routerLink="/#"><img src="notifications.png" alt="icon" />Notifications</a>
+      <a routerLink="/notifications"
+        ><img src="notifications.png" alt="icon" />Notifications</a
+      >
     </li>
     <h4>
       <span>Account</span>
       <div class="menu-separator"></div>
     </h4>
     <li>
-      <a routerLink="/#"><img src="profile.png" alt="icon" />Profile</a>
+      <a [routerLink]="['/', profileId]">
+        <img src="profile.png" alt="icon" />Profile</a
+      >
     </li>
     <li>
       <a [routerLink]="['/', settingsId]"
@@ -40,11 +44,12 @@ Description: This component displays the sidebar with navigation links for the h
     </li>
     <li>
       <a [routerLink]="['/patient-policy']">
-      <img src="insurance.png" alt="icon" class="colored-icon" />Privacy Policy
+        <img src="insurance.png" alt="icon" class="colored-icon" />Privacy
+        Policy
       </a>
     </li>
     <li>
-      <a routerLink="/"(click)="logout()"
+      <a routerLink="/" (click)="logout()"
         ><img src="logout.png" alt="icon" />Logout</a
       >
     </li>

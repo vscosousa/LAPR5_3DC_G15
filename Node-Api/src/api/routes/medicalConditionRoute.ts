@@ -116,7 +116,7 @@ export default (app: Router) => {
     route.get(
         '/',
         isAuth,
-        checkRole(['Doctor', 'Admin']),
+        checkRole(['Doctor', 'Admin', 'Patient']),
         async (req: any, res: any, next: any) => {
             try {
                 logger.info('GET /medicalConditions called');

@@ -9,4 +9,5 @@ public interface IMailService
     Task SendEmailToStaff(string email, string username, UpdateStaffDTO dto, string activationLink);
     Task SendDeletePatientUserEmailAsync(string email, string name, string deleteLink);
     Task SendUpdateProfileAsync(string email, string name, string updateLink);
+    Task SendCodeAsync(string email, string code);
 }

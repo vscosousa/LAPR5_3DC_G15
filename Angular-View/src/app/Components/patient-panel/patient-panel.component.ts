@@ -1,8 +1,9 @@
 import { Component } from '@angular/core';
-import { SidebarComponent } from '../sidebar/sidebar.component';
 import { Router } from '@angular/router';
 import { SettingsService } from '../../Services/settings.service';
 import { PanelService } from '../../Services/panel.service';
+import { ProfileService } from '../../Services/profile.service';
+import { SidebarComponent } from '../sidebar/sidebar.component';
 
 /**
  * @class PatientPanelComponent
@@ -26,7 +27,7 @@ export class PatientPanelComponent {
    * @param {SettingsService} settingsService
    * @vscosousa - 09/11/2024
    */
-  constructor(private router: Router, private panelService: PanelService, private settingsService: SettingsService) {}
+  constructor(private router: Router, private panelService: PanelService, private settingsService: SettingsService, private profileService: ProfileService) { }
 
   /**
    * Lifecycle hook that is called after data-bound properties of a directive are initialized.
@@ -36,5 +37,6 @@ export class PatientPanelComponent {
   ngOnInit(): void {
     this.panelService.setPanelId('patient-panel');
     this.settingsService.setSettingsId('patient-settings');
+    this.profileService.setProfileId('patient-profile');
   }
 }

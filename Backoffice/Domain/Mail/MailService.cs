@@ -168,4 +168,27 @@ public class MailService : IMailService
 
         await smtpClient.SendMailAsync(mailMessage);
     }
+
+    public async Task SendCodeAsync(string email, string code)
+    {
+        var smtpClient = new SmtpClient
+        {
+            Host = _configuration["SmtpSettings:Server"],
+            Port = int.Parse(_configuration["SmtpSettings:Port"]),
+            /* EnableSsl = bool.Parse(_configuration["SmtpSettings:EnableSsl"]),
+            Credentials = new NetworkCredential(_configuration["SmtpSettings:Username"], _configuration["SmtpSettings:Password"]) */
+        };
+
+        var mailMessage = new MailMessage
+        {
+            From = new MailAddress(_configuration["SmtpSettings:SenderEmail"], _configuration["SmtpSettings:SenderName"]),
+            Subject = "Code to prove your identity",
+            Body = $"Your code for identity verification is: {code}",
+            IsBodyHtml = true,
+        };
+
+        mailMessage.To.Add(email);
+
+        await smtpClient.SendMailAsync(mailMessage);
+    }
 }

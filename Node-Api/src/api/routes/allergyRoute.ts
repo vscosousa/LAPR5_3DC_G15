@@ -125,7 +125,7 @@ export default (app: Router) => {
     route.get(
         '/',
         isAuth,
-        checkRole(['Doctor', 'Admin']),
+        checkRole(['Doctor', 'Admin', 'Patient']),
         logRequestBody,
         async (req, res, next) => {
             try {

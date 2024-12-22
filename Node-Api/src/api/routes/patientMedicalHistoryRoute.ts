@@ -87,7 +87,7 @@ export default (app: Router) => {
   route.get(
     '/get/:patientMedicalRecordNumber',
     isAuth,
-    checkRole(['Doctor', 'Admin']),
+    checkRole(['Doctor', 'Admin', 'Patient']),
     logRequestBody,
     celebrate({
       params: Joi.object({

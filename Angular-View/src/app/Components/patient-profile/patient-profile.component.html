@@ -1,0 +1,72 @@
+<div class="profile-container">
+  <app-sidebar></app-sidebar>
+  <div class="profile-screen">
+    <div class="profile-header">
+      <h1 class="profile-name">
+        {{ patientProfile.fullName }}
+      </h1>
+      <button class="download-button" (click)="openModal()">Download Profile</button>
+    </div>
+    <div class="profile-details">
+      <h2>Personal Information</h2>
+      <p><strong>Email:</strong> {{ patientProfile.email }}</p>
+      <p><strong>Phone:</strong> {{ patientProfile.phoneNumber }}</p>
+      <p><strong>Date of Birth:</strong> {{ patientProfile.dateOfBirth }}</p>
+      <p>
+        <strong>Emergency Contact:</strong>
+        {{ patientProfile.emergencyContact }}
+      </p>
+      <p>
+        <strong>Gender:</strong>
+        {{ patientProfile.gender === 0 ? "Male" : "Female" }}
+      </p>
+      <p>
+        <strong>Medical Record Number:</strong>
+        {{ patientProfile.medicalRecordNumber }}
+      </p>
+    </div>
+    <div class="profile-details">
+      <h2>Medical History</h2>
+      <p><strong>Allergies:</strong></p>
+      <ul>
+        <li *ngFor="let allergy of selectedAllergies">
+          {{ allergy.allergyName }}
+        </li>
+      </ul>
+      <p><strong>Medical Conditions:</strong></p>
+      <ul>
+        <li *ngFor="let condition of selectedMedicalConditions">
+          {{ condition.medicalConditionName }}
+        </li>
+      </ul>
+      <p><strong>Family History:</strong></p>
+      <ul>
+        <li *ngFor="let history of selectedMedicalHistory?.familyHistory">
+          {{ history }}
+        </li>
+      </ul>
+      <p>
+        <strong>Free Text:</strong>
+        {{ selectedMedicalHistory?.freeText || "None " }}
+      </p>
+    </div>
+  </div>
+</div>
+
+<div id="codeModal" class="modal" [ngClass]="{'show': isModalOpen}">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2 class="modal-title">Enter Verification Code</h2>
+      <span class="close" (click)="closeModal()">&times;</span>
+    </div>
+    <div class="code-inputs">
+      <input id="code1" type="text" maxlength="1" pattern="[0-9]*" inputmode="numeric" [(ngModel)]="code1" (input)="moveFocus($event, 'code2')" (keydown)="handleBackspace($event, 'code1'); allowOnlyNumbers($event)" (paste)="handlePaste($event)">
+      <input id="code2" type="text" maxlength="1" pattern="[0-9]*" inputmode="numeric" [(ngModel)]="code2" (input)="moveFocus($event, 'code3')" (keydown)="handleBackspace($event, 'code1'); allowOnlyNumbers($event)" (paste)="handlePaste($event)">
+      <input id="code3" type="text" maxlength="1" pattern="[0-9]*" inputmode="numeric" [(ngModel)]="code3" (input)="moveFocus($event, 'code4')" (keydown)="handleBackspace($event, 'code2'); allowOnlyNumbers($event)" (paste)="handlePaste($event)">
+      <input id="code4" type="text" maxlength="1" pattern="[0-9]*" inputmode="numeric" [(ngModel)]="code4" (input)="moveFocus($event, 'code5')" (keydown)="handleBackspace($event, 'code3'); allowOnlyNumbers($event)" (paste)="handlePaste($event)">
+      <input id="code5" type="text" maxlength="1" pattern="[0-9]*" inputmode="numeric" [(ngModel)]="code5" (input)="moveFocus($event, 'code6')" (keydown)="handleBackspace($event, 'code4'); allowOnlyNumbers($event)" (paste)="handlePaste($event)">
+      <input id="code6" type="text" maxlength="1" pattern="[0-9]*" inputmode="numeric" [(ngModel)]="code6" (keydown)="handleBackspace($event, 'code5'); allowOnlyNumbers($event)" (paste)="handlePaste($event)">
+    </div>
+    <button class="btn-submit" (click)="verifyCode()">Submit</button>
+  </div>
+</div>

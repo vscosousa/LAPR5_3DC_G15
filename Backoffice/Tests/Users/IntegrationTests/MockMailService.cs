@@ -19,7 +19,7 @@ public class MockMailService : IMailService
     {
         var mailMessage = CreateMailMessage(toEmail, username, activationLink, "Activate your account");
         SentEmails.Add(mailMessage);
-        return Task.CompletedTask; 
+        return Task.CompletedTask;
     }
 
     public Task SendEmailToAdminAsync(string adminEmail, string subject, string message)
@@ -105,6 +105,29 @@ public class MockMailService : IMailService
             From = new MailAddress(_configuration["SmtpSettings:SenderEmail"], _configuration["SmtpSettings:SenderName"]),
             Subject = "Update your user profile",
             Body = $"Hi {name}, please update your user profile by clicking this link: {updateLink}",
+            IsBodyHtml = true,
+        };
+
+        mailMessage.To.Add(email);
+
+        await smtpClient.SendMailAsync(mailMessage);
+    }
+
+    public async Task SendCodeAsync(string email, string code)
+    {
+        var smtpClient = new SmtpClient
+        {
+            Host = _configuration["SmtpSettings:Server"],
+            Port = int.Parse(_configuration["SmtpSettings:Port"]),
+            /* EnableSsl = bool.Parse(_configuration["SmtpSettings:EnableSsl"]),
+            Credentials = new NetworkCredential(_configuration["SmtpSettings:Username"], _configuration["SmtpSettings:Password"]) */
+        };
+
+        var mailMessage = new MailMessage
+        {
+            From = new MailAddress(_configuration["SmtpSettings:SenderEmail"], _configuration["SmtpSettings:SenderName"]),
+            Subject = "Code to prove your identity",
+            Body = $"Your code for identity verification is: {code}",
             IsBodyHtml = true,
         };
 

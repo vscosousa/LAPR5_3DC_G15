@@ -3,6 +3,7 @@ import { RouterModule } from '@angular/router';
 import { PanelService } from '../../Services/panel.service';
 import { SettingsService } from '../../Services/settings.service';
 import { jwtDecode } from 'jwt-decode';
+import { ProfileService } from '../../Services/profile.service';
 
 /**
  * @class SidebarComponent
@@ -19,6 +20,7 @@ import { jwtDecode } from 'jwt-decode';
 export class SidebarComponent implements OnInit {
   panelId: string = '';
   settingsId: string = '';
+  profileId: string = '';
   name: string = '';
   role: string = '';
   privacyId: string = '';
@@ -30,7 +32,7 @@ export class SidebarComponent implements OnInit {
    * @param {SettingsService} settingsService
    * @vscosousa - 12/11/2024
    */
-  constructor(private panelService: PanelService, private settingsService: SettingsService) { }
+  constructor(private panelService: PanelService, private settingsService: SettingsService, private profileService: ProfileService) { }
 
   /**
    * Lifecycle hook that is called after data-bound properties of a directive are initialized.
@@ -44,6 +46,10 @@ export class SidebarComponent implements OnInit {
 
     this.settingsService.settingsId$.subscribe(settingsId => {
       this.settingsId = settingsId;
+    });
+
+    this.profileService.profileId$.subscribe(profileId => {
+      this.profileId = profileId;
     });
 
     const token = localStorage.getItem('token');

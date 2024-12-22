@@ -76,6 +76,10 @@ export class PatientService {
     return this.http.get<any[]>(`${this.apiUrl}/Patient?${queryParams.toString()}`);
   }
 
+  getMyProfile(emailAddress: string): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/Patient/myProfile/${emailAddress}`);
+  }
+
   /**
    * Creates a new patient.
    * @method createPatient
