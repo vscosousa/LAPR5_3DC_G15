@@ -66,7 +66,18 @@ class AssignedEquipment <<valueObject>> <<(V, #FF8B40)>> {}
 class CurrentStatus <<valueObject>> <<(V, #FF8B40)>> {}
 class MaintenanceSlots <<valueObject>> <<(V, #FF8B40)>> {}
 
+entity Allergies <<Entity>> {}
+entity MedicalConditions <<Entity>> {}
 
+class Code <<valueObject>> <<(V, #FF8B40)>> {}
+class Name <<valueObject>> <<(V, #FF8B40)>> {}
+class Description <<valueObject>> <<(V, #FF8B40)>> {}
+class Symptoms <<valueObject>> <<(V, #FF8B40)>> {}
+
+entity MedicalHistory <<Entity>> {}
+
+class FamilyHistory <<valueObject>> <<(V, #FF8B40)>> {}
+class FreeText <<valueObject>> <<(V, #FF8B40)>> {}
 
 /' -------------------------Patient and Staff------------------------------ '/
 
@@ -91,9 +102,11 @@ Patient "1" --> "1" LastName : has
 Patient "1" --> "1" FullName : has
 Patient "1" --> "1" Email : has
 Patient "1" --> "1" PhoneNumber : has
+Patient "1" -left-> "1" MedicalHistory : has
 
 Staff "1" --> "1" Specialization : has
 Staff "1" --> "*" OperationRequest : if doctor then it manages
+Staff "1" --> "*" MedicalHistory : if doctor then it manages
 Staff "1" --> "1" LicenseNumber : has
 Staff "1" --> "*" AvailabilititySlots : has
 Staff "1" --> "1" FirstName : has
@@ -126,10 +139,22 @@ Appointment "1" --> "1" Status : has
 SurgeryRoom "1" --> "1" RoomNumber : has
 SurgeryRoom "1" --> "1" Type : has
 SurgeryRoom "1" --> "1" Capacity : has
-SurgeryRoom "1" --> "*" AssignedEquipment
+SurgeryRoom "1" --> "*" AssignedEquipment: has
 SurgeryRoom "1" --> "1" CurrentStatus : has
 SurgeryRoom "1" --> "*" MaintenanceSlots : has
 
+MedicalHistory "1" -down-> "*" Allergies : has
+MedicalHistory "1" -down-> "*" MedicalConditions : has
+MedicalHistory "1" --> "*" FamilyHistory : has
+MedicalHistory "1" --> "*" FreeText : has
 
+Allergies "1" --> "1" Code : has
+Allergies "1" --> "1" Name : has
+Allergies "1" --> "1" Description : has
+Allergies "1" --> "*" Symptoms : has
 
+MedicalConditions "1" -up-> "1" Code : has
+MedicalConditions "1" -up-> "1" Name : has
+MedicalConditions "1" -up-> "1" Description : has
+MedicalConditions "1" -up-> "*" Symptoms : has
 @enduml

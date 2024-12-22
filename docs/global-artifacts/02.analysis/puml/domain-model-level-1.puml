@@ -33,6 +33,12 @@ entity Appointment <<Entity>> {}
 
 entity SurgeryRoom <<Entity>> {}
 
+entity Allergies <<Entity>> {}
+
+entity MedicalConditions <<Entity>> {}
+
+entity MedicalHistory <<Entity>> {}
+
 User "1" -left-> "1" Patient : can be
 User "1" -right-> "1" Staff : can be
 
@@ -47,5 +53,10 @@ OperationType "1" --> "*" Specialization : has
 
 Appointment "1" --> "1" OperationRequest : has
 Appointment "1" --> "1" SurgeryRoom : has
+
+Patient "1" -up-> "1" MedicalHistory : has
+
+MedicalHistory "1" -up-> "*" Allergies : has
+MedicalHistory "1" -up-> "*" MedicalConditions : has
 
 @enduml
