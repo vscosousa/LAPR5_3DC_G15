@@ -46,7 +46,9 @@ export default (app: Router) => {
                 medicalConditionDescription: Joi.string().max(MAX_DESCRIPTION_LENGTH).required().messages({
                     'string.max': `Allergy description cannot exceed ${MAX_DESCRIPTION_LENGTH} characters`
                 }),
-                medicalConditionSymptoms: Joi.string().required()
+                medicalConditionSymptoms: Joi.string().required().messages({
+                    'string.empty': 'Medical condition symptoms are required.'
+                })
             }),
         }),
         async (req: any, res: any, next: any) => {
