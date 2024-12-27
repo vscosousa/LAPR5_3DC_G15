@@ -1,0 +1,176 @@
+@startuml level_3_MDV
+
+title Level 3 Diagram for US 7.2.6
+
+hide empty members
+
+skinparam class {
+    BackgroundColor<<controller>> #D6EAF8
+    BackgroundColor<<service>> #D1F2EB
+    BackgroundColor<<repository>> #FDEBD0
+    BackgroundColor<<mapper>> #D1F2EB
+    BackgroundColor<<entity>> #FDEBD0
+    BackgroundColor #FEF9E7
+    ArrowColor Black
+}
+
+skinparam package {
+    BackgroundColor #EBF5FB
+}
+
+participant FE as D
+participant "PatientMedicalHistoryRouter" as PMHRt 
+participant "PatientMedicalHistoryController" as PMHC 
+participant "PatientMedicalHistoryService" as PMHS 
+participant "PatientMedicalHistoryRepository" as PMHR 
+participant "PatientMedicalHistoryMapper" as PMHM 
+participant "PatientMedicalHistoryDTO" as PMHD
+participant "PatientMedicalHistorySchema" as PMHSchem 
+
+participant "AllergyRouter" as ART 
+participant "AllergyController" as AC 
+participant "AllergyService" as AS 
+participant "AllergyRepo" as AR 
+participant "AllergyMap" as AM 
+participant "AllergyDTO" as AD 
+participant "AllergySchema" as ASchema 
+
+participant "MedicalConditionRouter" as MCRT 
+participant "MedicalConditionController" as MCC 
+participant "MedicalConditionService" as MCS 
+participant "MedicalConditionRepo" as MCR 
+participant "MedicalConditionMap" as MCM 
+participant "MedicalConditionSchema" as MCSchema 
+participant "MedicalConditionDTO" as MCDTO
+
+participant "Database" as DB
+
+
+activate D
+D -> MCRT: Makes Http Request to get all Medical Conditions
+activate MCRT
+MCRT -> MCC: listMedicalConditions(req, res, next)
+activate MCC
+MCC -> MCS: listMedicalConditions()
+activate MCS
+MCS -> MCR: findall()
+activate MCR
+MCR -> MCSchema: find()
+activate MCSchema
+MCSchema -> DB: query()
+activate DB
+DB -> DB: SELECT * FROM MedicalCondition
+DB --> MCSchema: Returns all MedicalConditions 
+deactivate DB
+MCSchema --> MCR: Returns all MedicalConditions 
+deactivate MCSchema
+MCR --> MCS: Returns all MedicalConditions 
+deactivate MCR
+MCS -> MCM: medicalConditions.map(medicalCondition => MedicalConditionMap.toDTO(medicalCondition))
+activate MCM
+MCM -> MCDTO: create(MedicalConditionProps)
+activate MCDTO
+MCDTO -> MCDTO: create()
+deactivate MCDTO
+MCM --> MCS: Returns list of medicalConditionDTOs
+deactivate MCM
+MCS --> MCC: Returns list of MedicalConditionDTOs
+deactivate MCS
+MCC --> MCRT: Returns list of MedicalConditionDTOs
+deactivate MCC
+MCRT --> D: Returns list of MedicalConditionDTOs
+deactivate MCRT
+
+D -> ART: Makes Http Request to get all Allergies
+activate ART
+ART -> AC: listAllergies(req, res, next)
+activate AC
+AC -> AS: listAllergys()
+activate AS
+AS -> AR: findall()
+activate AR
+AR -> ASchema: find()
+activate ASchema
+ASchema -> DB: query()
+activate DB
+DB -> DB: SELECT * FROM Allergy
+DB --> ASchema: Returns all Allergies
+deactivate DB
+ASchema --> AR: Returns all Allergies
+deactivate ASchema
+AR --> AS: Returns all Allergies
+deactivate AR
+AS -> AM: allergies.map(allergy => AllergyMap.toDTO(allergy))
+activate AM
+AM -> AD: create(AllergyProps)
+activate AD
+AD -> AD: create()
+deactivate AD
+AM --> AS: Returns list of allergyDTOs
+deactivate AM
+AS --> AC: Returns list of AllergyDTOs
+deactivate AS
+AC --> ART: Returns list of AllergyDTOs
+deactivate AC
+ART --> D: Returns list of AllergyDTOs
+deactivate ART
+
+D -> PMHRt: Makes HTTP Request to update Patient Medical History
+activate PMHRt
+PMHRt -> PMHC: updatePatientMedicalHistory(req, res, next)
+activate PMHC
+PMHC -> PMHS: updatePatientMedicalHistory(patientMedicalRecordNumber,PatientMedicalHistoryDTO)
+activate PMHS
+PMHS -> PMHR: findByPatientMedicalRecordNumber(patientMedicalRecordNumber)
+activate PMHR
+PMHR -> PMHSchem: findOne(query);
+activate PMHSchem
+PMHSchem -> DB: Query database for Patient Medical History
+activate DB
+DB -> DB: SELECT * FROM PatientMedicalHistory \n WHERE patientMedicalRecordNumber = patientMedicalRecordNumber
+DB --> PMHSchem: Returns Result
+deactivate DB
+PMHSchem --> PMHR: Returns Patient Medical History 
+deactivate PMHSchem
+PMHR --> PMHS: Returns Patient Medical History 
+deactivate PMHR
+
+alt Patient Medical History exists
+    PMHS -> PMHR: save(patientMedicalHistory)
+    activate PMHR
+    PMHR -> PMHSchem: findOne(query)
+    activate PMHSchem
+    PMHSchem -> DB: query(query)
+    activate DB
+    DB -> DB: SELECT * FROM PatientMedicalHistory \n WHERE patientMedicalRecordNumber = patientMedicalRecordNumber
+    DB --> PMHSchem: Returns Result
+    deactivate DB
+    PMHSchem --> PMHR: Returns PacienteMedicalHistoryPersistence
+    deactivate PMHSchem
+    PMHR -> PMHR: updates the fields of the Patient Medical History 
+    PMHR -> DB: save(patientMedicalHistory)
+    activate DB
+    DB -> DB: Updates PatientMedicalHistory \n SET ... \n WHERE patientMedicalRecordNumber = patientMedicalRecordNumber
+    DB --> PMHR: Returns Result
+    deactivate DB
+    PMHR --> PMHS: Returns PacienteMedicalHistory
+    deactivate PMHR
+    PMHS -> PMHM: toDto(patientMedicalHistory)
+    activate PMHM
+    PMHM -> PMHD: create(patientMedicalHistoryProps)
+    activate PMHD
+    PMHD -> PMHD: create()
+    deactivate PMHD
+    PMHM --> PMHS: Returns PatientMedicalHistoryDTO
+    deactivate PMHM
+    PMHS --> PMHC: Returns result(PatientMedicalHistoryDTO)
+else
+    PMHS --> PMHC: Returns failure message
+end
+deactivate PMHS
+PMHC --> PMHRt: Returns operation status
+deactivate PMHC
+PMHRt --> D: Returns operation status
+deactivate PMHRt
+
+@enduml

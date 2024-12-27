@@ -1,0 +1,127 @@
+@startuml level_3_FE
+
+title Level 3 FE Diagram for US 7.2.7
+
+hide empty members
+
+skinparam class {
+    BackgroundColor<<controller>> #D6EAF8
+    BackgroundColor<<service>> #D1F2EB
+    BackgroundColor<<component>> #FDEBD0
+    BackgroundColor #FEF9E7
+    ArrowColor Black
+}
+
+skinparam package {
+    BackgroundColor #EBF5FB
+}
+
+actor Doctor as D
+participant "View" as V
+participant "MedicalHistoryManagerComponent" as MHMC
+participant "MedicalHistoryService" as MHS
+participant "AuthInterceptor" as AI
+participant MDV as BE
+participant MDR as MDR
+
+activate D
+D -> V: Ask for Patients Medical Record
+activate V
+V -> MHMC: routerLink='/medical-history-manager'
+activate MHMC
+
+MHMC -> MHS: getPatientsWithAdvancedFilter()
+activate MHS
+MHS -> AI: Sends HTTP Request to fetch Patients 
+activate AI
+AI -> AI: Intercepts the request and adds the token to the header
+note right of AI
+    The token is added to the header so that the MDR
+    can authenticate and authorize the request.
+end note
+AI -> MDR: Sends HTTP Request with token to fetch Patient Medical History
+activate MDR
+MDR -> MDR: Fetches Patient
+MDR --> AI: Returns Patients 
+deactivate MDR
+AI --> MHS: Returns Patients
+deactivate AI
+MHS --> MHMC: Returns Patients
+deactivate MHS 
+
+MHMC -> MHS: getAllergies()
+activate MHS
+MHS -> AI: Sends HTTP Request to fetch Allergies
+activate AI
+AI -> AI: Intercepts the request and adds the token to the header
+note right of AI
+    The token is added to the header so that the MDR
+    can authenticate and authorize the request.
+end note
+AI -> BE: Sends HTTP Request with token to fetch Allergies
+activate BE
+BE -> BE: Fetches Allergies
+BE --> AI: Returns Allergies 
+deactivate BE
+AI --> MHS: Returns Alergies 
+deactivate AI
+MHS --> MHMC: Returns Allergies 
+deactivate MHS
+
+MHMC -> MHS: getMedicalConditions()
+activate MHS
+MHS -> AI: Sends HTTP Request to fetch Medical Conditions
+activate AI
+AI -> AI: Intercepts the request and adds the token to the header
+note right of AI
+    The token is added to the header so that the MDR
+    can authenticate and authorize the request.
+end note
+AI -> BE: Sends HTTP Request with token to fetch Medical Conditions
+activate BE
+BE -> BE: Fetches Medical Conditions
+BE --> AI: Returns Medical Conditions
+deactivate BE
+AI --> MHS: Returns Medical Conditions
+deactivate AI
+MHS --> MHMC: Returns Medical Conditions
+deactivate MHS
+
+MHMC --> V: Returns MedicalManagerComponent
+deactivate MHMC
+V --> D: Displays Patients
+deactivate V
+
+D -> V: Selects Patient Medical Record to view details 
+activate V
+V -> MHMC: viewPatientDetails(medicalRecordNumber)
+activate MHMC
+MHMC -> MHS: getPatientMedicalHistory(medicalRecordNumber)
+activate MHS
+MHS -> AI: Sends HTTP Request to fetch selected Patient Medical History
+activate AI
+AI -> AI: Intercepts the request and adds the token to the header
+note right of AI
+    The token is added to the header so that the MDR
+    can authenticate and authorize the request.
+end note
+AI -> BE: Sends HTTP Request with token to fetch selected Patient Medical History
+activate BE
+BE -> BE: Fech Patient Medical History
+BE --> AI: Returns selected Patient Medical History
+deactivate BE
+AI --> MHS: Returns selected Patient Medical History
+deactivate AI
+MHS --> MHMC: Returns selected Patient Medical History
+deactivate MHS
+MHMC --> V: Return selected Patient Medical History
+deactivate MHMC
+V -> MHMC: openMedicalHistoryModal()
+activate MHMC
+MHMC --> V: Return Medical History Modal
+deactivate MHMC
+
+V --> D: Displays Medical History Modal
+deactivate V
+
+@enduml

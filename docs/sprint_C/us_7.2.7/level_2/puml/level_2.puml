@@ -1,0 +1,58 @@
+@startuml level_2
+
+title Level 2 Diagram for US 7.2.7
+
+hide empty members
+
+skinparam class {
+    BackgroundColor<<valueObject>> #D6EAF8
+    BackgroundColor<<root>> #FDEBD0
+    BackgroundColor<<service>> #D1F2EB
+    BackgroundColor #FEF9E7
+    ArrowColor Black
+}
+
+skinparam package {
+    BackgroundColor #EBF5FB
+}
+
+actor Doctor as D
+participant FE as FE
+participant MDV as MDV
+participant MDR as MDR
+
+activate D
+D -> FE: Ask for Patient data 
+activate FE
+FE -> MDR: HTTP request to fetch Patient 
+activate MDR
+MDR -> MDR: Fetches Patients
+MDR --> FE: Returns Patients 
+deactivate MDR
+
+FE -> MDV: HTTP request to fetch Alergies 
+activate MDV
+MDV -> MDV: Fetches Alergies
+MDV --> FE: Returns Alergies 
+deactivate MDV
+
+FE -> MDV: HTTP request to fetch Medical Conditions 
+activate MDV
+MDV -> MDV: Fetches Medical Conditions
+MDV --> FE: Returns Medical Conditions 
+deactivate MDV
+
+FE --> D: Displays all Patients 
+deactivate FE
+
+D -> FE: Selects Patient Medical Record to view
+activate FE
+FE -> MDV: HTTP request to fetch selected Patient Medical History
+activate MDV
+MDV -> MDV: Validates and fetches selected Patient Medical History
+MDV --> FE: Returns selected Patient Medical Record
+deactivate MDV
+FE --> D: Displays selected Patient Medical Record
+deactivate FE
+
+@enduml

@@ -26,7 +26,7 @@ deactivate System
 D -> System: Select Patient Medical Record to view
 activate System
 System -> System: Validates Patient Medical Record
-System --> D: Returns results of Patient Medical Conditions and Allergies
+System --> D: Returns Patient Medical History
 deactivate System
 
 @enduml

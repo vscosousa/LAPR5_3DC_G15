@@ -96,5 +96,32 @@ UMHC --> V: Returns UpdatedMedicalHistoryComponent
 deactivate UMHC
 V --> D: Displays fetched data and allows to update
 deactivate V
+D -> V: Sends Patient Medical History \n update data (medicalConditions, allergies, familyHistory, freeText)
+activate V
+V-> UMHC: submitMedicalHistory()
+activate UMHC
+UMHC -> MHS: updatePatientMedicalHistory(medicalHistory)
+activate MHS
+MHS -> AI: Sends HTTP Request to update Patient Medical Record
+activate AI
+AI -> AI: Intercepts the request and adds the token to the header
+note right of AI
+    The token is added to the header so that the MDR
+    can authenticate and authorize the request.
+end note
+AI -> BE: Sends HTTP Request with token to update Patient Medical History
+activate BE
+BE -> BE: Validates and Updates Patient Medical History
+BE --> AI: Returns Updated Patient Medical History
+deactivate BE
+AI --> MHS: Returns Updated Patient Medical History
+deactivate AI
+MHS --> UMHC: Returns Updated Patient Medical History
+deactivate MHS
+UMHC --> V: Reurns status of the update
+deactivate UMHC
+V --> D: Displays the status of the update
+deactivate V
+deactivate D
 
 @enduml
