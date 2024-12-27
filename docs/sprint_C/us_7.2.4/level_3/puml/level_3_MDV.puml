@@ -1,0 +1,101 @@
+@startuml level_3_MDV
+
+title Level 3 Diagram for US 7.2.4
+
+hide empty members
+
+skinparam class {
+    BackgroundColor<<controller>> #D6EAF8
+    BackgroundColor<<service>> #D1F2EB
+    BackgroundColor<<repository>> #FDEBD0
+    BackgroundColor<<mapper>> #D1F2EB
+    BackgroundColor<<entity>> #FDEBD0
+    BackgroundColor #FEF9E7
+    ArrowColor Black
+}
+
+skinparam package {
+    BackgroundColor #EBF5FB
+}
+
+participant FE as A
+participant "MedicalConditionRouter" as MCRT 
+participant "MedicalConditionController" as MCC 
+participant "MedicalConditionService" as MCS
+participant "MedicalConditionRepo" as MCR 
+participant "MedicalConditionMap" as MCM
+participant "MedicalCondition" as MC 
+participant "MedicalConditionSchema" as MCSchema 
+participant "MedicalConditionDTO" as MCDTO
+participant "MedicalConditionPersistence" as MCP
+participant "Database" as DB
+
+activate A
+A -> MCRT: Makes Http Request with Medical Condition details data (Code, Name, Description, Symptoms)
+activate MCRT
+MCRT -> MCC: createMedicalCondition(req, res, next);
+activate MCC
+MCC -> MCS: createMedicalCondition(MedicalConditionDTO)
+activate MCS
+MCS -> MC: create(MedicalConditionProps, id)
+activate MC
+MC -> MC: create() 
+deactivate MC
+MCS -> MCR: save(medicalCondition)
+
+activate MCR
+MCR -> MCSchema: findOne(query)
+activate MCSchema
+MCSchema -> DB: query(query)
+activate DB
+DB -> DB: SELECT * FROM MedicalCondition WHERE id = id
+DB --> MCSchema: Returns MedicalConditionPersistence
+deactivate DB
+MCSchema --> MCR: Returns MedicalConditionPersistence
+deactivate MCSchema
+
+MCR -> MCM: toPersistence(medicalCondition)
+activate MCM
+MCM -> MCP: create(persistenceProps)
+activate MCP
+MCP --> MCP: create()
+deactivate MCP
+MCM --> MCR: Returns MedicalConditionPersistence
+deactivate MCM
+
+MCR -> DB: creat(MedicalCondition)
+activate DB
+DB -> DB: INSERT INTO MedicalCondition VALUES (medicalCondition)
+DB -> MCR: returns Result
+deactivate DB
+
+MCR -> MCM: toDomain(medicalConditionCreated)
+activate MCM
+MCM -> MC: create(MedicalConditionProps, id)
+activate MC
+MC -> MC: create() 
+deactivate MC
+MCM --> MCR: Returns MedicalCondition
+deactivate MCM
+
+
+MCR --> MCS: Returns MedicalCondition
+deactivate MCR
+
+MCS -> MCM: toDTO(medicalCondition)
+activate MCM
+MCM -> MCDTO: create(MedicalConditionProps)
+activate MCDTO
+MCDTO -> MCDTO: create()
+deactivate MCDTO
+MCM --> MCS: Returns medicalConditionDTO
+deactivate MCM
+
+MCS --> MCC: Returns result(medicalConditionDTO)
+deactivate MCS
+MCC --> MCRT: returns Operation Status Code
+deactivate MCC
+MCRT --> A: returns Operation Status Code
+deactivate MCC
+
+@enduml

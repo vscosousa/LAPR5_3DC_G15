@@ -1,0 +1,60 @@
+@startuml level_3_FE
+
+title Level 3 FE Diagram for US 7.2.4
+
+hide empty members
+
+skinparam class {
+    BackgroundColor<<valueObject>> #D6EAF8
+    BackgroundColor<<root>> #FDEBD0
+    BackgroundColor<<service>> #D1F2EB
+    BackgroundColor #FEF9E7
+    ArrowColor Black
+}
+
+skinparam package {
+    BackgroundColor #EBF5FB
+}
+
+actor Admin as A
+participant "View" as V
+participant "ManageAllergiesAndConditionsComponent" as MAC
+participant "CreateConditionsComponent" as CC
+participant "MedicalConditionService" as MCS
+participant "AuthInterceptor" as AI
+participant "MDV" as MDV
+
+activate A
+A -> V: Asks to create a Medical Condition
+activate V
+V -> MAC: routerLink='/manage-allergies-and-conditions'
+activate MAC
+MAC -> CC: this.router.navigate([`/manage-allergies-and-conditions/create-conditions`]);
+deactivate MAC
+activate CC
+
+CC -> MCS: createMedicalConditions(this.medicalCondition)
+activate MCS
+MCS -> AI: Sends HTTP Request to create a Medical Condition
+activate AI
+AI -> AI: Intercepts the request and adds the token to the header
+note right of AI
+    The token is added to the header so that the MDV
+    can authenticate and authorize the request.
+end note
+AI -> MDV: Sends HTTP Request with token to create a Medical Condition
+activate MDV
+MDV -> MDV: Validates Medical Condition data and tries to create the Medical Condition
+MDV --> AI: Returns Operation Status Code
+deactivate MDV
+AI --> MCS: Returns Operation Status Code
+deactivate AI
+MCS --> CC: Returns Operation Response
+deactivate MCS
+CC --> V: Returns Operation In/Sucess message
+deactivate CC
+
+V --> A: Returns Operation In/Sucess message
+deactivate V
+
+@enduml

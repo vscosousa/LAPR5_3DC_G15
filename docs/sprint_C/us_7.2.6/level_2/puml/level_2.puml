@@ -1,0 +1,56 @@
+@startuml level_2
+
+title Level 2 Diagram for US 7.2.6
+
+hide empty members
+
+skinparam class {
+    BackgroundColor<<valueObject>> #D6EAF8
+    BackgroundColor<<root>> #FDEBD0
+    BackgroundColor<<service>> #D1F2EB
+    BackgroundColor #FEF9E7
+    ArrowColor Black
+}
+
+skinparam package {
+    BackgroundColor #EBF5FB
+}
+
+actor Doctor as D
+participant FE as FE
+participant MDV as MDV
+
+activate D
+D -> FE: Requests to update the Patient Medical History
+activate FE
+
+FE -> MDV: Makes HTTP Request to get all allergies data
+activate MDV
+MDV -> MDV: Fetches allergies data
+MDV --> FE: Returns Operation Status Code
+deactivate MDV
+FE -> MDV: Makes HTTP Request to get all medical conditions data
+activate MDV
+MDV -> MDV: Fetches medical conditions data
+MDV --> FE: Returns Operation Status Code
+deactivate MDV
+
+FE -> MDV: Makes HTTP Request to get current Patient Medical History
+activate MDV
+MDV -> MDV: Fetches Patient Medical History data
+MDV --> FE: Returns Operation Status Code
+deactivate MDV
+FE --> D: Displays form with current Patient Medical History data
+deactivate FE
+D -> FE: Sends Patient Medical History data (medicalConditions, allergies, familyHistory, freeText)
+activate FE
+FE -> MDV: Makes HTTP Request to update Patient Medical History
+activate MDV
+MDV -> MDV: Validates Patient Medical History and tries to update it
+MDV --> FE: Returns Operation Status Code
+deactivate MDV
+FE --> D: Returns Operation In/Success message
+deactivate FE
+
+
+@enduml

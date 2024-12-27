@@ -1,0 +1,32 @@
+@startuml level_1
+
+title Level 1 Diagram for US 7.2.4
+
+hide empty members
+
+skinparam class {
+    BackgroundColor<<valueObject>> #D6EAF8
+    BackgroundColor<<root>> #FDEBD0
+    BackgroundColor<<service>> #D1F2EB
+    BackgroundColor #FEF9E7
+    ArrowColor Black
+}
+
+skinparam package {
+    BackgroundColor #EBF5FB
+}
+
+actor Admin as A
+
+activate A
+A -> System: Requests to add a new Medical Condition
+activate System
+System --> A: Displays form to enter Medical Condition details
+deactivate System
+A -> System: Send data of Medical Condition details (Code, Name, Description, Symptoms)
+activate System
+System -> System: Validates Medical Condition details \n and adds it to the database
+System --> A: Returns Success/Failure message
+deactivate System
+
+@enduml

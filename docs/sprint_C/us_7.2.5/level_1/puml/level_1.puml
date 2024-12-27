@@ -1,0 +1,26 @@
+@startuml level_1
+
+title Level 1 Diagram for US 7.2.5
+
+hide empty members
+
+skinparam class {
+    BackgroundColor<<valueObject>> #D6EAF8
+    BackgroundColor<<root>> #FDEBD0
+    BackgroundColor<<service>> #D1F2EB
+    BackgroundColor #FEF9E7
+    ArrowColor Black
+}
+
+skinparam package {
+    BackgroundColor #EBF5FB
+}
+
+actor Doctor as D
+activate D
+D -> System: Requests to update Patient Medical Record
+activate System
+System --> D: Displays a list of Medical Conditions \n to update Patient Medical Record
+deactivate System
+
+@enduml

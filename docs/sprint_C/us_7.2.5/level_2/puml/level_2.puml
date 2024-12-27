@@ -1,0 +1,34 @@
+@startuml level_2
+
+title Level 2 Diagram for US 7.2.5
+
+hide empty members
+
+skinparam class {
+    BackgroundColor<<valueObject>> #D6EAF8
+    BackgroundColor<<root>> #FDEBD0
+    BackgroundColor<<service>> #D1F2EB
+    BackgroundColor #FEF9E7
+    ArrowColor Black
+}
+
+skinparam package {
+    BackgroundColor #EBF5FB
+}
+
+actor Doctor as D
+participant FE as FE
+participant MDV as MDV
+
+activate D
+D -> FE: Requests to update Patient Medical Record
+activate FE
+FE -> MDV: Makes Http Request to Find Medical Conditions
+activate MDV
+MDV -> MDV: Fetches matching records
+MDV --> FE: Returns search results (Medical Conditions)
+deactivate MDV
+FE --> D: Displays search results (Medical Conditions)
+deactivate FE
+
+@enduml

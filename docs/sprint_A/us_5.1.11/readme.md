@@ -10,7 +10,7 @@ Acceptance Criteria:
 
 - Admins can search patient profiles by various attributes, including name, email, date of birth, or medical record number.
 - The system displays search results in a list view with key patient information (name, email, date of birth).
-- Admins can select a profile from the list to view, edit, or delete the patient record..
+- Admins can select a profile from the list to view, edit, or delete the patient record.
 - The search results are paginated, and filters are available to refine the search results.
 
 

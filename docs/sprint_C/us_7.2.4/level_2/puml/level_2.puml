@@ -1,0 +1,38 @@
+@startuml level_2
+
+title Level 2 Diagram for US 7.2.4
+
+hide empty members
+
+skinparam class {
+    BackgroundColor<<valueObject>> #D6EAF8
+    BackgroundColor<<root>> #FDEBD0
+    BackgroundColor<<service>> #D1F2EB
+    BackgroundColor #FEF9E7
+    ArrowColor Black
+}
+
+skinparam package {
+    BackgroundColor #EBF5FB
+}
+
+actor Doctor as A
+participant FE as FE
+participant MDV as MDV
+
+activate A
+A -> FE: Requests to add a new Medical Condition
+activate FE
+FE --> A: Displays form to enter Medical Condition details
+deactivate FE
+A -> FE: Send data of Medical Condition details (Code, Name, Description, Symptoms)
+activate FE
+FE -> MDV: Makes Http Request to add Medical Condition
+activate MDV
+MDV -> MDV: Validates Medical Condition details \n and adds it to the database
+MDV --> FE: Returns Success/Failure message
+deactivate MDV
+FE --> A: Returns Success/Failure message
+deactivate FE
+
+@enduml

@@ -1,14 +1,14 @@
 <img width=100% src="https://capsule-render.vercel.app/api?type=waving&height=120&color=4E1764"/>
 
-# 7.2.7 - As a Doctor, I want to search for entries in the Patient Medical Record
+# 7.2.4 - As an Admin, I want to add new Medical Condition
 
 ## 1. Context
 
- `Description:` As a Doctor, I want to search for entries in the Patient Medical Record, namely respecting Medical Conditions and Allergies.
+ `Description:` As an Admin, I want to add new Medical Condition, so that the Doctors can use it to update the Patient Medical Record.
 
  `Sprint:` This US makes part of the final stage of development of the integrative project of this semester, Sprint C.
 
-`Objectives:` This US aims to implement a search functionality within the Patient Medical Record system. The goal is to allow doctors to efficiently search and retrieve specific entries related to Medical Conditions and Allergies.
+`Objectives:` This US aims to implement a functionality that allows an Admin to add new Medical Conditions to the system. The goal is to ensure that doctors have up-to-date information to update the Patient Medical Record.
 
 ## Level 1
 
