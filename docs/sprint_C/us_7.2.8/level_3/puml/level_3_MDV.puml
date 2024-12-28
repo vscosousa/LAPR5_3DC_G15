@@ -112,7 +112,16 @@ AP -> AP: create()
 deactivate AP
 AM -> ARP: returns appointmentPersistence
 deactivate AM
-ARP -> AM: toDomain(appointmentPersistence)
+ARP -> ASC: create(appointmentPersistence)
+activate ASC
+ASC -> DB: insert(appointmentPersistence)
+activate DB
+DB -> DB: INSERT INTO Appointment VALUES (appointmentPersistence)
+DB --> ASC: returns CreatedAppointment
+deactivate DB
+ASC --> ARP: returns CreatedAppointment
+deactivate ASC
+ARP -> AM: toDomain(CreatedAppointment)
 activate AM
 AM -> A: create(appointmentProps, id)
 activate A
@@ -120,11 +129,6 @@ A -> A: create()
 deactivate A
 AM -> ARP: returns appointment
 deactivate AM
-ARP -> DB: save(appointment)
-activate DB
-DB -> DB: INSERT INTO Appointment VALUES (appointment)
-DB -> ARP: returns Result
-deactivate DB
 ARP -> AS: returns appointment
 deactivate ARP
 AS -> AM: toDTO(appointment)
