@@ -35,7 +35,7 @@ export class UpdateOperationRequestComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.panelService.setPanelId('panel-admin');
+    this.panelService.setPanelId('panel-doctor');
     const operationRequestId = this.extractOperationRequestFromUrl();
     this.getOperationRequest(operationRequestId);
   }

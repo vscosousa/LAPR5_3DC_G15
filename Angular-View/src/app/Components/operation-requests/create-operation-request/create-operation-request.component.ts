@@ -32,6 +32,7 @@ import { PatientService } from '../../../Services/patient.service';
 import { OperationTypeService } from '../../../Services/operation-type.service';
 import { StaffService } from '../../../Services/staff-sevice.service';
 import { jwtDecode } from 'jwt-decode';
+import { PanelService } from '../../../Services/panel.service';
 
 @Component({
   selector: 'app-create-operation-request',
@@ -58,7 +59,8 @@ export class CreateOperationRequestComponent implements OnInit {
     private router: Router,
     private patientService: PatientService,
     private operationTypeService: OperationTypeService,
-    private staffService: StaffService
+    private staffService: StaffService,
+    private panelService: PanelService
   ) {
     this.operationRequestForm = this.fb.group({
       deadlineDate: ['', Validators.required],
@@ -70,6 +72,7 @@ export class CreateOperationRequestComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.panelService.setPanelId('panel-doctor');
     this.operationRequestForm = this.fb.group({
       deadlineDate: ['', Validators.required],
       priority: ['', Validators.required],

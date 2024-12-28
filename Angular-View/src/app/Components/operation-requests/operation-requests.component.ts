@@ -74,7 +74,7 @@ export class OperationRequestsComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadStaffProfiles();
-    this.panelService.setPanelId("panel-admin");
+    this.panelService.setPanelId("panel-doctor");
     this.fetchOperationRequests();
   }
 

@@ -41,7 +41,7 @@ export class MedicalHistoryManagerComponent {
   ) { }
 
   ngOnInit(): void {
-    this.panelService.setPanelId('panel-admin');
+    this.panelService.setPanelId('panel-doctor');
     this.clearFilters();
     this.fetchAllergies();
     this.fetchMedicalConditions();

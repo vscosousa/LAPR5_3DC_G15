@@ -5,8 +5,8 @@ import { RouterModule, Router } from '@angular/router';
 import { AppointmentService } from '../../Services/appointment.service';
 import { SidebarComponent } from '../sidebar/sidebar.component';
 import { OperationTypeService } from '../../Services/operation-type.service';
-import { StaffService } from '../../Services/staff-sevice.service';
 import { OperationRequestService } from '../../Services/operation-request.service';
+import { PanelService } from '../../Services/panel.service';
 
 @Component({
   selector: 'app-update-appointment',
@@ -45,10 +45,12 @@ export class UpdateAppointmentComponent implements OnInit {
     private appointmentService: AppointmentService,
     private router: Router,
     private operationTypeService: OperationTypeService,
-    private operationRequestService: OperationRequestService
+    private operationRequestService: OperationRequestService,
+    private panelService: PanelService
   ) { }
 
   ngOnInit() {
+    this.panelService.setPanelId('panel-doctor');
     this.loadAppointment();
   }
 

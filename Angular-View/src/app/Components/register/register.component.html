@@ -44,7 +44,7 @@ Description: This component displays the registration form for new users.
                 <input type="checkbox" id="acceptPolicy" formControlName="acceptPolicy" required>
                 <label for="acceptPolicy">
                     I accept the
-                    <a routerLink="/#" (click)="openPrivacyPolicy($event)">Privacy Policy</a>
+                    <a class="privacy-policy-link" (click)="openPrivacyPolicy($event)">Privacy Policy</a>
                 </label>
             </div>
 
@@ -69,12 +69,12 @@ Description: This component displays the registration form for new users.
 <!-- Privacy Policy Modal -->
 <div class="modal-container" [class.active]="isModalVisible">
     <div class="modal-content">
-        <h1>Privacy Policy</h1>
-        <p>Last updated: 11 de Dezembro de 2024</p>
+        <h1 class="modal-title">Privacy Policy</h1>
+        <p class="modal-date">Last updated: 11 de Dezembro de 2024</p>
 
-        <section>
-            <h2>Introdução</h2>
-            <p>
+        <section class="modal-section">
+            <h2 class="modal-subtitle">Introdução</h2>
+            <p class="modal-text">
                 No mundo da saúde, a confidencialidade é fundamental. A proteção de
                 dados de saúde é um direito fundamental de cada paciente, consagrado no
                 Regulamento Geral sobre a Proteção de Dados (RGPD) (Artigo 4º, nº
@@ -103,28 +103,28 @@ Description: This component displays the registration form for new users.
             </p>
         </section>
 
-        <section>
-            <h2>Responsável pelo Tratamento de Dados</h2>
-            <p>
+        <section class="modal-section">
+            <h2 class="modal-subtitle">Responsável pelo Tratamento de Dados</h2>
+            <p class="modal-text">
                 <strong>Nome da Empresa/Organização:</strong> Hospital Management App<br>
                 <strong>Contato:</strong> 1211503&#64;isep.ipp.pt<br>
                 <strong>Encarregado de Proteção de Dados:</strong> João Pereira
             </p>
         </section>
 
-        <section>
-            <h2>Dados Pessoais Coletados</h2>
-            <ul>
+        <section class="modal-section">
+            <h2 class="modal-subtitle">Dados Pessoais Coletados</h2>
+            <ul class="modal-list">
                 <li>Identificação (nome, email, NIF)</li>
                 <li>Dados de contato (número de telemóvel pessoal e de emergência, e-mail)</li>
                 <li>Dados médicos (histórico de saúde, alergias)</li>
             </ul>
         </section>
 
-        <section>
-            <h2>Processamento dos Dados pessoais</h2>
-            <p>Os dados passam por diversos tipos de processamento, incluindo:</p>
-            <ul>
+        <section class="modal-section">
+            <h2 class="modal-subtitle">Processamento dos Dados pessoais</h2>
+            <p class="modal-text">Os dados passam por diversos tipos de processamento, incluindo:</p>
+            <ul class="modal-list">
                 <li>Recolha: Os dados são obtidos através de diferentes meios, como
                     formulários de registo, prontuários médicos ou sistemas de agendamento.</li>
                 <li>Registo: Os dados recolhidos são inseridos no Hospital Management App,
@@ -144,25 +144,24 @@ Description: This component displays the registration form for new users.
                     quando deixam de ser necessários para as finalidades para as quais foram
                     recolhidos, ou quando o titular dos dados exerce o seu direito de
                     apagamento (direito a ser esquecido)</li>
-                <p>Todas estas operações respeitam os princípios do RGPD, como a limitação das
+                <p class="modal-text">Todas estas operações respeitam os princípios do RGPD, como a limitação das
                     finalidades e a integridade e confidencialidade dos dados (Artigo 5.º)</p>
             </ul>
         </section>
 
-        <section>
-            <h2>Finalidades do Tratamento</h2>
-            <p>Utilizamos os seus dados pessoais para:</p>
-            <ul>
+        <section class="modal-section">
+            <h2 class="modal-subtitle">Finalidades do Tratamento</h2>
+            <p class="modal-text">Utilizamos os seus dados pessoais para:</p>
+            <ul class="modal-list">
                 <li>Gestão de Informações Essenciais</li>
                 <li>Planeamento e Agendamento Cirúrgico</li>
-
             </ul>
         </section>
 
-        <section>
-            <h2>Base Legal para o Tratamento</h2>
-            <p>O tratamento de dados pessoais pode ser baseado nas seguintes bases legais:</p>
-            <ul>
+        <section class="modal-section">
+            <h2 class="modal-subtitle">Base Legal para o Tratamento</h2>
+            <p class="modal-text">O tratamento de dados pessoais pode ser baseado nas seguintes bases legais:</p>
+            <ul class="modal-list">
                 <li>Execução de um contrato</li>
                 <li>Cumprimento de uma obrigação legal</li>
                 <li>Consentimento explícito (para finalidades específicas, como marketing)</li>
@@ -170,19 +169,19 @@ Description: This component displays the registration form for new users.
             </ul>
         </section>
 
-        <section>
-            <h2>Compartilhamento de Dados</h2>
-            <p>Os seus dados podem ser compartilhados com:</p>
-            <ul>
+        <section class="modal-section">
+            <h2 class="modal-subtitle">Compartilhamento de Dados</h2>
+            <p class="modal-text">Os seus dados podem ser compartilhados com:</p>
+            <ul class="modal-list">
                 <li>Parceiros e prestadores de serviços que auxiliam na execução das nossas atividades</li>
                 <li>Autoridades legais, quando exigido por lei</li>
                 <li>Familiares quando se encontrar com limitações físicas e psícológicas</li>
             </ul>
         </section>
 
-        <section>
-            <h2>Retenção de Dados</h2>
-            <p>
+        <section class="modal-section">
+            <h2 class="modal-subtitle">Retenção de Dados</h2>
+            <p class="modal-text">
                 Os seus dados pessoais serão armazenados apenas pelo tempo necessário para cumprir as finalidades
                 descritas
                 nesta Política ou conforme exigido por lei. Após o período de retenção, os dados serão apagados ou
@@ -190,10 +189,10 @@ Description: This component displays the registration form for new users.
             </p>
         </section>
 
-        <section>
-            <h2>Direitos do Titular dos Dados</h2>
-            <p>Você possui os seguintes direitos em relação aos seus dados pessoais:</p>
-            <ul>
+        <section class="modal-section">
+            <h2 class="modal-subtitle">Direitos do Titular dos Dados</h2>
+            <p class="modal-text">Você possui os seguintes direitos em relação aos seus dados pessoais:</p>
+            <ul class="modal-list">
                 <li>Acesso aos dados tratados</li>
                 <li>Retificação de dados incorretos ou desatualizados</li>
                 <li>Exclusão dos dados (direito ao esquecimento)</li>
@@ -202,14 +201,14 @@ Description: This component displays the registration form for new users.
                 <li>Oposição ao tratamento em determinadas circunstâncias</li>
                 <li>Retirada do consentimento, quando aplicável</li>
             </ul>
-            <p>Para exercer os seus direitos, entre em contato connosco pelo e-mail
+            <p class="modal-text">Para exercer os seus direitos, entre em contato connosco pelo e-mail
                 <strong>1211503&#64;isep.ipp.pt</strong>.
             </p>
         </section>
 
-        <section>
-            <h2>Transferência Internacional de Dados</h2>
-            <p>
+        <section class="modal-section">
+            <h2 class="modal-subtitle">Transferência Internacional de Dados</h2>
+            <p class="modal-text">
                 Se houver necessidade de transferência de dados para fora do Espaço Econômico Europeu (EEE),
                 garantiremos
                 que os seus dados estarão protegidos com medidas adequadas, como cláusulas contratuais padrão ou outras
@@ -218,40 +217,40 @@ Description: This component displays the registration form for new users.
             </p>
         </section>
 
-        <section>
-            <h2>Segurança dos Dados</h2>
-            <p>
+        <section class="modal-section">
+            <h2 class="modal-subtitle">Segurança dos Dados</h2>
+            <p class="modal-text">
                 Implementamos medidas técnicas e organizacionais para proteger os seus dados pessoais contra acessos não
                 autorizados, perda, alteração ou destruição.
             </p>
         </section>
 
-        <section>
-            <h2>Alterações à Política de Privacidade</h2>
-            <p>
+        <section class="modal-section">
+            <h2 class="modal-subtitle">Alterações à Política de Privacidade</h2>
+            <p class="modal-text">
                 Podemos atualizar esta Política de Privacidade periodicamente. Notificaremos sobre mudanças
                 significativas, caso necessário.
             </p>
         </section>
 
-        <section>
-            <h2>Reclamações</h2>
-            <p>
+        <section class="modal-section">
+            <h2 class="modal-subtitle">Reclamações</h2>
+            <p class="modal-text">
                 Se acreditar que os seus direitos foram violados, pode entrar em contato connosco para esclarecimentos.
                 Além disso, você tem o direito de apresentar uma reclamação junto à autoridade supervisora do seu país.
             </p>
         </section>
 
-        <section>
-            <h2>Contato</h2>
-            <p>
+        <section class="modal-section">
+            <h2 class="modal-subtitle">Contato</h2>
+            <p class="modal-text">
                 Para quaisquer dúvidas, entre em contato conosco:
             </p>
-            <ul>
+            <ul class="modal-list">
                 <li><strong>E-mail:</strong> 1211503&#64;isep.ipp.pt</li>
                 <li><strong>Telefone:</strong> +351912345678</li>
             </ul>
         </section>
-        <button (click)="closeModal()">Close</button>
+        <button class="modal-close-btn" (click)="closeModal()">Close</button>
     </div>
 </div>

@@ -63,7 +63,7 @@ export class UpdateMedicalHistoryComponent implements OnInit {
 
   ngOnInit() {
     console.log('ngOnInit called');
-    this.panelService.setPanelId('panel-admin');
+    this.panelService.setPanelId('panel-doctor');
     this.fetchAllergies();
     this.fetchMedicalConditions();
     const medicalRecordNumber = this.extractMedicalRecordNumberFromUrl();
