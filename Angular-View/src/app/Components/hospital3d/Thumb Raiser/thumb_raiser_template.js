@@ -205,6 +205,11 @@ export default class ThumbRaiser {
     
 
     mouseClick(event) {
+        if (event.button !== 0) {
+            // Ignore non-left-clicks
+            return;
+        }
+    
         if (event.target.id === "scene-container") {
             event.preventDefault();
     
@@ -234,10 +239,12 @@ export default class ThumbRaiser {
                     this.moveCameraToTable(table);
                 } else {
                     console.log("No table found in the intersection");
+                    this.roomInfoHandler.deselectRoom(); // Ensure room is deselected if nothing is picked
                 }
             }
         }
     }
+    
     
     moveCameraToTable(table) {
         // Avoid redundant animations
@@ -508,7 +515,10 @@ export default class ThumbRaiser {
     }
 
     mouseDown(event) {
-        if (event.buttons == 1 || event.buttons == 2) { // Primary or secondary button down
+        if (event.buttons == 2) { // Primary or secondary button down
+            this.isRotating = true; // Set rotating flag to true
+    
+
             // Store current mouse position in window coordinates (mouse coordinate system: origin in the top-left corner; window coordinate system: origin in the bottom-left corner)
             this.mousePosition = new THREE.Vector2(event.clientX, window.innerHeight - event.clientY - 1);
             // Select the camera whose view is being pointed
@@ -518,18 +528,19 @@ export default class ThumbRaiser {
                     if (event.buttons == 1) { // Primary button down
                         this.dragMiniMap = true;
                     }
-                }
-                else { // One of the remaining cameras selected
+                } else { // One of the remaining cameras selected
                     const cameraIndex = ["fixed", "first-person", "third-person", "top"].indexOf(cameraView);
                     this.view.options.selectedIndex = cameraIndex;
                     this.setActiveViewCamera([this.fixedViewCamera, this.firstPersonViewCamera, this.thirdPersonViewCamera, this.topViewCamera][cameraIndex]);
                     if (event.buttons == 1) { // Primary button down
                         this.changeCameraDistance = true;
-                    }
-                    else { // Secondary button down
+                    } else { // Secondary button down
                         this.changeCameraOrientation = true;
                     }
                 }
+            }
+            if(this.isRotating == true){
+                this.roomInfoHandler.deselectRoom();
             }
         }
     }
