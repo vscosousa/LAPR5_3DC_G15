@@ -97,17 +97,15 @@ bchange([X | L1], [X | L2]) :-
   bchange(L1, L2).
 
 % Generate the next generation
-generate_generation(G, G, Pop) :- !,
-  nl, write('Generation '), write(G), write(':'), nl, write(Pop), nl.
-
 generate_generation(N, G, Pop) :-
+  N < G,  % Only generate a new generation if N is less than G
   nl, write('Generation '), write(N), write(':'), nl, write(Pop), nl,
 
   % Identify the best individual from the current population
-  Pop = [Best * BestValue | _],
+  Pop = [Best * BestValue | Rest],
   write('Best individual: '), write(Best), write(' with Value: '), write(BestValue), nl,
 
-  % Perform genetic operations
+  % Perform genetic operations (crossover and mutation)
   crossover(Pop, NPop1),
   mutation(NPop1, NPop),
 
@@ -115,26 +113,24 @@ generate_generation(N, G, Pop) :-
   evaluate_population(NPop, NPopValue),
   order_population(NPopValue, NPopOrd),
 
-  write('New population'), write(NPopOrd), nl,
+  % Include the best individual in the new population, but maintain diversity
+  include_best(Best * BestValue, NPopOrd, FinalPop),
 
-  % Compare the best from current and new population
-  NPopOrd = [_NewBest * NewBestValue | _],
-  (NewBestValue @=< BestValue
-    -> FinalPop = NPopOrd,  % Keep new population if no improvement
-      nl, write('NewBest value:'), write(NewBestValue), nl,
-      write('Best value:'), write(BestValue), nl
-    ;  include_best(Best * BestValue, NPopOrd, FinalPop),  % Preserve best individual
-      nl, write('NewBest value:'), write(NewBestValue), nl,
-      write('Best value:'), write(BestValue), nl
-  ),
+  write('New population: '), write(FinalPop), nl,
 
+  % Generate the next generation
   N1 is N + 1,
   generate_generation(N1, G, FinalPop).
 
-% Put the best individual in the first position
+% Stop when N >= G (maximum generations reached)
+generate_generation(N, G, Pop) :-
+  N >= G,
+  write('Reached the maximum number of generations: '), write(G), nl.
+
+% Put the best individual in the first position, preserving the population's diversity
 include_best(Best, Population, FinalPopulation) :-
-  % Remove the worst individual from the population
-  append(Front, [_ | Rest], Population),
+  % Remove the worst individual from the population (preserving diversity)
+  append(Front, [_Worst | Rest], Population),
   append(Front, Rest, TempPopulation),
   % Insert the best individual at the start
   append([Best], TempPopulation, FinalPopulation).
