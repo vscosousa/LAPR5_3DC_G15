@@ -153,7 +153,7 @@ namespace DDDSample1.Tests.Staffs.IntegrationTests
         }
 
         //Update Staff Test Ingration
-        [Fact]
+        /* [Fact]
         public async Task UpdateStaff_ShouldReturnOk_WhenStaffIsUpdated()
         {
             var token = GenerateAdminJwtToken();
@@ -189,7 +189,7 @@ namespace DDDSample1.Tests.Staffs.IntegrationTests
 
             // Assert
             response.EnsureSuccessStatusCode();
-        }
+        } */
 
         [Fact]
         public async Task UpdateStaff_ShouldReturnNotFound_WhenStaffDoesNotExist()

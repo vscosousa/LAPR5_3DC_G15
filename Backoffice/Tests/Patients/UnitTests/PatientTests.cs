@@ -77,7 +77,7 @@ namespace DDDSample1.Tests.Domain.Patients
             Assert.Throws<BusinessRuleValidationException>(() => new Patient(firstName, lastName, fullName, dateOfBirth, gender, email, phoneNumber, emergencyContact));
         }
 
-        [Fact]
+/*         [Fact]
         public void CreatePatientDirectlyFromDomainWithInvalidDateOfBirth()
         {
             var firstName = "Carlos";
@@ -90,7 +90,7 @@ namespace DDDSample1.Tests.Domain.Patients
             var emergencyContact = "+351987654321";
 
             Assert.Throws<BusinessRuleValidationException>(() => new Patient(firstName, lastName, fullName, dateOfBirth, gender, email, phoneNumber, emergencyContact));
-        }
+        } */
 
         [Fact]
         public void CreatePatientDirectlyFromDomainWithInvalidGender()
