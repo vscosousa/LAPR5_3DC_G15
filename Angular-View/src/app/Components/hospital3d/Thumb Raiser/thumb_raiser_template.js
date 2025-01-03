@@ -13,7 +13,7 @@
 import * as THREE from "three";
 import Stats from "three/addons/libs/stats.module.js";
 import Orientation from "./orientation.js";
-import { generalData, mazeData, playerData, lightsData, fogData, cameraData, doorData, tableData, humanData, exitDoorData } from "./default_data.js";
+import { generalData, mazeData, playerData, lightsData, fogData, cameraData, doorData, tableData, humanData, exitDoorData, hearthMonitorData, hearthTableData, surgicalEquipmentData, surgeonData } from "./default_data.js";
 import { merge } from "./merge.js";
 import Maze from "./maze_template.js";
 import Player from "./player_template.js";
@@ -29,7 +29,7 @@ import RoomInfoHandler from "./RoomInfoHandler.js";
 
 export default class ThumbRaiser {
 
-    constructor(generalParameters, mazeParameters, playerParameters, lightsParameters, fogParameters, fixedViewCameraParameters, firstPersonViewCameraParameters, thirdPersonViewCameraParameters, topViewCameraParameters, miniMapCameraParameters, doorParameters, tableParameters, humanParameters,exitDoorParameters, roomParameters) {
+    constructor(generalParameters, mazeParameters, playerParameters, lightsParameters, fogParameters, fixedViewCameraParameters, firstPersonViewCameraParameters, thirdPersonViewCameraParameters, topViewCameraParameters, miniMapCameraParameters, doorParameters, tableParameters, humanParameters, exitDoorParameters,hearthMonitorParameters,hearthTableParameters, surgicalEquipmentParameters,surgeonParameters, roomParameters) {
         this.generalParameters = merge({}, generalData, generalParameters);
         this.mazeParameters = merge({}, mazeData, mazeParameters);
         this.playerParameters = merge({}, playerData, playerParameters);
@@ -44,6 +44,10 @@ export default class ThumbRaiser {
         this.tableParameters = merge({}, tableData, tableParameters);
         this.humanParameters = merge({}, humanData, humanParameters);
         this.exitDoorParameters = merge({}, exitDoorData, exitDoorParameters);
+        this.hearthMonitorParameters = merge({}, hearthMonitorData, hearthMonitorParameters);
+        this.hearthTableParameters = merge({}, hearthTableData, hearthTableParameters);
+        this.surgicalEquipmentParameters = merge({}, surgicalEquipmentData, surgicalEquipmentParameters);
+        this.surgeonParameters = merge({}, surgeonData, surgeonParameters);
         this.roomParameters = roomParameters && roomParameters.rooms ? roomParameters.rooms : [];
 
         // Create a 2D scene (the viewports frames)
@@ -64,7 +68,7 @@ export default class ThumbRaiser {
         this.scene3D = new THREE.Scene();
 
         // Create the maze
-        this.maze = new Maze(this.mazeParameters, this.doorParameters, this.tableParameters, this.humanParameters, this.exitDoorParameters, this.roomParameters);
+        this.maze = new Maze(this.mazeParameters, this.doorParameters, this.tableParameters, this.humanParameters, this.exitDoorParameters,this.hearthMonitorParameters, this.hearthTableParameters,this.surgicalEquipmentParameters, this.surgeonParameters, this.roomParameters);
 
         // Create the player
         this.player = new Player(this.playerParameters);
@@ -76,6 +80,8 @@ export default class ThumbRaiser {
         this.fog = new Fog(this.fogParameters);
 
         this.door = new Door(this.doorParameters);
+
+        this.table = new Table(this.tableParameters);
 
         // Create the cameras corresponding to the four different views: fixed view, first-person view, third-person view and top view
         this.fixedViewCamera = new Camera(this.fixedViewCameraParameters, window.innerWidth, window.innerHeight);
@@ -176,7 +182,7 @@ export default class ThumbRaiser {
 
         // Register the event handler to be called on mouse click
         this.renderer.domElement.addEventListener("click", event => this.mouseClick(event));
-        
+
 
         // Register the event handler to be called on select, input number, or input checkbox change
         this.view.addEventListener("change", event => this.elementChange(event));
@@ -197,43 +203,74 @@ export default class ThumbRaiser {
 
         this.activeElement = document.activeElement;
         // Usage
-    
+
 
         this.roomInfoHandler = new RoomInfoHandler(this.roomParameters);
 
+
+        //Sound effects
+
+
+        //add sound effect to player movement
+        this.player.moveSound = new Audio("/audios/walking.mp3");
+        console.log(this.player.moveSound);
+        this.player.moveSound.loop = true;
+        this.player.moveSound.volume = 0.3;
+
+        this.activeKeys = new Set(); // Track currently pressed keys
+
+
+        this.player.hitWallSound = new Audio("/audios/hurt.mp3");
+        this.player.hitWallSound.loop = false;
+        this.player.hitWallSound.volume = 0.3;
+
+
+        this.door.hearthSound = new Audio("/audios/heartbit.mp3");
+        this.door.hearthSound.loop = true;
+
+
+
+
+
+
+
+
+
+
+
     }
-    
+
 
     mouseClick(event) {
         if (event.button !== 0) {
             // Ignore non-left-clicks
             return;
         }
-    
+
         if (event.target.id === "scene-container") {
             event.preventDefault();
-    
+
             // Initialize raycaster and mouse position
             const raycaster = new THREE.Raycaster();
             const mouse = new THREE.Vector2(
                 (event.clientX / window.innerWidth) * 2 - 1,
                 -(event.clientY / window.innerHeight) * 2 + 1
             );
-    
+
             // Cast a ray from the camera
             raycaster.setFromCamera(mouse, this.activeViewCamera.object);
-    
+
             // Perform raycast to get intersected objects
             const intersects = raycaster.intersectObjects(this.scene3D.children, true);
-    
+
             if (intersects.length > 0) {
                 // Find the first intersected object that is a table
                 const intersectedTable = intersects.find(intersect => intersect.object.isTable);
-    
+
                 if (intersectedTable) {
                     const table = intersectedTable.object;
                     console.log("Picked table:", table.name);
-    
+
                     // Handle room selection and camera movement
                     this.roomInfoHandler.selectRoomFromTable(table);
                     this.moveCameraToTable(table);
@@ -244,59 +281,59 @@ export default class ThumbRaiser {
             }
         }
     }
-    
-    
+
+
     moveCameraToTable(table) {
         // Avoid redundant animations
         if (this.isCameraAnimating) {
             console.log("Camera is already animating");
             return;
         }
-    
+
         // Mark camera as animating
         this.isCameraAnimating = true;
-    
+
         // Calculate target position and orientation
         const box = new THREE.Box3().setFromObject(table);
         console.log("Bounding Box:", box);
         const targetPosition = box.getCenter(new THREE.Vector3());
         console.log("Target Position:", targetPosition);
-    
+
         const camera = this.activeViewCamera.object;
         const offset = new THREE.Vector3(0, 6, 0);
         // Final position should always be the same independent of the initial camera position
         const finalPosition = targetPosition.clone().add(offset);
         console.log("Final Position:", finalPosition);
-    
+
         // Camera start and target state
         const startPosition = camera.position.clone();
         const startQuaternion = camera.quaternion.clone();
-    
+
         // Ensure the camera always looks straight at the target without inclination
         const upVector = new THREE.Vector3(0, 1, 0); // Ensure the "up" direction is consistent
         const targetQuaternion = new THREE.Quaternion().setFromRotationMatrix(
             new THREE.Matrix4().lookAt(finalPosition, targetPosition, upVector)
         );
-    
+
         const startZoom = camera.zoom;
         const targetZoom = 1; // Adjust this value as needed
-    
+
         const duration = 1500; // Animation duration in ms
         const startTime = Date.now();
-    
+
         const easeInOutQuad = (t) => (t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t);
-    
+
         const animateCamera = () => {
             const elapsedTime = Date.now() - startTime;
             const t = Math.min(elapsedTime / duration, 1);
             const easedT = easeInOutQuad(t);
-    
+
             // Interpolate camera position, orientation, and zoom
             camera.position.lerpVectors(startPosition, finalPosition, easedT);
             camera.quaternion.slerpQuaternions(startQuaternion, targetQuaternion, easedT);
             camera.zoom = THREE.MathUtils.lerp(startZoom, targetZoom, easedT);
             camera.updateProjectionMatrix();
-    
+
             // Update spotlight position if it exists
             if (this.spotlight) {
                 const spotlightOffset = new THREE.Vector3(0, 10, 0);
@@ -309,7 +346,7 @@ export default class ThumbRaiser {
                 this.spotlight.target.position.copy(targetPosition);
                 this.spotlight.target.updateMatrixWorld();
             }
-    
+
             if (t < 1) {
                 requestAnimationFrame(animateCamera);
             } else {
@@ -317,12 +354,12 @@ export default class ThumbRaiser {
                 this.isCameraAnimating = false;
             }
         };
-    
+
         animateCamera();
     }
-    
 
-    
+
+
 
 
     buildHelpPanel() {
@@ -442,11 +479,28 @@ export default class ThumbRaiser {
         if (["horizontal", "vertical", "distance", "zoom"].indexOf(event.target.id) < 0) {
             event.target.blur();
         }
-        if (document.activeElement == document.body) {
-            // Prevent the "Space" and "Arrow" keys from scrolling the document's content
-            if (event.code == "Space" || event.code == "ArrowLeft" || event.code == "ArrowRight" || event.code == "ArrowDown" || event.code == "ArrowUp") {
-                event.preventDefault();
+        if (["Space", "ArrowLeft", "ArrowRight", "ArrowDown", "ArrowUp"].includes(event.code)) {
+            event.preventDefault();
+
+            if (state) {
+                // Add the key to the active keys set and play the sound if not already playing
+                if (!this.activeKeys.has(event.code)) {
+                    this.activeKeys.add(event.code);
+                    if (event.code === "ArrowUp" || event.code === "ArrowDown") {
+                        this.player.moveSound.play();
+                    }
+                }
+            } else {
+                // Remove the key from the active keys set
+                this.activeKeys.delete(event.code);
+
+                // Pause the sound only if no movement keys are being pressed
+                if (this.activeKeys.size === 0 || (event.code === "ArrowUp" || event.code === "ArrowDown")) {
+                    this.player.moveSound.pause();
+                    this.player.moveSound.currentTime = 0; // Reset sound
+                }
             }
+
             if (event.code == this.player.keyCodes.fixedView && state) { // Select fixed view
                 this.setActiveViewCamera(this.fixedViewCamera);
             }
@@ -510,14 +564,14 @@ export default class ThumbRaiser {
             else if (event.code == this.player.keyCodes.thumbsUp) {
                 this.player.keyStates.thumbsUp = state;
             }
-        
+
         }
     }
 
     mouseDown(event) {
         if (event.buttons == 2) { // Primary or secondary button down
             this.isRotating = true; // Set rotating flag to true
-    
+
 
             // Store current mouse position in window coordinates (mouse coordinate system: origin in the top-left corner; window coordinate system: origin in the bottom-left corner)
             this.mousePosition = new THREE.Vector2(event.clientX, window.innerHeight - event.clientY - 1);
@@ -539,7 +593,7 @@ export default class ThumbRaiser {
                     }
                 }
             }
-            if(this.isRotating == true){
+            if (this.isRotating == true) {
                 this.roomInfoHandler.deselectRoom();
             }
         }
@@ -598,7 +652,7 @@ export default class ThumbRaiser {
         }
     }
 
-    
+
 
     contextMenu(event) {
         // Prevent the context menu from appearing when the secondary mouse button is clicked
@@ -702,25 +756,50 @@ export default class ThumbRaiser {
     }
 
 
-
-    openDoor() {
-        /* To-do #25 - Check if the player is close to a door and open it
-        - assume that a door is opened if the distance between the player position and the door is less than the player radius
-        - player radius : this.player.radius*/
-        const door = this.maze.getDoor();
-        if (door && door.position.distanceTo(this.player.position) < this.player.radius) {
-            door.open();
+    // The main function to check proximity and play sound if the player is near a wall or door
+    distanceToRoomBoundaryAndPlaySound(position) {
+        // Define the proximity threshold
+        const proximityThreshold = 20; // Adjust this value based on your needs
+    
+        // Initialize a flag to track if any room's sound should be playing
+        let soundPlayed = false;
+    
+        // Loop through each room and check proximity to its boundaries
+        {
+            const distanceToWest = this.maze.distanceToWestWallSound(position);
+            const distanceToEast = this.maze.distanceToEastWallSound(position);
+            const distanceToNorth = this.maze.distanceToNorthWallSound(position);
+            const distanceToSouth = this.maze.distanceToSouthWallSound(position);
+            const distanceToDoor = this.maze.distanceToDoor(position);
+    
+            // Get the closest distance to any boundary for the current room
+            const closestDistance = Math.min(distanceToWest, distanceToEast, distanceToNorth, distanceToSouth, distanceToDoor);
+    
+            // If the player is close to this room's boundaries and the room is occupied, play the sound
+            if (closestDistance <= proximityThreshold) {
+                if (this.door.hearthSound.paused) {
+                    this.door.hearthSound.play(); // Play sound if it's not already playing
+                    this.door.hearthSound.volume = 0.1; // Adjust the volume as needed (0.1 for 10% volume)
+                }
+                soundPlayed = true; // Mark that sound is playing for this room
+            } else {
+                // If the player is no longer within proximity, pause the sound
+                if (!this.door.hearthSound.paused) {
+                    this.door.hearthSound.pause(); // Pause the sound if the player moves away
+                }
+            }
         }
+    
+        // Return whether the player is close enough to any room boundary
+        return soundPlayed;
     }
+
 
     update() {
         if (!this.gameRunning) {
             if (this.maze.loaded && this.player.loaded) { // If all resources have been loaded
                 // Add the maze, the player and the lights to the scene
                 this.scene3D.add(this.maze.object);
-                /* To-do #11 - Add the player to the scene
-                    - player: this.player.object
-                ...; */
                 this.scene3D.add(this.player.object);
                 this.scene3D.add(this.lights.object);
 
@@ -734,15 +813,13 @@ export default class ThumbRaiser {
                 this.player.position = this.maze.initialPosition.clone();
                 this.player.direction = this.maze.initialDirection;
 
-                /* To-do #40 - Create the user interface
-                    - parameters: this.scene3D, this.renderer, this.lights, this.fog, this.player.object, this.animations*/
+                // Create the user interface
                 this.userInterface = new UserInterface(this.scene3D, this.renderer, this.lights, this.fog, this.player.object, this.animations);
 
                 // Start the game
                 this.gameRunning = true;
             }
-        }
-        else {
+        } else {
             // Update the model animations
             const deltaT = this.clock.getDelta();
             this.animations.update(deltaT);
@@ -750,186 +827,104 @@ export default class ThumbRaiser {
             // Update the player
             if (!this.animations.actionInProgress) {
                 let coveredDistance = this.player.walkingSpeed * deltaT;
-                /* To-do #13 - Compute the player's direction increment
-                    - assume that the player is turning left or right while walking:
-                        direction increment = turning speed * elapsed time
-                    - turning speed: this.player.turningSpeed
-                    - elapsed time: deltaT*/
                 let directionIncrement = this.player.turningSpeed * deltaT;
                 if (this.player.keyStates.run) {
-                    /* To-do #14 - Adjust the distance covered by the player
-                        - now assume that the player is running:
-                        - multiply the covered distance by this.player.runningFactor
-                    */
                     coveredDistance *= this.player.runningFactor;
-
-                    /* To-do #15 - Adjust the player's direction increment
-                        - now assume that the player is running:
-                        - multiply the direction increment by this.player.runningFactor
-                    */
                     directionIncrement *= this.player.runningFactor;
                 }
-                /* To-do #16 - Check if the player is turning left or right and update the player direction accordingly by adding or subtracting the direction increment
-                    - left key state: this.player.keyStates.left
-                    - right key state: this.player.keyStates.right
-                    - current direction: this.player.direction
-                    - direction increment: directionIncrement
-                */
                 if (this.player.keyStates.left) { // The player is turning left
                     this.player.direction += directionIncrement;
-                }
-                else if (this.player.keyStates.right) { // The player is turning right
+                } else if (this.player.keyStates.right) { // The player is turning right
                     this.player.direction -= directionIncrement;
                 }
                 const direction = THREE.MathUtils.degToRad(this.player.direction);
-                /* To-do #17 - Check if the player is moving backward or forward and update the player position accordingly
-                    - backward key state: this.player.keyStates.backward
-                    - forward key state: this.player.keyStates.forward
-                    - current position: this.player.position
-                    - covered distance: coveredDistance
-                    - current direction: direction (expressed in radians)
-
-                    - use the parametric form of the circle equation to compute the player's new position:
-                        x = r * sin(t) + x0
-                        y = y0;
-                        z = r * cos(t) + z0
-
-                        where:
-                        - (x, y, z) are the player's new coordinates
-                        - (x0, y0, z0) are the player's current coordinates
-                        - r is the distance covered by the player
-                        - t is the player direction (expressed in radians)*/
-
-
-
-
                 if (this.player.keyStates.backward) { // The player is moving backward
                     const newPosition = new THREE.Vector3(-coveredDistance * Math.sin(direction) + this.player.position.x, this.player.position.y, -coveredDistance * Math.cos(direction) + this.player.position.z);
-                    /* To-do #18 - If the player collided with a wall, then trigger the death action; else, trigger either the walking or the running action
-                        - death action: "Death"
-                        - walking action: "Walking"
-                        - running action: "Running"
-                        - duration: 0.2 seconds*/
                     if (this.collision(newPosition)) {
                         this.animations.fadeToAction("Death", 0.2);
-                    }
-                    else {
+                        this.player.moveSound.pause();
+                        this.player.hitWallSound.play();
+                    } else {
                         this.animations.fadeToAction(this.player.keyStates.run ? "Running" : "Walking", 0.2);
                         this.player.position = newPosition;
                     }
-                }
-                else if (this.player.keyStates.forward) { // The player is moving forward
+                } else if (this.player.keyStates.forward) { // The player is moving forward
                     const newPosition = new THREE.Vector3(coveredDistance * Math.sin(direction) + this.player.position.x, this.player.position.y, coveredDistance * Math.cos(direction) + this.player.position.z);
-                    /* To-do #19 - If the player collided with a wall, then trigger the death action; else, trigger either the walking or the running action
-                        - death action: "Death"
-                        - walking action: "Walking"
-                        - running action: "Running"
-                        - duration: 0.2 seconds*/
                     if (this.collision(newPosition)) {
                         this.animations.fadeToAction("Death", 0.2);
-                    }
-                    else {
+                        this.player.moveSound.pause();
+                        this.player.hitWallSound.play();
+                    } else {
                         this.animations.fadeToAction(this.player.keyStates.run ? "Running" : "Walking", 0.2);
                         this.player.position = newPosition;
                     }
+                } else if (this.player.keyStates.jump) {
+                    this.animations.fadeToAction("Jump", 0.2);
+                } else if (this.player.keyStates.yes) {
+                    this.animations.fadeToAction("Yes", 0.2);
+                } else if (this.player.keyStates.no) {
+                    this.animations.fadeToAction("No", 0.2);
+                } else if (this.player.keyStates.wave) {
+                    this.animations.fadeToAction("Wave", 0.2);
+                } else if (this.player.keyStates.punch) {
+                    this.animations.fadeToAction("Punch", 0.2);
+                } else if (this.player.keyStates.thumbsUp) {
+                    this.animations.fadeToAction("ThumbsUp", 0.2);
+                } else {
+                    this.animations.fadeToAction("Idle", this.animations.previousAction == "Death" ? 0.6 : 0.2);
                 }
-                else
-                    /* To-do #20 - Check the player emotes
-                        - jump key state: this.player.keyStates.jump
-                        - jump emote: "Jump"
-                        - yes key state: this.player.keyStates.yes
-                        - yes emote: "Yes"
-                        - no key state: this.player.keyStates.no
-                        - no emote: "No"
-                        - wave key state: this.player.keyStates.wave
-                        - wave emote: "Wave"
-                        - punch key state: this.player.keyStates.punch
-                        - punch emote: "Punch"
-                        - thumbs up key state: this.player.keyStates.thumbsUp
-                        - thumbs up emote: "ThumbsUp"
-                        - duration: 0.2 seconds*/
-                    if (this.player.keyStates.jump) {
-                        this.animations.fadeToAction("Jump", 0.2);
-                    }
-                    else if (this.player.keyStates.yes) {
-                        this.animations.fadeToAction("Yes", 0.2);
-                    }
-                    else if (this.player.keyStates.no) {
-                        this.animations.fadeToAction("No", 0.2);
-                    }
-                    else if (this.player.keyStates.wave) {
-                        this.animations.fadeToAction("Wave", 0.2);
-                    }
-                    else if (this.player.keyStates.punch) {
-                        this.animations.fadeToAction("Punch", 0.2);
-                    }
-                    else if (this.player.keyStates.thumbsUp) {
-                        this.animations.fadeToAction("ThumbsUp", 0.2);
-                    }
-                    /* To-do #21 - If the player is not moving nor emoting, then trigger the idle action
-                        - idle ation: "Idle"
-                        - duration: 0.6 or 0.2 seconds, depending whether the player is recovering from a death action (long recovery) or from some other action (short recovery)*/
-                    else {
-                        this.animations.fadeToAction("Idle", this.animations.previousAction == "Death" ? 0.6 : 0.2);
-                    }
-                /* To-do #22 - Set the player's new position and orientation
-                    - new position: this.player.position
-                    - new orientation:  direction - this.player.initialDirection*/
                 this.player.object.position.copy(this.player.position);
                 this.player.object.rotation.y = direction - this.player.initialDirection;
             }
-        }
 
-        // Update first-person, third-person and top view cameras parameters (player direction and target)
-        this.firstPersonViewCamera.playerDirection = this.player.direction;
-        this.thirdPersonViewCamera.playerDirection = this.player.direction;
-        this.topViewCamera.playerDirection = this.player.direction;
-        const target = new THREE.Vector3(this.player.position.x, this.player.position.y + this.player.eyeHeight, this.player.position.z);
-        this.firstPersonViewCamera.setTarget(target);
-        this.thirdPersonViewCamera.setTarget(target);
-        this.topViewCamera.setTarget(target);
+            // Call distanceToTable function to check if the player is close to a table
+            this.distanceToRoomBoundaryAndPlaySound(this.player.position);
 
-        // Update statistics
-        this.statistics.update();
+            // Update first-person, third-person and top view cameras parameters (player direction and target)
+            this.firstPersonViewCamera.playerDirection = this.player.direction;
+            this.thirdPersonViewCamera.playerDirection = this.player.direction;
+            this.topViewCamera.playerDirection = this.player.direction;
+            const target = new THREE.Vector3(this.player.position.x, this.player.position.y + this.player.eyeHeight, this.player.position.z);
+            this.firstPersonViewCamera.setTarget(target);
+            this.thirdPersonViewCamera.setTarget(target);
+            this.topViewCamera.setTarget(target);
 
-        // Render primary viewport(s)
-        this.renderer.clear();
+            // Update statistics
+            this.statistics.update();
 
-        /* To-do #39 - If the fog is enabled, then assign it to the scene; else, assign null
-            - fog enabled: this.fog.enabled
-            - fog: this.fog.object*/
-        if (this.fog.enabled) {
-            this.scene3D.fog = this.fog.object;
-        }
-        else {
-            this.scene3D.fog = null;
-        }
-        let cameras;
-        if (this.multipleViewsCheckBox.checked) {
-            cameras = [this.fixedViewCamera, this.firstPersonViewCamera, this.thirdPersonViewCamera, this.topViewCamera];
-        }
-        else {
-            cameras = [this.activeViewCamera];
-        }
-        for (const camera of cameras) {
-            this.player.object.visible = (camera != this.firstPersonViewCamera);
-            const viewport = camera.getViewport();
-            this.renderer.setViewport(viewport.x, viewport.y, viewport.width, viewport.height);
-            this.renderer.render(this.scene3D, camera.object);
-            this.renderer.render(this.scene2D, this.camera2D);
-            this.renderer.clearDepth();
-        }
+            // Render primary viewport(s)
+            this.renderer.clear();
 
-        // Render secondary viewport (mini-map)
-        if (this.miniMapCheckBox.checked) {
-            this.scene3D.fog = null;
-            this.player.object.visible = true;
-            const viewport = this.miniMapCamera.getViewport();
-            this.renderer.setViewport(viewport.x, viewport.y, viewport.width, viewport.height);
-            this.renderer.render(this.scene3D, this.miniMapCamera.object);
-            this.renderer.render(this.scene2D, this.camera2D);
-        }
+            if (this.fog.enabled) {
+                this.scene3D.fog = this.fog.object;
+            } else {
+                this.scene3D.fog = null;
+            }
+            let cameras;
+            if (this.multipleViewsCheckBox.checked) {
+                cameras = [this.fixedViewCamera, this.firstPersonViewCamera, this.thirdPersonViewCamera, this.topViewCamera];
+            } else {
+                cameras = [this.activeViewCamera];
+            }
+            for (const camera of cameras) {
+                this.player.object.visible = (camera != this.firstPersonViewCamera);
+                const viewport = camera.getViewport();
+                this.renderer.setViewport(viewport.x, viewport.y, viewport.width, viewport.height);
+                this.renderer.render(this.scene3D, camera.object);
+                this.renderer.render(this.scene2D, this.camera2D);
+                this.renderer.clearDepth();
+            }
 
+            // Render secondary viewport (mini-map)
+            if (this.miniMapCheckBox.checked) {
+                this.scene3D.fog = null;
+                this.player.object.visible = true;
+                const viewport = this.miniMapCamera.getViewport();
+                this.renderer.setViewport(viewport.x, viewport.y, viewport.width, viewport.height);
+                this.renderer.render(this.scene3D, this.miniMapCamera.object);
+                this.renderer.render(this.scene2D, this.camera2D);
+            }
+        }
     }
 
 

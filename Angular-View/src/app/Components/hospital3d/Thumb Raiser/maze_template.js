@@ -5,7 +5,10 @@ import Door from "./door_template.js";
 import Table from "./table.js";
 import Human from "./human.js";
 import ExitDoor from "./exitDoor.js";
-import { consumerPollProducersForChange } from "@angular/core/primitives/signals";
+import HeartMonitor from "./heartMonitor.js";
+import HeartTable from "./heart_table_template.js";
+import SurgicalEquipment from "./surgical_equipment.js";
+
 
 /*
  * parameters = {
@@ -16,7 +19,7 @@ import { consumerPollProducersForChange } from "@angular/core/primitives/signals
  */
 
 export default class Maze {
-    constructor(parameters, doorParameters, tableParameters, humanParameters, exitDoorParameters, roomParameters) {
+    constructor(parameters, doorParameters, tableParameters, humanParameters, exitDoorParameters, hearthMonitorParameters, hearthTableParameters, surgicalEquipmentParameters, surgeonParameters, roomParameters) {
         this.onLoad = function (description) {
             // Store the maze's map and size
             this.map = description.map;
@@ -27,6 +30,10 @@ export default class Maze {
             this.tableParameters = tableParameters;
             this.humanParameters = humanParameters;
             this.exitDoorParameters = exitDoorParameters;
+            this.hearthMonitorParameters = hearthMonitorParameters;
+            this.hearthTableParameters = hearthTableParameters;
+            this.surgicalEquipmentParameters = surgicalEquipmentParameters;
+            this.surgeonParameters = surgeonParameters;
             this.roomParameters = roomParameters;
 
             // Store the player's initial position and direction
@@ -47,7 +54,7 @@ export default class Maze {
 
 
 
-            
+
             // Build the maze
             for (let j = 0; j <= description.size.height; j++) {
                 for (let i = 0; i <= description.size.width; i++) {
@@ -140,7 +147,7 @@ export default class Maze {
 
                     // Add tables and humans
                     if (this.map[j][i] === 5) {
-                        
+
 
                         // Create a table instance
                         const tableObject = new Table({
@@ -149,7 +156,7 @@ export default class Maze {
                             name: `Table_${j}_${i}` // Unique identifier for the table
                         });
 
-                        console.log("Table added: " +  tableObject.name)
+                        console.log("Table added: " + tableObject.name)
 
                         // Position the table in the scene
                         tableObject.object.position.set(
@@ -157,9 +164,9 @@ export default class Maze {
                             0.5,
                             j - description.size.height / 2
                         );
-                        tableObject.object.scale.set(1, 0.68, 1); // Adjust scale as necessary
+                        tableObject.object.scale.set(1, 1, 1); // Adjust scale as necessary
                         tableObject.object.translateX(-0.6);
-                        tableObject.object.translateY(-0.2);
+                        tableObject.object.translateY(-0.4);
 
                         // Add the table to the maze
                         this.object.add(tableObject.object);
@@ -180,21 +187,91 @@ export default class Maze {
                             humanObject.object.translateZ(-0.67);
 
                             this.object.add(humanObject.object);
+
+                            const surgeonObject = new Human(this.surgeonParameters);
+                            surgeonObject.object.position.set(
+                                i - description.size.width / 2 + 0.5,
+                                0.5,
+                                j - description.size.height / 2
+                            );
+                            surgeonObject.object.scale.set(0.08, 0.08, 0.08);
+                            surgeonObject.object.translateY(-0.5);
+                            surgeonObject.object.translateZ(0.3);
+                            surgeonObject.object.translateX(0.15);
+
+                            this.object.add(surgeonObject.object);
                         }
                     }
 
-                    if(this.map[j][i] === 6) {
+                    if (this.map[j][i] === 6) {
                         const exitDoorObject = new ExitDoor(this.exitDoorParameters);
                         exitDoorObject.object.position.set(
                             i - description.size.width / 2 + 0.5,
                             0.5,
                             j - description.size.height / 2
                         );
-                    
+
+
+
                         exitDoorObject.object.translateX(-0.34);
                         exitDoorObject.object.translateY(-1);
                         exitDoorObject.object.translateZ(-0.05);
                         this.object.add(exitDoorObject.object);
+                    }
+
+                    if (this.map[j][i] === 7 && currentRoom.isOccupied) {
+                        const hearthMonitorObject = new HeartMonitor(this.hearthMonitorParameters);
+                        hearthMonitorObject.object.position.set(
+                            i - description.size.width / 2 + 0.5,
+                            0.5,
+                            j - description.size.height / 2
+                        );
+
+                        hearthMonitorObject.object.scale.set(0.02, 0.02, 0.02);
+
+                        hearthMonitorObject.object.translateZ(0.4);
+                        hearthMonitorObject.object.translateX(-0.8);
+                        hearthMonitorObject.object.translateY(0.6);
+
+
+
+                        this.object.add(hearthMonitorObject.object);
+
+
+                        const hearthTableObject = new HeartTable(this.hearthTableParameters);
+                        hearthTableObject.object.position.set(
+                            i - description.size.width / 2 + 0.5,
+                            0.5,
+                            j - description.size.height / 2
+                        );
+
+                        hearthTableObject.object.scale.set(0.5, 0.5, 0.3);
+
+                        hearthTableObject.object.translateZ(0.4);
+                        hearthTableObject.object.translateX(-0.8);
+                        hearthTableObject.object.translateY(-0.4);
+
+                        this.object.add(hearthTableObject.object);
+
+                        const surgericalEquipmentObject = new SurgicalEquipment(this.surgicalEquipmentParameters);
+                        surgericalEquipmentObject.object.position.set(
+                            i - description.size.width / 2 + 0.5,
+                            0.5,
+                            j - description.size.height / 2
+                        );
+
+                        surgericalEquipmentObject.object.scale.set(0.8, 1.55, 0.87);
+
+                        surgericalEquipmentObject.object.translateZ(1.5);
+                        surgericalEquipmentObject.object.translateX(0);
+                        surgericalEquipmentObject.object.translateY(-0.4);
+
+                        surgericalEquipmentObject.object.rotateY(Math.PI / 2);
+
+                        this.object.add(surgericalEquipmentObject.object);
+
+
+
                     }
                 }
             }
@@ -278,6 +355,61 @@ export default class Maze {
         return Infinity;
     }
 
+    distanceToWestWallSound(position) {
+        const indices = this.cartesianToCell(position);
+        indices[0]++;
+        const roomIndex = this.getRoomIndex(indices);
+        const currentRoom = this.roomParameters[roomIndex];
+
+        // Check if the current room is occupied and the door is closed
+        if (this.map[indices[0]][indices[1]] === 1 && currentRoom.isOccupied) {
+            return position.x - this.cellToCartesian(indices).x + this.scale.x / 2.0;
+        }
+        return Infinity;
+    }
+
+    distanceToEastWallSound(position) {
+        const indices = this.cartesianToCell(position);
+        indices[0]++;
+
+        const roomIndex = this.getRoomIndex(indices);
+        const currentRoom = this.roomParameters[roomIndex];
+
+        // Check if the current room is occupied and the door is closed
+        if (this.map[indices[0]][indices[1]] === 1 && currentRoom.isOccupied) {
+            return this.cellToCartesian(indices).x - this.scale.x / 2.0 - position.x;
+        }
+
+        return Infinity;
+
+    }
+
+    distanceToNorthWallSound(position) {
+        const indices = this.cartesianToCell(position);
+        indices[0]++;
+        const roomIndex = this.getRoomIndex(indices);
+        const currentRoom = this.roomParameters[roomIndex];
+
+        // Check if the current room is occupied and the door is closed
+        if (this.map[indices[0]][indices[1]] === 2 && currentRoom.isOccupied) {
+            return position.z - this.cellToCartesian(indices).z + this.scale.z / 2.0;
+        }
+        return Infinity;
+    }
+
+    distanceToSouthWallSound(position) {
+        const indices = this.cartesianToCell(position);
+        indices[0]++;
+        const roomIndex = this.getRoomIndex(indices);
+        const currentRoom = this.roomParameters[roomIndex];
+
+        // Check if the current room is occupied and the door is closed
+        if (this.map[indices[0]][indices[1]] === 2 && currentRoom.isOccupied) {
+            return this.cellToCartesian(indices).z - this.scale.z / 2.0 - position.z;
+        }
+        return Infinity;
+    }
+
     distanceToDoor(position) {
         const indices = this.cartesianToCell(position);
         indices[0]++;
@@ -286,6 +418,18 @@ export default class Maze {
 
         // Check if the current room is occupied and the door is closed
         if (this.map[indices[0]][indices[1]] === 4 && currentRoom.isOccupied) {
+            return this.cellToCartesian(indices).z - this.scale.z / 2.0 - position.z;
+        }
+        return Infinity;
+    }
+
+    distanceToTable(position) {
+        const indices = this.cartesianToCell(position);
+        indices[0]++;
+        const roomIndex = this.getRoomIndex(indices);
+        const currentRoom = this.roomParameters[roomIndex];
+
+        if (this.map[indices[0]][indices[1]] === 5) {
             return this.cellToCartesian(indices).z - this.scale.z / 2.0 - position.z;
         }
         return Infinity;

@@ -75,7 +75,27 @@ export const humanData = {
 
 export const exitDoorData = {
     url: "/models/gltf/RobotExpressive/exit_doors.glb",
-    scale: new THREE.Vector3(1.35, 1.4, 1.35) // Adjusted scale to match wall dimensions
+    scale: new THREE.Vector3(1.35, 1.4, 1.3) // Adjusted scale to match wall dimensions
 }
 
+export const hearthMonitorData = {
+    url: "/models/gltf/RobotExpressive/monitor_with_heart_rate.glb",
+    scale: new THREE.Vector3(0.5, 0.5, 0.5)
+}
+
+export const hearthTableData = {
+    url: "/models/gltf/RobotExpressive/adjustable_bedside_table.glb",
+    scale: new THREE.Vector3(0.5, 0.5, 0.5)
+}
+
+export const surgicalEquipmentData = {
+    url: "/models/gltf/RobotExpressive/surgical.glb",
+    scale: new THREE.Vector3(0.5, 0.5, 0.5)
+}
+
+export const surgeonData = {
+    url: "/models/gltf/RobotExpressive/surgeon.glb",
+    scale: new THREE.Vector3(0.1, 0.1, 0.1)
+    
+}
 

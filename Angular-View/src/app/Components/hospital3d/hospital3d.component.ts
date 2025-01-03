@@ -80,6 +80,10 @@ export class Hospital3dComponent implements OnInit, AfterViewInit, OnDestroy {
       {}, // Table parameters
       {}, // Human parameters
       {}, //Exit door parameters
+      {}, // Heart parameters
+      {},
+      {},
+      {},//surgeon parameters
       { rooms: roomParameters }
     );
 

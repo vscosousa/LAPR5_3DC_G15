@@ -1,16 +1,56 @@
 export default class RoomInfoHandler {
-    
+
     constructor(roomParameters) {
-        this.selectedRoom = null; 
+        this.selectedRoom = null;
         this.isInfoVisible = false;
         this.roomParameters = roomParameters;
+
+        // Initialize the toggle info sound with volume control
+        this.toggleInfoSound = new Audio("audios/i.mp3");
+        console.log("Sound loaded: " + this.toggleInfoSound.src);
+        this.toggleInfoSound.loop = false;
+        this.toggleInfoSound.volume = 0.3; // Set the volume to 30% (adjust as necessary)
+
+        this.toggleHeartMonitorSound = new Audio("audios/heartbit.mp3");
+        this.toggleHeartMonitorSound.loop = true;
+
         this.initKeyboardListener();
+    }
+
+    playToggleInfoSound() {
+        if (this.selectedRoom) {  // Check if a room is selected
+            if (this.toggleInfoSound) {
+                // Reset the sound to the beginning every time it plays
+                if (!this.toggleInfoSound.paused) {
+                    this.toggleInfoSound.currentTime = 0;  // Stop the sound immediately
+                }
+        
+                this.toggleInfoSound.play().catch((error) => {
+                    console.error("Error playing sound:", error);
+                });
+            }
+        }
+    }
+
+    playToggleHeartMonitorSound() {
+        if (this.selectedRoom && this.selectedRoom.isOccupied) {  // Check if a room is selected and occupied
+            if (this.toggleHeartMonitorSound) {
+                // Reset the sound to the beginning every time it plays
+                if (!this.toggleHeartMonitorSound.paused) {
+                    this.toggleHeartMonitorSound.currentTime = 0;  // Stop the sound immediately
+                }
+        
+                this.toggleHeartMonitorSound.play().catch((error) => {
+                    console.error("Error playing sound:", error);
+                });
+            }
+        }
     }
 
     getRoomFromTable(table) {
         const tableName = table.name;
         console.log("getRoomFromTable:" + tableName);
-    
+
         const tableIndexMap = {
             "Table_2_2": 0,
             "Table_2_8": 1,
@@ -40,6 +80,7 @@ export default class RoomInfoHandler {
             return;
         }
         this.selectedRoom = room;
+        this.playToggleHeartMonitorSound();
         console.log(`Room selected: ${room.roomNumber}`);
         if (this.isInfoVisible) {
             this.updateRoomInfo();
@@ -50,6 +91,7 @@ export default class RoomInfoHandler {
         console.log("Deselecting room...");
         this.selectedRoom = null;
         this.clearRoomInfo();
+        this.toggleHeartMonitorSound.pause();
     }
 
     clearRoomInfo() {
@@ -99,6 +141,8 @@ export default class RoomInfoHandler {
         document.addEventListener("keydown", (event) => {
             if (event.key.toLowerCase() === "i") {
                 this.toggleRoomInfo();
+                this.playToggleInfoSound();
+
             }
         });
     }
