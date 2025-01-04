@@ -5,6 +5,7 @@ import patientMedicalHistory from './routes/patientMedicalHistoryRoute';
 import specialization from './routes/specializationRoute';
 import allergy from './routes/allergyRoute';
 import medicalCondition from './routes/medicalConditionRoute';
+import roomType from './routes/roomTypeRoute'; // Import the new roomTypeRoute
 
 export default () => {
   const app = Router();
@@ -14,6 +15,7 @@ export default () => {
   specialization(app);
   allergy(app);
   medicalCondition(app);
+  roomType(app); // Register the new roomTypeRoute
 
   app.use(errors());
 
