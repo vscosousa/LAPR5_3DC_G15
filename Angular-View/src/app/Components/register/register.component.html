@@ -68,189 +68,138 @@ Description: This component displays the registration form for new users.
 
 <!-- Privacy Policy Modal -->
 <div class="modal-container" [class.active]="isModalVisible">
-    <div class="modal-content">
-        <h1 class="modal-title">Privacy Policy</h1>
-        <p class="modal-date">Last updated: 11 de Dezembro de 2024</p>
+  <div class="modal-content">
+      <h1 class="modal-title">Privacy Policy</h1>
+      <p class="modal-date">Last updated: 11 de Dezembro de 2024</p>
 
-        <section class="modal-section">
-            <h2 class="modal-subtitle">Introdução</h2>
-            <p class="modal-text">
-                No mundo da saúde, a confidencialidade é fundamental. A proteção de
-                dados de saúde é um direito fundamental de cada paciente, consagrado no
-                Regulamento Geral sobre a Proteção de Dados (RGPD) (Artigo 4º, nº
-                Artigo 32º). A gestão manual ou sistemas desatualizados podem levar à perda
-                de dados, acesso não autorizado e incumprimento do RGPD. As consequências
-                podem ser graves: multas elevadas, processos judiciais e danos à reputação.
-                A nossa equipa é composta pelos especialistas em segurança informática e
-                gestão de dados, Vasco Sousa, João Pereira e Tiago Sousa e pela advogada
-                especializada em proteção de dados, Maria Medina e hoje estamos aqui com o
-                objetivo de apresentar o Hospital Management App, um sistema inovador que
-                garante a gestão eficiente e segura de recursos e a marcação de consultas
-                cirúrgicas, com total respeito pela privacidade dos seus pacientes (Artigo 13
-                e 14º).
-                O Hospital Management App foi concebido com base nos princípios de
-                proteção de dados desde a conceção e por defeito (Artigo 25º)
-                Este minimiza a recolha e o tratamento de dados, utilizando a pseudonimização
-                para proteger a identidade dos pacientes, encripta todos os dados, garantindo
-                a sua confidencialidade e integridade, controla o acesso aos dados, permitindo
-                apenas a utilizadores autorizados aceder à informação necessária para o
-                desempenho das suas funções e mantém registos detalhados de todas as
-                operações de tratamento, permitindo auditorias e a demonstração de
-                conformidade com o RGPD (Artigo 24º e 28º)
-                Com o Hospital Management App, pode ter a certeza de que está a otimizar os
-                seus processos, reduzindo custos e protegendo os dados sensíveis dos seus
-                pacientes, em total conformidade com o RGPD
-            </p>
-        </section>
+      <section class="modal-section">
+          <h2 class="modal-subtitle">Introdução</h2>
+          <p class="modal-text">
+              A sua privacidade é essencial para o Hospital Management App. Esta política, em
+              conformidade com o Regulamento Geral sobre a Proteção de Dados (RGPD), descreve
+              como recolhemos, utilizamos, partilhamos e protegemos os seus dados pessoais ao
+              utilizar a nossa aplicação. O RGPD assegura a proteção dos seus dados enquanto um
+              direito fundamental.
+          </p>
+      </section>
 
-        <section class="modal-section">
-            <h2 class="modal-subtitle">Responsável pelo Tratamento de Dados</h2>
-            <p class="modal-text">
-                <strong>Nome da Empresa/Organização:</strong> Hospital Management App<br>
-                <strong>Contato:</strong> 1211503&#64;isep.ipp.pt<br>
-                <strong>Encarregado de Proteção de Dados:</strong> João Pereira
-            </p>
-        </section>
+      <section class="modal-section">
+          <h2 class="modal-subtitle">Que Dados Pessoais Recolhemos?</h2>
+          <ul class="modal-list">
+              <li>Dados de Identificação: Nome, data de nascimento, número de identificação e género.</li>
+              <li>Contactos: Morada, email, número de telefone e contacto de emergência</li>
+              <li>Dados de Saúde: Informação médica, histórico clínico e resultados de exames.</li>
+              <li>Informação de Utilização: Como utiliza a aplicação, as suas preferências e definições.</li>
+          </ul>
+      </section>
 
-        <section class="modal-section">
-            <h2 class="modal-subtitle">Dados Pessoais Coletados</h2>
-            <ul class="modal-list">
-                <li>Identificação (nome, email, NIF)</li>
-                <li>Dados de contato (número de telemóvel pessoal e de emergência, e-mail)</li>
-                <li>Dados médicos (histórico de saúde, alergias)</li>
-            </ul>
-        </section>
+      <section class="modal-section">
+          <h2 class="modal-subtitle">Finalidades do Tratamento dos Dados</h2>
+          <ul class="modal-list">
+              <li>Gerir as suas consultas e marcações.</li>
+              <li>Fornecer-lhe os cuidados de saúde adequados.</li>
+              <li>Melhorar a qualidade dos nossos serviços.</li>
+              <li>Comunicar consigo sobre as suas consultas.</li>
+              <li>Cumprir com as obrigações legais.</li>
+              <li>Arquivo de interesse público, investigação científica ou histórica, ou fins estatísticos, assegurando a proteção dos seus direitos.</li>
+          </ul>
+      </section>
 
-        <section class="modal-section">
-            <h2 class="modal-subtitle">Processamento dos Dados pessoais</h2>
-            <p class="modal-text">Os dados passam por diversos tipos de processamento, incluindo:</p>
-            <ul class="modal-list">
-                <li>Recolha: Os dados são obtidos através de diferentes meios, como
-                    formulários de registo, prontuários médicos ou sistemas de agendamento.</li>
-                <li>Registo: Os dados recolhidos são inseridos no Hospital Management App,
-                    nos campos apropriados de cada funcionalidade.</li>
-                <li>Organização: Os dados são estruturados e categorizados dentro do
-                    sistema, de forma lógica e eficiente, facilitando a sua consulta e utilização.
-                </li>
-                <li>Consulta: Os dados são acedidos e visualizados pelos utilizadores
-                    autorizados do Hospital Management App, de acordo com as suas funções
-                    e permissões.
-                </li>
-                <li>Utilização: Os dados são utilizados para as finalidades específicas para as
-                    quais foram recolhidos, como a gestão de informações, o planeamento e
-                    agendamento cirúrgico, a visualização do hospital, a garantia da
-                    continuidade das operações e a conformidade com o RGPD.</li>
-                <li>Quando aplicável, apagamento: Os dados são eliminados do sistema
-                    quando deixam de ser necessários para as finalidades para as quais foram
-                    recolhidos, ou quando o titular dos dados exerce o seu direito de
-                    apagamento (direito a ser esquecido)</li>
-                <p class="modal-text">Todas estas operações respeitam os princípios do RGPD, como a limitação das
-                    finalidades e a integridade e confidencialidade dos dados (Artigo 5.º)</p>
-            </ul>
-        </section>
+      <section class="modal-section">
+          <h2 class="modal-subtitle">Tempos de Retenção de Dados</h2>
+          <p class="modal-text">Os tempos de retenção foram definidos considerando a finalidade do tratamento, a base legal, as obrigações legais e as boas práticas de segurança:</p>
+          <h3 class="modal-subtitle">1. Dados de Contacto</h3>
+          <ul class="modal-list">
+              <li>Inclui: Nome, morada, email, número de telefone e contacto de emergência.</li>
+              <li>Tempo de retenção: Durante o período em que o paciente for utilizador ativo da aplicação. Eliminados 6 meses após a última interação do paciente com a aplicação.</li>
+              <li>Justificativa: Essenciais para a gestão de consultas e comunicação com o paciente, com retenção adicional de 6 meses para eventuais questões legais ou administrativas.</li>
+          </ul>
+          <h3 class="modal-subtitle">2. Dados de Saúde</h3>
+          <ul class="modal-list">
+              <li>Inclui: Informação médica, histórico clínico e resultados de exames.</li>
+              <li>Tempo de retenção: 20 anos após a última consulta, conforme legislação portuguesa para prontuários médicos.</li>
+              <li>Justificativa: Obrigação legal de retenção por 20 anos para assegurar o cumprimento da legislação e permitir acesso a informações médicas em caso de necessidade.</li>
+          </ul>
+          <h3 class="modal-subtitle">3. Informação de Utilização</h3>
+          <ul class="modal-list">
+              <li>Inclui: Como utiliza a aplicação, preferências e definições.</li>
+              <li>Tempo de retenção: 1 ano após a última interação do paciente com a aplicação.</li>
+              <li>Justificativa: Necessária para melhorar os serviços da aplicação, permitindo análise de tendências e implementação de melhorias.</li>
+          </ul>
+      </section>
 
-        <section class="modal-section">
-            <h2 class="modal-subtitle">Finalidades do Tratamento</h2>
-            <p class="modal-text">Utilizamos os seus dados pessoais para:</p>
-            <ul class="modal-list">
-                <li>Gestão de Informações Essenciais</li>
-                <li>Planeamento e Agendamento Cirúrgico</li>
-            </ul>
-        </section>
+      <section class="modal-section">
+          <h2 class="modal-subtitle">Procedimentos Após o Fim do Período de Retenção</h2>
+          <p class="modal-text">Após o período de retenção definido:</p>
+          <ul class="modal-list">
+              <li>Os dados serão eliminados de forma segura e irreversível, garantindo que não possam ser recuperados.</li>
+              <li>Dados necessários para fins legais ou contratuais poderão ser anonimizados e retidos por tempo indeterminado, utilizados exclusivamente para investigação e estatística.</li>
+          </ul>
+      </section>
 
-        <section class="modal-section">
-            <h2 class="modal-subtitle">Base Legal para o Tratamento</h2>
-            <p class="modal-text">O tratamento de dados pessoais pode ser baseado nas seguintes bases legais:</p>
-            <ul class="modal-list">
-                <li>Execução de um contrato</li>
-                <li>Cumprimento de uma obrigação legal</li>
-                <li>Consentimento explícito (para finalidades específicas, como marketing)</li>
-                <li>Interesses legítimos da aplicação</li>
-            </ul>
-        </section>
+      <section class="modal-section">
+          <h2 class="modal-subtitle">Com Quem Partilhamos os seus Dados?</h2>
+          <ul class="modal-list">
+              <li>Profissionais de Saúde: Para fornecer os cuidados de saúde necessários, apenas na medida estritamente indispensável.</li>
+              <li>Autoridades de Controlo: Quando exigido por lei, mediante pedido formal, justificado e ocasional.</li>
+              <li>Prestadores de Serviços: Empresas que auxiliam na operação da aplicação, sob contrato que garante proteção de dados adequada.</li>
+          </ul>
+      </section>
 
-        <section class="modal-section">
-            <h2 class="modal-subtitle">Compartilhamento de Dados</h2>
-            <p class="modal-text">Os seus dados podem ser compartilhados com:</p>
-            <ul class="modal-list">
-                <li>Parceiros e prestadores de serviços que auxiliam na execução das nossas atividades</li>
-                <li>Autoridades legais, quando exigido por lei</li>
-                <li>Familiares quando se encontrar com limitações físicas e psícológicas</li>
-            </ul>
-        </section>
+      <section class="modal-section">
+          <h2 class="modal-subtitle">Como Protegemos os seus Dados?</h2>
+          <ul class="modal-list">
+              <li>Encriptação: Todos os dados são encriptados para impedir acessos não autorizados.</li>
+              <li>Pseudonimização: Sempre que possível, protegemos a sua identidade através de pseudonimização.</li>
+              <li>Controlo de Acesso: Apenas utilizadores autorizados, mediante autenticação segura, têm acesso aos seus dados.</li>
+              <li>Medidas Técnicas e Organizativas: Implementamos soluções adequadas ao risco, considerando o estado da arte tecnológica.</li>
+          </ul>
+      </section>
 
-        <section class="modal-section">
-            <h2 class="modal-subtitle">Retenção de Dados</h2>
-            <p class="modal-text">
-                Os seus dados pessoais serão armazenados apenas pelo tempo necessário para cumprir as finalidades
-                descritas
-                nesta Política ou conforme exigido por lei. Após o período de retenção, os dados serão apagados ou
-                anonimizados.
-            </p>
-        </section>
+      <section class="modal-section">
+          <h2 class="modal-subtitle">Os seus Direitos</h2>
+          <p class="modal-text">De acordo com o RGPD, tem os seguintes direitos:</p>
+          <ul class="modal-list">
+              <li>Acesso aos seus dados: Solicitar uma cópia dos seus dados pessoais num formato legível.</li>
+              <li>Retificação: Corrigir dados incorretos ou incompletos.</li>
+              <li>Apagamento ("direito a ser esquecido"): Solicitar a eliminação dos seus dados em condições específicas.</li>
+              <li>Limitação do Tratamento: Restringir o uso dos seus dados em determinadas situações.</li>
+              <li>Oposição ao Tratamento: Recusar o tratamento baseado em interesses legítimos ou marketing direto.</li>
+              <li>Portabilidade dos Dados: Receber os seus dados num formato estruturado para transferir para outro serviço.</li>
+          </ul>
+          <p class="modal-text">Pode exercer os seus direitos através de um pedido dirigido ao Hospital Management App, pelos seguintes meios:</p>
+          <ul class="modal-list">
+              <li>Por correio postal para o endereço: R. Dr. António Bernardino de Almeida 431, 4249-015 Porto.</li>
+              <li>Por email para o endereço: privacy&#64;hospital.management.app.com.</li>
+              <li>Através da aplicação, utilizando as funcionalidades específicas disponíveis para o efeito.</li>
+          </ul>
+          <p class="modal-text">Ao exercer estes direitos, o utilizador deve especificar a natureza da sua solicitação e identificar-se devidamente. Após a confirmação da identidade do utilizador, para garantir que o pedido não é realizado por terceiros não autorizados, a solicitação será tratada em total conformidade com os requisitos e prazos legais aplicáveis.</p>
+      </section>
 
-        <section class="modal-section">
-            <h2 class="modal-subtitle">Direitos do Titular dos Dados</h2>
-            <p class="modal-text">Você possui os seguintes direitos em relação aos seus dados pessoais:</p>
-            <ul class="modal-list">
-                <li>Acesso aos dados tratados</li>
-                <li>Retificação de dados incorretos ou desatualizados</li>
-                <li>Exclusão dos dados (direito ao esquecimento)</li>
-                <li>Restrição do tratamento</li>
-                <li>Portabilidade dos dados</li>
-                <li>Oposição ao tratamento em determinadas circunstâncias</li>
-                <li>Retirada do consentimento, quando aplicável</li>
-            </ul>
-            <p class="modal-text">Para exercer os seus direitos, entre em contato connosco pelo e-mail
-                <strong>1211503&#64;isep.ipp.pt</strong>.
-            </p>
-        </section>
+      <section class="modal-section">
+          <h2 class="modal-subtitle">Consentimento</h2>
+          <p class="modal-text">Solicitamos o seu consentimento claro e direto para tratar dados, especialmente categorias sensíveis, explicando claramente as finalidades. Pode retirar o seu consentimento a qualquer momento através das funcionalidades da aplicação ou pelos contactos disponibilizados.</p>
+      </section>
 
-        <section class="modal-section">
-            <h2 class="modal-subtitle">Transferência Internacional de Dados</h2>
-            <p class="modal-text">
-                Se houver necessidade de transferência de dados para fora do Espaço Econômico Europeu (EEE),
-                garantiremos
-                que os seus dados estarão protegidos com medidas adequadas, como cláusulas contratuais padrão ou outras
-                bases
-                legais reconhecidas pelo RGPD.
-            </p>
-        </section>
+      <section class="modal-section">
+          <h2 class="modal-subtitle">Transferência de Dados Pessoais</h2>
+          <p class="modal-text">Em nenhum caso, o Hospital Management App transferirá os dados pessoais fornecidos através deste website a terceiros sem o consentimento prévio do utilizador, exceto se tal for uma obrigação legal ou se for identificado um interesse legítimo, desde que sejam garantidas as salvaguardas apropriadas.</p>
+      </section>
 
-        <section class="modal-section">
-            <h2 class="modal-subtitle">Segurança dos Dados</h2>
-            <p class="modal-text">
-                Implementamos medidas técnicas e organizacionais para proteger os seus dados pessoais contra acessos não
-                autorizados, perda, alteração ou destruição.
-            </p>
-        </section>
+      <section class="modal-section">
+          <h2 class="modal-subtitle">Autoridade de Supervisão</h2>
+          <p class="modal-text">De acordo com a lei, o titular dos dados tem o direito de apresentar uma reclamação relativa à proteção de dados pessoais junto da autoridade de supervisão competente.</p>
+      </section>
 
-        <section class="modal-section">
-            <h2 class="modal-subtitle">Alterações à Política de Privacidade</h2>
-            <p class="modal-text">
-                Podemos atualizar esta Política de Privacidade periodicamente. Notificaremos sobre mudanças
-                significativas, caso necessário.
-            </p>
-        </section>
+      <section class="modal-section">
+          <h2 class="modal-subtitle">Contactos</h2>
+          <p class="modal-text">Se tiver dúvidas sobre esta política de privacidade, contacte o nosso Encarregado de Proteção de Dados através do email: paulo&#64;hospital.management.app.com.</p>
+      </section>
 
-        <section class="modal-section">
-            <h2 class="modal-subtitle">Reclamações</h2>
-            <p class="modal-text">
-                Se acreditar que os seus direitos foram violados, pode entrar em contato connosco para esclarecimentos.
-                Além disso, você tem o direito de apresentar uma reclamação junto à autoridade supervisora do seu país.
-            </p>
-        </section>
-
-        <section class="modal-section">
-            <h2 class="modal-subtitle">Contato</h2>
-            <p class="modal-text">
-                Para quaisquer dúvidas, entre em contato conosco:
-            </p>
-            <ul class="modal-list">
-                <li><strong>E-mail:</strong> 1211503&#64;isep.ipp.pt</li>
-                <li><strong>Telefone:</strong> +351912345678</li>
-            </ul>
-        </section>
-        <button class="modal-close-btn" (click)="closeModal()">Close</button>
-    </div>
+      <section class="modal-section">
+          <h2 class="modal-subtitle">Atualizações</h2>
+          <p class="modal-text">Esta política de privacidade pode ser alterada. Informaremos com pelo menos 30 dias de antecedência sobre mudanças significativas, e a versão atualizada estará sempre disponível na nossa aplicação.</p>
+      </section>
+      <button class="modal-close-btn" (click)="closeModal()">Close</button>
+  </div>
 </div>

@@ -97,7 +97,7 @@ export const routes: Routes = [
     path: "patient-settings", component: PatientSettingsComponent, canActivate: [PatientGuard]
   },
   {
-    path: "patient-policy", component: PatientPolicyComponent
+    path: "privacy-policy", component: PatientPolicyComponent
   },
   {
     path: "patient-profile", component: PatientProfileComponent, canActivate: [PatientGuard]
