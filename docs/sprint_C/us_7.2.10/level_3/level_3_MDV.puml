@@ -1,0 +1,89 @@
+@startuml level_3_MDV
+
+title Level 3 MDV Diagram - Add New Types of Rooms
+
+hide empty members
+'skinparam Linetype ortho
+
+skinparam class {
+    BackgroundColor<<valueObject>> #D6EAF8
+    BackgroundColor<<root>> #FDEBD0
+    BackgroundColor<<service>> #D1F2EB
+    BackgroundColor #UIF9E7
+    ArrowColor Black
+}
+
+skinparam package {
+    BackgroundColor #EBF5FB
+}
+
+participant FE as FE
+participant "RoomRouter" as RR
+participant "RoomController" as RC
+participant "RoomService" as RS
+participant "RoomRepository" as RRE
+participant "RoomSchema" as RSC
+participant "RoomMapper" as RM
+participant "RoomDTO" as RD
+participant "LogRouter" as LR
+participant "LogController" as LC
+participant "LogService" as LS
+participant "LogRepository" as LRE
+participant "LogSchema" as LSC
+participant "LogMapper" as LM
+participant "LogDTO" as LD
+participant MDR as MDR
+participant "Database" as DB
+
+activate FE
+FE -> RR: Makes Http Request to add new room type
+activate RR
+RR -> RC: addRoomType(request, response, next)
+activate RC
+RC -> RS: addRoomType(roomTypeDTO)
+activate RS
+RS -> RM: toEntity(roomTypeDTO)
+activate RM
+RM -> RSC: new RoomSchema(roomTypeDTO fields)
+activate RSC
+RSC -> RSC: RoomSchema()
+deactivate RSC
+RM -> RS: returns RoomSchema
+deactivate RM
+RS -> RRE: save(RoomSchema)
+activate RRE
+RRE -> DB: INSERT INTO Room (fields) VALUES (...)
+activate DB
+DB --> RRE: returns RoomSchema
+deactivate DB
+RRE --> RS: returns RoomSchema
+deactivate RRE
+RS -> RM: toDto(RoomSchema)
+activate RM
+RM -> RD: new RoomDTO(roomSchema fields)
+activate RD
+RD -> RD: RoomDTO()
+deactivate RD
+RM --> RS: returns RoomDTO
+deactivate RM
+RS -> LC: new Log(TypeOfAction.Create, roomSchema.Id, "New room type added.")
+activate LC
+LC -> LC: Log()
+deactivate LC
+RS -> LRE: addAsync(log)
+activate LRE
+LRE -> DB: INSERT INTO Log (TypeOfAction, RoomTypeId, Message) VALUES (...)
+activate DB
+DB --> LRE: returns Log
+deactivate DB
+LRE --> RS: returns Log
+deactivate LRE
+RS --> RC: returns RoomDTO
+deactivate RS
+RC --> RR: returns Operation Status Code
+deactivate RC
+RR --> FE: returns Operation Status Code
+deactivate RR
+deactivate FE
+
+@enduml

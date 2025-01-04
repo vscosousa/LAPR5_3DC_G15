@@ -1,0 +1,32 @@
+@startuml add_room_types
+
+title Add New Types of Rooms
+
+hide empty members
+
+skinparam class {
+    BackgroundColor<<valueObject>> #D6EAF8
+    BackgroundColor<<root>> #FDEBD0
+    BackgroundColor<<service>> #D1F2EB
+    BackgroundColor #FEF9E7
+    ArrowColor Black
+}
+
+skinparam package {
+    BackgroundColor #EBF5FB
+}
+
+actor Admin as A
+
+activate A
+A -> System: Requests to add a new type of room
+activate System
+System --> A: Displays form to enter room type details
+deactivate System
+A -> System: Submits new room type details
+activate System
+System -> System: Validates and saves new room type
+System --> A: Returns success/failure message
+deactivate System
+
+@enduml

@@ -1,0 +1,60 @@
+@startuml level_3_FE
+
+title Level 3 FE Diagram - Add New Types of Rooms
+
+hide empty members
+'skinparam Linetype ortho
+
+skinparam class {
+    BackgroundColor<<valueObject>> #D6EAF8
+    BackgroundColor<<root>> #FDEBD0
+    BackgroundColor<<service>> #D1F2EB
+    BackgroundColor #UIF9E7
+    ArrowColor Black
+}
+
+skinparam package {
+    BackgroundColor #EBF5FB
+}
+
+actor Admin as A
+participant View as UI
+participant "RoomTypesComponent" as RTC
+participant "CreateRoomTypeComponent" as CRTC
+participant "RoomTypeService" as RTS
+participant "AuthInterceptor" as AI
+participant MDR as MDR
+
+activate A
+A -> UI: Asks to add a new type of room
+activate UI
+UI -> RTC: routerLink='/create-room-type'
+activate RTC
+RTC -> CRTC: routes to CreateRoomTypeComponent
+deactivate RTC
+activate CRTC
+CRTC -> RTS: saveRoomType(roomTypeData)
+activate RTS
+RTS -> AI: Makes Http Request to save room type
+activate AI
+AI -> AI: Intercepts the request and adds the token to the header
+note right of AI
+    The token is added to the header so that the MDR
+    can authenticate and authorize the request.
+end note
+AI -> MDR: saveRoomType(roomTypeData)
+activate MDR
+MDR -> MDR: Validates and saves room type
+MDR --> AI: returns Operation Status Code
+deactivate MDR
+AI --> RTS: returns Operation Status Code
+deactivate AI
+RTS -> CRTC: returns Operation Response
+deactivate RTS
+CRTC -> CRTC: initializes CreateRoomTypeComponent
+CRTC --> UI: returns CreateRoomTypeComponent
+deactivate CRTC
+UI --> A: Displays success/failure message
+deactivate UI
+
+@enduml

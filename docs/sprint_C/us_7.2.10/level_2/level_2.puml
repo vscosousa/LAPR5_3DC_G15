@@ -1,0 +1,40 @@
+@startuml add_room_types_level_2
+
+title Add New Types of Rooms - Level 2 Diagram
+
+hide empty members
+
+skinparam class {
+    BackgroundColor<<valueObject>> #D6EAF8
+    BackgroundColor<<root>> #FDEBD0
+    BackgroundColor<<service>> #D1F2EB
+    BackgroundColor #FEF9E7
+    ArrowColor Black
+}
+
+skinparam package {
+    BackgroundColor #EBF5FB
+}
+
+actor Admin as A
+participant FE as FE
+participant MDV as MDV
+participant MDR as MDR
+
+activate A
+A -> FE: Requests to add a new type of room
+activate FE
+FE -> MDR: Makes Http Request to validate room type
+activate MDR
+MDR -> MDR: Validates room type
+MDR --> FE: Returns validation result
+deactivate MDR
+FE -> MDV: Makes Http Request to save new room type
+activate MDV
+MDV -> MDV: Saves new room type
+MDV --> FE: Returns save status
+deactivate MDV
+FE --> A: Returns success/failure message
+deactivate FE
+
+@enduml

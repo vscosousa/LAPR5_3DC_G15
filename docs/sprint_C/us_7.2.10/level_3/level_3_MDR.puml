@@ -1,0 +1,79 @@
+@startuml level_3_MDR
+
+title Level 3 MDR Diagram - Add New Types of Rooms
+
+hide empty members
+'skinparam Linetype ortho
+
+skinparam class {
+    BackgroundColor<<valueObject>> #D6EAF8
+    BackgroundColor<<root>> #FDEBD0
+    BackgroundColor<<service>> #D1F2EB
+    BackgroundColor #UIF9E7
+    ArrowColor Black
+}
+
+skinparam package {
+    BackgroundColor #EBF5FB
+}
+
+participant FE as FE
+participant MDV as MDV
+participant "RoomTypeController" as RTC
+participant "RoomTypeService" as RTS
+participant "RoomTypeRepository" as RTR
+participant "RoomTypeMapper" as RTM
+participant "RoomTypeDTO" as RTD
+participant "RoomType" as RT
+participant "LogRepository" as LR
+participant "Log" as L
+participant "Database" as DB
+
+activate FE
+FE -> RTC: Makes Http Request to add new room type
+activate RTC
+RTC -> RTS: addRoomType(roomTypeDTO)
+activate RTS
+RTS -> RTM: toEntity(roomTypeDTO)
+activate RTM
+RTM -> RT: new RoomType(roomTypeDTO fields)
+activate RT
+RT --> RT: RoomType()
+deactivate RT
+RTM --> RTS: returns RoomType
+deactivate RTM
+RTS -> RTR: save(RoomType)
+activate RTR
+RTR -> DB: INSERT INTO RoomType (fields) VALUES (...)
+activate DB
+DB --> RTR: returns RoomType
+deactivate DB
+RTR --> RTS: returns RoomType
+deactivate RTR
+RTS -> RTM: toDto(RoomType)
+activate RTM
+RTM -> RTD: new RoomTypeDTO(roomType fields)
+activate RTD
+RTD --> RTD: RoomTypeDTO()
+deactivate RTD
+RTM --> RTS: returns RoomTypeDTO
+deactivate RTM
+RTS -> L: new Log(TypeOfAction.Create, roomType.Id, "New room type added.")
+activate L
+L -> L: Log()
+deactivate L
+RTS -> LR: addAsync(log)
+activate LR
+LR -> DB: INSERT INTO Log (TypeOfAction, RoomTypeId, Message) VALUES (...)
+activate DB
+DB --> LR: returns Log
+deactivate DB
+LR --> RTS: returns Log
+deactivate LR
+RTS --> RTC: returns RoomTypeDTO
+deactivate RTS
+RTC --> FE: returns Operation Status Code
+deactivate RTC
+deactivate FE
+
+@enduml
