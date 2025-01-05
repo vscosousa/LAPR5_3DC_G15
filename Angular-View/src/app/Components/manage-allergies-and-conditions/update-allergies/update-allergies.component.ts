@@ -1,3 +1,14 @@
+/**
+ * @fileoverview UpdateAllergiesComponent
+ * @author Vasco Sousa (1221700)
+ * @date 11/12/2024
+ * 
+ * This component allows users to update allergy information.
+ * 
+ * Methods:
+ * - onSubmit(): void - Handles the form submission to update the allergy.
+ */
+
 import { Component, EventEmitter, Input, Output, importProvidersFrom } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AllergyService } from '../../../Services/allergy.service';

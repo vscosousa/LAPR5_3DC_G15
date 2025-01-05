@@ -1,3 +1,24 @@
+/**
+ * @fileoverview UpdateAppointmentComponent is responsible for handling the update of an existing appointment.
+ * It fetches the appointment details, operation requests, operation types, and staff lists, and allows the user to update the appointment.
+ * 
+ * @author Vasco Sousa (1221700)
+ * @date 15/12/2024
+ * 
+ * @class UpdateAppointmentComponent
+ * @implements OnInit
+ * 
+ * @method ngOnInit Initializes the component and loads the appointment details.
+ * @method loadAppointment Loads the appointment details based on the appointment ID from the route.
+ * @method fetchOperationTypes Fetches the operation types and filters them based on the selected operation request.
+ * @method fetchStaffList Fetches the staff list based on the selected operation type.
+ * @method updateAppointment Updates the appointment with the new details.
+ * @method fetchOperationRequests Fetches the operation requests and filters them based on the existing appointment request ID.
+ * @method clearForm Clears the form fields.
+ * @method updateTeam Updates the team members for the appointment based on the checkbox selection.
+ * @method getAppointmentIdFromRoute Retrieves the appointment ID from the current route URL.
+ */
+
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';

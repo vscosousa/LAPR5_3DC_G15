@@ -1,3 +1,28 @@
+/**
+ * @class AppointmentService
+ * @description Service to handle appointment-related API requests.
+ * 
+ * @author Vasco Sousa (1221700)
+ * @date 11/12/2024
+ * 
+ * @method createAppointment
+ * @description Creates a new appointment.
+ * @returns {Observable<any>} An observable containing the created appointment.
+ * 
+ * @method getAppointments
+ * @description Fetches all appointments from the API.
+ * @returns {Observable<any[]>} An observable containing an array of appointments.
+ * 
+ * @method getAppointmentById
+ * @description Fetches a specific appointment by ID.
+ * @returns {Observable<any>} An observable containing the fetched appointment.
+ * 
+ * @method updateAppointment
+ * @description Updates an existing appointment.
+ * @returns {Observable<any>} An observable containing the updated appointment.
+ */
+
+
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError, throwError } from 'rxjs';

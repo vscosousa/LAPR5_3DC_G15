@@ -1,6 +1,19 @@
+/**
+ * @class CreateConditionsComponent
+ * @description Component for creating medical conditions.
+ * @date 09/12/2024
+ * @methods
+ *  - constructor: Initializes the component with the necessary services.
+ *  - onSubmit: Submits the form to create a new medical condition.
+ * @output
+ *  - conditionCreated: Event emitted when a medical condition is successfully created.
+ * @author Vasco Sousa (1221700)
+ */
+
 import { Component, EventEmitter, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MedicalConditionService } from '../../../Services/medical-condition.service';
+
 
 @Component({
   selector: 'app-create-conditions',

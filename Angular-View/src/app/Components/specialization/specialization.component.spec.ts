@@ -1,3 +1,8 @@
+/*
+Author: João Pereira (1211503)
+Last update: 06/12/2024
+*/
+
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute } from '@angular/router';
 import { of } from 'rxjs';
@@ -7,6 +12,10 @@ import { SpecializationComponent } from './specialization.component';
 
 describe('SpecializationComponent', () => {
   let component: SpecializationComponent;
+  /**
+   * Fixture for testing the SpecializationComponent.
+   * Provides access to the component instance and allows interaction with the component's template.
+   */
   let fixture: ComponentFixture<SpecializationComponent>;
 
   beforeEach(async () => {

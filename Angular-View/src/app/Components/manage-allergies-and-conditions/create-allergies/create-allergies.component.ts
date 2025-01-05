@@ -1,3 +1,12 @@
+/**
+ * @fileoverview CreateAllergiesComponent
+ * @description Component for creating allergies.
+ * @date 09/12/2024
+ * @methods onSubmit
+ * 
+ * @author Vasco Sousa (1221700)
+ */
+
 import { Component, EventEmitter, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AllergyService } from '../../../Services/allergy.service';

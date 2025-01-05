@@ -1,3 +1,31 @@
+/**
+ * @class MedicalHistoryManagerComponent
+ * @description This component manages the medical history of patients, including fetching, filtering, and displaying patient details, allergies, and medical conditions.
+ * @date 11/12/2024
+ * 
+ * @method ngOnInit Initializes the component, sets the panel ID, clears filters, and fetches allergies and medical conditions.
+ * @method fetchPatients Fetches the list of patients with advanced filters applied.
+ * @method fetchAllergies Fetches the list of all allergies.
+ * @method fetchMedicalConditions Fetches the list of all medical conditions.
+ * @method applyFilters Applies the filters to the patient list.
+ * @method filterPatients Filters the patients based on the provided filter string.
+ * @method clearFilters Clears all filters and fetches the patient list.
+ * @method deletePatient Deletes a patient by their medical record number after confirmation.
+ * @method viewPatientDetails Views the details of a patient by their medical record number.
+ * @method fetchMedicalHistory Fetches the medical history of a patient by their medical record number.
+ * @method parseFamilyHistoryString Parses a family history string into an array of strings.
+ * @method parseFamilyHistory Parses an array of family history strings into an array of objects with relationship and conditions.
+ * @method filterSelectedAllergies Filters the selected allergies based on the patient's medical history.
+ * @method filterSelectedMedicalConditions Filters the selected medical conditions based on the patient's medical history.
+ * @method searchAllergies Searches for allergies based on the allergy search string.
+ * @method searchMedicalConditions Searches for medical conditions based on the medical condition search string.
+ * @method refreshPatientList Refreshes the patient list by removing a deleted patient.
+ * @method openMedicalHistoryModal Opens the medical history modal.
+ * @method closeMedicalHistoryModal Closes the medical history modal.
+ * 
+ * @author Vasco Sousa (1221700)
+ */
+
 import { MedicalHistoryService } from '../../Services/medical-history.service';
 import { MedicalConditionService } from '../../Services/medical-condition.service';
 import { Component } from '@angular/core';
@@ -8,6 +36,7 @@ import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { PanelService } from '../../Services/panel.service';
 import { AllergyService } from '../../Services/allergy.service';
+
 
 @Component({
   selector: 'app-medical-history-manager',

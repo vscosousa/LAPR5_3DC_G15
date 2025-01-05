@@ -1,3 +1,36 @@
+/**
+ * Component for creating a new appointment.
+ * 
+ * Author: Vasco Sousa (1221700)
+ * Last update: 15/12/2024
+ * @component
+ * @selector app-create-appointment
+ * @standalone true
+ * @imports [FormsModule, SidebarComponent, RouterModule, CommonModule]
+ * 
+ * @class CreateAppointmentComponent
+ * 
+ * @property {any[]} operationRequests - List of operation requests.
+ * @property {any} selectedOperationRequest - The selected operation request.
+ * @property {any} selectedOperationType - The selected operation type.
+ * @property {Object} newAppointment - The new appointment object to be created.
+ * @property {any[]} rooms - List of available rooms.
+ * @property {any[]} doctors - List of available doctors.
+ * @property {any[]} nurses - List of available nurses.
+ * @property {any[]} staffProfiles - List of staff profiles.
+ * @property {any[]} operationTypes - List of operation types.
+ * @property {string} email - Email of the user.
+ * 
+ * @method ngOnInit Initializes the component and fetches operation requests.
+ * @method fetchOperationTypes Fetches all operation types from the service.
+ * @method fetchStaffList Fetches the staff list based on the selected operation type.
+ * @method createAppointment Submits the form to create a new appointment.
+ * @method extractOperationRequestFromUrl Extracts the operation request ID from the URL.
+ * @method fetchOperationRequests Fetches all operation requests from the service.
+ * @method clearForm Clears the form after creating an appointment.
+ * @method updateTeam Updates the team members for the appointment.
+ */
+
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -18,10 +51,14 @@ import { PanelService } from '../../Services/panel.service';
   styleUrl: './create-appointment.component.scss'
 })
 export class CreateAppointmentComponent implements OnInit {
+  // List of operation requests
   operationRequests: any[] = [];
+  // The selected operation request
   selectedOperationRequest: any;
+  // The selected operation type
   selectedOperationType: any;
 
+  // The new appointment object to be created
   newAppointment: {
     requestId: string;
     roomId: string;
@@ -43,6 +80,7 @@ export class CreateAppointmentComponent implements OnInit {
   operationTypes: any[] = [];
   email: string = '';
 
+  // Constructor to inject the necessary services
   constructor(
     private appointmentService: AppointmentService,
     private router: Router,
@@ -51,11 +89,13 @@ export class CreateAppointmentComponent implements OnInit {
     private panelService: PanelService
   ) { }
 
+  // Lifecycle hook that runs when the component is initialized
   ngOnInit() {
     this.panelService.setPanelId('panel-doctor');
     this.fetchOperationRequests();
   }
 
+  // Method to fetch all operation types from the service
   fetchOperationTypes(): void {
     this.operationTypeService.getOperationTypes().subscribe(
       (data: any[]) => {
@@ -78,6 +118,7 @@ export class CreateAppointmentComponent implements OnInit {
     );
   }
 
+  // Method to fetch the staff list based on the selected operation type
   fetchStaffList(operationType: any): void {
     if (operationType && operationType.staffs) {
       this.doctors = [];
@@ -96,6 +137,7 @@ export class CreateAppointmentComponent implements OnInit {
     }
   }
 
+  // Method to submit the form and create a new appointment
   createAppointment(event: Event) {
     event.preventDefault();
     console.log('Creating appointment with data:', this.newAppointment); // Add this line for debugging
@@ -113,6 +155,7 @@ export class CreateAppointmentComponent implements OnInit {
     );
   }
 
+  // Method to extract the operation request ID from the URL
   extractOperationRequestFromUrl() {
     const url = window.location.href;
     const regex = /\/create-appointment\/([0-9a-fA-F-]+)/;
@@ -124,6 +167,7 @@ export class CreateAppointmentComponent implements OnInit {
     }
   }
 
+  // Method to fetch all operation requests from the service
   fetchOperationRequests(): void {
     this.operationRequestService.getOperationRequests().subscribe(
       (data: any[]) => {
@@ -146,6 +190,7 @@ export class CreateAppointmentComponent implements OnInit {
     );
   }
 
+  // Method to clear the form after creating an appointment
   clearForm() {
     this.newAppointment = {
       requestId: '',
@@ -156,6 +201,7 @@ export class CreateAppointmentComponent implements OnInit {
     };
   }
 
+  // Method to update the team members for the appointment
   updateTeam(event: Event, memberId: string) {
     const checkbox = event.target as HTMLInputElement;
     if (checkbox.checked) {

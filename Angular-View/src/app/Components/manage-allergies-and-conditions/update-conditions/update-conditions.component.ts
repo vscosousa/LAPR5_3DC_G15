@@ -1,6 +1,20 @@
+/**
+ * @fileoverview UpdateConditionsComponent is responsible for updating medical conditions.
+ * 
+ * @author Vasco Sousa (1221700)
+ * @date 11/12/2024
+ * 
+ * @class UpdateConditionsComponent
+ * @description This component allows users to update existing medical conditions.
+ * 
+ * @method onSubmit
+ * @description Submits the updated medical condition to the server and handles the response.
+ */
+
 import { MedicalConditionService } from './../../../Services/medical-condition.service';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+
 
 @Component({
   selector: 'app-update-conditions',

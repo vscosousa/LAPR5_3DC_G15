@@ -1,3 +1,10 @@
+/**
+ * @file manage-allergies-and-conditions.component.ts
+ * @description Component for managing allergies and medical conditions.
+ * @date 11/12/2024
+ * @author Vasco Sousa (1221700)
+ */
+
 import { CommonModule } from '@angular/common';
 import { Component, Renderer2 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -11,6 +18,12 @@ import { CreateConditionsComponent } from "./create-conditions/create-conditions
 import { UpdateAllergiesComponent } from "./update-allergies/update-allergies.component";
 import { UpdateConditionsComponent } from "./update-conditions/update-conditions.component";
 
+
+
+/**
+ * @class ManageAllergiesAndConditionsComponent
+ * @description Component class for managing allergies and medical conditions.
+ */
 @Component({
   selector: 'app-manage-allergies-and-conditions',
   standalone: true,
@@ -25,21 +38,42 @@ export class ManageAllergiesAndConditionsComponent {
   selectedItem: any = null;
   selectedItemType: string | null = null;
 
+  /**
+   * @constructor
+   * @param renderer Renderer2 service for manipulating DOM elements.
+   * @param router Router service for navigation.
+   * @param panelService PanelService for managing panel state.
+   * @param allergyService AllergyService for fetching allergy data.
+   * @param medicalConditionService MedicalConditionService for fetching medical condition data.
+   */
   constructor(private renderer: Renderer2, private router: Router, private panelService: PanelService, private allergyService: AllergyService,
     private medicalConditionService: MedicalConditionService) { }
 
+  /**
+   * @method ngOnInit
+   * @description Lifecycle hook that is called after data-bound properties are initialized.
+   */
   ngOnInit(): void {
     this.panelService.setPanelId('panel-admin');
     this.fetchAllergies();
     this.fetchMedicalConditions();
   }
 
+  /**
+   * @method openModal
+   * @description Opens a modal of the specified type.
+   * @param type The type of modal to open.
+   */
   openModal(type: string): void {
     this.modalType = type;
     this.renderer.addClass(document.body, 'modal-active');
     this.router.navigate([`/manage-allergies-and-conditions/${type}`]);
   }
 
+  /**
+   * @method closeModal
+   * @description Closes the currently open modal.
+   */
   closeModal(): void {
     this.modalType = null;
     this.selectedItem = null;
@@ -49,6 +83,12 @@ export class ManageAllergiesAndConditionsComponent {
     this.refreshPage();
   }
 
+  /**
+   * @method openDetailsModal
+   * @description Opens a details modal for the specified item.
+   * @param item The item to display details for.
+   * @param itemType The type of the item (allergy or medical condition).
+   */
   openDetailsModal(item: any, itemType: string): void {
     this.selectedItem = item;
     this.selectedItemType = itemType;
@@ -56,6 +96,12 @@ export class ManageAllergiesAndConditionsComponent {
     this.renderer.addClass(document.body, 'modal-active');
   }
 
+  /**
+   * @method openUpdateModal
+   * @description Opens an update modal for the specified item.
+   * @param item The item to update.
+   * @param itemType The type of the item (allergy or medical condition).
+   */
   openUpdateModal(item: any, itemType: string): void {
     this.selectedItem = item;
     this.selectedItemType = itemType;
@@ -68,27 +114,51 @@ export class ManageAllergiesAndConditionsComponent {
     }
   }
 
+  /**
+   * @method handleAllergyCreated
+   * @description Handles the event when an allergy is created.
+   */
   handleAllergyCreated(): void {
     this.closeModal();
   }
 
+  /**
+   * @method handleConditionCreated
+   * @description Handles the event when a medical condition is created.
+   */
   handleConditionCreated(): void {
     this.closeModal();
   }
 
+  /**
+   * @method handleAllergyUpdated
+   * @description Handles the event when an allergy is updated.
+   */
   handleAllergyUpdated(): void {
     this.closeModal();
   }
 
+  /**
+   * @method handleConditionUpdated
+   * @description Handles the event when a medical condition is updated.
+   */
   handleConditionUpdated(): void {
     this.closeModal();
   }
 
+  /**
+   * @method refreshPage
+   * @description Refreshes the page by fetching the latest allergies and medical conditions.
+   */
   refreshPage(): void {
     this.fetchAllergies();
     this.fetchMedicalConditions();
   }
 
+  /**
+   * @method fetchAllergies
+   * @description Fetches the list of allergies from the server.
+   */
   fetchAllergies(): void {
     this.allergyService.getAllergies().subscribe(
       (response: any) => {
@@ -101,6 +171,10 @@ export class ManageAllergiesAndConditionsComponent {
     );
   }
 
+  /**
+   * @method fetchMedicalConditions
+   * @description Fetches the list of medical conditions from the server.
+   */
   fetchMedicalConditions(): void {
     this.medicalConditionService.getMedicalConditions().subscribe(
       (response: any) => {

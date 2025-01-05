@@ -1,3 +1,20 @@
+  /**
+   * @fileoverview Unit tests for UpdateAllergiesComponent.
+   * @author Vasco Sousa (1221700)
+   * @date 11/12/2024
+   * 
+   * This file contains the unit tests for the UpdateAllergiesComponent.
+   * 
+   * Methods implemented:
+   * - beforeEach: Sets up the testing environment before each test.
+   * - it: Contains individual test cases for the component.
+   */
+
+  /**
+   * Fixture for UpdateAllergiesComponent.
+   * Used to create an instance of the component and access its properties and methods.
+   */
+
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { UpdateAllergiesComponent } from './update-allergies.component';
@@ -6,6 +23,7 @@ import { of, throwError } from 'rxjs';
 
 describe('UpdateAllergiesComponent', () => {
   let component: UpdateAllergiesComponent;
+
   let fixture: ComponentFixture<UpdateAllergiesComponent>;
   let allergyService: AllergyService;
 

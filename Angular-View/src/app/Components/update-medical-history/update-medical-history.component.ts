@@ -1,3 +1,35 @@
+/**
+ * @class UpdateMedicalHistoryComponent
+ * @description Component for updating a patient's medical history.
+ * 
+ * @author Vasco Sousa (1221700)
+ * @date 11/12/2024
+ * 
+ * @methods
+ * - ngOnInit(): void
+ * - fetchMedicalHistory(medicalRecordNumber: string): void
+ * - parseFamilyHistoryString(familyHistoryString: string): string[]
+ * - parseFamilyHistory(familyHistory: string[]): { relationship: string; conditions: string[] }[]
+ * - filterSelectedAllergies(): void
+ * - filterSelectedMedicalConditions(): void
+ * - searchAllergies(): void
+ * - searchMedicalConditions(): void
+ * - extractMedicalRecordNumberFromUrl(): string
+ * - fetchAllergies(): void
+ * - fetchMedicalConditions(): void
+ * - onAllergyChange(event: any, allergyId: string): void
+ * - onMedicalConditionChange(event: any, medicalConditionId: string): void
+ * - openFamilyConditionsModal(): void
+ * - closeFamilyConditionsModal(): void
+ * - addFamilyHistory(): void
+ * - removeFamilyHistory(index: number): void
+ * - onFamilyHistoryConditionChange(event: any, condition: string): void
+ * - editFamilyHistory(index: number): void
+ * - closeUpdateFamilyHistoryModal(): void
+ * - updateFamilyHistory(): void
+ * - submitMedicalHistory(): void
+ */
+
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -7,6 +39,7 @@ import { SidebarComponent } from "../sidebar/sidebar.component";
 import { PanelService } from '../../Services/panel.service';
 import { HttpClient } from '@angular/common/http'; // Import HttpClient
 import { MedicalHistoryService } from '../../Services/medical-history.service'; // Import MedicalHistoryService
+
 
 @Component({
   selector: 'app-update-medical-history',

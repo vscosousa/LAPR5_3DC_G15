@@ -1,3 +1,24 @@
+    /**
+     * @fileoverview This file contains the unit tests for the UpdateAppointmentComponent.
+     * 
+     * @author Vasco Sousa (1221700)
+     * @date 15/12/2024
+     * 
+     * @description
+     * This file includes the following methods:
+     * - isSuccess: Indicates whether the appointment update was successful.
+     * - _value: Contains the details of the appointment including requestId, roomId, dateTime, status, and team.
+     * 
+     * @typedef {Object} Appointment
+     * @property {boolean} isSuccess - Indicates if the appointment update was successful.
+     * @property {Object} _value - The details of the appointment.
+     * @property {string} _value.requestId - The ID of the appointment request.
+     * @property {string} _value.roomId - The ID of the room where the appointment is scheduled.
+     * @property {string} _value.dateTime - The date and time of the appointment.
+     * @property {string} _value.status - The status of the appointment.
+     * @property {Array<string>} _value.team - The team members involved in the appointment.
+     */
+
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
@@ -55,6 +76,7 @@ describe('UpdateAppointmentComponent', () => {
   });
 
   it('should load appointment successfully', () => {
+
     const appointment = {
       isSuccess: true,
       _value: {

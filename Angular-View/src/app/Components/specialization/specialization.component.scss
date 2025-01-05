@@ -1,4 +1,8 @@
-/* Variables */
+/*
+Author: João Pereira (1211503)
+Last update: 06/12/2024
+*/
+
 $primary-color: #007bff;
 $primary-color-hover: #0056b3;
 $success-color: #28a745;
@@ -17,7 +21,6 @@ $border-color: #ddd;
 $box-shadow-color: rgba(0, 0, 0, 0.1);
 $font-family: 'Poppins', sans-serif;
 
-/* Global Styles */
 body {
   font-family: $font-family;
   margin: 0;
@@ -25,7 +28,7 @@ body {
   box-sizing: border-box;
 }
 
-/* Container Styles */
+
 .manage-container {
   display: flex;
   flex-direction: column;

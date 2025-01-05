@@ -1,3 +1,10 @@
+/**
+ * Author: Vasco Sousa (1221700)
+ * Last update: 15/12/2024
+ * 
+ * Test suite for the CreateAppointmentComponent.
+ */
+
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
@@ -15,6 +22,7 @@ describe('CreateAppointmentComponent', () => {
   let operationTypeService: OperationTypeService;
   let router: Router;
 
+  // Configuração do módulo de teste antes de cada teste
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [
@@ -30,6 +38,7 @@ describe('CreateAppointmentComponent', () => {
     }).compileComponents();
   });
 
+  // Configuração inicial antes de cada teste
   beforeEach(() => {
     fixture = TestBed.createComponent(CreateAppointmentComponent);
     component = fixture.componentInstance;
@@ -39,16 +48,19 @@ describe('CreateAppointmentComponent', () => {
     fixture.detectChanges();
   });
 
+  // Teste para verificar se o componente foi criado com sucesso
   it('should create', () => {
     expect(component).toBeTruthy();
   });
 
+  // Teste para verificar se as requisições de operação são buscadas na inicialização
   it('should fetch operation requests on init', () => {
     spyOn(component, 'fetchOperationRequests');
     component.ngOnInit();
     expect(component.fetchOperationRequests).toHaveBeenCalled();
   });
 
+  // Teste para verificar se os tipos de operação são buscados com sucesso
   it('should fetch operation types successfully', () => {
     const operationTypes = [{ name: 'Type1' }, { name: 'Type2' }];
     spyOn(operationTypeService, 'getOperationTypes').and.returnValue(of(operationTypes));
@@ -63,6 +75,7 @@ describe('CreateAppointmentComponent', () => {
     expect(component.fetchStaffList).toHaveBeenCalledWith(operationTypes[0]);
   });
 
+  // Teste para verificar o tratamento de erro ao buscar tipos de operação
   it('should handle error while fetching operation types', () => {
     spyOn(operationTypeService, 'getOperationTypes').and.returnValue(throwError('Error'));
     spyOn(console, 'error');
@@ -73,6 +86,7 @@ describe('CreateAppointmentComponent', () => {
     expect(console.error).toHaveBeenCalledWith('Error fetching operation types', 'Error');
   });
 
+  // Teste para verificar se a lista de staff é buscada com base no tipo de operação
   it('should fetch staff list based on operation type', () => {
     const operationType = {
       staffs: [
@@ -87,6 +101,7 @@ describe('CreateAppointmentComponent', () => {
     expect(component.nurses).toEqual([{ staffType: 'Nurse', name: 'Nurse1' }]);
   });
 
+  // Teste para verificar o tratamento de ausência de lista de staff para o tipo de operação selecionado
   it('should handle no staff list for the selected operation type', () => {
     spyOn(console, 'error');
 
@@ -97,6 +112,7 @@ describe('CreateAppointmentComponent', () => {
     expect(console.error).toHaveBeenCalledWith('No staff list found for the selected operation type');
   });
 
+  // Teste para verificar a atualização da equipe quando um membro é adicionado
   it('should update team when a member is added', () => {
     const event = { target: { checked: true } } as unknown as Event;
     component.newAppointment.team = [];
@@ -106,6 +122,7 @@ describe('CreateAppointmentComponent', () => {
     expect(component.newAppointment.team).toEqual(['member1']);
   });
 
+  // Teste para verificar a atualização da equipe quando um membro é removido
   it('should update team when a member is removed', () => {
     const event = { target: { checked: false } } as unknown as Event;
     component.newAppointment.team = ['member1'];
@@ -115,6 +132,7 @@ describe('CreateAppointmentComponent', () => {
     expect(component.newAppointment.team).toEqual([]);
   });
 
+  // Teste para verificar a criação de um agendamento com sucesso
   it('should create an appointment successfully', () => {
     spyOn(appointmentService, 'createAppointment').and.returnValue(of({}));
     spyOn(component, 'clearForm');
@@ -137,6 +155,7 @@ describe('CreateAppointmentComponent', () => {
     expect(navigateSpy).toHaveBeenCalledWith(['/appointment-manager']);
   });
 
+  // Teste para verificar o tratamento de erro durante a criação de um agendamento
   it('should handle error during appointment creation', () => {
     spyOn(appointmentService, 'createAppointment').and.returnValue(throwError('Error'));
     spyOn(window, 'alert');

@@ -1,3 +1,29 @@
+/**
+ * Component for managing appointments.
+ * 
+ * Author: Vasco Sousa (1221700)
+ * Last update: 15/12/2024
+ * 
+ * @component
+ * @selector app-appointment-manager
+ * @standalone true
+ * @imports [FormsModule, ReactiveFormsModule, CommonModule, RouterModule, SidebarComponent]
+ * 
+ * @class AppointmentManagerComponent
+ * 
+ * @property {any} filters - Filters for searching appointments.
+ * @property {any[]} appointments - List of appointments.
+ * @property {any[]} operationRequests - List of operation requests.
+ * @property {any[]} staffList - List of staff members.
+ * @property {string[]} statusTypes - List of status types for appointments.
+ * 
+ * @method ngOnInit Initializes the component and fetches appointments.
+ * @method fetchAppointments Fetches all appointments from the service.
+ * @method fetchOperationRequests Fetches all operation requests from the service.
+ * @method fetchStaffList Fetches the list of staff members.
+ */
+
+
 import { Component, OnInit } from '@angular/core';
 import { AppointmentService } from '../../Services/appointment.service';
 import { OperationRequestService } from '../../Services/operation-request.service';

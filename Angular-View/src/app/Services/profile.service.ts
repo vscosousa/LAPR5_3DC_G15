@@ -1,3 +1,19 @@
+/** 
+ * @class ProfileService
+ * @description Service to handle profile-related API requests.
+ * 
+ * @method setProfileId
+ * @description Sets the profile ID.
+ * @returns {void}
+ * 
+ * @method getCode
+ * @description Fetches a code for the given email.
+ * @returns {Observable<any>} An observable containing the fetched code.
+ * 
+ * @date 22/12/2024
+ * @autor Vasco Sousa (1221700)
+ */
+
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';

@@ -1,3 +1,37 @@
+ /**
+     * @fileoverview This file contains the test suite for the MedicalHistoryManagerComponent.
+     * 
+     * @author Vasco Sousa (1221700)
+     * @date 11/12/2024
+     * 
+     * @description
+     * This file includes unit tests for the MedicalHistoryManagerComponent. It tests various functionalities
+     * such as displaying patient data, handling user interactions, and ensuring proper data binding.
+     * 
+     * @methods
+     * - Test cases for displaying patient data
+     * - Test cases for handling user interactions
+     * - Test cases for data binding and component initialization
+     */
+
+    /**
+     * Represents the data structure for a patient's medical history.
+     * 
+     * @typedef {Object} PatientData
+     * @property {string} medicalRecordNumber - The unique identifier for the patient's medical record.
+     * @property {string} firstName - The first name of the patient.
+     * @property {string} lastName - The last name of the patient.
+     * @property {string} fullName - The full name of the patient.
+     * @property {string} dateOfBirth - The date of birth of the patient in MM/DD/YYYY format.
+     * @property {number} gender - The gender of the patient (1 for male, 2 for female, etc.).
+     * @property {string} email - The email address of the patient.
+     * @property {string} phoneNumber - The phone number of the patient.
+     * @property {string} emergencyContact - The emergency contact number for the patient.
+     * @property {string} medicalConditions - Any medical conditions the patient has.
+     * @property {Array} appointmentHistory - The history of appointments for the patient.
+     * @property {boolean} isActive - Indicates whether the patient is currently active.
+     */
+
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ActivatedRoute } from '@angular/router';
@@ -123,6 +157,7 @@ describe('MedicalHistoryManagerComponent', () => {
 
   it('should view patient details', () => {
     const medicalRecordNumber = '20241116';
+  
     const patientData = [{
       medicalRecordNumber: '20241116',
       firstName: 'John',

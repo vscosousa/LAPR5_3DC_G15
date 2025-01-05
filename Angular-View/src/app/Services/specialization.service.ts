@@ -1,3 +1,21 @@
+/**
+ * Service for managing specializations.
+ * 
+ * 
+ * US Developed By: João Pereira - 1211503
+ * Finished at 06/12/2024 
+ * 
+ * 
+ * @service
+ * @class SpecializationService
+ * 
+ * @method getSpecializations Fetches all specializations from the API.
+ * @method createSpecialization Creates a new specialization.
+ * @method updateSpecialization Updates an existing specialization.
+ * @method deleteSpecialization Deletes a specialization.
+ */
+
+
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';

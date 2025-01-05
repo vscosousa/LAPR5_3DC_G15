@@ -1,3 +1,19 @@
+/**
+ * US 7.2.13 - As an Admin, I want to update Specializations.
+ * 
+ * US Developed By: João Pereira - 1211503
+ * Finished at 06/12/2024 
+ * 
+ * @class UpdateSpecializationComponent
+ * 
+ * @property {string} specializationId - The ID of the specialization to be updated.
+ * @property {EventEmitter<void>} specializationUpdated - Event emitter to notify parent component of the update.
+ * 
+ * @method ngOnInit Logs the specialization ID when the component is initialized.
+ * @method onSubmit Submits the form to update the specialization.
+ */
+
+
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Route, Router } from '@angular/router';
 import { SpecializationService } from '../../../Services/specialization.service';

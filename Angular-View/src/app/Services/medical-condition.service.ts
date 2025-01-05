@@ -1,3 +1,23 @@
+/**
+ * @class MedicalConditionService
+ * @description Service to handle medical condition-related API requests.
+ * 
+ * @author Vasco Sousa (1221700)
+ * @date 11/12/2024
+ * 
+ * @method getMedicalConditions
+ * @description Fetches all medical conditions from the API.
+ * @returns {Observable<any[]>} An observable containing an array of medical conditions.
+ * 
+ * @method createMedicalConditions
+ * @description Creates a new medical condition.
+ * @returns {Observable<any>} An observable containing the created medical condition.
+ * 
+ * @method updateCondition
+ * @description Updates an existing medical condition.
+ * @returns {Observable<any>} An observable containing the updated medical condition.
+ */
+
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError, Observable, of, throwError } from 'rxjs';

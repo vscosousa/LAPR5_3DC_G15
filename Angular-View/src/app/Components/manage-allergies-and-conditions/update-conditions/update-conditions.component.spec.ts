@@ -1,3 +1,20 @@
+/**
+   * @fileoverview Unit tests for the UpdateConditionsComponent.
+   * @author Vasco Sousa (1221700)
+   * @date 11/12/2024
+   * 
+   * This file contains the unit tests for the UpdateConditionsComponent.
+   * 
+   * Methods implemented:
+   * - beforeEach: Sets up the testing environment before each test.
+   * - it: Contains individual test cases for the component.
+   */
+
+  /**
+   * Fixture for the UpdateConditionsComponent.
+   * Used to create an instance of the component and access its properties and methods.
+   */
+
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { UpdateConditionsComponent } from './update-conditions.component';

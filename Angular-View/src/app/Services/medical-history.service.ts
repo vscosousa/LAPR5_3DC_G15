@@ -1,3 +1,22 @@
+/**
+ * @fileoverview MedicalHistoryService
+ * @description Service to handle medical history-related API requests.
+ * 
+ * @class MedicalHistoryService
+ * @description Service to handle medical history-related API requests.
+ * 
+ * @method getPatientMedicalHistory
+ * @description Fetches the medical history of a specific patient by their medical record number.
+ * @returns {Observable<any>} An observable containing the patient's medical history.
+ * 
+ * @method updatePatientMedicalHistory
+ * @description Updates the medical history of a specific patient.
+ * @returns {Observable<any>} An observable containing the updated medical history.
+ * 
+ * @date 11/12/2024
+ * @author Vasco Sousa (1221700)
+ */
+
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { catchError, Observable, tap, throwError } from 'rxjs';

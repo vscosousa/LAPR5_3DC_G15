@@ -1,3 +1,13 @@
+/**
+     * @file manage-allergies-and-conditions.component.spec.ts
+     * @description This file contains the unit tests for the ManageAllergiesAndConditionsComponent.
+     * @author Vasco Sousa (1221700)
+     * @date 11/12/2024
+**/
+
+
+  
+
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ManageAllergiesAndConditionsComponent } from './manage-allergies-and-conditions.component';
@@ -105,6 +115,7 @@ describe('ManageAllergiesAndConditionsComponent', () => {
   });
 
   it('should fetch medical conditions successfully', async () => {
+    
     const mockConditions = [{ code: 'C1', medicalConditionName: 'Asthma', description: 'Asthma condition', symptoms: 'Shortness of breath' }] ;
     jest.spyOn(medicalConditionService, 'getMedicalConditions').mockReturnValue(of(mockConditions as any));
 

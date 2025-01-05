@@ -1,3 +1,22 @@
+/**
+ * @fileoverview AllergyService
+ * @description Service to handle allergy-related API requests.
+ * @author Vasco Sousa (1221700)
+ * @date 11/12/2024
+ * 
+ * @method getAllergies
+ * @description Fetches all allergies from the API.
+ * @returns {Observable<any[]>} An observable containing an array of allergies.
+ * 
+ * @method createAllergy
+ * @description Creates a new allergy.
+ * @returns {Observable<any>} An observable containing the created allergy.
+ * 
+ * @method updateAllergy
+ * @description Updates an existing allergy.
+ * @returns {Observable<any>} An observable containing the updated allergy.
+ */
+
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';

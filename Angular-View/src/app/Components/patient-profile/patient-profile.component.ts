@@ -1,3 +1,32 @@
+/**
+ * @fileoverview PatientProfileComponent handles the patient profile functionalities including fetching patient data, allergies, medical conditions, and medical history.
+ * It also provides functionalities to download the profile data and verify a code for secure actions.
+ * 
+ * @author Vasco Sousa (1221700)
+ * @date 22/12/2024
+ * 
+ * @class PatientProfileComponent
+ * @implements OnInit
+ * 
+ * @method ngOnInit Initializes the component by setting panel and settings IDs, fetching allergies, medical conditions, and patient profile.
+ * @method getPatientProfile Fetches the patient profile using the email decoded from the JWT token.
+ * @method fetchAllergies Fetches all allergies from the allergy service.
+ * @method fetchMedicalConditions Fetches all medical conditions from the medical condition service.
+ * @method fetchMedicalHistory Fetches the medical history of the patient using the medical record number.
+ * @method parseFamilyHistoryString Parses a family history string into an array of strings.
+ * @method parseFamilyHistory Parses an array of family history strings into an array of objects with relationship and conditions.
+ * @method filterSelectedAllergies Filters the selected allergies based on the fetched medical history.
+ * @method filterSelectedMedicalConditions Filters the selected medical conditions based on the fetched medical history.
+ * @method downloadProfile Downloads the patient profile data as a JSON file inside a ZIP archive.
+ * @method openModal Opens a modal for code verification.
+ * @method verifyCode Verifies the entered code and triggers the profile download if the code is correct.
+ * @method closeModal Closes the modal.
+ * @method moveFocus Moves the focus to the next input element when a digit is entered.
+ * @method handleBackspace Moves the focus to the previous input element when backspace is pressed on an empty input.
+ * @method allowOnlyNumbers Allows only numeric input in the code input fields.
+ * @method handlePaste Handles paste event to allow pasting a 6-digit code into the input fields.
+ */
+
 import { Component, OnInit } from '@angular/core';
 import { SidebarComponent } from "../sidebar/sidebar.component";
 import { PanelService } from '../../Services/panel.service';
@@ -12,6 +41,7 @@ import { CommonModule } from '@angular/common';
 import JSZip from 'jszip';
 import { saveAs } from 'file-saver';
 import { FormsModule } from '@angular/forms';
+
 
 @Component({
   selector: 'app-patient-profile',
