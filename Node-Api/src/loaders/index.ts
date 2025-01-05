@@ -37,6 +37,11 @@ export default async ({ expressApp }) => {
     schema: '../persistence/schemas/medicalConditionSchema',
   };
 
+  const roomTypeSchema = {
+    name: 'roomTypeSchema',
+    schema: '../persistence/schemas/roomTypeSchema',
+  };
+
   const appointmentController = {
     name: config.controllers.appointment.name,
     path: config.controllers.appointment.path

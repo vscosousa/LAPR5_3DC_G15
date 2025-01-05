@@ -3,7 +3,7 @@ import { Inject, Service } from 'typedi';
 import { Result } from '../core/logic/Result';
 import IRoomTypeService from '../services/IServices/IRoomTypeService';
 import IRoomTypeController from './IControllers/IRoomTypeController';
-import { IRoomTypeDTO } from '../dto/IRoomTypeDTO'; // Import the DTO
+import { IRoomTypeDTO } from '../dto/IRoomTypeDTO';
 
 @Service()
 export default class RoomTypeController implements IRoomTypeController {

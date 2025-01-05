@@ -19,7 +19,6 @@ export class RoomType extends AggregateRoot<RoomTypeProps> {
 
     private constructor(props: RoomTypeProps, id?: UniqueEntityID) {
         super(props, id);
-        // this._id is initialized in the super constructor
         this.props = props;
     }
 
