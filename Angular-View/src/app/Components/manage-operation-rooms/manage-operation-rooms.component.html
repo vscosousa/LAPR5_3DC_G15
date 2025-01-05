@@ -1,0 +1,43 @@
+<div class="manage-container">
+  <app-sidebar></app-sidebar>
+  <div class="screens-container">
+    <div class="screen">
+      <button (click)="openModal('create-room')" class="btn btn-create">Create</button>
+      <h2 class="manage-title" style="text-align: center">Rooms</h2>
+      <div class="table-container">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Room Name</th>
+              <th>Room Type</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let room of rooms">
+              <td>{{ room.name }}</td>
+              <td>{{ room.type }}</td>
+              <td>
+                <button (click)="openDetailsModal(room)" class="btn btn-view">View Details</button>
+                <button (click)="openUpdateModal(room)" class="btn btn-view">Update</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" *ngIf="modalType">
+    <div class="modal-content">
+      <span class="close" (click)="closeModal()">&times;</span>
+      <app-create-room *ngIf="modalType === 'create-room'" (roomCreated)="handleRoomCreated()"></app-create-room>
+      <app-update-room *ngIf="modalType === 'update-room'" [room]="selectedItem" (roomUpdated)="handleRoomUpdated()"></app-update-room>
+      <div *ngIf="modalType === 'details'">
+        <h2>{{ selectedItem.name }} Details</h2>
+        <p><strong>Type:</strong> {{ selectedItem.type }}</p>
+        <p><strong>Description:</strong> {{ selectedItem.description }}</p>
+      </div>
+    </div>
+  </div>
+</div>

@@ -8,15 +8,16 @@ import { IRoomTypePersistence } from '../dataschema/IRoomTypePersistence';
 
 @Service()
 export default class RoomTypeRepo implements IRoomTypeRepo {
+  constructor(
+    @Inject('roomTypeSchema') private roomTypeSchema: Model<IRoomTypePersistence & Document>,
+    @Inject('logger') private logger
+  ) {}
+
   public async exists(roomType: RoomType): Promise<boolean> {
     const query = { domainId: roomType.id.toString() };
     const roomTypeDocument = await this.roomTypeSchema.findOne(query);
     return roomTypeDocument !== null;
   }
-  constructor(
-    @Inject('roomTypeSchema') private roomTypeSchema: Model<IRoomTypePersistence & Document>,
-    @Inject('logger') private logger
-  ) {}
 
   public async findAll(): Promise<RoomType[]> {
     const roomTypeDocuments = await this.roomTypeSchema.find();
@@ -24,18 +25,22 @@ export default class RoomTypeRepo implements IRoomTypeRepo {
   }
 
   public async save(roomType: RoomType): Promise<RoomType> {
-    const query = { domainId: roomType.id.toString() };
-    const roomTypeDocument = await this.roomTypeSchema.findOne(query);
-
-    if (roomTypeDocument === null) {
-      const rawRoomType = RoomTypeMap.toPersistence(roomType);
-      await this.roomTypeSchema.create(rawRoomType);
-    } else {
-      roomTypeDocument.typeName = roomType.typeName;
-      await roomTypeDocument.save();
+    try {
+      const query = { domainId: roomType.id.toString() };
+      const roomTypeDocument = await this.roomTypeSchema.findOne(query);
+      if (roomTypeDocument === null) {
+        const rawRoomType = RoomTypeMap.toPersistence(roomType);
+        await this.roomTypeSchema.create(rawRoomType);
+      } else {
+        roomTypeDocument.typeName = roomType.props.typeName;
+        roomTypeDocument.status = roomType.props.status; // Ensure status is updated
+        await roomTypeDocument.save();
+      }
+      return roomType;
+    } catch (e) {
+      console.error('Error saving room type:', e);
+      throw e;
     }
-
-    return roomType;
   }
 
   public async findByDomainId(roomTypeId: UniqueEntityID | string): Promise<RoomType> {

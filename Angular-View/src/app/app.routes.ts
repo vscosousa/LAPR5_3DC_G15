@@ -27,7 +27,7 @@ import { DoctorGuard } from './Guards/doctor.guard';
 import { DoctorPanelComponent } from './Components/doctor-panel/doctor-panel.component';
 import { OperationRequestsComponent } from './Components/operation-requests/operation-requests.component';
 import { CreateOperationRequestComponent } from './Components/operation-requests/create-operation-request/create-operation-request.component';
-/**import { UpdateOperationRequestComponent } from './Components/operation-requests/update-operation-request/update-operation-request.component';*/
+import { UpdateOperationRequestComponent } from './Components/operation-requests/update-operation-request/update-operation-request.component';
 import { SpecializationComponent } from './Components/specialization/specialization.component';
 import { CreateSpecializationComponent } from './Components/specialization/create-specialization/create-specialization.component';
 import { ManageAllergiesAndConditionsComponent } from './Components/manage-allergies-and-conditions/manage-allergies-and-conditions.component';
@@ -38,11 +38,14 @@ import { UpdateConditionsComponent } from './Components/manage-allergies-and-con
 import { UpdateMedicalHistoryComponent } from './Components/update-medical-history/update-medical-history.component';
 import { MedicalHistoryManagerComponent } from './Components/medical-history-manager/medical-history-manager.component';
 import { PatientPolicyComponent } from './Components/patient-policy/patient-policy.component';
-import { UpdateOperationRequestComponent } from './Components/operation-requests/update-operation-request/update-operation-request.component';
 import { CreateAppointmentComponent } from './Components/create-appointment/create-appointment.component';
 import { AppointmentManagerComponent } from './Components/appointment-manager/appointment-manager.component';
 import { UpdateAppointmentComponent } from './Components/update-appointment/update-appointment.component';
 import { PatientProfileComponent } from './Components/patient-profile/patient-profile.component';
+import { ManageOperationRoomsComponent } from './Components/manage-operation-rooms/manage-operation-rooms.component';
+import { CreateRoomComponent } from './Components/manage-operation-rooms/create-rooms/create-room.component';
+import { UpdateRoomComponent } from './Components/manage-operation-rooms/update-room/update-room.component';
+
 
 export const routes: Routes = [
   {
@@ -151,6 +154,13 @@ export const routes: Routes = [
   },
   {
     path: "update-appointment/:id", component: UpdateAppointmentComponent, canActivate: [DoctorGuard]
+  },
+  {
+    path: 'manage-operation-rooms', component: ManageOperationRoomsComponent, canActivate: [AuthGuard],
+    children: [
+      { path: 'create-room', component: CreateRoomComponent, canActivate: [AuthGuard] },
+      { path: 'update-room', component: UpdateRoomComponent, canActivate: [AuthGuard] }
+    ]
   },
   {
     path: "", component: HomeComponent

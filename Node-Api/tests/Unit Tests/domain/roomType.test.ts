@@ -4,8 +4,9 @@ import { RoomType } from '../../../src/domain/roomType';
 
 describe('RoomType Domain', () => {
     it('should create a room type successfully', () => {
-        const roomTypeProps = {
-            typeName: 'Operating Room'
+        const roomTypeProps: { typeName: string; status: 'suitable' | 'unsuitable' } = {
+            typeName: 'Operating Room',
+            status: 'suitable'
         };
 
         const result = RoomType.create(roomTypeProps);
@@ -13,11 +14,13 @@ describe('RoomType Domain', () => {
         expect(result.isSuccess).to.be.true;
         expect(result.getValue()).to.be.instanceOf(RoomType);
         expect(result.getValue().typeName).to.equal(roomTypeProps.typeName);
+        expect(result.getValue().status).to.equal(roomTypeProps.status);
     });
 
     it('should fail to create a room type with missing properties', () => {
-        const roomTypeProps = {
-            typeName: ''
+        const roomTypeProps: { typeName: string; status: 'suitable' | 'unsuitable' } = {
+            typeName: '',
+            status: 'suitable'
         };
 
         const result = RoomType.create(roomTypeProps);
@@ -26,21 +29,25 @@ describe('RoomType Domain', () => {
     });
 
     it('should set and get room type properties', () => {
-        const roomTypeProps = {
-            typeName: 'Operating Room'
+        const roomTypeProps: { typeName: string; status: 'suitable' | 'unsuitable' } = {
+            typeName: 'Operating Room',
+            status: 'suitable'
         };
 
         const result = RoomType.create(roomTypeProps);
         const roomType = result.getValue();
 
         roomType.props.typeName = 'Updated Room';
+        roomType.props.status = 'unsuitable';
 
         expect(roomType.typeName).to.equal('Updated Room');
+        expect(roomType.status).to.equal('unsuitable');
     });
 
     it('should create a room type with a specific id', () => {
-        const roomTypeProps = {
-            typeName: 'Operating Room'
+        const roomTypeProps: { typeName: string; status: 'suitable' | 'unsuitable' } = {
+            typeName: 'Operating Room',
+            status: 'suitable'
         };
 
         const id = new UniqueEntityID('1');

@@ -1,19 +1,13 @@
 import mongoose from 'mongoose';
 import { IRoomTypePersistence } from '../../dataschema/IRoomTypePersistence';
 
-const RoomType = new mongoose.Schema(
+const RoomTypeSchema = new mongoose.Schema(
     {
-        domainId: {
-            type: String,
-            unique: true
-        },
-        typeName: {
-            type: String,
-            required: [true, 'Please enter Room Type Name'],
-            unique: true
-        }
+    domainId: { type: String, required: true },
+    typeName: { type: String, required: true },
+    status: { type: String, required: true, enum: ['suitable', 'unsuitable'] },
     },
     { timestamps: true },
 );
 
-export default mongoose.model<IRoomTypePersistence & mongoose.Document>('RoomType', RoomType);
+export default mongoose.model<IRoomTypePersistence & mongoose.Document>('RoomType', RoomTypeSchema);

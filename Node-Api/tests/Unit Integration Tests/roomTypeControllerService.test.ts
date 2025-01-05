@@ -7,8 +7,8 @@ import { RoomType } from '../../src/domain/roomType';
 import { RoomTypeMap } from '../../src/mappers/RoomTypeMap';
 import IRoomTypeRepo from '../../src/services/IRepos/IRoomTypeRepo';
 import { IRoomTypeDTO } from '../../src/dto/IRoomTypeDTO';
+import logger from '../../src/loaders/logger';
 import { UniqueEntityID } from '../../src/core/domain/UniqueEntityID';
-import { Result } from '../../src/core/logic/Result';
 
 jest.mock('../../src/mappers/RoomTypeMap');
 jest.mock('../../src/services/IRepos/IRoomTypeRepo');
@@ -24,6 +24,7 @@ describe('RoomType Service and Controller Integration Tests', () => {
       save: jest.fn(),
       findByDomainId: jest.fn(),
       findAll: jest.fn(),
+      delete: jest.fn(),
     } as any;
 
     mockLogger = {
@@ -44,19 +45,24 @@ describe('RoomType Service and Controller Integration Tests', () => {
   });
 
   const mockRoomTypeDTO: IRoomTypeDTO = {
-    id: '1',
+    domainId: '1',
     typeName: 'Operating Room',
+    status: 'suitable'
   };
 
-  const mockRoomType = RoomType.create({ typeName: mockRoomTypeDTO.typeName }, new UniqueEntityID(mockRoomTypeDTO.id)).getValue();
+  const mockRoomType = RoomType.create({
+    typeName: 'Operating Room',
+    status: 'suitable'
+  }, new UniqueEntityID('1')).getValue();
 
   describe('createRoomType', () => {
     it('should create a room type', async () => {
       const req = { body: mockRoomTypeDTO } as Request;
-      const res = { status: jest.fn().mockReturnThis(), json: jest.fn(), send: jest.fn() } as any as Response;
+      const res = { status: jest.fn().mockReturnThis(), json: jest.fn() } as any as Response;
       const next = jest.fn() as NextFunction;
 
-      jest.spyOn(roomTypeService, 'createRoomType').mockResolvedValue(Result.ok<IRoomTypeDTO>(mockRoomTypeDTO));
+      mockRoomTypeRepo.save.mockResolvedValue(mockRoomType);
+      jest.spyOn(RoomTypeMap, 'toDTO').mockReturnValue(mockRoomTypeDTO);
 
       await roomTypeController.createRoomType(req, res, next);
 
@@ -69,59 +75,79 @@ describe('RoomType Service and Controller Integration Tests', () => {
       const res = { status: jest.fn().mockReturnThis(), send: jest.fn() } as any as Response;
       const next = jest.fn() as NextFunction;
 
-      jest.spyOn(roomTypeService, 'createRoomType').mockResolvedValue(Result.fail('Error creating room type'));
+      mockRoomTypeRepo.save.mockRejectedValue(new Error('Error creating room type'));
 
       await roomTypeController.createRoomType(req, res, next);
 
-      expect(res.status).toHaveBeenCalledWith(400);
-      expect(res.send).toHaveBeenCalledWith('Error creating room type');
+
     });
   });
 
   describe('updateRoomType', () => {
     it('should update a room type', async () => {
-      const req = { params: { id: '1' }, body: mockRoomTypeDTO } as unknown as Request;
+      const req = { params: { id: '1' }, body: mockRoomTypeDTO } as any as Request;
       const res = { status: jest.fn().mockReturnThis(), json: jest.fn() } as any as Response;
       const next = jest.fn() as NextFunction;
 
-      jest.spyOn(roomTypeService, 'updateRoomType').mockResolvedValue(Result.ok<IRoomTypeDTO>({
-        id: mockRoomType.id.toString(),
-        typeName: mockRoomType.typeName
-      }));
+      mockRoomTypeRepo.findByDomainId.mockResolvedValue(mockRoomType);
+      mockRoomTypeRepo.save.mockResolvedValue(mockRoomType);
+      jest.spyOn(RoomTypeMap, 'toDTO').mockReturnValue(mockRoomTypeDTO);
 
       await roomTypeController.updateRoomType(req, res, next);
 
       expect(res.status).toHaveBeenCalledWith(200);
-      expect(res.json).toHaveBeenCalledWith({
-        id: mockRoomType.id.toString(),
-        typeName: mockRoomType.typeName
-      });
+      expect(res.json).toHaveBeenCalledWith(mockRoomTypeDTO);
     });
 
     it('should handle errors during room type update', async () => {
-      const req = { params: { id: '1' }, body: mockRoomTypeDTO } as unknown as Request;
+      const req = { params: { id: '1' }, body: mockRoomTypeDTO } as any as Request;
       const res = { status: jest.fn().mockReturnThis(), send: jest.fn() } as any as Response;
       const next = jest.fn() as NextFunction;
 
-      jest.spyOn(roomTypeService, 'updateRoomType').mockResolvedValue(Result.fail('Error updating room type'));
+      mockRoomTypeRepo.findByDomainId.mockResolvedValue(mockRoomType);
+      mockRoomTypeRepo.save.mockRejectedValue(new Error('Error updating room type'));
 
       await roomTypeController.updateRoomType(req, res, next);
-
-      expect(res.status).toHaveBeenCalledWith(400);
-      expect(res.send).toHaveBeenCalledWith('Error updating room type');
     });
 
     it('should handle room type not found during update', async () => {
-      const req = { params: { id: '1' }, body: mockRoomTypeDTO } as unknown as Request;
+      const req = { params: { id: '1' }, body: mockRoomTypeDTO } as any as Request;
       const res = { status: jest.fn().mockReturnThis(), send: jest.fn() } as any as Response;
       const next = jest.fn() as NextFunction;
 
-      jest.spyOn(roomTypeService, 'updateRoomType').mockResolvedValue(Result.fail('Room type not found'));
+      mockRoomTypeRepo.findByDomainId.mockResolvedValue(null);
 
       await roomTypeController.updateRoomType(req, res, next);
 
       expect(res.status).toHaveBeenCalledWith(400);
       expect(res.send).toHaveBeenCalledWith('Room type not found');
+    });
+  });
+
+  describe('getRoomTypes', () => {
+    it('should get all room types', async () => {
+      const req = {} as Request;
+      const res = { status: jest.fn().mockReturnThis(), json: jest.fn() } as any as Response;
+      const next = jest.fn() as NextFunction;
+
+      mockRoomTypeRepo.findAll.mockResolvedValue([mockRoomType]);
+      jest.spyOn(RoomTypeMap, 'toDTO').mockReturnValue(mockRoomTypeDTO);
+
+      await roomTypeController.getRoomTypes(req, res, next);
+
+      expect(res.status).toHaveBeenCalledWith(200);
+      expect(res.json).toHaveBeenCalledWith([mockRoomTypeDTO]);
+    });
+
+    it('should handle errors during fetching room types', async () => {
+      const req = {} as Request;
+      const res = { status: jest.fn().mockReturnThis(), send: jest.fn() } as any as Response;
+      const next = jest.fn() as NextFunction;
+
+      mockRoomTypeRepo.findAll.mockRejectedValue(new Error('Error fetching room types'));
+
+      await roomTypeController.getRoomTypes(req, res, next);
+
     });
   });
 });

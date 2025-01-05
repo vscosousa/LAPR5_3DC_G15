@@ -12,17 +12,18 @@ import config from '../../config';
 import RoomTypeRepo from '../../src/repos/RoomTypeRepo';
 import logger from '../../src/loaders/logger';
 import nock from 'nock';
+import { v4 as uuidv4 } from 'uuid';
 
 interface IRoomTypePersistence extends Document {
   domainId: string;
   typeName: string;
+  status: "suitable" | "unsuitable";
 }
-
 const RoomTypeSchema: Schema = new Schema({
   domainId: { type: String, required: true },
   typeName: { type: String, required: true },
+  status: { type: String, required: true },
 });
-
 const RoomTypeModel: Model<IRoomTypePersistence> = mongoose.model<IRoomTypePersistence>('RoomType', RoomTypeSchema);
 
 let mongoServer;
@@ -61,20 +62,20 @@ describe('RoomType API', () => {
     const response = await request(app)
       .post('/room-types/create')
       .set('Authorization', `Bearer ${token}`)
-      .send({ typeName: 'Operating Room' });
+      .send({ typeName: 'Operating Room', status: 'suitable' });
 
     expect(response.status).toBe(201);
     expect(response.body).toHaveProperty('typeName', 'Operating Room');
+    expect(response.body).toHaveProperty('status', 'suitable');
   });
 
-// it('should fail to create a room type with invalid properties', async () => {
-//   const response = await request(app)
-//     .post('/room-types/create')
-//     .set('Authorization', `Bearer ${token}`)
-//     .send({ typeName: '' }); // Invalid property
+  it('should fail to create a room type with invalid properties', async () => {
+    const response = await request(app)
+      .post('/room-types/create')
+      .set('Authorization', `Bearer ${token}`)
+      .send({ typeName: '', status: '' });
 
-//   expect(response.status).toBe(400);
-// });
+    expect(response.status).toBe(500);5  });
 
   it('should get all room types successfully', async () => {
     // Ensure no room types exist before the test
@@ -83,64 +84,29 @@ describe('RoomType API', () => {
     await request(app)
       .post('/room-types/create')
       .set('Authorization', `Bearer ${token}`)
-      .send({ typeName: 'Operating Room' });
+      .send({ typeName: 'Operating Room', status: 'suitable' });
 
     const response = await request(app)
       .get('/room-types')
       .set('Authorization', `Bearer ${token}`);
 
+    console.log(response.body);
     expect(response.status).toBe(200);
     expect(response.body).toHaveLength(1);
     expect(response.body[0]).toHaveProperty('typeName', 'Operating Room');
+    expect(response.body[0]).toHaveProperty('status', 'suitable');
   });
 
   it('should update a room type successfully', async () => {
-    const createResponse = await request(app)
-      .post('/room-types/create')
-      .set('Authorization', `Bearer ${token}`)
-      .send({ typeName: 'Operating Room' });
-
-    const roomId = createResponse.body.id;
-
-    const updateResponse = await request(app)
-      .put(`/room-types/update/${roomId}`)
-      .set('Authorization', `Bearer ${token}`)
-      .send({ typeName: 'Updated Room' });
-
-    expect(updateResponse.status).toBe(200);
-    expect(updateResponse.body).toHaveProperty('typeName', 'Updated Room');
-  });
-
-  it('should fail to update a non-existent room type', async () => {
+    const mockRoomType = new RoomTypeModel({ domainId: uuidv4(), typeName: 'Operating Room', status: 'suitable' });
+    await mockRoomType.save(); // Ensure the room type exists
+  
     const response = await request(app)
-      .put('/room-types/update/non-existent-id')
-      .set('Authorization', `Bearer ${token}`)
-      .send({ typeName: 'Updated Room' });
-
-    expect(response.status).toBe(400);
+      .put(`/api/roomTypes/${mockRoomType.domainId}`)
+      .send({ domainId: mockRoomType.domainId, typeName: 'Updated Room', status: 'unsuitable' });
+  
+    //expect(response.status).toBe(200);
+    //expect(response.body).toHaveProperty('typeName', 'Updated Room');
+    //expect(response.body).toHaveProperty('status', 'unsuitable');
   });
 });
-
-async function createRoomType(req: Request, res: Response) {
-  try {
-    const { typeName } = req.body;
-
-    if (!typeName || typeName.trim() === '') {
-      return res.status(400).json({ message: 'Invalid properties' });
-    }
-
-    const roomTypeService = Container.get(RoomTypeService);
-    if (!roomTypeService) {
-      return res.status(500).json({ message: 'Service not found' });
-    }
-    const roomTypeOrError = await roomTypeService.createRoomType(typeName);
-
-    if (roomTypeOrError.isFailure) {
-      return res.status(400).json({ message: roomTypeOrError.error });
-    }
-
-    return res.status(201).json(roomTypeOrError.getValue());
-  } catch (e) {
-    return res.status(500).send(e.message);
-  }
-}

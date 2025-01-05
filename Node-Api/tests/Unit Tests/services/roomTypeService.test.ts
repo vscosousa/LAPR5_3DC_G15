@@ -33,7 +33,6 @@ describe('RoomTypeService', function () {
 
         // Mock UniqueEntityID generation
         sandbox.stub(UniqueEntityID.prototype, 'toString').returns('123');
-        
     });
 
     afterEach(function () {
@@ -42,15 +41,16 @@ describe('RoomTypeService', function () {
 
     it('should create a room type successfully', async function () {
         const typeName = 'Operating Room';
-        const roomTypeDTO: IRoomTypeDTO = { id: '123', typeName };
+        const status: 'suitable' | 'unsuitable' = 'suitable';
+        const roomTypeDTO: IRoomTypeDTO = { domainId: '123', typeName, status };
 
-        const roomTypeOrError = RoomType.create({ typeName }, new UniqueEntityID(roomTypeDTO.id));
+        const roomTypeOrError = RoomType.create({ typeName, status }, new UniqueEntityID(roomTypeDTO.domainId));
         expect(roomTypeOrError.isSuccess).to.be.true;
         const roomType = roomTypeOrError.getValue();
 
         roomTypeRepo.save.resolves();
 
-        const result = await roomTypeService.createRoomType(typeName);
+        const result = await roomTypeService.createRoomType(typeName, status);
 
         expect(result.isSuccess).to.be.true;
         expect(result.getValue()).to.deep.equal(roomTypeDTO);
@@ -60,8 +60,9 @@ describe('RoomTypeService', function () {
 
     it('should fail to create a room type with invalid properties', async function () {
         const typeName = '';
+        const status: 'suitable' | 'unsuitable' = 'suitable';
 
-        const result = await roomTypeService.createRoomType(typeName);
+        const result = await roomTypeService.createRoomType(typeName, status);
 
         expect(result.isFailure).to.be.true;
         sinon.assert.notCalled(roomTypeRepo.save);
@@ -70,8 +71,8 @@ describe('RoomTypeService', function () {
 
     it('should get all room types successfully', async function () {
         const roomTypes = [
-            RoomType.create({ typeName: 'Operating Room' }, new UniqueEntityID('1')).getValue(),
-            RoomType.create({ typeName: 'Emergency Room' }, new UniqueEntityID('2')).getValue()
+            RoomType.create({ typeName: 'Operating Room', status: 'suitable' }, new UniqueEntityID('1')).getValue(),
+            RoomType.create({ typeName: 'Emergency Room', status: 'suitable' }, new UniqueEntityID('2')).getValue()
         ];
         roomTypeRepo.findAll.resolves(roomTypes);
 

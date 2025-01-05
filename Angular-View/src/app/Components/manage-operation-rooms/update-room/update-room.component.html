@@ -1,0 +1,13 @@
+<h2>Update Room</h2>
+<form (submit)="onSubmit()">
+  <label for="room-name">Name:</label>
+  <input type="text" id="room-name" name="room-name" [(ngModel)]="room.name" required>
+  
+  <label for="room-type">Type:</label>
+  <input type="text" id="room-type" name="room-type" [(ngModel)]="room.type" required>
+  
+  <label for="room-description">Description:</label>
+  <input type="text" id="room-description" name="room-description" [(ngModel)]="room.description" required>
+  
+  <button type="submit">Submit</button>
+</form>

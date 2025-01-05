@@ -1,4 +1,5 @@
 export interface IRoomTypeDTO {
-    id: string;
-    typeName: string;
-  }
+  domainId: string;
+  typeName: string;
+  status: 'suitable' | 'unsuitable';
+}

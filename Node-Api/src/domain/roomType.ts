@@ -4,11 +4,10 @@ import { Result } from "../core/logic/Result";
 
 interface RoomTypeProps {
     typeName: string;
+    status: 'suitable' | 'unsuitable';
 }
 
 export class RoomType extends AggregateRoot<RoomTypeProps> {
-    props: RoomTypeProps;
-
     get id(): UniqueEntityID {
         return this._id;
     }
@@ -17,22 +16,24 @@ export class RoomType extends AggregateRoot<RoomTypeProps> {
         return this.props.typeName;
     }
 
+    get status(): 'suitable' | 'unsuitable' {
+        return this.props.status;
+    }
+
     private constructor(props: RoomTypeProps, id?: UniqueEntityID) {
         super(props, id);
-        this.props = props;
     }
 
     public static create(props: RoomTypeProps, id?: UniqueEntityID): Result<RoomType> {
+        if (!props.typeName || props.typeName.trim() === '') {
+            return Result.fail<RoomType>('typeName is required');
+        }
 
-      if (!props.typeName || props.typeName.trim() === '') {
-  
-          return Result.fail<RoomType>('typeName is required');
-  
-      }
-  
-      const roomType = new RoomType(props, id);
-  
-      return Result.ok<RoomType>(roomType);
-  
-  }
+        if (!props.status || (props.status !== 'suitable' && props.status !== 'unsuitable')) {
+            return Result.fail<RoomType>('status is required and must be either suitable or unsuitable');
+        }
+
+        const roomType = new RoomType(props, id);
+        return Result.ok<RoomType>(roomType);
+    }
 }

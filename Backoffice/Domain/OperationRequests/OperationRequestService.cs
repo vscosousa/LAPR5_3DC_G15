@@ -169,6 +169,11 @@ namespace DDDSample1.Domain.OperationRequests
                 var operationRequest = await _repo.GetByIdAsync(new OperationRequestId(id));
                 var patient = await _patientRepo.GetByIdAsync(operationRequest.PatientId);
                 Console.WriteLine("Doctor License Number: " + doctorLicenseNumber);
+                if (operationRequest == null)
+            {
+                    throw new BusinessRuleValidationException("The operation request does not exist in the system.");
+                 }
+    
                 if (doctor.Id != operationRequest.DoctorId)
                 {
                     throw new BusinessRuleValidationException("You are not allowed to delete this operation request, as you are not the doctor assigned to it.");

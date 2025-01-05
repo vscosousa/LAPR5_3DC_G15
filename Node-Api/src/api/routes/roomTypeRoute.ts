@@ -35,6 +35,10 @@ export default (app: Router) => {
           'string.max': `Room type name cannot exceed ${MAX_NAME_LENGTH} characters`,
           'string.empty': 'Room type name is required.',
         }),
+        status: Joi.string().valid('suitable', 'unsuitable').required().messages({
+          'any.only': 'Status must be either suitable or unsuitable',
+          'string.empty': 'Status is required.',
+        }),
       }),
     }),
     async (req: any, res: any, next: any) => {
@@ -75,6 +79,10 @@ export default (app: Router) => {
           'string.max': `Room type name cannot exceed ${MAX_NAME_LENGTH} characters`,
           'string.empty': 'Room type name is required.',
         }),
+        status: Joi.string().valid('suitable', 'unsuitable').required().messages({
+          'any.only': 'Status must be either suitable or unsuitable',
+          'string.empty': 'Status is required.',
+        }),
       }),
     }),
     async (req: any, res: any, next: any) => {
@@ -88,4 +96,5 @@ export default (app: Router) => {
       }
     }
   );
+  
 };

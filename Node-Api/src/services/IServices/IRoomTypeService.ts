@@ -3,10 +3,10 @@ import { IRoomTypeDTO } from "../../dto/IRoomTypeDTO";
 
 export default interface IRoomTypeService {
 
-  createRoomType(typeName: string): Promise<Result<IRoomTypeDTO>>;
+  createRoomType(typeName: string, status: 'suitable' | 'unsuitable'): Promise<Result<IRoomTypeDTO>>;
 
   getRoomTypes(): Promise<Result<IRoomTypeDTO[]>>;
 
-  updateRoomType(id: string, typeName: string): Promise<Result<IRoomTypeDTO>>;
+  updateRoomType(id: string, typeName: string, status: string): Promise<Result<IRoomTypeDTO>>;
 
 }

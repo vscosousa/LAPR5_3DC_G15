@@ -1,6 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
 import { Inject, Service } from 'typedi';
-import { Result } from '../core/logic/Result';
 import IRoomTypeService from '../services/IServices/IRoomTypeService';
 import IRoomTypeController from './IControllers/IRoomTypeController';
 import { IRoomTypeDTO } from '../dto/IRoomTypeDTO';
@@ -13,26 +12,25 @@ export default class RoomTypeController implements IRoomTypeController {
 
   public async createRoomType(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
     try {
-      const { typeName } = req.body;
+      const { typeName, status } = req.body;
 
-      // Validate typeName
-      if (!typeName || typeof typeName !== 'string' || typeName.trim() === '') {
+      // Validate typeName and status
+      if (!typeName || typeof typeName !== 'string' || typeName.trim() === '' ||
+          !status || (status !== 'suitable' && status !== 'unsuitable')) {
         return res.status(400).send('Invalid properties');
       }
 
-      const roomTypeOrError = await this.roomTypeService.createRoomType(typeName);
+      const roomTypeOrError = await this.roomTypeService.createRoomType(typeName, status);
 
       if (roomTypeOrError.isFailure) {
         return res.status(400).send(roomTypeOrError.error);
       }
 
       const roomType = roomTypeOrError.getValue();
-      return res.status(201).json({
-        id: roomType.id.toString(),
-        typeName: roomType.typeName
-      });
+      return res.status(201).json(roomType);
     } catch (e) {
-      return res.status(500).send(e.message);
+      console.error('Error creating room type:', e);
+      return next(e);
     }
   }
 
@@ -47,6 +45,7 @@ export default class RoomTypeController implements IRoomTypeController {
       const roomTypeDTOs: IRoomTypeDTO[] = roomTypesOrError.getValue();
       return res.status(200).json(roomTypeDTOs);
     } catch (e) {
+      console.error('Error getting room types:', e);
       return next(e);
     }
   }
@@ -54,8 +53,15 @@ export default class RoomTypeController implements IRoomTypeController {
   public async updateRoomType(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
     try {
       const { id } = req.params;
-      const { typeName } = req.body;
-      const roomTypeOrError = await this.roomTypeService.updateRoomType(id, typeName);
+      const { typeName, status } = req.body;
+
+      // Validate typeName and status
+      if (!typeName || typeof typeName !== 'string' || typeName.trim() === '' ||
+          !status || (status !== 'suitable' && status !== 'unsuitable')) {
+        return res.status(400).send('Invalid properties');
+      }
+
+      const roomTypeOrError = await this.roomTypeService.updateRoomType(id, typeName, status);
 
       if (roomTypeOrError.isFailure) {
         return res.status(400).send(roomTypeOrError.errorValue());
@@ -64,6 +70,7 @@ export default class RoomTypeController implements IRoomTypeController {
       const roomTypeDTO: IRoomTypeDTO = roomTypeOrError.getValue();
       return res.status(200).json(roomTypeDTO);
     } catch (e) {
+      console.error('Error updating room type:', e);
       return next(e);
     }
   }

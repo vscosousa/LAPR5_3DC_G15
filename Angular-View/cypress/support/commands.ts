@@ -41,7 +41,11 @@ declare namespace Cypress {
       staffType: string;
       specializationName: string;
     }): Chainable<any>;
-
+    createRoom(room: {
+      roomNumber: string;
+      roomType: string;
+      roomDescription: string;
+    }): Chainable<any>;
   }
 }
 //
@@ -162,4 +166,15 @@ Cypress.Commands.add('createStaff', (staff) => {
   cy.get('select[id="staffType"]').select(staff.staffType);
   cy.get('select[id="specializationName"]').select(staff.specializationName);
   cy.get('form').submit();
+});
+
+Cypress.Commands.add('createRoom', (room) => {
+  cy.request({
+    method: 'POST',
+    url: '/api/rooms', // Adjust the URL to match your API endpoint
+    body: room,
+    headers: {
+      Authorization: `Bearer ${window.localStorage.getItem('token')}`
+    }
+  });
 });
