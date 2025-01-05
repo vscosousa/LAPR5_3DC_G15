@@ -1,7 +1,6 @@
 @startuml add_room_types_level_2
 
-title Add New Types of Rooms - Level 2 Diagram
-
+title Level 2 Diagram- 7.2.10
 hide empty members
 
 skinparam class {

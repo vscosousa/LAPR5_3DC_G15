@@ -1,0 +1,100 @@
+@startuml level_3_MDV
+
+title Level 3 Diagram for 7.2.2
+
+hide empty members
+
+skinparam class {
+    BackgroundColor<<controller>> #D6EAF8
+    BackgroundColor<<service>> #D1F2EB
+    BackgroundColor<<repository>> #FDEBD0
+    BackgroundColor<<mapper>> #D1F2EB
+    BackgroundColor<<entity>> #FDEBD0
+    BackgroundColor #FEF9E7
+    ArrowColor Black
+}
+
+skinparam package {
+    BackgroundColor #EBF5FB
+}
+
+participant FE as A
+participant "AllergyRouter" as ART 
+participant "AllergyController" as AC 
+participant "AllergyService" as AS
+participant "AllergyRepo" as AR 
+participant "AllergyMap" as AM
+participant "Allergy" as AL 
+participant "AllergySchema" as ALSchema 
+participant "AllergyDTO" as ALDTO
+participant "AllergyPersistence" as ALP
+participant "Database" as DB
+
+activate A
+A -> ART: Makes Http Request with Allergy details data (Code, Name, Description, Symptoms)
+activate ART
+ART -> AC: createAllergy(req, res, next);
+activate AC
+AC -> AS: createAllergy(AllergyDTO)
+activate AS
+AS -> AL: create(AllergyProps, id)
+activate AL
+AL -> AL: create() 
+deactivate AL
+AS -> AR: save(allergy)
+
+activate AR
+AR -> ALSchema: findOne(query)
+activate ALSchema
+ALSchema -> DB: query(query)
+activate DB
+DB -> DB: SELECT * FROM Allergy WHERE id = id
+DB --> ALSchema: Returns AllergyPersistence
+deactivate DB
+ALSchema --> AR: Returns AllergyPersistence
+deactivate ALSchema
+
+AR -> AM: toPersistence(allergy)
+activate AM
+AM -> ALP: create(persistenceProps)
+activate ALP
+ALP --> ALP: create()
+deactivate ALP
+AM --> AR: Returns AllergyPersistence
+deactivate AM
+
+AR -> DB: create(Allergy)
+activate DB
+DB -> DB: INSERT INTO Allergy VALUES (allergy)
+DB -> AR: returns Result
+deactivate DB
+
+AR -> AM: toDomain(allergyCreated)
+activate AM
+AM -> AL: create(AllergyProps, id)
+activate AL
+AL -> AL: create() 
+deactivate AL
+AM --> AR: Returns Allergy
+deactivate AM
+
+AR --> AS: Returns Allergy
+deactivate AR
+
+AS -> AM: toDTO(allergy)
+activate AM
+AM -> ALDTO: create(AllergyProps)
+activate ALDTO
+ALDTO -> ALDTO: create()
+deactivate ALDTO
+AM --> AS: Returns allergyDTO
+deactivate AM
+
+AS --> AC: Returns result(allergyDTO)
+deactivate AS
+AC --> ART: returns Operation Status Code
+deactivate AC
+ART --> A: returns Operation Status Code
+deactivate ART
+
+@enduml

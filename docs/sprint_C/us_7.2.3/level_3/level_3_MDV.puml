@@ -1,0 +1,65 @@
+@startuml level_3_MDV
+
+title Level 3 Diagram for 7.2.3
+hide empty members
+
+skinparam class {
+    BackgroundColor<<controller>> #D6EAF8
+    BackgroundColor<<service>> #D1F2EB
+    BackgroundColor<<repository>> #FDEBD0
+    BackgroundColor<<mapper>> #D1F2EB
+    BackgroundColor<<entity>> #FDEBD0
+    BackgroundColor #FEF9E7
+    ArrowColor Black
+}
+
+skinparam package {
+    BackgroundColor #EBF5FB
+}
+
+participant FE as D
+participant "AllergyRouter" as ART 
+participant "AllergyController" as AC 
+participant "AllergyService" as AS 
+participant "AllergyRepo" as AR 
+participant "AllergyMap" as AM 
+participant "AllergySchema" as ALSchema 
+participant "AllergyDTO" as ALDTO
+participant "Database" as DB
+
+activate D
+D -> ART: Makes Http Request to get all Allergies
+activate ART
+ART -> AC: listAllergies(req, res, next)
+activate AC
+AC -> AS: listAllergies()
+activate AS
+AS -> AR: findall()
+activate AR
+AR -> ALSchema: find()
+activate ALSchema
+ALSchema -> DB: query()
+activate DB
+DB -> DB: SELECT * FROM Allergy
+DB --> ALSchema: Returns all Allergies 
+deactivate DB
+ALSchema --> AR: Returns all Allergies 
+deactivate ALSchema
+AR --> AS: Returns all Allergies 
+deactivate AR
+AS -> AM: allergies.map(allergy => AllergyMap.toDTO(allergy))
+activate AM
+AM -> ALDTO: create(AllergyProps)
+activate ALDTO
+ALDTO -> ALDTO: create()
+deactivate ALDTO
+AM --> AS: Returns list of allergyDTOs
+deactivate AM
+AS --> AC: Returns list of AllergyDTOs
+deactivate AS
+AC --> ART: Returns list of AllergyDTOs
+deactivate AC
+ART --> D: Returns list of AllergyDTOs
+deactivate ART
+
+@enduml

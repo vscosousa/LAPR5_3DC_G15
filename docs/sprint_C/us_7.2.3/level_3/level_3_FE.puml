@@ -1,0 +1,57 @@
+@startuml level_3_FE
+
+title Level 3 FE Diagram for 7.2.3
+
+skinparam class {
+    BackgroundColor<<valueObject>> #D6EAF8
+    BackgroundColor<<root>> #FDEBD0
+    BackgroundColor<<service>> #D1F2EB
+    BackgroundColor #FEF9E7
+    ArrowColor Black
+}
+
+skinparam package {
+    BackgroundColor #EBF5FB
+}
+
+actor Doctor as D
+participant "View" as V 
+participant "MedicalHistoryManagerComponent" as MHMC
+participant "UpdateMedicalHistoryComponent" as UMHC
+participant "AllergyService" as AS
+participant "AuthInterceptor" as AI
+participant "MDV" as MDV
+
+activate D
+D -> V: Requests to search for Allergies
+activate V
+V -> MHMC: routerLink='/medical-history-manager'
+activate MHMC
+MHMC -> UMHC: routerLink='/update-medical-history/:medicalRecordNumber'
+deactivate MHMC
+activate UMHC
+UMHC -> AS: getAllergies()
+activate AS
+AS -> AI: Sends HTTP Request to get all Allergies
+activate AI
+AI -> AI: Intercepts the request and adds the token to the header
+note right of AI
+    The token is added to the header so that the MDV
+    can authenticate and authorize the request.
+end note
+AI -> MDV: Sends HTTP Request with token to get all Allergies
+activate MDV
+MDV -> MDV: Fetches all Allergies
+MDV --> AI: Returns get results (Allergies)
+deactivate MDV
+AI --> AS: Returns get results (Allergies)
+deactivate AI
+AS --> UMHC: Returns get results (Allergies)
+deactivate AS
+
+UMHC --> V: Returns get results (Allergies)
+deactivate UMHC
+V --> D: Displays get results (Allergies)
+deactivate V
+
+@enduml

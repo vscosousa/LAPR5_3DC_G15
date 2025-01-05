@@ -1,0 +1,59 @@
+@startuml level_3_FE
+
+title Level 3 FE Diagram for 7.2.2
+hide empty members
+
+skinparam class {
+    BackgroundColor<<valueObject>> #D6EAF8
+    BackgroundColor<<root>> #FDEBD0
+    BackgroundColor<<service>> #D1F2EB
+    BackgroundColor #FEF9E7
+    ArrowColor Black
+}
+
+skinparam package {
+    BackgroundColor #EBF5FB
+}
+
+actor Admin as A
+participant "View" as V
+participant "ManageAllergiesAndConditionsComponent" as MAC
+participant "CreateAllergiesComponent" as CAC
+participant "AllergyService" as AS
+participant "AuthInterceptor" as AI
+participant "MDV" as MDV
+
+activate A
+A -> V: Asks to create an Allergy
+activate V
+V -> MAC: routerLink='/manage-allergies-and-conditions'
+activate MAC
+MAC -> CAC: this.router.navigate([`/manage-allergies-and-conditions/create-allergies`]);
+deactivate MAC
+activate CAC
+
+CAC -> AS: createAllergy(this.allergy)
+activate AS
+AS -> AI: Sends HTTP Request to create an Allergy
+activate AI
+AI -> AI: Intercepts the request and adds the token to the header
+note right of AI
+    The token is added to the header so that the MDV
+    can authenticate and authorize the request.
+end note
+AI -> MDV: Sends HTTP Request with token to create an Allergy
+activate MDV
+MDV -> MDV: Validates Allergy data and tries to create the Allergy
+MDV --> AI: Returns Operation Status Code
+deactivate MDV
+AI --> AS: Returns Operation Status Code
+deactivate AI
+AS --> CAC: Returns Operation Response
+deactivate AS
+CAC --> V: Returns Operation In/Sucess message
+deactivate CAC
+
+V --> A: Returns Operation In/Sucess message
+deactivate V
+
+@enduml

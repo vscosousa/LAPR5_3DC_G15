@@ -1,6 +1,6 @@
 @startuml level_3_MDR
 
-title Level 3 MDR Diagram - Add New Types of Rooms
+title Level 3 MDR Diagram - 7.2.10
 
 hide empty members
 'skinparam Linetype ortho

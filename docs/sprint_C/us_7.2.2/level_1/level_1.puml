@@ -1,6 +1,6 @@
-@startuml add_room_types
+@startuml level_1
 
-title Level 1 Diagram 7.2.10
+title Level 1 Diagram 7.2.2
 
 hide empty members
 
@@ -19,14 +19,14 @@ skinparam package {
 actor Admin as A
 
 activate A
-A -> System: Requests to add a new type of room
+A -> System: Requests to add a new Allergy
 activate System
-System --> A: Displays form to enter room type details
+System --> A: Displays form to enter Allergy details
 deactivate System
-A -> System: Submits new room type details
+A -> System: Send data of Allergy details (Code, Name, Description, Symptoms)
 activate System
-System -> System: Validates and saves new room type
-System --> A: Returns success/failure message
+System -> System: Validates Allergy details \n and adds it to the database
+System --> A: Returns Success/Failure message
 deactivate System
 
 @enduml

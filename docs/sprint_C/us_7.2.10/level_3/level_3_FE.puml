@@ -1,6 +1,6 @@
 @startuml level_3_FE
 
-title Level 3 FE Diagram - Add New Types of Rooms
+title Level 3 FE Diagram - 7.2.10
 
 hide empty members
 'skinparam Linetype ortho
