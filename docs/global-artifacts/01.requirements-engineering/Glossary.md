@@ -42,5 +42,15 @@
 | **FullName**            | Combined first and last name, used for clear reference in records and communication.                                                  |
 | **Email**               | Contact email for users, facilitating secure communication and notifications.                                                         |
 | **PhoneNumber**         | Contact number for patients and staff, aiding in direct communication and appointment coordination.                                   |
+| **MedicalHistory**      | Comprehensive record of a patient's medical background, including allergies, conditions, and family history.                          |
+| **Allergies**           | Specific allergic reactions a patient has, documented for safe medical treatment.                                                     |
+| **MedicalConditions**   | Chronic or acute medical issues a patient has, tracked for ongoing care and treatment.                                                |
+| **Code**                | Unique identifier for allergies or medical conditions, ensuring precise documentation and reference.                                  |
+| **Name**                | The name of an allergy or medical condition, used for clear identification and communication.                                          |
+| **Description**         | Detailed explanation of an allergy or medical condition, aiding in understanding and treatment.                                       |
+| **Symptoms**            | Observable effects of an allergy or medical condition, documented for accurate diagnosis and care.                                    |
+| **FamilyHistory**       | Record of medical issues in a patient's family, used to assess risk and inform treatment.                                              |
+| **FreeText**            | Additional notes or information in a patient's medical history, providing context and details.                                         |
+
 
 <img width=100% src="https://capsule-render.vercel.app/api?type=waving&height=120&color=4E1764&section=footer"/>

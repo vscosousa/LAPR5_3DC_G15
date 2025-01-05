@@ -16,7 +16,6 @@
     <div id="container-select">
       <label for="sprint-selector">Select Sprint:</label>
       <select id="sprint-selector">
-        <option value="sprintA">Sprint A: 16/09/2024 - 28/10/2024</option>
         <option value="sprintB" selected>
           Sprint B: 28/10/2024 - 24/11/2024
         </option>
@@ -28,12 +27,6 @@
     <script>
       $(function () {
         const sprints = {
-          sprintA: {
-            startDate: new Date("2024-09-16"),
-            endDate: new Date("2024-10-28"),
-            userStories: [],
-            closedStories: [],
-          },
           sprintB: {
             startDate: new Date("2024-10-28"),
             endDate: new Date("2024-11-24"),
@@ -245,7 +238,7 @@
               return sprint;
             }
           }
-          return "sprintA";
+          return "sprintB";
         }
 
         function updateChart(sprint) {

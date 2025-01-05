@@ -28,8 +28,10 @@ An association is a relationship between instances of objects that indicates a r
 | Patient              | has                      | FullName              |
 | Patient              | has                      | Email                 |
 | Patient              | has                      | PhoneNumber           |
+| Patient              | has                      | MedicalHistory        |
 | Staff                | has                      | Specialization        |
 | Staff                | manages (if doctor)      | OperationRequest      |
+| Staff                | manages (if doctor)      | MedicalHistory        |
 | Staff                | has                      | LicenseNumber         |
 | Staff                | has                      | AvailabilititySlots   |
 | Staff                | has                      | FirstName             |
@@ -59,7 +61,18 @@ An association is a relationship between instances of objects that indicates a r
 | SurgeryRoom          | has                      | AssignedEquipment     |
 | SurgeryRoom          | has                      | CurrentStatus         |
 | SurgeryRoom          | has                      | Maintenance Slots     |
-
+| MedicalHistory       | has                      | Allergies             |
+| MedicalHistory       | has                      | MedicalConditions     |
+| MedicalHistory       | has                      | FamilyHistory         |
+| MedicalHistory       | has                      | FreeText              |
+| Allergies            | has                      | Code                  |
+| Allergies            | has                      | Name                  |
+| Allergies            | has                      | Description           |
+| Allergies            | has                      | Symptoms              |
+| MedicalConditions    | has                      | Code                  |
+| MedicalConditions    | has                      | Name                  |
+| MedicalConditions    | has                      | Description           |
+| MedicalConditions    | has                      | Symptoms              |
 
 ## Domain Model
 

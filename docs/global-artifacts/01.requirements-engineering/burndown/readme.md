@@ -6,6 +6,10 @@ A burndown chart is a graphical representation of work left to do versus time. I
 
 ![Burndown Chart](burndown_chart_sprintB.png)
 
+## Sprint C Burndown Chart
+
+![Burndown Chart](burndown_chart_sprintC.png)
+
 ## How to Read the Burndown Chart
 
 - **X-Axis**: Represents the time (days).

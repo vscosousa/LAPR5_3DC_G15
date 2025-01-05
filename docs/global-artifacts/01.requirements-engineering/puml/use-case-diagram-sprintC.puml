@@ -30,9 +30,17 @@ rectangle System{
     usecase "Update a Surgery appointment" as US7_2_9
     usecase "Add a new room type" as US7_2_10
     usecase "Add a new Specialization" as US7_2_11
-    usecase "Update specializations" as US7_2_12
-    usecase "Include the access of the Patient Medical Record during the patient profile visualization and management" as US7_2_13
-    usecase "List/Search  and Remove Specializations" as US7_2_14
+    usecase "Update specializations" as US7_2_13
+    usecase "Include the access of the Patient Medical Record during the patient profile visualization and management" as US7_2_14
+    usecase "List/Search  and Remove Specializations" as US7_2_15
+    usecase "Update an Allergy" as US7_2_16
+    usecase "Update a Medical Condition" as US7_2_17
+    usecase "Update an Allergy Entry in the Patient Medical Record" as US7_2_18
+    usecase "Update a Medical Condition Entry in the Patient Medical Record" as US7_2_19
+    usecase "Add an entry about family history in the Patient Medical Record" as US7_2_20
+    usecase "Update an entry about family history in the Patient Medical Record" as US7_2_21
+    usecase "Add a new entry for free text in the Patient Medical Record" as US7_2_22
+    usecase "Update an entry for free text in the Patient Medical Record" as US7_2_23
 
     usecase "Automatic method to assign a set of operations to several operation rooms" as US7_3_1
     usecase "Schedule surgeries to several operations rooms using Genetic Algorithms" as US7_3_2
@@ -83,9 +91,18 @@ rectangle System{
     DO --> US7_2_9
     AD --> US7_2_10
     AD --> US7_2_11
-    AD --> US7_2_12
-    DO --> US7_2_13
-    AD --> US7_2_14
+    AD --> US7_2_13
+    DO --> US7_2_14
+    AD --> US7_2_15
+    AD --> US7_2_16
+    AD --> US7_2_17
+    DO --> US7_2_18
+    DO --> US7_2_19
+    DO --> US7_2_20
+    DO --> US7_2_21
+    DO --> US7_2_22
+    DO --> US7_2_23
+
 
     AD --> US7_3_1
     AD --> US7_3_2
