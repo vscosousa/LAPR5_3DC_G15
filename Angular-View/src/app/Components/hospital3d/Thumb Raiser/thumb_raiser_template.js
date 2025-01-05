@@ -29,7 +29,7 @@ import RoomInfoHandler from "./RoomInfoHandler.js";
 
 export default class ThumbRaiser {
 
-    constructor(generalParameters, mazeParameters, playerParameters, lightsParameters, fogParameters, fixedViewCameraParameters, firstPersonViewCameraParameters, thirdPersonViewCameraParameters, topViewCameraParameters, miniMapCameraParameters, doorParameters, tableParameters, humanParameters, exitDoorParameters,hearthMonitorParameters,hearthTableParameters, surgicalEquipmentParameters,surgeonParameters, roomParameters) {
+    constructor(generalParameters, mazeParameters, playerParameters, lightsParameters, fogParameters, fixedViewCameraParameters, firstPersonViewCameraParameters, thirdPersonViewCameraParameters, topViewCameraParameters, miniMapCameraParameters, doorParameters, tableParameters, humanParameters, exitDoorParameters, hearthMonitorParameters, hearthTableParameters, surgicalEquipmentParameters, surgeonParameters, roomParameters) {
         this.generalParameters = merge({}, generalData, generalParameters);
         this.mazeParameters = merge({}, mazeData, mazeParameters);
         this.playerParameters = merge({}, playerData, playerParameters);
@@ -68,7 +68,7 @@ export default class ThumbRaiser {
         this.scene3D = new THREE.Scene();
 
         // Create the maze
-        this.maze = new Maze(this.mazeParameters, this.doorParameters, this.tableParameters, this.humanParameters, this.exitDoorParameters,this.hearthMonitorParameters, this.hearthTableParameters,this.surgicalEquipmentParameters, this.surgeonParameters, this.roomParameters);
+        this.maze = new Maze(this.mazeParameters, this.doorParameters, this.tableParameters, this.humanParameters, this.exitDoorParameters, this.hearthMonitorParameters, this.hearthTableParameters, this.surgicalEquipmentParameters, this.surgeonParameters, this.roomParameters);
 
         // Create the player
         this.player = new Player(this.playerParameters);
@@ -246,41 +246,39 @@ export default class ThumbRaiser {
             // Ignore non-left-clicks
             return;
         }
-
+    
         if (event.target.id === "scene-container") {
             event.preventDefault();
-
+    
             // Initialize raycaster and mouse position
             const raycaster = new THREE.Raycaster();
             const mouse = new THREE.Vector2(
                 (event.clientX / window.innerWidth) * 2 - 1,
                 -(event.clientY / window.innerHeight) * 2 + 1
             );
-
+    
             // Cast a ray from the camera
             raycaster.setFromCamera(mouse, this.activeViewCamera.object);
-
+    
             // Perform raycast to get intersected objects
             const intersects = raycaster.intersectObjects(this.scene3D.children, true);
-
+    
             if (intersects.length > 0) {
                 // Find the first intersected object that is a table
                 const intersectedTable = intersects.find(intersect => intersect.object.isTable);
-
+    
                 if (intersectedTable) {
                     const table = intersectedTable.object;
                     console.log("Picked table:", table.name);
-
-                    // Handle room selection and camera movement
+    
+                    // Handle room selection and camera movement only for tables
                     this.roomInfoHandler.selectRoomFromTable(table);
                     this.moveCameraToTable(table);
-                } else {
-                    console.log("No table found in the intersection");
-                    this.roomInfoHandler.deselectRoom(); // Ensure room is deselected if nothing is picked
                 }
             }
         }
     }
+    
 
 
     moveCameraToTable(table) {
@@ -756,42 +754,55 @@ export default class ThumbRaiser {
     }
 
 
-    // The main function to check proximity and play sound if the player is near a wall or door
-    distanceToRoomBoundaryAndPlaySound(position) {
-        // Define the proximity threshold
-        const proximityThreshold = 20; // Adjust this value based on your needs
+   
+
+    stopPlayerMovement() {
+        this.activeKeys.clear(); // Limpa todas as teclas ativas
+        this.player.isMoving = false; // Adicione uma flag que impede a atualização de movimento
+    }
     
-        // Initialize a flag to track if any room's sound should be playing
-        let soundPlayed = false;
-    
-        // Loop through each room and check proximity to its boundaries
-        {
-            const distanceToWest = this.maze.distanceToWestWallSound(position);
-            const distanceToEast = this.maze.distanceToEastWallSound(position);
-            const distanceToNorth = this.maze.distanceToNorthWallSound(position);
-            const distanceToSouth = this.maze.distanceToSouthWallSound(position);
-            const distanceToDoor = this.maze.distanceToDoor(position);
-    
-            // Get the closest distance to any boundary for the current room
-            const closestDistance = Math.min(distanceToWest, distanceToEast, distanceToNorth, distanceToSouth, distanceToDoor);
-    
-            // If the player is close to this room's boundaries and the room is occupied, play the sound
-            if (closestDistance <= proximityThreshold) {
-                if (this.door.hearthSound.paused) {
-                    this.door.hearthSound.play(); // Play sound if it's not already playing
-                    this.door.hearthSound.volume = 0.1; // Adjust the volume as needed (0.1 for 10% volume)
-                }
-                soundPlayed = true; // Mark that sound is playing for this room
-            } else {
-                // If the player is no longer within proximity, pause the sound
-                if (!this.door.hearthSound.paused) {
-                    this.door.hearthSound.pause(); // Pause the sound if the player moves away
-                }
-            }
+
+    exitModelView() {
+        // Check if player collides with the exit door
+        if (this.maze.distanceToExitDoor(this.player.position) < this.player.radius) {
+        
+
+            // Show the exit menu
+            this.showExitMenu();
+
+            this.stopPlayerMovement();
+            
+            
+
         }
-    
-        // Return whether the player is close enough to any room boundary
-        return soundPlayed;
+    }
+
+    showExitMenu() {
+        const exitMenu = document.getElementById('exit-menu');
+        if (exitMenu) {
+            exitMenu.style.display = 'block';
+
+            // Add event listeners for the buttons
+            document.getElementById('exit-yes').addEventListener('click', () => this.exitGame());
+            document.getElementById('exit-no').addEventListener('click', () => this.continueGame());
+        }
+    }
+
+    exitGame() {
+        // Logic to exit the game and present the main menu
+        console.log('Exiting game and presenting main menu...');
+        // Implement your logic to exit the game and show the main menu here
+        // For example, you might redirect to the main menu page or reset the game state
+        window.location.href = 'main_menu.html'; // Example: redirect to main menu page
+    }
+
+    continueGame() {
+        // Logic to continue the game
+        console.log('Continuing game...');
+        const exitMenu = document.getElementById('exit-menu');
+        if (exitMenu) {
+            exitMenu.style.display = 'none';
+        }
     }
 
 
@@ -877,8 +888,9 @@ export default class ThumbRaiser {
                 this.player.object.rotation.y = direction - this.player.initialDirection;
             }
 
-            // Call distanceToTable function to check if the player is close to a table
-            this.distanceToRoomBoundaryAndPlaySound(this.player.position);
+
+            // Call exitModelView function to check if the player is close to the exit door
+            this.exitModelView();
 
             // Update first-person, third-person and top view cameras parameters (player direction and target)
             this.firstPersonViewCamera.playerDirection = this.player.direction;
@@ -928,8 +940,7 @@ export default class ThumbRaiser {
     }
 
 
-
-    dispose() {
+        dispose() {
         // Dispose of the renderer and other resources
         if (this.renderer) {
             this.renderer.dispose();
@@ -946,6 +957,10 @@ export default class ThumbRaiser {
                 }
                 this.scene.remove(child);
             });
+        }
+        // Dispose of the user interface if it exists
+        if (this.userInterface) {
+            this.userInterface.dispose();
         }
     }
 

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { SettingsService } from '../../Services/settings.service';
 import { PanelService } from '../../Services/panel.service';
 import { ProfileService } from '../../Services/profile.service';
@@ -13,7 +13,7 @@ import { SidebarComponent } from '../sidebar/sidebar.component';
 @Component({
   selector: 'app-patient-panel',
   standalone: true,
-  imports: [SidebarComponent],
+  imports: [SidebarComponent, RouterModule],
   templateUrl: './patient-panel.component.html',
   styleUrl: './patient-panel.component.scss'
 })

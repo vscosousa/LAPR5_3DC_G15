@@ -1,29 +1,22 @@
 <div class="panel-container">
   <app-sidebar></app-sidebar>
   <div class="panel-content">
+    <div class="top-left-corner">
+      <button class="open-3d-button" routerLink="/hospital3d" routerLinkActive="active">
+        Open 3D Visualization
+      </button>
+    </div>
     <div class="header">
       <h1>Doctor Panel</h1>
     </div>
     <div class="stats">
-      <button
-        class="box box1"
-        routerLink="/medical-history-manager"
-        routerLinkActive="active"
-      >
+      <button class="box box1" routerLink="/medical-history-manager" routerLinkActive="active">
         Manage Medical Histories
       </button>
-      <button
-        class="box box2"
-        routerLink="/appointment-manager"
-        routerLinkActive="active"
-      >
+      <button class="box box2" routerLink="/appointment-manager" routerLinkActive="active">
         Manage Appointments
       </button>
-      <button
-        class="box box3"
-        routerLink="/operation-requests"
-        routerLinkActive="active"
-      >
+      <button class="box box3" routerLink="/operation-requests" routerLinkActive="active">
         Manage Operation Requests
       </button>
     </div>

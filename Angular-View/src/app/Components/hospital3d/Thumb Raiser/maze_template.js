@@ -435,6 +435,15 @@ export default class Maze {
         return Infinity;
     }
 
+    distanceToExitDoor(position) {
+        const indices = this.cartesianToCell(position);
+        indices[0]++;
+        if (this.map[indices[0]][indices[1]] === 6) {
+            return this.cellToCartesian(indices).z - this.scale.z / 2.0 - position.z;
+        }
+        return Infinity;
+    }
+
     // Helper method to get the room index based on the tile position
     getRoomIndex(indices) {
         const midHeight = Math.floor(this.size.height / 2);

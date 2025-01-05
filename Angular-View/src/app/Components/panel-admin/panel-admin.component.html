@@ -4,30 +4,36 @@ Last update: 12/11/2024
 Description: This component displays the admin panel with options to manage operation types and patients.
 -->
 <div class="dashboard-container">
-  <app-sidebar></app-sidebar>
-  <div class="dashboard-content">
+    <app-sidebar></app-sidebar>
+    <div class="top-left-corner">
+      <button class="open-3d-button" routerLink="/hospital3d" routerLinkActive="active">
+        Open 3D Visualization
+      </button>
+    </div>
+    <div class="dashboard-content">
       <div class="header">
-          <h1>Admin Panel</h1>
+        <h1>Admin Panel</h1>
       </div>
       <div class="stats">
-          <button class="box box1" routerLink="/operation-types" routerLinkActive="active">
-              Manage Operation Types
-          </button>
-          <button class="box box2" routerLink="/manage-patients" routerLinkActive="active">
-              Manage Patients
-          </button>
-          <button class="box box3" routerLink="/search-staffs" routerLinkActive="active">
-              Manage Staffs
-          </button>
-          <button class="box box4" routerLink="/operation-rooms" routerLinkActive="active">
-              Manage Operation Rooms
-          </button>
-          <button class="box box5" routerLink="/specializations" routerLinkActive="active">
-              Manage Specializations
-          </button>
-          <button class="box box6" routerLink="/manage-allergies-and-conditions" routerLinkActive="active">
-              Manage Allergies and Conditions
-          </button>
+        <button class="box box1" routerLink="/operation-types" routerLinkActive="active">
+          Manage Operation Types
+        </button>
+        <button class="box box2" routerLink="/manage-patients" routerLinkActive="active">
+          Manage Patients
+        </button>
+        <button class="box box3" routerLink="/search-staffs" routerLinkActive="active">
+          Manage Staffs
+        </button>
+        <button class="box box4" routerLink="/operation-rooms" routerLinkActive="active">
+          Manage Operation Rooms
+        </button>
+        <button class="box box5" routerLink="/specializations" routerLinkActive="active">
+          Manage Specializations
+        </button>
+        <button class="box box6" routerLink="/manage-allergies-and-conditions" routerLinkActive="active">
+          Manage Allergies and Conditions
+        </button>
       </div>
+    </div>
   </div>
-</div>
+  

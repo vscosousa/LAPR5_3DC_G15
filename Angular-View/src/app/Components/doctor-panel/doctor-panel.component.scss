@@ -1,76 +1,162 @@
+/*
+  Author: Vasco Sousa (1221700) and João Pereira (1211503)
+  Last update: 12/11/2024
+  Description: This file contains the styling for the doctor-panel component
+*/
+
 .panel-container {
-    display: flex;
-    margin-left: 85px;
-    height: 100vh;
-    background-color: #161a2d; /* Dark blue-gray */
-    font-family: "Poppins", sans-serif;
+  display: flex;
+  margin-left: 85px;
+  height: 100vh;
+  background-color: #161a2d; /* Dark blue-gray */
+  font-family: "Poppins", sans-serif;
+  position: relative; /* Needed for proper z-index stacking */
 }
 
 .panel-content {
-    flex: 1;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+  flex: 1;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Center content horizontally */
+  justify-content: flex-start; /* Align content to the top */
+}
+
+.sidebar {
+  position: fixed; /* Fixes the sidebar to the side */
+  left: 0;
+  top: 0;
+  width: 250px; /* Adjust width as needed */
+  height: 100vh;
+  background-color: #1e223a; /* Sidebar color */
+  z-index: 10; /* Higher z-index to ensure it's on top */
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.2);
+}
+
+.top-left-corner {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 0; /* Lower z-index to stay under the sidebar */
 }
 
 .header {
-    padding: 10px;
-    border-bottom: 1px solid #4a4a4a; /* Dark gray */
-    display: flex;
-    justify-content: center;
-    color: #ffffff; /* White */
+  display: flex;
+  justify-content: center; /* Center the header */
+  align-items: center;
+  width: 100%;
+  margin: 20px 0;
+  padding: 10px;
+  border-bottom: 1px solid #4a4a4a; /* Dark gray */
+  color: #ffffff; /* White */
+}
+
+.header h1 {
+  font-size: 2.5em;
+  color: #ffffff; /* White */
+  margin: 0; /* Remove margin to keep it centered */
+}
+
+.open-3d-button {
+  background-color: #1e223a; /* Matches the box background */
+  color: #ffffff; /* White text */
+  border: 3px solid #4a4a4a; /* Matches the box border */
+  padding: 10px 20px; /* Adjusted padding */
+  font-size: 1em; /* Adjusted font size */
+  font-weight: bold;
+  border-radius: 10px; /* Matches the box border radius */
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease, border-color 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px; /* Add margin-bottom to create space */
+}
+
+.open-3d-button:hover {
+  background-color: #0056b3; /* Consistent hover color */
+  border-color: #92a8d1; /* Matches the hover effect for box6 */
+  transform: scale(1.05); /* Slight zoom effect */
+}
+
+.open-3d-button:active {
+  background-color: #004085; /* Darker blue */
+  transform: scale(1); /* Reset zoom on active */
 }
 
 .stats {
-    display: grid;
-    grid-template-areas:
-        "box1 box2"
-        "box3 box3";
-    gap: 10px;
-    flex: 1;
-    margin: 20px;
-    width: 100%;
-    height: 100%;
+  display: grid;
+  grid-template-areas:
+    "box1 box2"
+    "box3 box3";
+  gap: 10px;
+  flex: 1;
+  margin: 20px;
+  width: 100%;
+  height: 100%;
 }
 
 .box {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 10px;
-    color: #ffffff; /* White */
-    font-size: 1.5em;
-    font-weight: bold;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  color: #ffffff; /* White */
+  font-size: 1.2em; /* Adjusted font size */
+  font-weight: bold;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  height: 100%;
+  padding: 15px; /* Added padding for better spacing */
+  border: 3px solid #4a4a4a; /* Dark gray */
+  background-color: #1e223a; /* Slightly lighter dark blue-gray */
+  transition: border-color 0.3s ease, transform 0.2s ease;
 }
 
-.box1, .box2, .box3 {
-    border: 3px solid #4a4a4a; /* Dark gray */
-    background-color: #1e223a; /* Slightly lighter dark blue-gray */
+.box:hover {
+  transform: scale(1.02); /* Slight zoom on hover */
 }
 
 .box1 {
-    grid-area: box1;
+  grid-area: box1;
 }
 
 .box1:hover {
-    border-color: #ff6f61; /* Coral */
+  border-color: #ff6f61; /* Coral */
 }
 
 .box2 {
-    grid-area: box2;
+  grid-area: box2;
 }
 
 .box2:hover {
-    border-color: #6b5b95; /* Purple */
+  border-color: #6b5b95; /* Purple */
 }
 
 .box3 {
-    grid-area: box3;
+  grid-area: box3;
 }
 
 .box3:hover {
-    border-color: #e70a0a; /* Red */
+  border-color: #e70a0a; /* Red */
+}
+
+@media (max-width: 768px) {
+  .panel-content {
+    margin-left: 0; /* Adjust for smaller screens */
+    padding: 10px;
+  }
+
+  .header {
+    text-align: center; /* Center header for smaller screens */
+    font-size: 1.5em;
+  }
+
+  .stats {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .open-3d-button {
+    font-size: 0.9em; /* Adjust button size for smaller screens */
+    padding: 8px 15px;
+  }
 }

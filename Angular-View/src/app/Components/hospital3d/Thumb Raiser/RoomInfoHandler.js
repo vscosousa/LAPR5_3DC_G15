@@ -97,10 +97,7 @@ export default class RoomInfoHandler {
     clearRoomInfo() {
         const infoDiv = document.getElementById("room-info");
         if (infoDiv) {
-            infoDiv.innerHTML = `
-                <h3>Room Information</h3>
-                <p>No room selected.</p>
-            `;
+            infoDiv.innerHTML = ''; // Clear the content
             infoDiv.style.display = "none";
             this.isInfoVisible = false;
         }
@@ -108,12 +105,11 @@ export default class RoomInfoHandler {
 
     toggleRoomInfo() {
         if (!this.selectedRoom) {
-            alert("No room selected!");
-            return;
+            return; // Simply return if no room is selected, without showing the alert
         }
-
+    
         const infoDiv = document.getElementById("room-info") || this.createInfoDiv();
-
+    
         if (this.isInfoVisible) {
             infoDiv.style.display = "none";
             this.isInfoVisible = false;

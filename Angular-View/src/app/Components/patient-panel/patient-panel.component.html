@@ -4,24 +4,29 @@ Last update: 09/11/2024
 Description: This component displays the patient panel with various options.
 -->
 <div class="panel-container">
-    <app-sidebar></app-sidebar>
-    <div class="panel-content">
-        <div class="header">
-            <h1>Patient Panel</h1>
-        </div>
-        <div class="stats">
-            <div class="box box1">
-                <!-- Content for box 1 -->
-            </div>
-            <div class="box box2">
-                <!-- Content for box 2 -->
-            </div>
-            <div class="box box3">
-                <!-- Content for box 3 -->
-            </div>
-            <div class="box box4">
-                <!-- Content for box 4 -->
-            </div>
-        </div>
+  <app-sidebar></app-sidebar>
+  <div class="panel-content">
+    <div class="top-right-corner">
+      <button class="open-3d-button" routerLink="/hospital3d" routerLinkActive="active">
+        Open 3D Visualization
+      </button>
     </div>
+    <div class="header">
+      <h1>Patient Panel</h1>
+    </div>
+    <div class="stats">
+      <div class="box box1">
+        <!-- Content for box 1 -->
+      </div>
+      <div class="box box2">
+        <!-- Content for box 2 -->
+      </div>
+      <div class="box box3">
+        <!-- Content for box 3 -->
+      </div>
+      <div class="box box4">
+        <!-- Content for box 4 -->
+      </div>
+    </div>
+  </div>
 </div>
