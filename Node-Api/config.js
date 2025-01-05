@@ -1,6 +1,7 @@
 // filepath: /c:/Projetos/LAPR5_3DC_G15/Node-Api/config.js
 import dotenv from 'dotenv';
 import { MongoMemoryServer } from 'mongodb-memory-server';
+import path from 'path';
 
 // Set the NODE_ENV to 'development' by default
 process.env.NODE_ENV = process.env.NODE_ENV || 'development';
@@ -75,6 +76,10 @@ const config = {
     roomType: {
       name: 'RoomTypeController',
       path: "../controllers/roomTypeController"
+    },
+    room: {
+      name: 'RoomController',
+      path: "../controllers/roomController"
     }
   },
 
@@ -102,6 +107,10 @@ const config = {
     roomType: {
       name: 'RoomTypeRepo',
       path: "../repos/roomTypeRepo"
+    },
+    room: {
+      name: 'RoomRepo',
+      path: "../repos/roomRepo"
     }
   },
 
@@ -129,6 +138,10 @@ const config = {
     roomType: {
       name: 'RoomTypeService',
       path: "../services/roomTypeService"
+    },
+    room: {
+      name: 'RoomService',
+      path: "../services/roomService"
     }
   },
 };

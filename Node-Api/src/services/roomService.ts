@@ -7,12 +7,13 @@ import { UniqueEntityID } from '../core/domain/UniqueEntityID';
 import { Room } from '../domain/room';
 import { IRoomDTO } from '../dto/IRoomDTO';
 import { RoomMap } from '../mappers/RoomMap';
+import config from '../../config';
 
 @Service()
 export default class RoomService implements IRoomService {
     constructor(
         @Inject('logger') private logger: Logger,
-        @Inject('roomRepo') private roomRepo: IRoomRepo
+        @Inject(config.repos.room.name) private roomRepo: IRoomRepo
     ) {}
 
     public async createRoom(roomName: string, roomType: string): Promise<Result<IRoomDTO>> {

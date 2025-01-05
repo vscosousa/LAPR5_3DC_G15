@@ -15,7 +15,6 @@ describe('Patient Settings Page', () => {
       email: uniqueEmail,
       phoneNumber: `+1${uniquePhoneNumber}`,
       emergencyContact: `+123456788${uniqueId}`,
-      medicalConditions: 'None'
     });
 
     cy.get('.sidebar a').contains('Logout').click();

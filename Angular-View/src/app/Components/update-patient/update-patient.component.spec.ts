@@ -39,7 +39,7 @@ describe('UpdatePatientComponent', () => {
     // Mock the URL to include a medical record number
     Object.defineProperty(window, 'location', {
       value: {
-        href: 'http://localhost:4200/update-patient/202411000001'
+        href: 'http://localhost:4200/LAPR5_3DC_G15/update-patient/202411000001'
       },
       writable: true
     });

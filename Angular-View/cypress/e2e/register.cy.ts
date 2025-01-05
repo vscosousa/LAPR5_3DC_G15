@@ -14,7 +14,6 @@ describe('Register Page', () => {
       email: uniqueEmail,
       phoneNumber: `+1${uniquePhoneNumber}`,
       emergencyContact: `+123456788${uniqueId}`,
-      medicalConditions: 'None'
     });
   });
 

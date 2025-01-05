@@ -251,7 +251,7 @@ namespace DDDSample1.Domain.Users
         {   
             var encodedToken = HttpUtility.UrlEncode(token);
             string kebabCaseLink = ConvertToKebabCase(typeOfLink);
-            var link = $"http://localhost:4200/{kebabCaseLink}?token={encodedToken}";
+            var link = $"http://localhost:4200/LAPR5_3DC_G15/{kebabCaseLink}?token={encodedToken}";
             Console.WriteLine("Link " + link);
             return link;
         }

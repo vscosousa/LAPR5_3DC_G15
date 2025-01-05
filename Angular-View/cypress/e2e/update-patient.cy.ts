@@ -14,7 +14,6 @@ describe('Update Patient Page', () => {
       email: uniqueEmail,
       phoneNumber: `+1${uniquePhoneNumber}`,
       emergencyContact: `+123456788${uniqueId}`,
-      medicalConditions: 'None'
     });
   });
 
@@ -43,7 +42,6 @@ describe('Update Patient Page', () => {
     cy.get('input[name="email"]').clear().type(`updated.${uniqueEmail}`);
     cy.get('input[name="phoneNumber"]').clear().type(`+123456789${uniqueId}`);
     cy.get('input[name="emergencyContact"]').clear().type(`+123456780${uniqueId}`);
-    cy.get('textarea[name="medicalConditions"]').clear().type('Updated Conditions');
 
     cy.get('button.btn-update').click();
 
@@ -59,7 +57,6 @@ describe('Update Patient Page', () => {
     cy.get('input[name="email"]').clear().type(`updated.${uniqueEmail}`);
     cy.get('input[name="phoneNumber"]').clear().type(`+123456789${uniqueId}`);
     cy.get('input[name="emergencyContact"]').clear().type(`+123456780${uniqueId}`);
-    cy.get('textarea[name="medicalConditions"]').clear().type('Updated Conditions');
 
     cy.get('button.btn-clear').click();
 
@@ -69,6 +66,5 @@ describe('Update Patient Page', () => {
     cy.get('input[name="email"]').should('have.value', '');
     cy.get('input[name="phoneNumber"]').should('have.value', '');
     cy.get('input[name="emergencyContact"]').should('have.value', '');
-    cy.get('textarea[name="medicalConditions"]').should('have.value', '');
   });
 });

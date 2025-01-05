@@ -37,6 +37,11 @@ export default async ({ expressApp }) => {
     schema: '../persistence/schemas/medicalConditionSchema',
   };
 
+  const roomSchema = {
+    name: 'roomSchema',
+    schema: '../persistence/schemas/roomSchema',
+  };
+
   const roomTypeSchema = {
     name: 'roomTypeSchema',
     schema: '../persistence/schemas/roomTypeSchema',
@@ -72,6 +77,11 @@ export default async ({ expressApp }) => {
     path: config.controllers.roomType.path
   };
 
+  const roomController = {
+    name: config.controllers.room.name,
+    path: config.controllers.room.path
+  };
+
   const appointmentRepo = {
     name: config.repos.appointment.name,
     path: config.repos.appointment.path
@@ -100,6 +110,11 @@ export default async ({ expressApp }) => {
   const roomTypeRepo = {
     name: config.repos.roomType.name,
     path: config.repos.roomType.path
+  };
+
+  const roomRepo = {
+    name: config.repos.room.name,
+    path: config.repos.room.path
   };
 
   const appointmentService = {
@@ -132,6 +147,11 @@ export default async ({ expressApp }) => {
     path: config.services.roomType.path
   };
 
+  const roomService = {
+    name: config.services.room.name,
+    path: config.services.room.path
+  };
+
   await dependencyInjectorLoader({
     mongoConnection,
     schemas: [
@@ -140,7 +160,8 @@ export default async ({ expressApp }) => {
       specializationSchema,
       allergySchema,
       medicalConditionSchema,
-      roomTypeSchema
+      roomTypeSchema,
+      roomSchema
     ],
     controllers: [
       appointmentController,
@@ -148,7 +169,8 @@ export default async ({ expressApp }) => {
       specializationController,
       allergyController,
       medicalConditionController,
-      roomTypeController // Add your RoomType controller here
+      roomTypeController,
+      roomController
     ],
     repos: [
       appointmentRepo,
@@ -156,7 +178,8 @@ export default async ({ expressApp }) => {
       specializationRepo,
       allergyRepo,
       medicalConditionRepo,
-      roomTypeRepo // Add your RoomType repo here
+      roomTypeRepo,
+      roomRepo
     ],
     services: [
       appointmentService,
@@ -164,7 +187,8 @@ export default async ({ expressApp }) => {
       specializationService,
       allergyService,
       medicalConditionService,
-      roomTypeService // Add your RoomType service here
+      roomTypeService,
+      roomService
     ]
   });
   Logger.info('✌️ Schemas, Controllers, Repositories, Services, etc. loaded');

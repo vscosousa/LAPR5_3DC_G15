@@ -1,6 +1,6 @@
 describe('Update Appointment Workflow', () => {
   const uniqueId = Date.now();
-  const uniqueDateTime = new Date(Date.now() + 1000 * 60 * 60 * 24).toISOString().slice(0, 16);
+  const uniqueDateTime = new Date('2028-12-30T00:00:00').toISOString().slice(0, 16);
   const formattedDateTime = new Date(uniqueDateTime).toLocaleString('pt-PT', {
     day: '2-digit',
     month: '2-digit',
@@ -24,7 +24,7 @@ describe('Update Appointment Workflow', () => {
     });
 
     // Navigate to operation requests
-    cy.get('button.box4').click();
+    cy.get('button.box3').click();
     cy.wait(3000);
     cy.url().should('include', '/operation-requests');
 
@@ -94,7 +94,7 @@ describe('Update Appointment Workflow', () => {
     });
 
     // Navigate to operation requests
-    cy.get('button.box4').click();
+    cy.get('button.box3').click();
     cy.wait(3000);
     cy.url().should('include', '/operation-requests');
 

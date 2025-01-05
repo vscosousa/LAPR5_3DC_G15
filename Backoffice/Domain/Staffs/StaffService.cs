@@ -284,7 +284,7 @@ namespace DDDSample1.Domain.Staffs
             var encodedEmail = HttpUtility.UrlEncode(dto.Email);
             var encodedToken = HttpUtility.UrlEncode(token);
 
-            var link = $"http://localhost:4200/update-staff/ConfirmUpdates?phoneNumber={encodedPhoneNumber}&email={encodedEmail}&token={encodedToken}";
+            var link = $"http://localhost:4200/LAPR5_3DC_G15/update-staff/ConfirmUpdates?phoneNumber={encodedPhoneNumber}&email={encodedEmail}&token={encodedToken}";
             Console.WriteLine("Link to Confirm Update Contact: " + link);
             return link;
         }

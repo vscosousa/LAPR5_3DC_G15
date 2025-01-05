@@ -22,7 +22,6 @@ describe('Create Patient Page', () => {
     cy.get('input[name="email"]').type(uniqueEmail);
     cy.get('input[name="phoneNumber"]').type(`+1${uniquePhoneNumber}`);
     cy.get('input[name="emergencyContact"]').type(`+123456788${uniqueId}`);
-    cy.get('textarea[name="medicalConditions"]').type('None');
 
     cy.get('button.btn-create').click();
 
@@ -39,7 +38,6 @@ describe('Create Patient Page', () => {
     cy.get('input[name="email"]').type(uniqueEmail);
     cy.get('input[name="phoneNumber"]').type(`+1${uniquePhoneNumber}`);
     cy.get('input[name="emergencyContact"]').type(`+123456788${uniqueId}`);
-    cy.get('textarea[name="medicalConditions"]').type('None');
 
     cy.get('button.btn-clear').click();
 

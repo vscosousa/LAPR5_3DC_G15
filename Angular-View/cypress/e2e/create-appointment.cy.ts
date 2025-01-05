@@ -24,7 +24,7 @@ describe('Create Appointment Workflow', () => {
     });
 
     // Navigate to operation requests
-    cy.get('button.box4').click();
+    cy.get('button.box3').click();
     cy.wait(3000);
     cy.url().should('include', '/operation-requests');
 
@@ -32,7 +32,7 @@ describe('Create Appointment Workflow', () => {
     cy.get('button.btn-create').click();
     cy.wait(3000);
     cy.url().should('include', '/create-operation-request');
-    cy.get('input#deadlineDate').type('2025-01-01');
+    cy.get('input#deadlineDate').type(uniqueDateTime.split('T')[0]);
     cy.get('select#priority').select('ElectiveSurgery');
     cy.get('select#patientMedicalRecordNumber').select('202412000076 - Teste Casa');
     cy.get('select#operationType').select('MyTest');
@@ -77,7 +77,7 @@ describe('Create Appointment Workflow', () => {
     });
 
     // Navigate to operation requests
-    cy.get('button.box4').click();
+    cy.get('button.box3').click();
     cy.wait(3000);
     cy.url().should('include', '/operation-requests');
 
@@ -85,7 +85,7 @@ describe('Create Appointment Workflow', () => {
     cy.get('button.btn-create').click();
     cy.wait(3000);
     cy.url().should('include', '/create-operation-request');
-    cy.get('input#deadlineDate').type('2025-01-02');
+    cy.get('input#deadlineDate').type(uniqueDateTime.split('T')[0]);
     cy.get('select#priority').select('ElectiveSurgery');
     cy.get('select#patientMedicalRecordNumber').select('202412000076 - Teste Casa');
     cy.get('select#operationType').select('MyTest');
