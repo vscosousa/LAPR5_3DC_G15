@@ -11,10 +11,6 @@ const RoomType = new mongoose.Schema(
             type: String,
             required: [true, 'Please enter Room Type Name'],
             unique: true
-        },
-        description: {
-            type: String,
-            required: false
         }
     },
     { timestamps: true },

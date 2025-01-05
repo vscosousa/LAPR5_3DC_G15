@@ -1,12 +1,12 @@
 import { Result } from "../../core/logic/Result";
-import { RoomType } from "../../domain/roomType";
+import { IRoomTypeDTO } from "../../dto/IRoomTypeDTO";
 
 export default interface IRoomTypeService {
 
-  createRoomType(typeName: string): Promise<Result<RoomType>>;
+  createRoomType(typeName: string): Promise<Result<IRoomTypeDTO>>;
 
-  getRoomTypes(): Promise<Result<RoomType[]>>;
+  getRoomTypes(): Promise<Result<IRoomTypeDTO[]>>;
 
-  updateRoomType(id: string, typeName: string): Promise<Result<RoomType>>;
+  updateRoomType(id: string, typeName: string): Promise<Result<IRoomTypeDTO>>;
 
 }

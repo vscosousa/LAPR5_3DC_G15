@@ -71,6 +71,10 @@ const config = {
     medicalCondition: {
       name: "MedicalConditionController",
       path: "../controllers/medicalConditionController"
+    },
+    roomType: {
+      name: 'RoomTypeController',
+      path: "../controllers/roomTypeController"
     }
   },
 
@@ -94,6 +98,10 @@ const config = {
     medicalCondition: {
       name: "MedicalConditionRepo",
       path: "../repos/medicalConditionRepo"
+    },
+    roomType: {
+      name: 'RoomTypeRepo',
+      path: "../repos/roomTypeRepo"
     }
   },
 
@@ -117,6 +125,10 @@ const config = {
     medicalCondition: {
       name: "MedicalConditionService",
       path: "../services/medicalConditionService"
+    },
+    roomType: {
+      name: 'RoomTypeService',
+      path: "../services/roomTypeService"
     }
   },
 };

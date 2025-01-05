@@ -3,6 +3,7 @@ import { Inject, Service } from 'typedi';
 import { Result } from '../core/logic/Result';
 import IRoomTypeService from '../services/IServices/IRoomTypeService';
 import IRoomTypeController from './IControllers/IRoomTypeController';
+import { IRoomTypeDTO } from '../dto/IRoomTypeDTO'; // Import the DTO
 
 @Service()
 export default class RoomTypeController implements IRoomTypeController {
@@ -13,16 +14,25 @@ export default class RoomTypeController implements IRoomTypeController {
   public async createRoomType(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
     try {
       const { typeName } = req.body;
+
+      // Validate typeName
+      if (!typeName || typeof typeName !== 'string' || typeName.trim() === '') {
+        return res.status(400).send('Invalid properties');
+      }
+
       const roomTypeOrError = await this.roomTypeService.createRoomType(typeName);
 
       if (roomTypeOrError.isFailure) {
-        return res.status(400).send(roomTypeOrError.errorValue());
+        return res.status(400).send(roomTypeOrError.error);
       }
 
       const roomType = roomTypeOrError.getValue();
-      return res.status(201).json(roomType);
+      return res.status(201).json({
+        id: roomType.id.toString(),
+        typeName: roomType.typeName
+      });
     } catch (e) {
-      return next(e);
+      return res.status(500).send(e.message);
     }
   }
 
@@ -34,8 +44,8 @@ export default class RoomTypeController implements IRoomTypeController {
         return res.status(400).send(roomTypesOrError.errorValue());
       }
 
-      const roomTypes = roomTypesOrError.getValue();
-      return res.status(200).json(roomTypes);
+      const roomTypeDTOs: IRoomTypeDTO[] = roomTypesOrError.getValue();
+      return res.status(200).json(roomTypeDTOs);
     } catch (e) {
       return next(e);
     }
@@ -51,8 +61,8 @@ export default class RoomTypeController implements IRoomTypeController {
         return res.status(400).send(roomTypeOrError.errorValue());
       }
 
-      const roomType = roomTypeOrError.getValue();
-      return res.status(200).json(roomType);
+      const roomTypeDTO: IRoomTypeDTO = roomTypeOrError.getValue();
+      return res.status(200).json(roomTypeDTO);
     } catch (e) {
       return next(e);
     }

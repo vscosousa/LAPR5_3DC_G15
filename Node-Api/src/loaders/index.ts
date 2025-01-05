@@ -5,6 +5,7 @@ import Logger from './logger';
 
 import config from '../../config';
 import path from 'path';
+import roomTypeSchema from '../persistence/schemas/roomTypeSchema';
 
 
 export default async ({ expressApp }) => {
@@ -61,6 +62,11 @@ export default async ({ expressApp }) => {
     path: config.controllers.medicalCondition.path
   };
 
+  const roomTypeController = {
+    name: config.controllers.roomType.name,
+    path: config.controllers.roomType.path
+  };
+
   const appointmentRepo = {
     name: config.repos.appointment.name,
     path: config.repos.appointment.path
@@ -84,6 +90,11 @@ export default async ({ expressApp }) => {
   const medicalConditionRepo = {
     name: config.repos.medicalCondition.name,
     path: config.repos.medicalCondition.path
+  };
+
+  const roomTypeRepo = {
+    name: config.repos.roomType.name,
+    path: config.repos.roomType.path
   };
 
   const appointmentService = {
@@ -111,6 +122,11 @@ export default async ({ expressApp }) => {
     path: config.services.medicalCondition.path
   };
 
+  const roomTypeService = {
+    name: config.services.roomType.name,
+    path: config.services.roomType.path
+  };
+
   await dependencyInjectorLoader({
     mongoConnection,
     schemas: [
@@ -118,28 +134,32 @@ export default async ({ expressApp }) => {
       patientMedicalHistorySchema,
       specializationSchema,
       allergySchema,
-      medicalConditionSchema
+      medicalConditionSchema,
+      roomTypeSchema
     ],
     controllers: [
       appointmentController,
       patientMedicalHistoryController,
       specializationController,
       allergyController,
-      medicalConditionController
+      medicalConditionController,
+      roomTypeController // Add your RoomType controller here
     ],
     repos: [
       appointmentRepo,
       patientMedicalHistoryRepo,
       specializationRepo,
       allergyRepo,
-      medicalConditionRepo
+      medicalConditionRepo,
+      roomTypeRepo // Add your RoomType repo here
     ],
     services: [
       appointmentService,
       patientMedicalHistoryService,
       specializationService,
       allergyService,
-      medicalConditionService
+      medicalConditionService,
+      roomTypeService // Add your RoomType service here
     ]
   });
   Logger.info('✌️ Schemas, Controllers, Repositories, Services, etc. loaded');

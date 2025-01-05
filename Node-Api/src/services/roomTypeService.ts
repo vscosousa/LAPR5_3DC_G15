@@ -1,56 +1,65 @@
-import { RoomType } from '../domain/roomType';
 import { Service, Inject } from 'typedi';
 import { Logger } from 'winston';
 import { Result } from '../core/logic/Result';
 import IRoomTypeRepo from '../services/IRepos/IRoomTypeRepo';
 import IRoomTypeService from './IServices/IRoomTypeService';
 import { UniqueEntityID } from '../core/domain/UniqueEntityID';
+import { RoomType } from '../domain/roomType';
+import { IRoomTypeDTO } from '../dto/IRoomTypeDTO';
+import { RoomTypeMap } from '../mappers/RoomTypeMap';
 
 @Service()
-export default class RoomTypeService implements IRoomTypeService {
-  constructor(
-    @Inject('logger') private logger: Logger,
-    @Inject('RoomTypeRepo') private roomTypeRepo: IRoomTypeRepo
-  ) {}
+export default class RoomTypeService {
+  private roomTypeRepo: IRoomTypeRepo;
+  private logger: any;
 
-  public async createRoomType(typeName: string): Promise<Result<RoomType>> {
-    const roomTypeOrError = RoomType.create({ typeName
-        
-     });
+  constructor(logger: any, roomTypeRepo: IRoomTypeRepo) {
+    this.logger = logger;
+    this.roomTypeRepo = roomTypeRepo;
+  }
 
-    if (roomTypeOrError.isFailure) {
-      this.logger.error('Failed to add room type:', roomTypeOrError.errorValue());
-      return Result.fail<RoomType>(roomTypeOrError.errorValue());
-    }
-
-    const roomType = roomTypeOrError.getValue();
-
+  public async createRoomType(typeName: string): Promise<Result<IRoomTypeDTO>> {
     try {
+      const roomTypeOrError = RoomType.create({ typeName });
+
+      if (roomTypeOrError.isFailure) {
+        this.logger.error('Failed to add room type:', roomTypeOrError.errorValue());
+        return Result.fail<IRoomTypeDTO>(roomTypeOrError.errorValue());
+      }
+
+      const roomType = roomTypeOrError.getValue();
       await this.roomTypeRepo.save(roomType);
+
       this.logger.info('Room type added:', roomType);
-      return Result.ok<RoomType>(roomType);
-    } catch (error) {
-      this.logger.error('Error saving room type to database:', error);
-      return Result.fail<RoomType>('Error saving room type to database');
+      const roomTypeDTO = RoomTypeMap.toDTO(roomType);
+      return Result.ok<IRoomTypeDTO>(roomTypeDTO);
+    } catch (e) {
+      this.logger.error('Failed to add room type:', e.toString());
+      return Result.fail<IRoomTypeDTO>(e.toString());
     }
   }
 
-  public async getRoomTypes(): Promise<Result<RoomType[]>> {
+  public async getRoomTypes(): Promise<Result<IRoomTypeDTO[]>> {
     try {
       const roomTypes = await this.roomTypeRepo.findAll();
-      return Result.ok<RoomType[]>(roomTypes);
-    } catch (error) {
-      this.logger.error('Error fetching room types from database:', error);
-      return Result.fail<RoomType[]>('Error fetching room types from database');
+      const roomTypeDTOs: IRoomTypeDTO[] = roomTypes.map(roomType => ({
+        id: roomType.id.toString(),
+        typeName: roomType.typeName,
+      }));
+      return Result.ok<IRoomTypeDTO[]>(roomTypeDTOs);
+    } catch (e) {
+      this.logger.error('Failed to get room types:', e);
+      return Result.fail<IRoomTypeDTO[]>(e.toString());
     }
   }
 
-  public async updateRoomType(id: string, typeName: string): Promise<Result<RoomType>> {
+  public async updateRoomType(id: string, typeName: string): Promise<Result<IRoomTypeDTO>> {
     try {
       const roomType = await this.roomTypeRepo.findByDomainId(new UniqueEntityID(id));
 
       if (!roomType) {
-        return Result.fail<RoomType>('Room type not found');
+        this.logger.error('Room type not found');
+        return Result.fail<IRoomTypeDTO>('Room type not found');
       }
 
       roomType.props.typeName = typeName;
@@ -58,10 +67,15 @@ export default class RoomTypeService implements IRoomTypeService {
       await this.roomTypeRepo.save(roomType);
       this.logger.info('Room type updated:', roomType);
 
-      return Result.ok<RoomType>(roomType);
+      const roomTypeDTO: IRoomTypeDTO = {
+        id: roomType.id.toString(),
+        typeName: roomType.typeName,
+      };
+
+      return Result.ok<IRoomTypeDTO>(roomTypeDTO);
     } catch (error) {
       this.logger.error('Error updating room type:', error);
-      return Result.fail<RoomType>('Error updating room type');
+      return Result.fail<IRoomTypeDTO>('Error updating room type');
     }
   }
 }
