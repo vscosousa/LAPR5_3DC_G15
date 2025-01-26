@@ -147,6 +147,18 @@ export default class ThumbRaiser {
         this.sceneContainer = document.getElementById("scene-container");
         this.renderer.domElement.id = "scene-container";
 
+
+        this.exitMenu = document.getElementById("exit-menu");
+        this.exitYesButton = document.getElementById("exit-yes");
+        this.exitNoButton = document.getElementById("exit-no");
+
+        // Add event listeners for the exit menu buttons
+        if (this.exitYesButton && this.exitNoButton) {
+            this.exitYesButton.addEventListener("click", () => this.exitGame());
+            this.exitNoButton.addEventListener("click", () => this.continueGame());
+        }
+
+
         // Build the help panel
         this.buildHelpPanel();
 
@@ -246,31 +258,31 @@ export default class ThumbRaiser {
             // Ignore non-left-clicks
             return;
         }
-    
+
         if (event.target.id === "scene-container") {
             event.preventDefault();
-    
+
             // Initialize raycaster and mouse position
             const raycaster = new THREE.Raycaster();
             const mouse = new THREE.Vector2(
                 (event.clientX / window.innerWidth) * 2 - 1,
                 -(event.clientY / window.innerHeight) * 2 + 1
             );
-    
+
             // Cast a ray from the camera
             raycaster.setFromCamera(mouse, this.activeViewCamera.object);
-    
+
             // Perform raycast to get intersected objects
             const intersects = raycaster.intersectObjects(this.scene3D.children, true);
-    
+
             if (intersects.length > 0) {
                 // Find the first intersected object that is a table
                 const intersectedTable = intersects.find(intersect => intersect.object.isTable);
-    
+
                 if (intersectedTable) {
                     const table = intersectedTable.object;
                     console.log("Picked table:", table.name);
-    
+
                     // Handle room selection and camera movement only for tables
                     this.roomInfoHandler.selectRoomFromTable(table);
                     this.moveCameraToTable(table);
@@ -278,7 +290,7 @@ export default class ThumbRaiser {
             }
         }
     }
-    
+
 
 
     moveCameraToTable(table) {
@@ -754,54 +766,58 @@ export default class ThumbRaiser {
     }
 
 
-   
 
     stopPlayerMovement() {
         this.activeKeys.clear(); // Limpa todas as teclas ativas
         this.player.isMoving = false; // Adicione uma flag que impede a atualização de movimento
     }
-    
 
-    exitModelView() {
+    /* collision(position) {
+        // Check if the player collided with a wall
+        const wallCollision = this.maze.distanceToWestWall(position) < this.player.radius ||
+            this.maze.distanceToEastWall(position) < this.player.radius ||
+            this.maze.distanceToNorthWall(position) < this.player.radius ||
+            this.maze.distanceToSouthWall(position) < this.player.radius;
+
+        // Check if the player collided with any doors (add this part)
+        const doorCollision = this.maze.distanceToDoor(position) < this.player.radius;
+
+        // Return true if there is a wall collision or a door collision
+        return wallCollision || doorCollision;
+    }
+*/
+
+
+    exitModelView(position) {
         // Check if player collides with the exit door
-        if (this.maze.distanceToExitDoor(this.player.position) < this.player.radius) {
-        
+        const exitDoorCollision = (this.maze.distanceToExitDoor(position)*3)  < this.player.radius;
 
+        if (exitDoorCollision) {
             // Show the exit menu
             this.showExitMenu();
-
             this.stopPlayerMovement();
-            
-            
-
+            return true; // Indicate that a collision occurred
         }
+        return exitDoorCollision;
     }
 
     showExitMenu() {
-        const exitMenu = document.getElementById('exit-menu');
-        if (exitMenu) {
-            exitMenu.style.display = 'block';
-
-            // Add event listeners for the buttons
-            document.getElementById('exit-yes').addEventListener('click', () => this.exitGame());
-            document.getElementById('exit-no').addEventListener('click', () => this.continueGame());
+        if (this.exitMenu) {
+            this.exitMenu.style.display = "block";
         }
     }
 
     exitGame() {
         // Logic to exit the game and present the main menu
-        console.log('Exiting game and presenting main menu...');
-        // Implement your logic to exit the game and show the main menu here
-        // For example, you might redirect to the main menu page or reset the game state
-        window.location.href = 'main_menu.html'; // Example: redirect to main menu page
+        console.log("Exiting game and presenting main menu...");
+        window.location.href = "/index.html";
     }
 
     continueGame() {
         // Logic to continue the game
-        console.log('Continuing game...');
-        const exitMenu = document.getElementById('exit-menu');
-        if (exitMenu) {
-            exitMenu.style.display = 'none';
+        console.log("Continuing game...");
+        if (this.exitMenu) {
+            this.exitMenu.style.display = "none";
         }
     }
 
@@ -851,7 +867,7 @@ export default class ThumbRaiser {
                 const direction = THREE.MathUtils.degToRad(this.player.direction);
                 if (this.player.keyStates.backward) { // The player is moving backward
                     const newPosition = new THREE.Vector3(-coveredDistance * Math.sin(direction) + this.player.position.x, this.player.position.y, -coveredDistance * Math.cos(direction) + this.player.position.z);
-                    if (this.collision(newPosition)) {
+                    if (this.collision(newPosition) || this.exitModelView(newPosition)) {
                         this.animations.fadeToAction("Death", 0.2);
                         this.player.moveSound.pause();
                         this.player.hitWallSound.play();
@@ -859,9 +875,9 @@ export default class ThumbRaiser {
                         this.animations.fadeToAction(this.player.keyStates.run ? "Running" : "Walking", 0.2);
                         this.player.position = newPosition;
                     }
-                } else if (this.player.keyStates.forward) { // The player is moving forward
+                } else if (this.player.keyStates.forward ) { // The player is moving forward
                     const newPosition = new THREE.Vector3(coveredDistance * Math.sin(direction) + this.player.position.x, this.player.position.y, coveredDistance * Math.cos(direction) + this.player.position.z);
-                    if (this.collision(newPosition)) {
+                    if (this.collision(newPosition) || this.exitModelView(newPosition)) {
                         this.animations.fadeToAction("Death", 0.2);
                         this.player.moveSound.pause();
                         this.player.hitWallSound.play();
@@ -887,10 +903,6 @@ export default class ThumbRaiser {
                 this.player.object.position.copy(this.player.position);
                 this.player.object.rotation.y = direction - this.player.initialDirection;
             }
-
-
-            // Call exitModelView function to check if the player is close to the exit door
-            this.exitModelView();
 
             // Update first-person, third-person and top view cameras parameters (player direction and target)
             this.firstPersonViewCamera.playerDirection = this.player.direction;
@@ -940,7 +952,7 @@ export default class ThumbRaiser {
     }
 
 
-        dispose() {
+    dispose() {
         // Dispose of the renderer and other resources
         if (this.renderer) {
             this.renderer.dispose();

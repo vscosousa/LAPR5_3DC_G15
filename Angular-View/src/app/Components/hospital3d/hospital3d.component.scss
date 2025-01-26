@@ -38,7 +38,7 @@ canvas {
   display: flex;
   justify-content: center;
   align-items: center;
-  pointer-events: none; /* Prevent blocking mouse interactions */
+  pointer-events: auto; /* Prevent blocking mouse interactions */
 }
 
 #views-panel {
@@ -55,7 +55,7 @@ canvas {
     color: white;
     pointer-events: auto; /* Allow interaction with the panel */
   }
-  
+
 
 /* Help Panel */
 #help-panel {
@@ -91,6 +91,7 @@ canvas {
   }
 
   .exit-menu {
+    display: none;
     position: absolute;
     top: 50%;
     left: 50%;
@@ -108,4 +109,3 @@ canvas {
     padding: 10px 20px;
     font-size: 16px;
 }
-  

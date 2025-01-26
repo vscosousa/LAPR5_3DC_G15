@@ -63,7 +63,7 @@ export class CreatePatientComponent implements OnInit {
         console.log('Patient created:', response);
         this.clearForm();
         alert('Patient created successfully');
-        this.router.navigate(['/patients']);
+        this.router.navigate(['/manage-patients']);
       },
       (error: any) => {
         console.error('Error creating patient', error);
