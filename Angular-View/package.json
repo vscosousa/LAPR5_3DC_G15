@@ -23,7 +23,7 @@
     "@angular/forms": "^18.0.0",
     "@angular/platform-browser": "^18.0.0",
     "@angular/platform-browser-dynamic": "^18.0.0",
-    "@angular/platform-server": "^18.0.0",
+    "@angular/platform-server": "^18.2.14",
     "@angular/router": "^18.0.0",
     "@angular/ssr": "^18.0.5",
     "@react-oauth/google": "^0.12.1",
