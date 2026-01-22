@@ -63,7 +63,7 @@
     "jest-preset-angular": "^14.3.0",
     "jszip": "^3.10.1",
     "jwt-decode": "^4.0.0",
-    "lodash-es": "^4.17.21",
+    "lodash-es": "^4.17.23",
     "typescript": "~5.4.2"
   }
 }
